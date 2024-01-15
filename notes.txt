@@ -1,0 +1,1 @@
+change the root_path param to point here from settings.config at C:\Users\jdolabany\AppData\Roaming\pico-8

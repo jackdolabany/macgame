@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacGame", "MacGame\MacGame.csproj", "{BA32D64D-3EBB-4EC8-9AE9-720B7A57AC74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileEngine", "TileEngine\TileEngine.csproj", "{AEC969A9-B1CE-4A77-A7B8-0CC3E8377473}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomContentProcessorLibrary", "CustomContentProcessorLibrary\CustomContentProcessorLibrary.csproj", "{0D6780BF-C15F-479D-BEC6-EE98CE946340}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapLibrary", "TmxMapLibrary\TmxMapLibrary.csproj", "{BFA7B7C2-2B61-4F48-A346-00410385E817}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA32D64D-3EBB-4EC8-9AE9-720B7A57AC74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA32D64D-3EBB-4EC8-9AE9-720B7A57AC74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA32D64D-3EBB-4EC8-9AE9-720B7A57AC74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA32D64D-3EBB-4EC8-9AE9-720B7A57AC74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC969A9-B1CE-4A77-A7B8-0CC3E8377473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC969A9-B1CE-4A77-A7B8-0CC3E8377473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC969A9-B1CE-4A77-A7B8-0CC3E8377473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC969A9-B1CE-4A77-A7B8-0CC3E8377473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D6780BF-C15F-479D-BEC6-EE98CE946340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D6780BF-C15F-479D-BEC6-EE98CE946340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D6780BF-C15F-479D-BEC6-EE98CE946340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D6780BF-C15F-479D-BEC6-EE98CE946340}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44686530-3276-4633-B61C-A48938B0A1BB}
+	EndGlobalSection
+EndGlobal

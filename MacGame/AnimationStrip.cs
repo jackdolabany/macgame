@@ -1,0 +1,147 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace MacGame
+{
+    public class AnimationStrip
+    {
+        private float frameTimer = 0f;
+
+        public int currentFrameIndex;
+        
+        Rectangle FirstFrame { get; set; }
+
+        public int FrameWidth
+        {
+            get { return FirstFrame.Width; }
+        }
+
+        public int FrameHeight
+        {
+            get { return FirstFrame.Height; }
+        }
+
+        public Texture2D Texture { get; set; }
+
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Add another animation if you want it to play after this one immediately.
+        /// </summary>
+        public string NextAnimation { get; set; }
+
+        public bool LoopAnimation { get; set; }
+
+        /// <summary>
+        /// If true the animation will start working backwards once it gets to the end. Otherwise it will 
+        /// start back at the beginning.
+        /// </summary>
+        public bool Oscillate { get; set; }
+
+        public bool FinishedPlaying { get; private set; }
+
+        public int FrameCount { get; set; }
+
+        /// <summary>
+        /// A length of time to display each frame.
+        /// </summary>
+        public float FrameLength { get; set; }
+
+        public bool Reverse { get; set; }
+
+        /// <summary>
+        /// The current frame rectangle relative to the texture.
+        /// </summary>
+        public Rectangle FrameRectangle
+        {
+            get
+            {
+
+                int realCurrentFrameIndex = currentFrameIndex;
+                if (Reverse)
+                {
+                    realCurrentFrameIndex = FrameCount - 1 - currentFrameIndex;
+                }
+
+                return new Rectangle(
+                    FirstFrame.X + realCurrentFrameIndex * FrameWidth,
+                    FirstFrame.Y,
+                    FrameWidth,
+                    FrameHeight);
+            }
+        }
+
+        /// <summary>
+        /// Creates a 2D animation. We expect a texture with frames moving to the right.
+        /// </summary>
+        /// <param name="firstFrame">A rectangle relative to the texture of the first frame. All other frames are expected to be to the right.</param>
+        /// <param name="frameCount">The number of frames in the animation.</param>
+        public AnimationStrip(Texture2D texture, Rectangle firstFrame, int frameCount, string name)
+        {
+            this.Texture = texture;
+            this.FirstFrame = firstFrame;
+            this.FrameCount = frameCount;
+            this.Name = name;
+            this.FrameLength = 0.05f;
+        }
+
+        public AnimationStrip Play(int currentFrame)
+        {
+            this.currentFrameIndex = currentFrame;
+            this.frameTimer = 0;
+            FinishedPlaying = false;
+            return this;
+        }
+
+        public AnimationStrip Play()
+        {
+            return Play(0);
+        }
+
+        public AnimationStrip FollowedBy(string animationName)
+        {
+            this.NextAnimation = animationName;
+            return this;
+        }
+
+        public void Update(float elapsed)
+        {
+            frameTimer += elapsed;
+
+            if (frameTimer >= FrameLength)
+            {
+                currentFrameIndex++;
+                if (currentFrameIndex >= FrameCount)
+                {
+                    if (LoopAnimation)
+                    {
+                        currentFrameIndex = 0;
+                        if (Oscillate)
+                        {
+                            Reverse = !Reverse;
+                        }
+                    }
+                    else
+                    {
+                        currentFrameIndex = FrameCount - 1;
+                        FinishedPlaying = true;
+                    }
+                }
+
+                frameTimer = 0f;
+            }
+        }
+
+        public object Clone()
+        {
+            AnimationStrip clone = new AnimationStrip(this.Texture, this.FirstFrame, this.FrameCount, this.Name);
+            clone.currentFrameIndex = this.currentFrameIndex;
+            clone.FrameLength = this.FrameLength;
+            clone.LoopAnimation = this.LoopAnimation;
+            clone.NextAnimation = this.NextAnimation;
+            clone.Oscillate = this.Oscillate;
+            clone.Reverse = this.Reverse;
+            return clone;
+        }
+    }
+}

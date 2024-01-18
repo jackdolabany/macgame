@@ -23,7 +23,7 @@ function _init()
     landed=false,
     sliding = false,
     jump_pressed = false,
-    is_platofrm_below = false, -- on update, scan for a jump thru platofrm below the player
+    is_platform_below = false, -- on update, scan for a jump thru platofrm below the player
     health=3,
     invincible = false,
     invincible_timer=0
@@ -97,7 +97,7 @@ function _update()
     end
   end
 
-  -- fall donw pit
+  -- fall down pit
   if player.health > 0 then
    if player.y > 128 then
     sfx(3)

@@ -1,0 +1,36 @@
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.csproj.AssemblyReference.cache
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.AssemblyInfoInputs.cache
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.AssemblyInfo.cs
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.csproj.CoreCompileInputs.cache
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.deps.json
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\refint\TileEngine.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\TileEngine\obj\Debug\net6.0\ref\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.deps.json
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.csproj.AssemblyReference.cache
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.AssemblyInfoInputs.cache
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.AssemblyInfo.cs
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.csproj.CoreCompileInputs.cache
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\refint\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame\MacGame\TileEngine\obj\Debug\net6.0\ref\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.deps.json
+C:\Users\Jack\Documents\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\TileEngine\bin\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.csproj.AssemblyReference.cache
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.AssemblyInfoInputs.cache
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.AssemblyInfo.cs
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.csproj.CoreCompileInputs.cache
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\refint\TileEngine.dll
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame\TileEngine\obj\Debug\net6.0\ref\TileEngine.dll

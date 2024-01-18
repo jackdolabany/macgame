@@ -1,0 +1,17 @@
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.deps.json
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.pdb
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.csproj.AssemblyReference.cache
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.AssemblyInfoInputs.cache
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.AssemblyInfo.cs
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\refint\CustomContentProcessorLibrary.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.pdb
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\ref\CustomContentProcessorLibrary.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\TileEngine.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\TmxMapLibrary.dll
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\TileEngine.pdb
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\bin\Debug\net6.0\TmxMapLibrary.pdb
+C:\Users\Jack\Documents\MacGame MonoGame\MacGame\CustomContentProcessorLibrary\obj\Debug\net6.0\CustomContentProcessorLibrary.csproj.CopyComplete

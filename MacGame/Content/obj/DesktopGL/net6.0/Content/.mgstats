@@ -1,0 +1,5 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/Jack/Documents/MacGame/MacGame/Content/Fonts/KenPixel.spritefont","C:/Users/Jack/Documents/MacGame/MacGame/Content/bin/DesktopGL/Content/Fonts/KenPixel.xnb","FontDescriptionProcessor","SpriteFontContent",2008,21535,0.228176
+"C:/Users/Jack/Documents/MacGame/MacGame/Content/Maps/TestLevel2.tmx","C:/Users/Jack/Documents/MacGame/MacGame/Content/bin/DesktopGL/Content/Maps/TestLevel2.xnb","PassThroughProcessor","TileMap",33397,297829,0.1872391
+"C:/Users/Jack/Documents/MacGame/MacGame/Content/Textures/Textures.png","C:/Users/Jack/Documents/MacGame/MacGame/Content/bin/DesktopGL/Content/Textures/Textures.xnb","TextureProcessor","Texture2DContent",891,65621,0.0151024
+"C:/Users/Jack/Documents/MacGame/MacGame/Content/Textures/TitleScreen.png","C:/Users/Jack/Documents/MacGame/MacGame/Content/bin/DesktopGL/Content/Textures/TitleScreen.xnb","TextureProcessor","Texture2DContent",1866,65621,0.0049093

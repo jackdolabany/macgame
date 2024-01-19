@@ -23,7 +23,7 @@ namespace MacGame
         {
             var simpleSprites = content.Load<Texture2D>(@"Textures\Textures");
             SparkTexture = simpleSprites;
-            WhiteSquareSourceRectangle = new Rectangle(2, 2, 2, 2).ToTileRect();
+            WhiteSquareSourceRectangle = new Rectangle(11, 27, 2, 2);
           
             Rectangle collisionRect = new Rectangle(2, 2, 1, 1);
 
@@ -99,14 +99,14 @@ namespace MacGame
                         location,
                         RandomDirection(speed),
                         Vector2.Zero,
-                        4000,
-                        30,
+                        40,
+                        30000,
                         color * 0.8f,
                         Color.White * 0.8f);
-                pop.Scale = 0.4f;
-                pop.FinalScale = 0.05f;
+                pop.Scale = 10f;
+                pop.FinalScale = 10f;
                 pop.SetStaticImage(Game1.textures, WhiteSquareSourceRectangle);
-                //pop.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
+                // pop.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
             }
         }
 

@@ -13,6 +13,9 @@ namespace MacGame
         protected Vector2 worldLocation;
 
         private bool _flipped = false;
+        /// <summary>
+        /// Default is facing to the right. If you're flipped you are facing left.
+        /// </summary>
         protected bool flipped
         {
             get
@@ -466,7 +469,7 @@ namespace MacGame
                                 if (samePlatformAsBefore)
                                 {
                                     // Previous platform. The GameObject will be moved along with the platform outside of this function.
-                                    moveAmount.Y = 0;
+                                    moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - cachedCollisionRectangle.Bottom);
                                 }
                                 else
                                 {

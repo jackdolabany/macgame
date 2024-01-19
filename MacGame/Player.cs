@@ -71,7 +71,7 @@ namespace MacGame
             Enabled = true;
 
             // TODO: Whatever
-            //cd.DrawDepth = 0.5f;
+            DisplayComponent.DrawDepth = 0.5f;
 
             this.IsAbleToMoveOutsideOfWorld = true;
             this.IsAbleToSurviveOutsideOfWorld = true;
@@ -82,7 +82,7 @@ namespace MacGame
 
             this.IsAffectedByPlatforms = true;
 
-            this.CollisionRectangle = new Rectangle(-4, -8, 8, 8);
+            this.CollisionRectangle = new Rectangle(-3, -7, 6, 7);
 
             InputManager = inputManager;
             _deadMenu = deadMenu;

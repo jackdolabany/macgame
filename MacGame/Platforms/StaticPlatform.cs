@@ -10,7 +10,7 @@ namespace MacGame.Platforms
             : base(content, cellX, cellY)
         {
             this.DisplayComponent = new StaticImageDisplay(content.Load<Texture2D>(@"Textures/Textures"), new Rectangle(0, 4*8, 8, 8));
-            SetCenteredCollisionRectangle(8, 0);
+            this.CollisionRectangle = new Rectangle(-3, -8, 6, 3);
         }
     }
 }

@@ -99,9 +99,8 @@ namespace TileEngine
         /// </summary>
         public enum DrawObjectGroups
         {
-            Player,
-            Effects,
-            Shot
+            PlayerAndEnemies,
+            Effects
         }
 
         public float GetObjectDrawDepth(DrawObjectGroups group)

@@ -42,7 +42,7 @@ namespace MacGame
                         {
                             if (loadClass.StartsWith("Enemy."))
                             {
-                                //use reflection to load the enemies from the code
+                                // Use reflection to load the enemies from the code
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Enemy).Namespace + "." + classname);
                                 Enemy enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });

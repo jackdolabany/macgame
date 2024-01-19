@@ -67,15 +67,10 @@ namespace MacGame
 
         protected Camera camera;
 
-        //public Enemy(ContentManager content, int cellX, int cellY, Player player) : base()
-        //{
-        //    Initialize(cellX, cellY, player);
-        //}
-
         public Enemy(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base()
         {
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize, cellY * TileMap.TileSize);
+            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, cellY * TileMap.TileSize);
             Enabled = true;
             isEnemyTileColliding = true;
             IsAbleToMoveOutsideOfWorld = false;
@@ -84,14 +79,6 @@ namespace MacGame
             Invincible = false;
             this.camera = camera;
         }
-
-        //public CharacterConfig SetDisplayComponentFromConfig(ContentManager content)
-        //{
-        //    var config = CharacterConfig.GetCharacterConfig($@"Content\Textures\{this.GetType().Name}.json");
-        //    var animationDisplay = CharacterConfig.GetAnimationDisplay(config, content);
-        //    this.DisplayComponent = animationDisplay;
-        //    return config;
-        //}
 
         /// <summary>
         /// Used in the constructor to properly place enemies on the map.

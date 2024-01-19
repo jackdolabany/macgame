@@ -14,15 +14,10 @@ namespace TileEngine
         public Tile[] LayerTiles { get; set; }
         public bool Passable { get; set; } = true;
 
-        /// <summary>
-        /// Only for the WorldMap. Each square represents part of a level.
-        /// </summary>
-        public int LevelNumber { get; set; }
-
         public bool EnemyPassable { get; set; } = true;
         public bool PlatformPassable { get; set; } = true;
-        public bool IsSand { get; set; } = true;
-        public bool IsIce { get; set; } = true;
+        public bool IsSand { get; set; } = false;
+        public bool IsIce { get; set; } = false;
 
         public MapSquare(int depth, bool passable)
         {

@@ -708,9 +708,9 @@ namespace Squared.Tiled
 
                         int tileIndex = layer.GetTile(x, y);
 
-                        //.TMX maps use 0 for the when there is no tile. 
-                        //We'll assume that we can always draw the texture at tile 1 and it
-                        //will be empty.
+                        // .TMX maps use 0 for the when there is no tile. 
+                        // We'll assume that we can always draw the texture at tile 1 and it
+                        // will be empty.
                         if (tileIndex == 0)
                         {
                             tileIndex = 1;
@@ -751,30 +751,28 @@ namespace Squared.Tiled
                         {
                             tileMap.MapCells[x][y].Passable = false;
                         }
-                        else if (tileInfo.properties.ContainsKey("Sand"))
+                        else if (tileInfo.properties.ContainsKey("PlayerStart"))
+                        {
+                            tileMap.PlayerStart = new Vector2(x, y);
+                            tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "PlayerStart";
+                        }
+                        
+                        if (tileInfo.properties.ContainsKey("BlockEnemy"))
+                        {
+                            tileMap.MapCells[x][y].EnemyPassable = false;
+                        }
+                        if (tileInfo.properties.ContainsKey("BlockPlatform"))
+                        {
+                            tileMap.MapCells[x][y].PlatformPassable = false;
+                        }
+                        
+                        if (tileInfo.properties.ContainsKey("Sand"))
                         {
                             tileMap.MapCells[x][y].IsSand = true;
                         }
                         else if (tileInfo.properties.ContainsKey("Ice"))
                         {
                             tileMap.MapCells[x][y].IsIce = true;
-                        }
-                        else if (tileInfo.properties.ContainsKey("PlayerStart"))
-                        {
-                            tileMap.PlayerStart = new Vector2(x, y);
-                            tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "PlayerStart";
-                        }
-                        else if (tileInfo.properties.ContainsKey("BlockEnemy"))
-                        {
-                            tileMap.MapCells[x][y].EnemyPassable = false;
-                        }
-                        else if (tileInfo.properties.ContainsKey("BlockPlatform"))
-                        {
-                            tileMap.MapCells[x][y].PlatformPassable = false;
-                        }
-                        else if (tileInfo.properties.ContainsKey("LevelNumber"))
-                        {
-                            tileMap.MapCells[x][y].LevelNumber = int.Parse(tileInfo.properties["LevelNumber"]);
                         }
 
                         var shouldDrawTile = layer.Name.ToLower() != "collisions" 

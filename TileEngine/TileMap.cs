@@ -251,6 +251,7 @@ namespace TileEngine
                         var texture = mapCell.LayerTiles[z].Texture;
                         if (texture != null)
                         {
+
                             spriteBatch.Draw(
                                 texture,
                                 rect,

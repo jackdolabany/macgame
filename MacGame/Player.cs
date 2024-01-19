@@ -21,9 +21,6 @@ namespace MacGame
 
         public int Health { get; set; }
 
-        // Keeps track of the enemies already stabbed for a given knife swing.
-        private List<Enemy> stabbedEnemies = new List<Enemy>(5);
-
         public InputManager InputManager { get; private set; }
 
         private DeadMenu _deadMenu;
@@ -35,6 +32,10 @@ namespace MacGame
         private bool isJumping = false;
         private bool isSliding = false;
         private bool isFalling = false;
+
+        private float invincibleTimeRemaining = 0.0f;
+
+        public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
@@ -100,6 +101,11 @@ namespace MacGame
                 Kill();
             }
 
+            if (invincibleTimeRemaining > 0)
+            {
+                invincibleTimeRemaining -= elapsed;
+            }
+
             base.Update(gameTime, elapsed);
         }
 
@@ -115,13 +121,17 @@ namespace MacGame
                         // If the player is above the midpoint of the enemy, the enemy was jumped on and takes a hit.
                         enemy.Kill();
                     }
-                    else
+                    else if (!this.IsInvincible)
                     {
                         // player takes a hit.
                         Health -= 1;
                         if (Health <= 0)
                         {
                             Kill();
+                        }
+                        else
+                        {
+                            invincibleTimeRemaining = 1.5f;
                         }
                     }
 
@@ -133,31 +143,19 @@ namespace MacGame
 
         private void HandleInputs(float elapsed)
         {
-
-            //this.velocity.X = 0;
-
-            
-            //if (OnGround)
-            //{
-            //    nextAnimation = "idle";
-            //}
-            //else
-            //{
-            //    nextAnimation = "jump";
-            //}
-
-            // TODO On ice or sand??
             float friction;
             float jumpBoost;
-            var isOnSand = false;
-            var isOnIce = false;
 
-            if (isOnSand)
+            var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
+            
+            var maxWalkingSpeed = maxSpeed;
+            if (mapSquareBelow.IsSand)
             {
-                friction = 0.3f;
-                jumpBoost = 75;
+                friction = 5f;
+                jumpBoost = 100;
+                maxWalkingSpeed /= 2;
             }
-            else if (isOnIce)
+            else if (mapSquareBelow.IsIce)
             {
                 friction = 0.95f;
                 jumpBoost = 150;
@@ -173,9 +171,9 @@ namespace MacGame
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
             {
                 this.velocity.X += acceleration * elapsed;
-                if (velocity.X > maxSpeed)
+                if (velocity.X > maxWalkingSpeed)
                 {
-                    velocity.X = maxSpeed;
+                    velocity.X = maxWalkingSpeed;
                 }
                 isRunning = true;
                 isSliding = false;
@@ -186,9 +184,9 @@ namespace MacGame
             if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
             {
                 this.velocity.X -= acceleration * elapsed;
-                if (velocity.X < -maxSpeed)
+                if (velocity.X < -maxWalkingSpeed)
                 {
-                    velocity.X = -maxSpeed;
+                    velocity.X = -maxWalkingSpeed;
                 }
                 isRunning = true;
                 isSliding = false;

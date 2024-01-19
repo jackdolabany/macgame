@@ -95,16 +95,21 @@ namespace MacGame
             {
                 var pop = (Particle)Particles.GetNextObject();
 
+                // Randomize the speed 80% slower or faster
+                //var deviation = Game1.Randy.Next(0, 100);
+                //float speedFactor = (50f + deviation) / 100f;
+                var speedFactor = Game1.Randy.NextDouble();
+
                 pop.Initialize(
                         location,
-                        RandomDirection(speed),
+                        RandomDirection(speed) * (float)speedFactor,
                         Vector2.Zero,
-                        40,
-                        30000,
+                        20,
+                        30,
                         color * 0.8f,
                         Color.White * 0.8f);
-                pop.Scale = 10f;
-                pop.FinalScale = 10f;
+                pop.Scale = 1f;
+                pop.FinalScale = 1f;
                 pop.SetStaticImage(Game1.textures, WhiteSquareSourceRectangle);
                 // pop.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
             }

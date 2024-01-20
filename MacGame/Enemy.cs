@@ -161,12 +161,12 @@ namespace MacGame
 
         public virtual void PlayTakeHitSound()
         {
-            // TODO
+            SoundManager.PlaySound("harsh_hit");
         }
 
         public virtual void PlayDeathSound()
         {
-            // TODO
+            SoundManager.PlaySound("hit_enemy");
         }
 
         public virtual void Kill()

@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security;
 using System.Runtime.Intrinsics.X86;
+using Microsoft.Xna.Framework.Audio;
+using System.Net.Http;
 
 namespace MacGame
 {
@@ -95,7 +97,7 @@ namespace MacGame
 
             HandleInputs(elapsed);
 
-            if (CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
+            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
             {
                 // player fell down a bottomless pit
                 Kill();
@@ -119,7 +121,8 @@ namespace MacGame
                     if (CollisionRectangle.Bottom < enemy.CollisionRectangle.Center.Y)
                     {
                         // If the player is above the midpoint of the enemy, the enemy was jumped on and takes a hit.
-                        enemy.Kill();
+                        enemy.TakeHit(1, Vector2.Zero);
+                        velocity.Y = -120;
                     }
                     else if (!this.IsInvincible)
                     {
@@ -132,6 +135,7 @@ namespace MacGame
                         else
                         {
                             invincibleTimeRemaining = 1.5f;
+                            SoundManager.PlaySound("take_hit");
                         }
                     }
 
@@ -229,6 +233,7 @@ namespace MacGame
                         this.PoisonPlatforms.Add(platform);
                     }
                 }
+                SoundManager.PlaySound("jump");
 
             }
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
@@ -236,6 +241,7 @@ namespace MacGame
                 // Regular jump.
                 this.velocity.Y -= jumpBoost;
                 isSliding = false;
+                SoundManager.PlaySound("jump");
             }
 
 
@@ -296,7 +302,8 @@ namespace MacGame
             Health = 0;
             Enabled = false;
             EffectsManager.RisingText("Dead", WorldCenter);
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.Red, 50f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 50f);
+            SoundManager.PlaySound("mac_death");
             MenuManager.AddMenu(_deadMenu);
         }
 

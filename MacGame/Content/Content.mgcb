@@ -28,6 +28,36 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel2.tmx
 
+#begin SoundEffects/harsh_hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/harsh_hit.wav
+
+#begin SoundEffects/hit_enemy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/hit_enemy.wav
+
+#begin SoundEffects/jump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/jump.wav
+
+#begin SoundEffects/mac_death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/mac_death.wav
+
+#begin SoundEffects/take_hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/take_hit.wav
+
 #begin Textures/Textures.png
 /importer:TextureImporter
 /processor:TextureProcessor

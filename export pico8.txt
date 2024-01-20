@@ -1,0 +1,3 @@
+export mygame_sfx_%d.wav
+
+exports to C:\Users\Jack\AppData\Roaming\pico-8\carts

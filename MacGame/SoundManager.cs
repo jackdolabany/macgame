@@ -44,7 +44,7 @@ namespace MacGame
         /// </summary>
         public static void LoadSong(string songName)
         {
-            LoadSong(songName, @"Sounds\Music\" + songName);
+            LoadSong(songName, @"Music\" + songName);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace MacGame
 
         public static void LoadSound(string name)
         {
-            var soundEffect = content.Load<SoundEffect>(@"Sounds\" + name);
+            var soundEffect = content.Load<SoundEffect>(@"SoundEffects\" + name);
             Sounds.Add(name, soundEffect);
         }
 
@@ -123,14 +123,12 @@ namespace MacGame
             Sounds = new Dictionary<string, SoundEffect>();
             Songs = new Dictionary<string, Song>();
 
-            //// Sound Effects
-            //LoadSound("woosh1");
-            //LoadSound("cloth1");
-            //LoadSound("bookClose");
-            //LoadSound("swordMetal7");
-            //LoadSound("rollover1");
-            //LoadSound("rollover2");
-            //LoadSound("chop");
+            // Sound Effects
+            LoadSound("harsh_hit");
+            LoadSound("hit_enemy");
+            LoadSound("jump");
+            LoadSound("mac_death");
+            LoadSound("take_hit");
 
             //// Music.
             //LoadSong("Retro Mystic");

@@ -70,7 +70,7 @@ namespace MacGame
         public Enemy(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base()
         {
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, cellY * TileMap.TileSize);
+            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
             isEnemyTileColliding = true;
             IsAbleToMoveOutsideOfWorld = false;

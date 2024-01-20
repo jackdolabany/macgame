@@ -161,10 +161,10 @@ namespace MacGame
 
             CurrentGameState = GameState.Playing;
 
-            StartNewGame();
+            StartNewGame(false);
         }
 
-        public void StartNewGame()
+        public void StartNewGame(bool loadLevel = true)
         {
             MenuManager.ClearMenus();
 
@@ -173,7 +173,12 @@ namespace MacGame
             EffectsManager.Initialize(Content);
 
             Player.Enabled = true;
-            currentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+            Player.Health = 3;
+
+            if (loadLevel)
+            {
+                currentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+            }
         }
 
         public void GoToTitleScreen()

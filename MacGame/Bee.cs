@@ -29,7 +29,8 @@ namespace MacGame
 
             animations.Play("fly");
 
-            isEnemyTileColliding = true;
+            isTileColliding = false;
+            isEnemyTileColliding = false;
             Attack = 1;
             Health = 1;
             IsAffectedByGravity = false;
@@ -59,7 +60,7 @@ namespace MacGame
                 }
             }
 
-            var travelDistance = (int)this.WorldCenter.Y - startLocationY;
+            var travelDistance = (int)this.WorldLocation.Y - startLocationY;
 
             if(this.velocity.Y > 0 && travelDistance >= maxWalkDistance)
             {

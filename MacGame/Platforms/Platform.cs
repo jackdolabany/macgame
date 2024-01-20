@@ -12,7 +12,7 @@ namespace MacGame.Platforms
         public Platform(ContentManager content, int cellX, int cellY)
             : base()
         {
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize, cellY * TileMap.TileSize);
+            this.WorldLocation = new Vector2((cellX * TileMap.TileSize) + (TileMap.TileSize / 2), (cellY + 1) * TileMap.TileSize);
             this.PreviousLocation = this.worldLocation;
             Enabled = true;
             isEnemyTileColliding = false;

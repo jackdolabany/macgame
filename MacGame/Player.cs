@@ -147,15 +147,17 @@ namespace MacGame
             float jumpBoost;
 
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
-            
+            var isSand = mapSquareBelow != null && mapSquareBelow.IsSand;
+            var isIce = mapSquareBelow != null && mapSquareBelow.IsIce;
+
             var maxWalkingSpeed = maxSpeed;
-            if (mapSquareBelow.IsSand)
+            if (isSand)
             {
                 friction = 5f;
                 jumpBoost = 100;
                 maxWalkingSpeed /= 2;
             }
-            else if (mapSquareBelow.IsIce)
+            else if (isIce)
             {
                 friction = 0.95f;
                 jumpBoost = 150;

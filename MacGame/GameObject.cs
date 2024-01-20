@@ -186,6 +186,10 @@ namespace MacGame
             }
         }
 
+        /// <summary>
+        /// The bottom center of where you want a character.
+        /// Center for certian particles.
+        /// </summary>
         public Vector2 WorldLocation
         {
             get { return worldLocation; }

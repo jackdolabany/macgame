@@ -777,7 +777,8 @@ namespace Squared.Tiled
 
                         var shouldDrawTile = layer.Name.ToLower() != "collisions" 
                             && !tileInfo.properties.ContainsKey("LoadClass")
-                            && !tileInfo.properties.ContainsKey("PlayerStart");
+                            && !tileInfo.properties.ContainsKey("PlayerStart")
+                            && !tileInfo.properties.ContainsKey("Hidden");
 
                         if (shouldDrawTile)
                         {

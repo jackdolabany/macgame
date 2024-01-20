@@ -173,6 +173,11 @@ namespace MacGame
                 jumpBoost = 150f;
             }
 
+            if (!InputManager.CurrentAction.attack)
+            {
+                maxWalkingSpeed /= 2;
+            }
+
             // Walk Right
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
             {
@@ -309,7 +314,6 @@ namespace MacGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-
             base.Draw(spriteBatch);
         }
 

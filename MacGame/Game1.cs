@@ -98,8 +98,6 @@ namespace MacGame
             Window.Title = "Mac Game";
 
             Content.RootDirectory = "Content";
-            SoundManager.MusicVolume = 0;
-            //SoundManager.SoundEffectVolume = 0;
         }
 
         /// <summary>
@@ -154,7 +152,7 @@ namespace MacGame
 
             EffectsManager.Initialize(Content);
             SoundManager.Initialize(Content);
-            //SoundManager.PlaySong("Retro Mystic", true);
+            SoundManager.PlaySong("Stage1", true, 0.2f);
 
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);

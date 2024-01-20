@@ -131,7 +131,7 @@ namespace MacGame
             LoadSound("take_hit");
 
             //// Music.
-            //LoadSong("Retro Mystic");
+            LoadSong("Stage1");
 
         }
 

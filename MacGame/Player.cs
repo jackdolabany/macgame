@@ -21,7 +21,7 @@ namespace MacGame
     {
         AnimationDisplay animations;
 
-        public const int MaxHealth = 5;
+        public const int MaxHealth = 15;
         
         public int Health { get; set; } = MaxHealth;
         
@@ -139,37 +139,43 @@ namespace MacGame
                 // Check body collisions
                 if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
                 {
-                    if (CollisionRectangle.Bottom < enemy.CollisionRectangle.Center.Y)
+                    enemy.HandleCustomPlayerCollision(this);
+                    if (enemy.Alive && !enemy.Invincible && CollisionRectangle.Bottom < enemy.CollisionRectangle.Center.Y)
                     {
                         // If the player is above the midpoint of the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
                         velocity.Y = -120;
                     }
-                    else if (!this.IsInvincible)
+                    else if (enemy.Alive)
                     {
-                        // player takes a hit.
-                        Health -= 1;
-                        if (Health <= 0)
-                        {
-                            Kill();
-                        }
-                        else
-                        {
-                            invincibleTimeRemaining = 0.75f;
-                            SoundManager.PlaySound("take_hit");
-                            var hitBackBoost = new Vector2(50, -100);
-                            if (CollisionCenter.X < enemy.CollisionCenter.X)
-                            {
-                                hitBackBoost.X *= -1;
-                            }
-                            this.velocity = hitBackBoost;
-                        }
+                        TakeHit(enemy);
                     }
 
                 }
 
             }
 
+        }
+
+        public void TakeHit(Enemy enemy)
+        {
+            // player takes a hit.
+            Health -= 1;
+            if (Health <= 0)
+            {
+                Kill();
+            }
+            else
+            {
+                invincibleTimeRemaining = 0.75f;
+                SoundManager.PlaySound("take_hit");
+                var hitBackBoost = new Vector2(50, -100);
+                if (CollisionCenter.X < enemy.CollisionCenter.X)
+                {
+                    hitBackBoost.X *= -1;
+                }
+                this.velocity = hitBackBoost;
+            }
         }
 
         private void HandleInputs(float elapsed)
@@ -276,9 +282,7 @@ namespace MacGame
                 SoundManager.PlaySound("jump");
             }
 
-
             // slightly sliding is not sliding, so we want to see the idle animation.
-
             if (velocity.X < 20 && velocity.X > -20 && isSliding)
             {
                 isRunning = false;

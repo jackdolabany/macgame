@@ -15,6 +15,7 @@ namespace MacGame
     /// </summary>
     public class SceneManager
     {
+
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
 
@@ -70,7 +71,6 @@ namespace MacGame
             camera.Map = level.Map;
 
             return level;
-
         }
     }
 }

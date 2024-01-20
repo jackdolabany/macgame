@@ -14,7 +14,7 @@ namespace MacGame
 
         private float speed = 10;
         private float startLocationY;
-        private float maxWalkDistance = 8;
+        private float maxTravelDistance = 8;
 
         public Bee(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -62,11 +62,11 @@ namespace MacGame
 
             var travelDistance = (int)this.WorldLocation.Y - startLocationY;
 
-            if(this.velocity.Y > 0 && travelDistance >= maxWalkDistance)
+            if(this.velocity.Y > 0 && travelDistance >= maxTravelDistance)
             {
                 this.flipped = !this.flipped;
             }
-            else if (this.velocity.Y < 0 && travelDistance <= -maxWalkDistance)
+            else if (this.velocity.Y < 0 && travelDistance <= -maxTravelDistance)
             {
                 this.flipped = !this.flipped;
             }

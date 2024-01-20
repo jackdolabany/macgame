@@ -24,6 +24,12 @@ namespace MacGame
         public List<GameObject> GameObjects;
         public List<Platform> Platforms;
 
+        /// <summary>
+        /// For enemies that need to add enemies. 
+        /// They can add them to this list and they will be added to the world before the next update cycle.
+        /// </summary>
+        private static Queue<Enemy> EnemiesToAdd = new Queue<Enemy>(20);
+
         public Level(Player player, TileMap map, Camera camera)
         {
             Player = player;
@@ -32,6 +38,11 @@ namespace MacGame
             Enemies = new List<Enemy>();
             Platforms = new List<Platform>();
             GameObjects = new List<GameObject>();
+        }
+
+        public static void AddEnemy(Enemy enemy)
+        {
+            EnemiesToAdd.Enqueue(enemy);
         }
 
         public void Update(GameTime gameTime, float elapsed)
@@ -66,6 +77,11 @@ namespace MacGame
                         Player.CheckEnemyInteractions(enemy);
                     }
                 }
+            }
+
+            while (EnemiesToAdd.Count > 0)
+            {
+                Enemies.Add(EnemiesToAdd.Dequeue());
             }
         }
 

@@ -14,6 +14,12 @@ namespace MacGame
 
         bool hasBeenSeen = false;
 
+        YarnBall[] yarnBalls = new YarnBall[5];
+
+        int nextYarnBallToThrowIndex = 0;
+        const float maxThrowTimer = 2f;
+        float throwTimer = maxThrowTimer;
+
         public CatBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -32,8 +38,19 @@ namespace MacGame
             Attack = 1;
             Health = 5;
             IsAffectedByGravity = false;
+            IsAbleToMoveOutsideOfWorld = true;
+            IsAbleToSurviveOutsideOfWorld = true;
 
             SetCenteredCollisionRectangle(14, 14);
+
+            // Cat has 5 yarn balls.
+            for (int i = 0; i < 5; i++)
+            {
+                yarnBalls[i] = new YarnBall(content, 0, 0, player, camera);
+                yarnBalls[i].Enabled = false;
+                Level.AddEnemy(yarnBalls[i]);
+            }
+
         }
 
         public override void TakeHit(int damage, Vector2 force)
@@ -64,6 +81,29 @@ namespace MacGame
                     hasBeenSeen = true;
                     SoundManager.PlaySong("BossFight", true, 0.2f);
                     Game1.Camera.CanScrollLeft = false;
+                }
+            } 
+
+            if (hasBeenSeen && Alive)
+            {
+                throwTimer -= elapsed;
+                if (throwTimer < 0f)
+                {
+                    // Throw a yarn ball at the player.
+                    var yarnBall = yarnBalls[nextYarnBallToThrowIndex];
+                    yarnBall.Enabled = true;
+                    yarnBall.Alive = true;
+                    yarnBall.WorldLocation = this.WorldCenter;
+                    var direction = Player.WorldCenter - yarnBall.WorldCenter;
+                    direction.Normalize();
+                    yarnBall.Velocity = direction * 40;
+
+                    nextYarnBallToThrowIndex++;
+                    if (nextYarnBallToThrowIndex >= yarnBalls.Length)
+                    {
+                        nextYarnBallToThrowIndex = 0;
+                    }
+                    throwTimer = maxThrowTimer;
                 }
             }
         }

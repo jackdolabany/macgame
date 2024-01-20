@@ -27,7 +27,18 @@ namespace MacGame
             }
         }
 
-        public bool Alive { get { return !Dead; } }
+        public bool Alive 
+        { 
+            get 
+            { 
+                return !Dead; 
+            }
+            set
+            {
+                Dead = !value;
+            }
+        }
+
         protected float Health { get; set; }
         public float Attack { get; set; }
         public bool IsCustomPlayerColliding { get; set; }
@@ -120,11 +131,6 @@ namespace MacGame
                 && center.X < currentTarget.X + TileMap.TileSize
                 && center.Y > currentTarget.Y
                 && center.Y < currentTarget.Y + TileMap.TileSize);
-        }
-
-        public virtual void CollideWithPlayer()
-        {
-            //do nothing.
         }
 
         public virtual void HandleCustomPlayerCollision(Player player)

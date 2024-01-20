@@ -44,9 +44,7 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-
             base.Update(gameTime, elapsed);
-
         }
     }
 }

@@ -17,6 +17,10 @@ namespace MacGame
     {
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
+
+            TimerManager.Clear();
+            Game1.Camera.CanScrollLeft = true;
+
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 
             var level = new Level(player, map, camera);

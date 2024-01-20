@@ -21,8 +21,10 @@ namespace MacGame
     {
         AnimationDisplay animations;
 
-        public int Health { get; set; }
-
+        public const int MaxHealth = 5;
+        
+        public int Health { get; set; } = MaxHealth;
+        
         public InputManager InputManager { get; private set; }
 
         private DeadMenu _deadMenu;
@@ -36,6 +38,7 @@ namespace MacGame
         private bool isFalling = false;
 
         private float invincibleTimeRemaining = 0.0f;
+        private float invincibleFlashTimer = 0.0f;
 
         public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
@@ -43,8 +46,6 @@ namespace MacGame
         {
             animations = new AnimationDisplay();
             this.DisplayComponent = animations;
-
-            Health = 3;
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var idle = new AnimationStrip(textures, new Rectangle(8, 0, 8, 8), 1, "idle");
@@ -106,6 +107,26 @@ namespace MacGame
             if (invincibleTimeRemaining > 0)
             {
                 invincibleTimeRemaining -= elapsed;
+                invincibleFlashTimer -= elapsed;
+
+                if(invincibleFlashTimer < 0)
+                {
+                    this.DisplayComponent.TintColor = Color.White * 0.4f;
+                }
+                else
+                {
+                    this.DisplayComponent.TintColor = Color.White;
+                }
+                if (invincibleFlashTimer <= -0.1f)
+                {
+                    invincibleFlashTimer = 0.1f;
+                }
+
+                
+            }
+            else
+            {
+                DisplayComponent.TintColor = Color.White;
             }
 
             base.Update(gameTime, elapsed);
@@ -134,8 +155,14 @@ namespace MacGame
                         }
                         else
                         {
-                            invincibleTimeRemaining = 1.5f;
+                            invincibleTimeRemaining = 0.75f;
                             SoundManager.PlaySound("take_hit");
+                            var hitBackBoost = new Vector2(50, -100);
+                            if (CollisionCenter.X < enemy.CollisionCenter.X)
+                            {
+                                hitBackBoost.X *= -1;
+                            }
+                            this.velocity = hitBackBoost;
                         }
                     }
 
@@ -264,6 +291,25 @@ namespace MacGame
                 velocity.X = 0;
             }
 
+            if (!OnGround && velocity.Y > 0)
+            {
+                isJumping = true;
+                isFalling = false;
+                isRunning = false;
+            }
+            else if (!OnGround && velocity.Y < 0)
+            {
+                isJumping = false;
+                isFalling = true;
+                isRunning = false;
+            }
+            else
+            {
+                isJumping = false;
+                isFalling = false;
+            }
+
+
             // Bound the player to the map left and right.
             if (CollisionRectangle.X < Game1.CurrentMap.GetWorldRectangle().X && velocity.X < 0)
             {
@@ -300,6 +346,17 @@ namespace MacGame
             {
                 animations.Play(nextAnimation);
             }
+
+            if (!Game1.Camera.CanScrollLeft)
+            {
+                // If you aren't allowed to scroll left (boss fight) your left movement becomes blocked by the camera
+                if (this.CollisionRectangle.Left < Game1.Camera.ViewPort.Left && this.velocity.X < 0)
+                {
+                    this.velocity.X = 0;
+                    this.worldLocation.X = Game1.Camera.ViewPort.Left + (CollisionRectangle.Width / 2) - 1;
+                }
+            }
+
         }
 
         public void Kill()

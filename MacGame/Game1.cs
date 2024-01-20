@@ -126,7 +126,6 @@ namespace MacGame
 
             var kenPixelFont = Content.Load<SpriteFont>(@"Fonts\KenPixel");
             Font = kenPixelFont;
-
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 
@@ -145,7 +144,6 @@ namespace MacGame
             Camera.Map = currentLevel.Map;
 
             // Basic Camera Setup
-            //Camera.Position = Vector2.Zero;
             Camera.Zoom = Camera.DEFAULT_ZOOM;
             Camera.ViewPortWidth = Game1.GAME_X_RESOLUTION;
             Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
@@ -171,7 +169,7 @@ namespace MacGame
             EffectsManager.Initialize(Content);
 
             Player.Enabled = true;
-            Player.Health = 3;
+            Player.Health = Player.MaxHealth;
 
             if (loadLevel)
             {
@@ -258,6 +256,7 @@ namespace MacGame
                 {
                     currentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
+                    TimerManager.Update(elapsed);
                 }
             }
 

@@ -28,6 +28,12 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel2.tmx
 
+#begin Music/BossFight.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/BossFight.mp3
+
 #begin Music/Stage1.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

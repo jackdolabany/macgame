@@ -17,6 +17,9 @@ namespace MacGame
         public Matrix Transform; // Matrix Transform
         public float Rotation; // Camera Rotation
 
+        // Change this for a boss fight so the player can't escape.
+        public bool CanScrollLeft = true;
+
         private TileMap _map;
         public TileMap Map
         {
@@ -81,7 +84,7 @@ namespace MacGame
             {
 
                 // Check constraints against map once it exists.
-
+                float previousX = position.X;
 
                 float x = 0;
                 float y = 0;
@@ -110,6 +113,12 @@ namespace MacGame
                 }
 
                 position = new Vector2(x, y);
+
+                if (!CanScrollLeft && position.X < previousX)
+                {
+                    position.X = previousX;
+                }
+
             }
         }
 

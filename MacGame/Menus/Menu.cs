@@ -14,7 +14,7 @@ namespace MacGame
         
         public Vector2 Position { get; set; }
         
-        public float Scale = 1f;
+        public float Scale = 0.5f;
         protected Game1 Game;
         public float DrawDepth;
         

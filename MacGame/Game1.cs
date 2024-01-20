@@ -138,6 +138,8 @@ namespace MacGame
 
             Camera = new Camera();
 
+            SoundManager.Initialize(Content);
+
             // Load map and adjust Camera
             currentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
 
@@ -149,9 +151,7 @@ namespace MacGame
             Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
             EffectsManager.Initialize(Content);
-            SoundManager.Initialize(Content);
-            SoundManager.PlaySong("Stage1", true, 0.2f);
-
+            
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
 

@@ -121,8 +121,6 @@ namespace MacGame
                 {
                     invincibleFlashTimer = 0.1f;
                 }
-
-                
             }
             else
             {
@@ -159,6 +157,8 @@ namespace MacGame
 
         public void TakeHit(Enemy enemy)
         {
+            if (IsInvincible) return;
+
             // player takes a hit.
             Health -= 1;
             if (Health <= 0)

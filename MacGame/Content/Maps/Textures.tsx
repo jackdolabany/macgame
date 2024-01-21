@@ -112,6 +112,11 @@
    <property name="Ice" value="1"/>
   </properties>
  </tile>
+ <tile id="115">
+  <properties>
+   <property name="LoadClass" value="Enemy.Cricket"/>
+  </properties>
+ </tile>
  <tile id="128">
   <properties>
    <property name="LoadClass" value="Enemy.Bat"/>

@@ -14,6 +14,7 @@ using System.Security;
 using System.Runtime.Intrinsics.X86;
 using Microsoft.Xna.Framework.Audio;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace MacGame
 {
@@ -138,13 +139,14 @@ namespace MacGame
                 if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
                 {
                     enemy.HandleCustomPlayerCollision(this);
-                    if (enemy.Alive && !enemy.Invincible && CollisionRectangle.Bottom < enemy.CollisionRectangle.Center.Y)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && CollisionRectangle.Bottom < enemy.CollisionRectangle.Center.Y)
                     {
+
                         // If the player is above the midpoint of the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
                         velocity.Y = -120;
                     }
-                    else if (enemy.Alive)
+                    else if (enemy.Alive && !enemy.IsInvincibleAfterHit)
                     {
                         TakeHit(enemy);
                     }

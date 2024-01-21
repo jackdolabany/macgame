@@ -21,7 +21,6 @@ namespace MacGame
             this.DisplayComponent = new StaticImageDisplay(textures);
             image.Source = new Rectangle(5 * 8, 2 * 8, 8, 8);
            
-
             isTileColliding = false;
             isEnemyTileColliding = false;
             Attack = 1;
@@ -31,16 +30,14 @@ namespace MacGame
             IsAbleToMoveOutsideOfWorld = true;
 
             SetCenteredCollisionRectangle(7, 7);
-
-            Invincible = true;
         }
 
-        public override void HandleCustomPlayerCollision(Player player)
+        public override void Kill()
         {
+            EffectsManager.EnemyPop(this.WorldCenter, 10, Color.Pink, 30f);
+
             this.Enabled = false;
-            SoundManager.PlaySound("harsh_hit");
-            EffectsManager.EnemyPop(this.WorldCenter, 20, Color.Purple, 30f);
-            player.TakeHit(this);
+            base.Kill();
         }
     }
 }

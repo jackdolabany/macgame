@@ -49,7 +49,14 @@ namespace MacGame
         /// </summary>
         public bool IsPlayerColliding = true;
 
-        public bool Invincible { get; set; }
+
+        public bool IsInvincibleAfterHit 
+        {
+            get
+            {
+                return _invincibleTimer > 0;
+            }
+        }
 
         private float _invincibleTimer;
         public float InvincibleTimer
@@ -58,7 +65,6 @@ namespace MacGame
             set
             {
                 _invincibleTimer = value;
-                Invincible = InvincibleTimer > 0;
             }
         }
 
@@ -89,7 +95,6 @@ namespace MacGame
             IsAbleToMoveOutsideOfWorld = false;
             this.Player = player;
             IsCustomPlayerColliding = false;
-            Invincible = false;
             this.camera = camera;
         }
 
@@ -147,9 +152,8 @@ namespace MacGame
 
         public virtual void TakeHit(int damage, Vector2 force)
         {
-            if (Invincible)
+            if (IsInvincibleAfterHit)
             {
-                PlayInvincibleHitSound();
                 return;
             }
 
@@ -207,7 +211,6 @@ namespace MacGame
                 if (InvincibleTimer <= 0)
                 {
                     InvincibleTimer = 0;
-                    Invincible = false;
                 }
             }
             else

@@ -56,7 +56,7 @@ namespace MacGame
         public override void TakeHit(int damage, Vector2 force)
         {
             base.TakeHit(damage, force);
-            if (!Invincible)
+            if (!IsInvincibleAfterHit)
             {
                 InvincibleTimer += 1f;
             }

@@ -89,6 +89,11 @@
    <property name="Sand" value="1"/>
   </properties>
  </tile>
+ <tile id="96">
+  <properties>
+   <property name="LoadClass" value="Enemy.Frog"/>
+  </properties>
+ </tile>
  <tile id="100">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -105,6 +110,11 @@
   <properties>
    <property name="BlockPlayer" value="1"/>
    <property name="Ice" value="1"/>
+  </properties>
+ </tile>
+ <tile id="128">
+  <properties>
+   <property name="LoadClass" value="Enemy.Bat"/>
   </properties>
  </tile>
 </tileset>

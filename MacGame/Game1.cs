@@ -27,7 +27,7 @@ namespace MacGame
         public static Texture2D textures;
         public static Texture2D titleScreen;
 
-        public static Rectangle whiteSourceRect = new Rectangle(1, 1, 1, 1).ToTileRect();
+        public static Rectangle whiteSourceRect = new Rectangle(11, 27, 2, 2);
 
         public const int TileSize = TileEngine.TileMap.TileSize;
 

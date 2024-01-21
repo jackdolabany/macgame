@@ -62,6 +62,8 @@ namespace MacGame
             }
         }
 
+        private float _invincibleFlashTimer = 0;
+
         public Vector2 GetPlayerDirection(Player player)
         {
             return GetDirectionTo(player);
@@ -185,12 +187,32 @@ namespace MacGame
 
             if (InvincibleTimer > 0)
             {
+
+                _invincibleFlashTimer -= elapsed;
+
+                if (_invincibleFlashTimer < 0)
+                {
+                    this.DisplayComponent.TintColor = Color.White * 0.4f;
+                }
+                else
+                {
+                    this.DisplayComponent.TintColor = Color.White;
+                }
+                if (_invincibleFlashTimer <= -0.1f)
+                {
+                    _invincibleFlashTimer = 0.1f;
+                }
+
                 InvincibleTimer -= elapsed;
                 if (InvincibleTimer <= 0)
                 {
                     InvincibleTimer = 0;
                     Invincible = false;
                 }
+            }
+            else
+            {
+                DisplayComponent.TintColor = Color.White;
             }
 
             base.Update(gameTime, elapsed);

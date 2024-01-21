@@ -21,7 +21,7 @@ namespace MacGame
     {
         AnimationDisplay animations;
 
-        public const int MaxHealth = 15;
+        public const int MaxHealth = 5;
         
         public int Health { get; set; } = MaxHealth;
         

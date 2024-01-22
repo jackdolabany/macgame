@@ -12,8 +12,6 @@ namespace MacGame
 
         StaticImageDisplay image => (StaticImageDisplay)DisplayComponent;
 
-        private float speed = 10;
-
         public YarnBall(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {

@@ -52,7 +52,7 @@ namespace MacGame
                                 // Use reflection to load the enemies from the code
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Enemy).Namespace + "." + classname);
-                                Enemy enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
+                                var enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Enemies.Add(enemy);
 
                             }
@@ -61,8 +61,16 @@ namespace MacGame
                                 // Use reflection to load the platform.
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Platform).Namespace + "." + classname);
-                                Platform platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y });
+                                var platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y });
                                 level.Platforms.Add(platform);
+                            }
+                            else if (loadClass.StartsWith("Item."))
+                            {
+                                // Use reflection to load the enemies from the code
+                                string classname = loadClass.Split('.')[1];
+                                Type t = Type.GetType(typeof(Item).Namespace + "." + classname);
+                                var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
+                                level.Items.Add(item);
                             }
                         }
                     }

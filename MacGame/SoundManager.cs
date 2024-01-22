@@ -129,6 +129,7 @@ namespace MacGame
             LoadSound("jump");
             LoadSound("mac_death");
             LoadSound("take_hit");
+            LoadSound("health");
 
             // Music.
             LoadSong("Stage1");

@@ -46,6 +46,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/harsh_hit.wav
 
+#begin SoundEffects/health.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/health.wav
+
 #begin SoundEffects/hit_enemy.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

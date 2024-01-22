@@ -143,7 +143,11 @@ namespace MacGame
                 if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
                 {
                     enemy.HandleCustomPlayerCollision(this);
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && _previousCollisionRectangle.Bottom <= enemy.CollisionRectangle.Top)
+
+                    // Pad 1 pixel to make it a little easier
+                    var wasAboveEnemy = _previousCollisionRectangle.Bottom - 1 <= enemy.CollisionRectangle.Top;
+
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.2" name="Textures" tilewidth="8" tileheight="8" tilecount="256" columns="16">
+<tileset version="1.10" tiledversion="1.10.2" name="Textures" tilewidth="8" tileheight="8" tilecount="256" columns="16">
  <image source="../Textures/Textures.png" width="128" height="128"/>
  <tile id="1">
   <properties>
@@ -29,6 +29,11 @@
  <tile id="22">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="33">
+  <properties>
+   <property name="LoadClass" value="Item.Heart"/>
   </properties>
  </tile>
  <tile id="35">

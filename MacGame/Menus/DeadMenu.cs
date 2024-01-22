@@ -8,7 +8,7 @@ namespace MacGame
             : base(game)
         {
             this.menuTitle = "You died.";
-            this.Scale = 0.8f;
+            //this.Scale = 0.8f;
 
             AddOption("Restart", (a, b) => Game.StartNewGame());
             AddOption("Title Screen", (a, b) => Game.GoToTitleScreen());

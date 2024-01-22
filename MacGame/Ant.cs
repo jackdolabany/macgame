@@ -9,7 +9,6 @@ namespace MacGame
 {
     public class Ant : Enemy
     {
-
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         private float speed = 10;

@@ -21,6 +21,7 @@ namespace MacGame
         public TileMap Map;
         public Camera Camera;
         public List<Enemy> Enemies;
+        public List<Item> Items;
         public List<GameObject> GameObjects;
         public List<Platform> Platforms;
 
@@ -28,7 +29,7 @@ namespace MacGame
         /// For enemies that need to add enemies. 
         /// They can add them to this list and they will be added to the world before the next update cycle.
         /// </summary>
-        private static Queue<Enemy> EnemiesToAdd = new Queue<Enemy>(20);
+        private static readonly Queue<Enemy> EnemiesToAdd = new Queue<Enemy>(20);
 
         public Level(Player player, TileMap map, Camera camera)
         {
@@ -36,6 +37,7 @@ namespace MacGame
             Map = map;
             Camera = camera;
             Enemies = new List<Enemy>();
+            Items = new List<Item>();
             Platforms = new List<Platform>();
             GameObjects = new List<GameObject>();
         }
@@ -62,6 +64,11 @@ namespace MacGame
                 enemy.Update(gameTime, elapsed);
             }
 
+            foreach (var item in Items)
+            {
+                item.Update(gameTime, elapsed);
+            }
+
             foreach (var gameObject in GameObjects)
             {
                 gameObject.Update(gameTime, elapsed);
@@ -75,6 +82,17 @@ namespace MacGame
                     if (enemy.Alive)
                     {
                         Player.CheckEnemyInteractions(enemy);
+                    }
+                }
+
+                foreach (var item in Items)
+                {
+                    if (item.Enabled)
+                    {
+                        if (Player.CollisionRectangle.Intersects(item.CollisionRectangle))
+                        {
+                            item.Collect(Player);
+                        }
                     }
                 }
             }
@@ -99,6 +117,11 @@ namespace MacGame
             foreach (var enemy in Enemies)
             {
                 enemy.Draw(spriteBatch);
+            }
+
+            foreach (var item in Items)
+            {
+                item.Draw(spriteBatch);
             }
 
             foreach (var gameObject in GameObjects)

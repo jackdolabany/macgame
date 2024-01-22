@@ -20,6 +20,10 @@ namespace MacGame
         const float maxThrowTimer = 2f;
         float throwTimer = maxThrowTimer;
 
+        int walkSpeed = 20;
+        int maxTravelDistance = 24;
+        int startLocationX;
+
         public CatBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -50,7 +54,7 @@ namespace MacGame
                 yarnBalls[i].Enabled = false;
                 Level.AddEnemy(yarnBalls[i]);
             }
-
+            startLocationX = (int)this.WorldLocation.X;
         }
 
         public override void TakeHit(int damage, Vector2 force)
@@ -96,7 +100,7 @@ namespace MacGame
                     yarnBall.WorldLocation = this.WorldCenter;
                     var direction = Player.WorldCenter - yarnBall.WorldCenter;
                     direction.Normalize();
-                    yarnBall.Velocity = direction * 40;
+                    yarnBall.Velocity = direction * 50;
 
                     nextYarnBallToThrowIndex++;
                     if (nextYarnBallToThrowIndex >= yarnBalls.Length)
@@ -105,6 +109,24 @@ namespace MacGame
                     }
                     throwTimer = maxThrowTimer;
                 }
+
+                this.velocity.X = walkSpeed;
+                if (flipped)
+                {
+                    this.velocity.X *= -1;
+                }
+
+                var travelDistance = (int)this.WorldCenter.X - startLocationX;
+
+                if (this.velocity.X > 0 && travelDistance >= maxTravelDistance)
+                {
+                    this.flipped = !this.flipped;
+                }
+                else if (this.velocity.X < 0 && travelDistance <= -maxTravelDistance)
+                {
+                    this.flipped = !this.flipped;
+                }
+
             }
         }
     }

@@ -43,6 +43,8 @@ namespace MacGame
 
         public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
+        private Rectangle _previousCollisionRectangle;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -96,6 +98,7 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+            _previousCollisionRectangle = this.CollisionRectangle;
 
             HandleInputs(elapsed);
 
@@ -129,6 +132,7 @@ namespace MacGame
             }
 
             base.Update(gameTime, elapsed);
+
         }
 
         public void CheckEnemyInteractions(Enemy enemy)
@@ -139,7 +143,7 @@ namespace MacGame
                 if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
                 {
                     enemy.HandleCustomPlayerCollision(this);
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && CollisionRectangle.Bottom < enemy.CollisionRectangle.Center.Y)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && _previousCollisionRectangle.Bottom <= enemy.CollisionRectangle.Top)
                     {
 
                         // If the player is above the midpoint of the enemy, the enemy was jumped on and takes a hit.

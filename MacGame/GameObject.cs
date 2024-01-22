@@ -606,7 +606,7 @@ namespace MacGame
             // Draw a square at the GameObjects location
             if (DrawLocation || Game1.DrawAllCollisisonRects)
             {
-                var rectSize = 4;
+                var rectSize = 1;
                 var location = WorldLocation;
 
                 // Draw location in green

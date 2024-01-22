@@ -145,8 +145,7 @@ namespace MacGame
                     enemy.HandleCustomPlayerCollision(this);
                     if (enemy.Alive && !enemy.IsInvincibleAfterHit && _previousCollisionRectangle.Bottom <= enemy.CollisionRectangle.Top)
                     {
-
-                        // If the player is above the midpoint of the enemy, the enemy was jumped on and takes a hit.
+                        // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
                         velocity.Y = -120;
                     }

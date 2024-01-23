@@ -97,8 +97,8 @@ namespace MacGame
             }
 
             pulsateTime += elapsed;
-            float pulsate = (float)Math.Sin(pulsateTime * 6f) + 1;
-            this.pulsateScale = 1 + pulsate * 0.02f * selectionFade;
+            //float pulsate = (float)Math.Sin(pulsateTime * 6f) + 1;
+            //this.pulsateScale = 1 + pulsate * 0.02f * selectionFade;
 
             wasSelected = isSelected;
         }
@@ -113,10 +113,10 @@ namespace MacGame
 
             var unscaledWidth = Game1.Font.MeasureString(Text).X;
             var unscaledHeight = (float)Game1.Font.LineSpacing;
-            var origin = new Vector2(unscaledWidth / 2, unscaledHeight / 2);
+            var origin = new Vector2((int)(unscaledWidth / 2), (int)(unscaledHeight / 2));
 
             spriteBatch.DrawString(Game1.Font, Text, Menu.Position + Position, color, 0,
-                                   origin, DrawScale, SpriteEffects.None, DrawDepth);
+                origin, DrawScale, SpriteEffects.None, DrawDepth);
         }
 
         /// <summary>

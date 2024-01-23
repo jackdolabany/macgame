@@ -376,7 +376,7 @@ namespace MacGame
         {
             Health = 0;
             Enabled = false;
-            EffectsManager.RisingText("Dead", WorldCenter);
+            // EffectsManager.RisingText("Dead", WorldCenter);
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 50f);
             SoundManager.PlaySound("mac_death");
             MenuManager.AddMenu(_deadMenu);

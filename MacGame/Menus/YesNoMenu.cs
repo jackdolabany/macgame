@@ -16,7 +16,7 @@ namespace MacGame
             yes.Chosen += acceptEvent;
             no.Chosen += Cancel;
 
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION * (1f / 3f));
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * 0.33f));
 
             this.menuOptions.Add(no);
             this.menuOptions.Add(yes);

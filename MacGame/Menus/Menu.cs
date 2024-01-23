@@ -14,7 +14,7 @@ namespace MacGame
         
         public Vector2 Position { get; set; }
         
-        public float Scale = 0.5f;
+        public float Scale = 1f;
         protected Game1 Game;
         public float DrawDepth;
         
@@ -147,13 +147,20 @@ namespace MacGame
             // each X value is generated per entry
             Vector2 position = Vector2.Zero;
 
+            // Start the menu items pushed down by the height of the menu title.
+            if (!string.IsNullOrEmpty(menuTitle))
+            {
+                position.Y += (int)Game1.Font.MeasureString(menuTitle).Y;
+                position.Y += 10; // Plus some padding.
+            }
+
             // update each menu entry's location in turn
             for (int i = 0; i < menuOptions.Count; i++)
             {
                 MenuOption option = menuOptions[i];
 
                 // each entry is to be centered horizontally
-                position.X = 0;//(option.GetWidth() / 2);
+                position.X = 0;
 
                 // set the entry's position
                 option.Position += position;
@@ -171,7 +178,7 @@ namespace MacGame
             // A blocking square
             if (IsOverlay)
             {
-                spriteBatch.Draw(Game1.textures, new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION), Game1.whiteSourceRect, new Color(0f, 0f, 0f, 0.85f), 0f, Vector2.Zero, SpriteEffects.None, DrawDepth + 2 * Game1.MIN_DRAW_INCREMENT);
+                spriteBatch.Draw(Game1.textures, new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION), Game1.whiteSourceRect, new Color(0f, 0f, 0f, 0.8f), 0f, Vector2.Zero, SpriteEffects.None, DrawDepth + 2 * Game1.MIN_DRAW_INCREMENT);
             }
 
             // Menu title
@@ -182,10 +189,10 @@ namespace MacGame
                 {
                     spriteBatch.DrawString(Game1.Font,
                         menuTitle,
-                        new Vector2(Game1.GAME_X_RESOLUTION / 2, Position.Y - 55),
+                        Position,
                         Color.White,
                         0f,
-                        new Vector2(size.X / 2f, 0f),
+                        new Vector2((int)(size.X / 2f), 0f),
                         Scale,
                         SpriteEffects.None,
                         DrawDepth);

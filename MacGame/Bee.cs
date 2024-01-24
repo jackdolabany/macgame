@@ -15,17 +15,17 @@ namespace MacGame
         private float speed = 10;
         private float startLocationY;
         private float maxTravelDistance = 8;
-
+        private bool goingUp = false;
         public Bee(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             this.DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var walk = new AnimationStrip(textures, new Rectangle(24, 16, 8, 8), 2, "fly");
-            walk.LoopAnimation = true;
-            walk.FrameLength = 0.14f;
-            animations.Add(walk);
+            var fly = new AnimationStrip(textures, new Rectangle(24, 16, 8, 8), 2, "fly");
+            fly.LoopAnimation = true;
+            fly.FrameLength = 0.14f;
+            animations.Add(fly);
 
             animations.Play("fly");
 
@@ -54,7 +54,7 @@ namespace MacGame
             if (Alive)
             {
                 this.velocity.Y = speed;
-                if (flipped)
+                if (goingUp)
                 {
                     this.velocity.Y *= -1;
                 }
@@ -64,12 +64,14 @@ namespace MacGame
 
             if(this.velocity.Y > 0 && travelDistance >= maxTravelDistance)
             {
-                this.flipped = !this.flipped;
+                goingUp = !goingUp;
             }
             else if (this.velocity.Y < 0 && travelDistance <= -maxTravelDistance)
             {
-                this.flipped = !this.flipped;
+                goingUp = !goingUp;
             }
+
+            flipped = this.WorldCenter.X >= Player.WorldCenter.X;
 
             base.Update(gameTime, elapsed);
 

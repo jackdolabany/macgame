@@ -41,6 +41,11 @@
    <property name="LoadClass" value="Enemy.Bee"/>
   </properties>
  </tile>
+ <tile id="56">
+  <properties>
+   <property name="LoadClass" value="Enemy.Bird"/>
+  </properties>
+ </tile>
  <tile id="64">
   <properties>
    <property name="LoadClass" value="Platform.StaticPlatform"/>

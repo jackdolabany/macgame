@@ -774,6 +774,15 @@ namespace Squared.Tiled
                         {
                             tileMap.MapCells[x][y].IsIce = true;
                         }
+                        else if (tileInfo.properties.ContainsKey("Ladder"))
+                        {
+                            tileMap.MapCells[x][y].IsIce = true;
+                        }
+                        else if (tileInfo.properties.ContainsKey("Vine"))
+                        {
+                            tileMap.MapCells[x][y].IsIce = true;
+                        }
+
 
                         var shouldDrawTile = layer.Name.ToLower() != "collisions" 
                             && !tileInfo.properties.ContainsKey("LoadClass")

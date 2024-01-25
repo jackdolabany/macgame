@@ -61,6 +61,16 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="68">
+  <properties>
+   <property name="Ladder" value="1"/>
+  </properties>
+ </tile>
+ <tile id="69">
+  <properties>
+   <property name="Vine" value="1"/>
+  </properties>
+ </tile>
  <tile id="80">
   <properties>
    <property name="BlockPlayer" value="1"/>

@@ -18,6 +18,8 @@ namespace TileEngine
         public bool PlatformPassable { get; set; } = true;
         public bool IsSand { get; set; } = false;
         public bool IsIce { get; set; } = false;
+        public bool IsLadder { get; set; } = false;
+        public bool IsVine { get; set; } = false;
 
         public MapSquare(int depth, bool passable)
         {

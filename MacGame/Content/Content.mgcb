@@ -40,6 +40,12 @@
 /processorParam:Quality=Best
 /build:Music/Stage1.mp3
 
+#begin SoundEffects/climb.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/climb.wav
+
 #begin SoundEffects/harsh_hit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

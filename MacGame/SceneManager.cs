@@ -37,6 +37,17 @@ namespace MacGame
                 {
                     var mapSquare = map.GetMapSquareAtCell(x, y);
 
+                    if (mapSquare.IsLadder)
+                    {
+                        var mapSquareAbove = map.GetMapSquareAtCell(x, y - 1);
+                        if (!mapSquareAbove.IsLadder)
+                        {
+                            // Add a hidden platform at the top of ladders so you can climb to the top and stand on them.
+                            var ladderPlatform = new LadderPlatform(contentManager, x, y);
+                            level.Platforms.Add(ladderPlatform);
+                        }
+                    }
+
                     for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
                     {
                         // Load the textures so the map can draw.

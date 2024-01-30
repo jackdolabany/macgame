@@ -15,6 +15,7 @@ using System.Runtime.Intrinsics.X86;
 using Microsoft.Xna.Framework.Audio;
 using System.Net.Http;
 using System.Diagnostics;
+using TileEngine;
 
 namespace MacGame
 {
@@ -44,6 +45,17 @@ namespace MacGame
         public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
         private Rectangle _previousCollisionRectangle;
+        
+        private bool isClimbingLadder = false;
+
+        AnimationStrip climbingAnimation;
+        private const int ladderSpeed = 30;
+        
+        // Used to temporarily prevent you from climbing ladders if you jump while holding up
+        // until you release up and press it again. This way you don't just insta-climb the ladder above you.
+        private bool canClimbLadders = true;
+
+        private float playClimbSoundTimer = 0f;
 
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
@@ -74,6 +86,11 @@ namespace MacGame
             fall.LoopAnimation = true;
             fall.FrameLength = 0.1f;
             animations.Add(fall);
+
+            climbingAnimation = new AnimationStrip(textures, new Rectangle(40, 24, 8, 8), 2, "climb");
+            climbingAnimation.LoopAnimation = true;
+            climbingAnimation.FrameLength = 0.14f;
+            animations.Add(climbingAnimation);
 
             Enabled = true;
 
@@ -147,7 +164,7 @@ namespace MacGame
                     // Pad 1 pixel to make it a little easier
                     var wasAboveEnemy = _previousCollisionRectangle.Bottom - 1 <= enemy.CollisionRectangle.Top;
 
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !isClimbingLadder)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
@@ -228,7 +245,7 @@ namespace MacGame
                 {
                     velocity.X = maxWalkingSpeed;
                 }
-                isRunning = true;
+                isRunning = !isClimbingLadder;
                 isSliding = false;
                 flipped = false;
             }
@@ -241,13 +258,13 @@ namespace MacGame
                 {
                     velocity.X = -maxWalkingSpeed;
                 }
-                isRunning = true;
+                isRunning = !isClimbingLadder;
                 isSliding = false;
                 flipped = true;
             }
 
 
-            if (!isRunning)
+            if (!isRunning && !isClimbingLadder)
             {
                 this.velocity.X -= (this.velocity.X * friction * elapsed);
             }
@@ -263,14 +280,77 @@ namespace MacGame
                 isSliding = true;
             }
 
+            
+            // Ladder stuff.
+            var tileAtBottom = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation);
+            var tileAtTop = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation - new Vector2(0, CollisionRectangle.Height));
+            var isOverALadder = (tileAtBottom?.IsLadder ?? false) || (tileAtTop?.IsLadder ?? false);
+
+            if (!isOverALadder)
+            {
+                isClimbingLadder = false;
+            }
+            
+            // Climbing a ladder from standstill.
+            if (isOverALadder 
+                && canClimbLadders
+                && (InputManager.CurrentAction.up || (isClimbingLadder && InputManager.CurrentAction.down)) // Need to press up to latch onto a ladder. Down only if you are already climbing.
+                && !(PlatformThatThisIsOn is LadderPlatform)) // Don't climb if you are standing on a ladder platform. Climbing down from atop a ladder is handled below.
+            {
+                isClimbingLadder = true;
+                isJumping = false;
+                isFalling = false;
+                this.velocity.X -= acceleration * elapsed;
+                if (velocity.X < -maxWalkingSpeed)
+                {
+                    velocity.X = -maxWalkingSpeed;
+                }
+                this.velocity.Y = ladderSpeed;
+                if (InputManager.CurrentAction.up)
+                {
+                    this.velocity.Y *= -1;
+                }
+
+                // No moving left or right on the ladder unless you are not going up or down.
+                this.velocity.X = 0;
+            }
+            this.IsAffectedByGravity = !isClimbingLadder;
+
+            if (isClimbingLadder && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
+            {
+                this.velocity.Y = 0;
+            }
+
+            if (isClimbingLadder && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+            {
+                this.velocity.X = 0;
+            }
+
+            // Stop climbing if you move down towards the ground.
+            if (isClimbingLadder && InputManager.CurrentAction.down && onGround)
+            {
+                isClimbingLadder = false;
+            }
+
+            // If you are on a ladder platform you can press down to climbe down through it.
+            if (canClimbLadders && !InputManager.CurrentAction.jump && InputManager.CurrentAction.down && OnPlatform && PlatformThatThisIsOn is LadderPlatform)
+            {
+                isClimbingLadder = true;
+                isJumping = false;
+                isFalling = false;
+                this.velocity.Y = ladderSpeed;
+                this.PoisonPlatforms.Add(PlatformThatThisIsOn);
+            }
+
             if (OnGround)
             {
                 PoisonPlatforms.Clear();
             }
 
+            // Jump down from platform(s). 
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && InputManager.CurrentAction.down && OnPlatform)
             {
-                // Jump down from platform(s). Find every platform below the player and mark them all as poison.
+                // Find every platform below the player and mark them all as poison.
                 var belowPlayerRect = new Rectangle(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom, this.CollisionRectangle.Width, 3);
 
                 foreach (var platform in Game1.Platforms)
@@ -289,6 +369,29 @@ namespace MacGame
                 this.velocity.Y -= jumpBoost;
                 isSliding = false;
                 SoundManager.PlaySound("jump");
+                isClimbingLadder = false;
+            }
+            else if (InputManager.CurrentAction.jump
+                && !InputManager.PreviousAction.jump
+                && isClimbingLadder)
+            {
+                // Jump off ladder
+                this.velocity.Y -= (jumpBoost / 2); // weaker jump
+                SoundManager.PlaySound("jump");
+
+                // block their ability to climb ladders until they release up. This prevents you from
+                // insta-climbing the ladder above you.
+                if (isClimbingLadder && InputManager.CurrentAction.up)
+                {
+                    canClimbLadders = false;
+                }
+                isClimbingLadder = false;
+            }
+
+            // Unset canclimb ladders if they release up.
+            if (!InputManager.CurrentAction.up || onGround)
+            {
+                canClimbLadders = true;
             }
 
             // slightly sliding is not sliding, so we want to see the idle animation.
@@ -299,29 +402,47 @@ namespace MacGame
             }
 
             // stop the player if they are nearly stopped so you don't get weird 1px movement.
-            if (velocity.X < 6 && velocity.X > -6 && !isRunning)
+            if (velocity.X < 6 && velocity.X > -6 && !isRunning && !isClimbingLadder)
             {
                 velocity.X = 0;
             }
 
-            if (!OnGround && velocity.Y > 0)
+            if (!isClimbingLadder)
             {
-                isJumping = true;
-                isFalling = false;
-                isRunning = false;
+                if (!OnGround && velocity.Y > 0)
+                {
+                    isJumping = true;
+                    isFalling = false;
+                    isRunning = false;
+                }
+                else if (!OnGround && velocity.Y < 0)
+                {
+                    isJumping = false;
+                    isFalling = true;
+                    isRunning = false;
+                }
+                else
+                {
+                    isJumping = false;
+                    isFalling = false;
+                }
             }
-            else if (!OnGround && velocity.Y < 0)
+            
+            var isClimbingAnimationPlaying = isClimbingLadder && velocity != Vector2.Zero;
+
+            if (isClimbingAnimationPlaying)
             {
-                isJumping = false;
-                isFalling = true;
-                isRunning = false;
+                playClimbSoundTimer -= elapsed;
+                if (playClimbSoundTimer <= 0f)
+                {
+                    SoundManager.PlaySound("climb");
+                    playClimbSoundTimer += 0.15f;
+                }
             }
             else
             {
-                isJumping = false;
-                isFalling = false;
+                playClimbSoundTimer = 0f;
             }
-
 
             // Bound the player to the map left and right.
             if (CollisionRectangle.X < Game1.CurrentMap.GetWorldRectangle().X && velocity.X < 0)
@@ -349,6 +470,11 @@ namespace MacGame
             else if (isSliding)
             {
                 nextAnimation = "slide";
+            }
+            else if (isClimbingLadder)
+            {
+                nextAnimation = "climb";
+                climbingAnimation.IsPaused = !isClimbingAnimationPlaying;
             }
             else
             {

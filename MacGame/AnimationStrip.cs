@@ -50,6 +50,11 @@ namespace MacGame
         public bool Reverse { get; set; }
 
         /// <summary>
+        /// Use this to pause animations. Like a climbing animation that pauses if you aren't moving.
+        /// </summary>
+        public bool IsPaused { get; set; }
+
+        /// <summary>
         /// The current frame rectangle relative to the texture.
         /// </summary>
         public Rectangle FrameRectangle
@@ -106,6 +111,8 @@ namespace MacGame
 
         public void Update(float elapsed)
         {
+            if (IsPaused) return;
+
             frameTimer += elapsed;
 
             if (frameTimer >= FrameLength)

@@ -776,11 +776,11 @@ namespace Squared.Tiled
                         }
                         else if (tileInfo.properties.ContainsKey("Ladder"))
                         {
-                            tileMap.MapCells[x][y].IsIce = true;
+                            tileMap.MapCells[x][y].IsLadder = true;
                         }
                         else if (tileInfo.properties.ContainsKey("Vine"))
                         {
-                            tileMap.MapCells[x][y].IsIce = true;
+                            tileMap.MapCells[x][y].IsVine = true;
                         }
 
 

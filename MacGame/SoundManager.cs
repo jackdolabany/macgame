@@ -136,6 +136,7 @@ namespace MacGame
             LoadSong("Stage1");
             LoadSong("BossFight");
 
+            MusicVolume = 0.1f;
         }
 
         /// <summary>

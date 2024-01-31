@@ -66,7 +66,7 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (Alive)
+            if (Alive && Game1.Camera.IsObjectVisible(this.CollisionRectangle))
             {
                 jumpTimer -= elapsed;
 
@@ -74,7 +74,7 @@ namespace MacGame
                 {
                     jumpTimer = 2;
                     animations.Play("jump");
-                    SoundManager.PlaySound("jump", 1, -0.2f);
+                    SoundManager.PlaySound("jump", 0.5f, -0.2f);
                     this.velocity.Y -= 150;
                     this.velocity.X = 30;
                     if (Game1.Randy.NextBool())

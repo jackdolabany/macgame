@@ -40,7 +40,7 @@ namespace MacGame
 
             isEnemyTileColliding = false;
             Attack = 1;
-            Health = 5;
+            Health = 3;
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;

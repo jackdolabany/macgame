@@ -88,6 +88,7 @@ namespace MacGame
             this.FrameCount = frameCount;
             this.Name = name;
             this.FrameLength = 0.05f;
+            this.NextAnimation = "";
         }
 
         public AnimationStrip Play(int currentFrame)

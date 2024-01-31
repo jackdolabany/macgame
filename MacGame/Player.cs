@@ -45,10 +45,10 @@ namespace MacGame
         public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
         private Rectangle _previousCollisionRectangle;
-        
-        private bool isClimbingLadder = false;
 
-        AnimationStrip climbingAnimation;
+        // Ladder climbing stuff
+        private bool isClimbingLadder = false;
+        AnimationStrip climbingLadderAnimation;
         private const int ladderSpeed = 30;
         
         // Used to temporarily prevent you from climbing ladders if you jump while holding up
@@ -56,6 +56,10 @@ namespace MacGame
         private bool canClimbLadders = true;
 
         private float playClimbSoundTimer = 0f;
+
+        // Vine climbing stuff
+        AnimationStrip climbingVineAnimation;
+        private bool isClimbingVine;
 
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
@@ -87,10 +91,16 @@ namespace MacGame
             fall.FrameLength = 0.1f;
             animations.Add(fall);
 
-            climbingAnimation = new AnimationStrip(textures, new Rectangle(40, 24, 8, 8), 2, "climb");
-            climbingAnimation.LoopAnimation = true;
-            climbingAnimation.FrameLength = 0.14f;
-            animations.Add(climbingAnimation);
+            climbingLadderAnimation = new AnimationStrip(textures, new Rectangle(40, 24, 8, 8), 2, "climbLadder");
+            climbingLadderAnimation.LoopAnimation = true;
+            climbingLadderAnimation.FrameLength = 0.14f;
+            animations.Add(climbingLadderAnimation);
+
+
+            climbingVineAnimation = new AnimationStrip(textures, new Rectangle(48, 16, 8, 8), 2, "climbVine");
+            climbingVineAnimation.LoopAnimation = true;
+            climbingVineAnimation.FrameLength = 0.14f;
+            animations.Add(climbingVineAnimation);
 
             Enabled = true;
 
@@ -164,7 +174,7 @@ namespace MacGame
                     // Pad 1 pixel to make it a little easier
                     var wasAboveEnemy = _previousCollisionRectangle.Bottom - 1 <= enemy.CollisionRectangle.Top;
 
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !isClimbingLadder)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !isClimbingLadder && !isClimbingVine)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
@@ -238,7 +248,7 @@ namespace MacGame
             }
 
             // Walk Right
-            if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
+            if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !isClimbingVine)
             {
                 this.velocity.X += acceleration * elapsed;
                 if (velocity.X > maxWalkingSpeed)
@@ -251,7 +261,7 @@ namespace MacGame
             }
 
             // Walk left
-            if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+            if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right && !isClimbingVine)
             {
                 this.velocity.X -= acceleration * elapsed;
                 if (velocity.X < -maxWalkingSpeed)
@@ -264,7 +274,7 @@ namespace MacGame
             }
 
 
-            if (!isRunning && !isClimbingLadder)
+            if (!isRunning && !isClimbingLadder && !isClimbingVine)
             {
                 this.velocity.X -= (this.velocity.X * friction * elapsed);
             }
@@ -314,9 +324,10 @@ namespace MacGame
                 // No moving left or right on the ladder unless you are not going up or down.
                 this.velocity.X = 0;
             }
-            this.IsAffectedByGravity = !isClimbingLadder;
+            this.IsAffectedByGravity = !isClimbingLadder && !isClimbingVine;
 
-            if (isClimbingLadder && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
+            // Stop moving while climbing if you aren't pressing up or down.
+            if ((isClimbingLadder || isClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
             {
                 this.velocity.Y = 0;
             }
@@ -327,9 +338,10 @@ namespace MacGame
             }
 
             // Stop climbing if you move down towards the ground.
-            if (isClimbingLadder && InputManager.CurrentAction.down && onGround)
+            if (InputManager.CurrentAction.down && onGround)
             {
                 isClimbingLadder = false;
+                isClimbingVine = false;
             }
 
             // If you are on a ladder platform you can press down to climbe down through it.
@@ -394,6 +406,39 @@ namespace MacGame
                 canClimbLadders = true;
             }
 
+            // Climbing Vine
+            var tileAtCenter = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
+            var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
+            if (isOverVine && (!OnGround || InputManager.CurrentAction.up))
+            {
+                // snap to vine.
+                isClimbingVine = true;
+                isFalling = false;
+                isJumping = false;
+
+                this.velocity.X = 0;
+
+                if (InputManager.CurrentAction.up)
+                {
+                    this.velocity.Y -= ladderSpeed;
+                }
+                else if (InputManager.CurrentAction.down)
+                {
+                    this.velocity.Y = ladderSpeed;
+                }
+                else
+                {
+                    this.velocity.Y = 0;
+                }
+
+                if (tileAtTop == null || !tileAtTop.IsVine)
+                {
+                    // You reached the top of the vine.
+                    this.velocity.Y = ladderSpeed;
+                    //this.worldLocation.Y += 3;
+                }
+            }
+
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 20 && velocity.X > -20 && isSliding)
             {
@@ -407,7 +452,7 @@ namespace MacGame
                 velocity.X = 0;
             }
 
-            if (!isClimbingLadder)
+            if (!isClimbingLadder && !isClimbingVine)
             {
                 if (!OnGround && velocity.Y > 0)
                 {
@@ -428,7 +473,7 @@ namespace MacGame
                 }
             }
             
-            var isClimbingAnimationPlaying = isClimbingLadder && velocity != Vector2.Zero;
+            var isClimbingAnimationPlaying = (isClimbingLadder || isClimbingVine) && velocity != Vector2.Zero;
 
             if (isClimbingAnimationPlaying)
             {
@@ -473,8 +518,13 @@ namespace MacGame
             }
             else if (isClimbingLadder)
             {
-                nextAnimation = "climb";
-                climbingAnimation.IsPaused = !isClimbingAnimationPlaying;
+                nextAnimation = "climbLadder";
+                climbingLadderAnimation.IsPaused = !isClimbingAnimationPlaying;
+            }
+            else if (isClimbingVine)
+            {
+                nextAnimation = "climbVine";
+                climbingVineAnimation.IsPaused = !isClimbingAnimationPlaying;
             }
             else
             {

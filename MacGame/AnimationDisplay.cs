@@ -92,7 +92,7 @@ namespace MacGame
               worldLocation.Y - ((float)currentAnimation.FrameHeight / 2f));
         }
 
-        public AnimationStrip Play(string name, int startFrame)
+        public AnimationStrip? Play(string name, int startFrame)
         {
             if (name != null && animations.ContainsKey(name))
             {
@@ -103,7 +103,7 @@ namespace MacGame
             return null;
         }
 
-        public AnimationStrip Play(string name)
+        public AnimationStrip? Play(string name)
         {
             return Play(name, 0);
         }

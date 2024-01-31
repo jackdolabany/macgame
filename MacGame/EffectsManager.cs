@@ -21,7 +21,7 @@ namespace MacGame
 
         public static void Initialize(ContentManager content)
         {
-            var simpleSprites = content.Load<Texture2D>(@"Textures\Textures");
+            var simpleSprites = content.Load<Texture2D>(@"Textures\Textures")!;
             SparkTexture = simpleSprites;
             WhiteSquareSourceRectangle = new Rectangle(11, 27, 2, 2);
           

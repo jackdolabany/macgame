@@ -15,14 +15,12 @@ namespace MacGame
 {
     public class Heart : Item
     {
-        public Heart(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public Heart(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
             this.DisplayComponent = image;
-            this.Enabled = true;
             image.Source = new Rectangle(8, 16, 8, 8);
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize, cellY * TileMap.TileSize);
             SetCenteredCollisionRectangle(8, 8);
         }
 

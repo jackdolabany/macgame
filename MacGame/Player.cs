@@ -344,7 +344,7 @@ namespace MacGame
                 isClimbingVine = false;
             }
 
-            // If you are on a ladder platform you can press down to climbe down through it.
+            // If you are on a ladder platform you can press down to climb down through it.
             if (canClimbLadders && !InputManager.CurrentAction.jump && InputManager.CurrentAction.down && OnPlatform && PlatformThatThisIsOn is LadderPlatform)
             {
                 isClimbingLadder = true;
@@ -399,6 +399,23 @@ namespace MacGame
                 }
                 isClimbingLadder = false;
             }
+            else if (InputManager.CurrentAction.jump
+                && !InputManager.PreviousAction.jump
+                && isClimbingVine)
+            {
+                // Jump off Vine
+                this.velocity.Y -= (jumpBoost / 2); // weaker jump
+
+                // Give them a little boost in the direction they are facing.
+                this.velocity.X = 30;
+                if (flipped)
+                {
+                    this.velocity.X *= -1;
+                }
+
+                SoundManager.PlaySound("jump");
+
+            }
 
             // Unset canclimb ladders if they release up.
             if (!InputManager.CurrentAction.up || onGround)
@@ -409,8 +426,49 @@ namespace MacGame
             // Climbing Vine
             var tileAtCenter = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
             var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
-            if (isOverVine && (!OnGround || InputManager.CurrentAction.up))
+            Vector2 currentVineCell = Vector2.Zero;
+
+            if (!isClimbingVine && isOverVine && (!OnGround || InputManager.CurrentAction.up))
             {
+                isClimbingVine = true;
+                currentVineCell = Game1.CurrentMap.GetCellByPixel(this.CollisionCenter);
+
+                //Snap the player to the vine cell
+                if (!flipped)
+                {
+                    this.worldLocation.X = (TileMap.TileSize * currentVineCell.X) + 4;
+                }
+                else
+                {
+                    this.worldLocation.X = (TileMap.TileSize * currentVineCell.X) + 4;
+                }
+            }
+
+
+            if (isClimbingVine)
+            {
+                // You can't move left and right on the vine, but Mac can flip.
+                if (InputManager.CurrentAction.left)
+                {
+                    flipped = true;
+                }
+                else if (InputManager.CurrentAction.right)
+                {
+                    flipped = false;
+                }
+
+
+                var tile = Game1.CurrentMap.GetCellByPixel(this.CollisionCenter);
+
+                if (!flipped)
+                {
+                    this.worldLocation.X = (TileMap.TileSize * tile.X) + 4;
+                }
+                else
+                {
+                    this.worldLocation.X = TileMap.TileSize * tile.X + 4;
+                }
+
                 // snap to vine.
                 isClimbingVine = true;
                 isFalling = false;
@@ -420,7 +478,7 @@ namespace MacGame
 
                 if (InputManager.CurrentAction.up)
                 {
-                    this.velocity.Y -= ladderSpeed;
+                    this.velocity.Y = -ladderSpeed;
                 }
                 else if (InputManager.CurrentAction.down)
                 {
@@ -437,7 +495,20 @@ namespace MacGame
                     this.velocity.Y = ladderSpeed;
                     //this.worldLocation.Y += 3;
                 }
+
+                if (InputManager.CurrentAction.jump)
+                {
+                    isClimbingVine = false;
+                    isJumping = true;
+                }
             }
+
+            // temp??
+            if (!tileAtCenter.IsVine)
+            {
+                isClimbingVine = false;
+            }
+
 
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 20 && velocity.X > -20 && isSliding)

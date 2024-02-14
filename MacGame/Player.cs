@@ -433,20 +433,30 @@ namespace MacGame
                 isClimbingVine = true;
                 currentVineCell = Game1.CurrentMap.GetCellByPixel(this.CollisionCenter);
 
-                //Snap the player to the vine cell
-                if (!flipped)
-                {
-                    this.worldLocation.X = (TileMap.TileSize * currentVineCell.X) + 4;
-                }
-                else
-                {
-                    this.worldLocation.X = (TileMap.TileSize * currentVineCell.X) + 4;
-                }
+                //// Snap the player to the vine cell
+                //if (!flipped)
+                //{
+                //    this.worldLocation.X = (TileMap.TileSize * currentVineCell.X) + 4;
+                //}
+                //else
+                //{
+                //    this.worldLocation.X = (TileMap.TileSize * currentVineCell.X) + 4;
+                //}
             }
-
 
             if (isClimbingVine)
             {
+
+                Vector2 vineTile;
+                if (!flipped)
+                {
+                    vineTile = Game1.CurrentMap.GetCellByPixel(new Vector2(this.CollisionRectangle.Right, this.CollisionCenter.Y));
+                }
+                else
+                {
+                    vineTile = Game1.CurrentMap.GetCellByPixel(new Vector2(this.CollisionRectangle.Left, this.CollisionCenter.Y));
+                }
+
                 // You can't move left and right on the vine, but Mac can flip.
                 if (InputManager.CurrentAction.left)
                 {
@@ -457,16 +467,13 @@ namespace MacGame
                     flipped = false;
                 }
 
-
-                var tile = Game1.CurrentMap.GetCellByPixel(this.CollisionCenter);
-
                 if (!flipped)
                 {
-                    this.worldLocation.X = (TileMap.TileSize * tile.X) + 4;
+                    this.worldLocation.X = (TileMap.TileSize * vineTile.X) + 2;
                 }
                 else
                 {
-                    this.worldLocation.X = TileMap.TileSize * tile.X + 4;
+                    this.worldLocation.X = TileMap.TileSize * vineTile.X + 6;
                 }
 
                 // snap to vine.
@@ -508,7 +515,6 @@ namespace MacGame
             {
                 isClimbingVine = false;
             }
-
 
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 20 && velocity.X > -20 && isSliding)
@@ -623,7 +629,6 @@ namespace MacGame
         {
             Health = 0;
             Enabled = false;
-            // EffectsManager.RisingText("Dead", WorldCenter);
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 50f);
             SoundManager.PlaySound("mac_death");
             MenuManager.AddMenu(_deadMenu);
@@ -642,6 +647,20 @@ namespace MacGame
         public bool IsFacingLeft()
         {
             return !IsFacingRight();
+        }
+
+        public Vector2 GetCameraPosition(Camera camera)
+        {
+            // Whe climbing a vine, the player's position may snap to the vine, or snap when he faces left and right
+            // so we need to more slowly move the camera to track the player.
+            if(isClimbingVine)
+            {
+                var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.1f);
+                return cameraPosition;
+            }
+            
+            // Normally the Camera tracks the player
+            return this.worldLocation;
         }
     }
 }

@@ -57,7 +57,7 @@ namespace MacGame
 
             Player.Update(gameTime, elapsed);
 
-            Camera.Position = Player.WorldLocation;
+            Camera.Position = Player.GetCameraPosition(Camera);
 
             foreach (var enemy in Enemies)
             {

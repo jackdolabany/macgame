@@ -24,6 +24,8 @@ namespace TileEngine
             this.Layers = new List<Layer>();
         }
 
+        public List<ObjectModifier> ObjectModifiers = new List<ObjectModifier>();
+
         public const int TileSize = 8;
 
         public List<Layer> Layers;

@@ -28,6 +28,11 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel2.tmx
 
+#begin Maps/TestLevel3.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestLevel3.tmx
+
 #begin Music/BossFight.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

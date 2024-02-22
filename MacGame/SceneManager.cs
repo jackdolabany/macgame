@@ -83,6 +83,40 @@ namespace MacGame
                                 var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Items.Add(item);
                             }
+                            else if (loadClass == "Door")
+                            {
+                                var door = new Door(contentManager, x, y, player, camera);
+                                level.Doors.Add(door);
+
+                                // Doors need to know what level to go to. I expect an object on the map that contains the door and 
+                                // tells it where to go.
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.Rectangle.Contains(door.CollisionRectangle))
+                                    {
+                                        foreach (var prop in obj.Properties)
+                                        {
+                                            if (obj.Properties.ContainsKey("GoToMap"))
+                                            {
+                                                door.GoToMap = obj.Properties["GoToMap"];
+                                            }
+                                            if (obj.Properties.ContainsKey("GoToDoor"))
+                                            {
+                                                door.GoToDoor = obj.Properties["GoToDoor"];
+                                            }
+                                            if (obj.Properties.ContainsKey("Name"))
+                                            {
+                                                door.Name = obj.Properties["Name"];
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if(string.IsNullOrEmpty(door.GoToMap) || string.IsNullOrEmpty(door.GoToDoor) || string.IsNullOrEmpty(door.Name))
+                                {
+                                    throw new Exception("Doors must have a custom object add these props in the map file.");
+                                }
+                            }
                         }
                     }
                 }

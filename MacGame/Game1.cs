@@ -5,6 +5,7 @@ using MacGame.Platforms;
 using System;
 using System.Collections.Generic;
 using TileEngine;
+using System.Globalization;
 
 namespace MacGame
 {
@@ -38,6 +39,9 @@ namespace MacGame
         private static SceneManager sceneManager;
 
         private static Level currentLevel;
+
+        public static string TransitionToMap;
+        public static string PutPlayerAtDoor;
 
         public static IEnumerable<Platform> Platforms
         {
@@ -174,6 +178,7 @@ namespace MacGame
             if (loadLevel)
             {
                 currentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+                Camera.Map = currentLevel.Map;
             }
         }
 
@@ -257,6 +262,29 @@ namespace MacGame
                     currentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
+                }
+
+                // See if it's time to go to another level.
+                if (!string.IsNullOrEmpty(TransitionToMap))
+                {
+                    currentLevel = sceneManager.LoadLevel(TransitionToMap, Content, Player, Camera);
+                    Camera.Map = currentLevel.Map;
+                    TransitionToMap = null;
+
+                    if (!string.IsNullOrEmpty(PutPlayerAtDoor))
+                    {
+                        foreach(var door in currentLevel.Doors)
+                        {
+                            if (door.Name == PutPlayerAtDoor)
+                            {
+                                Player.WorldLocation = door.WorldLocation;
+                                break;
+                            }
+                        }
+                        
+                        PutPlayerAtDoor = null;
+
+                    }
                 }
             }
 

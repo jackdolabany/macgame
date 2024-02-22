@@ -38,6 +38,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using TileEngine;
 
 namespace Squared.Tiled
 {
@@ -802,6 +803,21 @@ namespace Squared.Tiled
 
                     } // end for y
                 } // end for x
+            }
+
+            // Convert the Tiled ObjectGroups thing into a List of object modifiers for our game.
+            foreach (var obj in this.ObjectGroups.Values.SelectMany(og => og.Objects))
+            {
+                
+                var om = new ObjectModifier();
+                om.Rectangle = new Rectangle(obj.Value.X, obj.Value.Y, obj.Value.Width, obj.Value.Height);
+
+                foreach(var kvp in obj.Value.Properties)
+                {
+                    om.Properties.Add(kvp.Key, kvp.Value);
+                }
+
+                tileMap.ObjectModifiers.Add(om);
             }
 
             return tileMap;

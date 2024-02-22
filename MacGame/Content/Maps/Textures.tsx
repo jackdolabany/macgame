@@ -142,4 +142,9 @@
    <property name="LoadClass" value="Enemy.Bat"/>
   </properties>
  </tile>
+ <tile id="160">
+  <properties>
+   <property name="LoadClass" value="Door"/>
+  </properties>
+ </tile>
 </tileset>

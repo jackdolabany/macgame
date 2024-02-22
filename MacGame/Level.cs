@@ -24,6 +24,7 @@ namespace MacGame
         public List<Item> Items;
         public List<GameObject> GameObjects;
         public List<Platform> Platforms;
+        public List<Door> Doors;
 
         /// <summary>
         /// For enemies that need to add enemies. 
@@ -40,6 +41,7 @@ namespace MacGame
             Items = new List<Item>();
             Platforms = new List<Platform>();
             GameObjects = new List<GameObject>();
+            Doors = new List<Door>();
         }
 
         public static void AddEnemy(Enemy enemy)
@@ -74,6 +76,11 @@ namespace MacGame
                 gameObject.Update(gameTime, elapsed);
             }
 
+            foreach (var door in Doors)
+            {
+                door.Update(gameTime, elapsed);
+            }
+
             // Check collisions
             if (Player.Enabled)
             {
@@ -97,6 +104,22 @@ namespace MacGame
                 }
             }
 
+            // Doors
+            if (Player.IsTryingToOpenDoor)
+            {
+                foreach (var door in Doors)
+                {
+                    if (door.Enabled)
+                    {
+                        if (door.CollisionRectangle.Contains(Player.CollisionCenter))
+                        {
+                            Game1.TransitionToMap = door.GoToMap;
+                            Game1.PutPlayerAtDoor = door.GoToDoor;
+                        }
+                    }
+                }
+            }
+
             while (EnemiesToAdd.Count > 0)
             {
                 Enemies.Add(EnemiesToAdd.Dequeue());
@@ -110,6 +133,11 @@ namespace MacGame
             foreach (var p in Platforms)
             {
                 p.Draw(spriteBatch);
+            }
+
+            foreach (var door in Doors)
+            {
+                door.Draw(spriteBatch);
             }
 
             Player.Draw(spriteBatch);

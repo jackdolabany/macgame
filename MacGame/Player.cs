@@ -42,6 +42,8 @@ namespace MacGame
         private float invincibleTimeRemaining = 0.0f;
         private float invincibleFlashTimer = 0.0f;
 
+        public bool IsTryingToOpenDoor = false;
+
         public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
         private Rectangle _previousCollisionRectangle;
@@ -125,6 +127,9 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            IsTryingToOpenDoor = false;
+
             _previousCollisionRectangle = this.CollisionRectangle;
 
             HandleInputs(elapsed);
@@ -515,6 +520,9 @@ namespace MacGame
             {
                 isClimbingVine = false;
             }
+
+            // Level.cs will check door collisions if this is true.
+            this.IsTryingToOpenDoor = InputManager.CurrentAction.up && !InputManager.PreviousAction.up;
 
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 20 && velocity.X > -20 && isSliding)

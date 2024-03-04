@@ -22,6 +22,8 @@ namespace MacGame
             TimerManager.Clear();
             Game1.Camera.CanScrollLeft = true;
             
+            player.Velocity = Vector2.Zero;
+
             SoundManager.PlaySong("Stage1", true, 0.2f);
 
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");

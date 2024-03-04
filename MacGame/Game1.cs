@@ -93,7 +93,7 @@ namespace MacGame
         {
             graphics = new GraphicsDeviceManager(this);
 
-            var scale = 6;
+            var scale = 8;
 
             graphics.PreferredBackBufferWidth = GAME_X_RESOLUTION * scale;
             graphics.PreferredBackBufferHeight = GAME_Y_RESOLUTION * scale;

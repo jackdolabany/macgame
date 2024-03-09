@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TileEngine;
+using MacGame.RevealBlocks;
 
 namespace MacGame
 {
@@ -119,11 +120,17 @@ namespace MacGame
                                     throw new Exception("Doors must have a custom object add these props in the map file.");
                                 }
                             }
+                            else if (loadClass == "RevealBlock")
+                            {
+                                level.RevealBlockManager.AddRawBlock(new RevealBlock(x, y, z));
+                                mapSquare.Passable = true;
+                            }
                         }
                     }
                 }
             }
 
+            level.RevealBlockManager.OrganizeRawBlocksIntoGroups();
             player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + 4, ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
             camera.Map = level.Map;
 

@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TileEngine;
+using MacGame.RevealBlocks;
+using System.Runtime.CompilerServices;
 
 namespace MacGame
 {
@@ -32,6 +34,8 @@ namespace MacGame
         /// </summary>
         private static readonly Queue<Enemy> EnemiesToAdd = new Queue<Enemy>(20);
 
+        public RevealBlockManager RevealBlockManager;
+
         public Level(Player player, TileMap map, Camera camera)
         {
             Player = player;
@@ -42,6 +46,7 @@ namespace MacGame
             Platforms = new List<Platform>();
             GameObjects = new List<GameObject>();
             Doors = new List<Door>();
+            RevealBlockManager = new RevealBlockManager();
         }
 
         public static void AddEnemy(Enemy enemy)
@@ -51,6 +56,7 @@ namespace MacGame
 
         public void Update(GameTime gameTime, float elapsed)
         {
+            RevealBlockManager.Update(elapsed);
 
             foreach (var p in Platforms)
             {

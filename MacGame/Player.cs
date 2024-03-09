@@ -24,14 +24,14 @@ namespace MacGame
         AnimationDisplay animations;
 
         public const int MaxHealth = 5;
-        
+
         public int Health { get; set; } = MaxHealth;
-        
+
         public InputManager InputManager { get; private set; }
 
         private DeadMenu _deadMenu;
 
-        private const float acceleration = 150;
+        private const float maxAcceleration = 150;
         private const float maxSpeed = 80;
 
         private bool isRunning = false;
@@ -52,7 +52,7 @@ namespace MacGame
         private bool isClimbingLadder = false;
         AnimationStrip climbingLadderAnimation;
         private const int climbingSpeed = 30;
-        
+
         // Used to temporarily prevent you from climbing ladders if you jump while holding up
         // until you release up and press it again. This way you don't just insta-climb the ladder above you.
         private bool canClimbLadders = true;
@@ -152,7 +152,7 @@ namespace MacGame
                 invincibleTimeRemaining -= elapsed;
                 invincibleFlashTimer -= elapsed;
 
-                if(invincibleFlashTimer < 0)
+                if (invincibleFlashTimer < 0)
                 {
                     this.DisplayComponent.TintColor = Color.White * 0.4f;
                 }
@@ -235,12 +235,14 @@ namespace MacGame
             var isSand = mapSquareBelow != null && mapSquareBelow.IsSand;
             var isIce = mapSquareBelow != null && mapSquareBelow.IsIce;
 
-            var maxWalkingSpeed = maxSpeed;
+            var environmentMaxWalkSpeed = maxSpeed;
+            var acceleration = maxAcceleration;
+
             if (isSand)
             {
                 friction = 5f;
                 jumpBoost = 100;
-                maxWalkingSpeed /= 2;
+                environmentMaxWalkSpeed /= 2;
             }
             else if (isIce)
             {
@@ -254,18 +256,25 @@ namespace MacGame
                 jumpBoost = 150f;
             }
 
-            if (!InputManager.CurrentAction.attack)
+            // If they aren't running max walk speed is cut in half.
+            if (!InputManager.CurrentAction.attack && (onGround || isClimbingLadder))
             {
-                maxWalkingSpeed /= 2;
+                environmentMaxWalkSpeed /= 2;
+            }
+
+            // Cut the acceleration in half if they are in the air.
+            if (!OnGround && !isClimbingLadder && !isClimbingVine)
+            {
+                acceleration /= 2;
             }
 
             // Walk Right
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !isClimbingVine)
             {
                 this.velocity.X += acceleration * elapsed;
-                if (OnGround && velocity.X > maxWalkingSpeed)
+                if (OnGround && velocity.X > environmentMaxWalkSpeed)
                 {
-                    velocity.X = maxWalkingSpeed;
+                    velocity.X = environmentMaxWalkSpeed;
                 }
                 isRunning = onGround;
                 isSliding = false;
@@ -276,16 +285,16 @@ namespace MacGame
             if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right && !isClimbingVine)
             {
                 this.velocity.X -= acceleration * elapsed;
-                if (OnGround && velocity.X < -maxWalkingSpeed)
+                if (OnGround && velocity.X < -environmentMaxWalkSpeed)
                 {
-                    velocity.X = -maxWalkingSpeed;
+                    velocity.X = -environmentMaxWalkSpeed;
                 }
                 isRunning = onGround;
                 isSliding = false;
                 flipped = true;
             }
 
-            if (!isRunning && !isClimbingLadder && !isClimbingVine)
+            if (OnGround && !isClimbingLadder && !isClimbingVine)
             {
                 this.velocity.X -= (this.velocity.X * friction * elapsed);
             }
@@ -320,10 +329,10 @@ namespace MacGame
                 isClimbingLadder = true;
                 isJumping = false;
                 isFalling = false;
-                this.velocity.X -= acceleration * elapsed;
-                if (velocity.X < -maxWalkingSpeed)
+                this.velocity.X -= maxAcceleration * elapsed;
+                if (velocity.X < -environmentMaxWalkSpeed)
                 {
-                    velocity.X = -maxWalkingSpeed;
+                    velocity.X = -environmentMaxWalkSpeed;
                 }
                 this.velocity.Y = climbingSpeed;
                 if (InputManager.CurrentAction.up)
@@ -496,10 +505,10 @@ namespace MacGame
                     this.velocity.Y = 0;
                 }
 
-                if (tileAtTop == null || !tileAtTop.IsVine)
+                // Don't let them climb too high on the vine.
+                if ((tileAtTop == null || !tileAtTop.IsVine) && InputManager.CurrentAction.up)
                 {
-                    // You reached the top of the vine.
-                    this.velocity.Y = climbingSpeed;
+                    this.velocity.Y = 0;
                 }
             }
 
@@ -509,8 +518,8 @@ namespace MacGame
                 canClimbVines = true;
             }
 
-            // temp??
-            if (!tileAtCenter.IsVine)
+            // Just in case.
+            if (tileAtCenter != null && !tileAtCenter.IsVine)
             {
                 isClimbingVine = false;
             }

@@ -513,7 +513,7 @@ namespace MacGame
             }
 
             // Unset canClimbVines if they move enough away from the vine.
-            if (!canClimbVines && Math.Abs(this.worldLocation.Y - yPositionWhenLastOnVine) > 6)
+            if (!canClimbVines && Math.Abs(this.worldLocation.Y - yPositionWhenLastOnVine) > 5)
             {
                 canClimbVines = true;
             }

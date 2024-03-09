@@ -109,6 +109,11 @@
    <property name="Sand" value="1"/>
   </properties>
  </tile>
+ <tile id="87">
+  <properties>
+   <property name="LoadClass" value="Enemy.Beetle"/>
+  </properties>
+ </tile>
  <tile id="96">
   <properties>
    <property name="LoadClass" value="Enemy.Frog"/>

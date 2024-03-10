@@ -16,24 +16,38 @@ namespace MacGame.Items
 {
     public class InfiniteJump : Item
     {
+
+        private Camera _camera;
+
         public InfiniteJump(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
-            image.Source = new Rectangle(0, 13 * TileMap.TileSize, TileMap.TileSize, TileMap.TileSize);
+            image.Source = new Rectangle(11 * TileMap.TileSize, 0, TileMap.TileSize, TileMap.TileSize);
             SetCenteredCollisionRectangle(8, 8);
+            _player = player;
+            _camera = camera;
         }
 
         public override void WhenCollected(Player player)
         {
-            player.Health += 1;
-            if (player.Health > Player.MaxHealth)
+            EffectsManager.EnemyPop(WorldCenter, 7, Color.White, 20);
+            player.CurrentItem = this;
+        }
+
+        public override void Update(GameTime gameTime, float elapsed)
+        {
+            base.Update(gameTime, elapsed);
+
+            if (!Enabled)
             {
-                player.Health = Player.MaxHealth;
+                // re-enable if the player doesn't have it and they item is off screen.
+                if (_player.CurrentItem != this && !_camera.IsObjectVisible(this.CollisionRectangle))
+                {
+                    this.Enabled = true;
+                }
             }
-            SoundManager.PlaySound("health");
-            EffectsManager.EnemyPop(WorldCenter, 7, Color.Red, 20);
         }
     }
 }

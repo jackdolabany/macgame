@@ -16,6 +16,16 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="11">
+  <properties>
+   <property name="LoadClass" value="Item.InfiniteJump"/>
+  </properties>
+ </tile>
+ <tile id="14">
+  <properties>
+   <property name="LoadClass" value="Item.Apples"/>
+  </properties>
+ </tile>
  <tile id="16">
   <properties>
    <property name="LoadClass" value="RevealBlock"/>
@@ -34,6 +44,11 @@
  <tile id="22">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="27">
+  <properties>
+   <property name="LoadClass" value="Item.Shovel"/>
   </properties>
  </tile>
  <tile id="33">

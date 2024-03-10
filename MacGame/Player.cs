@@ -17,6 +17,7 @@ using System.Diagnostics;
 using TileEngine;
 using MacGame.Enemies;
 using MacGame.DisplayComponents;
+using MacGame.Items;
 
 namespace MacGame
 {
@@ -72,6 +73,16 @@ namespace MacGame
         private float yPositionWhenLastOnVine = 0;
 
         public bool IsInMineCart = false;
+        private bool HasInfiniteJump
+        {
+            get
+            {
+                return this.CurrentItem is InfiniteJump;
+            }
+        }
+
+        private float InfiniteJumpTimer = 0f;
+        public Item CurrentItem = null;
 
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
@@ -431,6 +442,14 @@ namespace MacGame
                 SoundManager.PlaySound("jump");
                 isClimbingLadder = false;
             }
+            else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasInfiniteJump && this.Velocity.Y >= 0)
+            {
+                // Infinite Jump Jump.
+                this.velocity.Y = -jumpBoost;
+                isSliding = false;
+                SoundManager.PlaySound("jump");
+                isClimbingLadder = false;
+            }
             else if (InputManager.CurrentAction.jump
                 && !InputManager.PreviousAction.jump
                 && isClimbingLadder)
@@ -604,6 +623,17 @@ namespace MacGame
             else
             {
                 playClimbSoundTimer = 0f;
+            }
+
+            // Limit the time the player has the infinite jump powerup. They'll only lose it after some time if they hit the ground.
+            if (HasInfiniteJump)
+            {
+                InfiniteJumpTimer += elapsed;
+                if ((InfiniteJumpTimer >= 6f && OnGround) || isClimbingLadder || isClimbingVine)
+                {
+                    InfiniteJumpTimer = 0;
+                    this.CurrentItem = null;
+                }
             }
 
             // Bound the player to the map left and right.

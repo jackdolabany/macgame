@@ -26,7 +26,8 @@ namespace MacGame
             Game1.Camera.CanScrollLeft = true;
             
             player.Velocity = Vector2.Zero;
-
+            player.IsInMineCart = false;
+            
             SoundManager.PlaySong("Stage1", true, 0.2f);
 
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
@@ -126,6 +127,11 @@ namespace MacGame
                             {
                                 level.RevealBlockManager.AddRawBlock(new RevealBlock(x, y, z));
                                 mapSquare.Passable = true;
+                            }
+                            else if (loadClass == "MineCart")
+                            {
+                                var mineCart = new MineCart(contentManager, x, y, player);
+                                level.GameObjects.Add(mineCart);
                             }
                         }
                     }

@@ -71,6 +71,8 @@ namespace MacGame
         private bool canClimbVines = true;
         private float yPositionWhenLastOnVine = 0;
 
+        public bool IsInMineCart = false;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -112,6 +114,11 @@ namespace MacGame
             climbingVineAnimation.FrameLength = 0.14f;
             animations.Add(climbingVineAnimation);
 
+            var mineCart = new AnimationStrip(textures, new Rectangle(2 * Game1.TileSize, 8 * Game1.TileSize, Game1.TileSize, Game1.TileSize), 1, "mineCart");
+            mineCart.LoopAnimation = false;
+            mineCart.FrameLength = 0.1f;
+            animations.Add(mineCart);
+
             Enabled = true;
 
             // TODO: Whatever
@@ -140,7 +147,14 @@ namespace MacGame
 
             _previousCollisionRectangle = this.CollisionRectangle;
 
-            HandleInputs(elapsed);
+            if (IsInMineCart)
+            {
+                HandleMineCartInputs(elapsed);
+            }
+            else
+            {
+                HandleInputs(elapsed);
+            }
 
             if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
             {
@@ -272,10 +286,17 @@ namespace MacGame
             // Walk Right
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !isClimbingVine)
             {
-                this.velocity.X += acceleration * elapsed;
-                if (OnGround && velocity.X > environmentMaxWalkSpeed)
+                if (!isClimbingLadder)
                 {
-                    velocity.X = environmentMaxWalkSpeed;
+                    this.velocity.X += acceleration * elapsed;
+                    if (OnGround && velocity.X > environmentMaxWalkSpeed)
+                    {
+                        velocity.X = environmentMaxWalkSpeed;
+                    }
+                }
+                else
+                {
+                    this.velocity.X = climbingSpeed;
                 }
                 isRunning = onGround;
                 isSliding = false;
@@ -285,10 +306,17 @@ namespace MacGame
             // Walk left
             if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right && !isClimbingVine)
             {
-                this.velocity.X -= acceleration * elapsed;
-                if (OnGround && velocity.X < -environmentMaxWalkSpeed)
+                if (!isClimbingLadder)
                 {
-                    velocity.X = -environmentMaxWalkSpeed;
+                    this.velocity.X -= acceleration * elapsed;
+                    if (OnGround && velocity.X < -environmentMaxWalkSpeed)
+                    {
+                        velocity.X = -environmentMaxWalkSpeed;
+                    }
+                }
+                else
+                {
+                    this.velocity.X = -climbingSpeed;
                 }
                 isRunning = onGround;
                 isSliding = false;
@@ -635,6 +663,46 @@ namespace MacGame
                 }
             }
 
+        }
+
+        private void HandleMineCartInputs(float elapsed)
+        {
+            if (animations.currentAnimationName != "mineCart")
+            {
+                animations.Play("mineCart");
+            }
+
+            this.velocity.X = 60f;
+            if (flipped)
+            {
+                this.velocity.X *= -1;
+            }
+
+            // Jump
+            if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
+            {
+                // Regular jump.
+                this.velocity.Y -= 150;
+                SoundManager.PlaySound("jump");
+            }
+
+            // If the tile to the right is colliding, flip the player
+            if (!flipped)
+            {
+                var tileToTheRight = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Right + 1, this.CollisionRectangle.Center.Y));
+                if (tileToTheRight != null && !tileToTheRight.Passable)
+                {
+                    this.flipped = true;
+                }
+            }
+            else
+            {
+                var tileToTheLeft = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Left - 1, this.CollisionRectangle.Center.Y));
+                if (tileToTheLeft != null && !tileToTheLeft.Passable)
+                {
+                    this.flipped = false;
+                }
+            }
         }
 
         public void Kill()

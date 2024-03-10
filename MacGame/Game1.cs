@@ -145,7 +145,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
 
             // Load map and adjust Camera
-            currentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+            currentLevel = sceneManager.LoadLevel("TestLevel4", Content, Player, Camera);
 
             Camera.Map = currentLevel.Map;
 
@@ -373,7 +373,8 @@ namespace MacGame
                     for (int i = 0; i < Player.Health; i++)
                     {
                         var xPos = (int)Camera.ViewPort.X + 2 + (i * 8);
-                        spriteBatch.Draw(textures, new Rectangle(xPos, 2, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
+                        var yPos = (int)Camera.ViewPort.Y + 2;
+                        spriteBatch.Draw(textures, new Rectangle(xPos, yPos, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
                     }
                     break;
                 case GameState.TitleScreen:

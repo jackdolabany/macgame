@@ -152,6 +152,21 @@
    <property name="LoadClass" value="Enemy.Bat"/>
   </properties>
  </tile>
+ <tile id="132">
+  <properties>
+   <property name="BlockPlayer" value="slopeup"/>
+  </properties>
+ </tile>
+ <tile id="133">
+  <properties>
+   <property name="BlockPlayer" value="slopedown"/>
+  </properties>
+ </tile>
+ <tile id="146">
+  <properties>
+   <property name="LoadClass" value="MineCart"/>
+  </properties>
+ </tile>
  <tile id="160">
   <properties>
    <property name="LoadClass" value="Door"/>

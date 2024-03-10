@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace MacGame
+namespace MacGame.DisplayComponents
 {
     public class NoDisplay : DisplayComponent
     {
@@ -21,7 +21,7 @@ namespace MacGame
         public NoDisplay()
             : base()
         {
-            this.RotationAndDrawOrigin = new Vector2(0, 0);
+            RotationAndDrawOrigin = new Vector2(0, 0);
         }
 
         private Vector2 WorldLocation { get; set; }

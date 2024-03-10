@@ -1,34 +1,35 @@
 ﻿using System;
-using MacGame;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
-    public class Bat : Enemy
+    public class Bee : Enemy
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         private float speed = 10;
-        private float startLocationX;
-        private float maxTravelDistance = 12;
-
-        public Bat(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        private float startLocationY;
+        private float maxTravelDistance = 8;
+        private bool goingUp = false;
+        public Bee(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            this.DisplayComponent = new AnimationDisplay();
+            DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var fly = new AnimationStrip(textures, new Rectangle(0, 8 * 8, 8, 8), 2, "fly");
+            var fly = new AnimationStrip(textures, new Rectangle(24, 16, 8, 8), 2, "fly");
             fly.LoopAnimation = true;
             fly.FrameLength = 0.14f;
             animations.Add(fly);
 
             animations.Play("fly");
 
+            isTileColliding = false;
             isEnemyTileColliding = false;
             Attack = 1;
             Health = 1;
@@ -36,14 +37,14 @@ namespace MacGame
 
             SetCenteredCollisionRectangle(6, 7);
 
-            startLocationX = this.WorldLocation.X;
+            startLocationY = WorldLocation.Y;
         }
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(this.WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
 
-            this.Enabled = false;
+            Enabled = false;
             base.Kill();
         }
 
@@ -52,23 +53,25 @@ namespace MacGame
 
             if (Alive)
             {
-                this.velocity.X = speed;
-                if (flipped)
+                velocity.Y = speed;
+                if (goingUp)
                 {
-                    this.velocity.X *= -1;
+                    velocity.Y *= -1;
                 }
             }
 
-            var travelDistance = (int)this.WorldCenter.X - startLocationX;
+            var travelDistance = (int)WorldLocation.Y - startLocationY;
 
-            if(this.velocity.X > 0 && travelDistance >= maxTravelDistance)
+            if (velocity.Y > 0 && travelDistance >= maxTravelDistance)
             {
-                this.flipped = !this.flipped;
+                goingUp = !goingUp;
             }
-            else if (this.velocity.X < 0 && travelDistance <= -maxTravelDistance)
+            else if (velocity.Y < 0 && travelDistance <= -maxTravelDistance)
             {
-                this.flipped = !this.flipped;
+                goingUp = !goingUp;
             }
+
+            flipped = WorldCenter.X >= Player.WorldCenter.X;
 
             base.Update(gameTime, elapsed);
 

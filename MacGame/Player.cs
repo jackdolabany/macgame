@@ -1,5 +1,4 @@
-﻿using MacGame;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,6 +15,8 @@ using Microsoft.Xna.Framework.Audio;
 using System.Net.Http;
 using System.Diagnostics;
 using TileEngine;
+using MacGame.Enemies;
+using MacGame.DisplayComponents;
 
 namespace MacGame
 {

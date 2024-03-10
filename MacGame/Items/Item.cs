@@ -7,20 +7,20 @@ using System.Text;
 using System.Threading.Tasks;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Items
 {
     public abstract class Item : GameObject
     {
         public Item(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
-        { 
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
+        {
+            WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
         }
 
         public virtual void Collect(Player player)
         {
             WhenCollected(player);
-            this.Enabled = false;
+            Enabled = false;
         }
 
         public abstract void WhenCollected(Player player);

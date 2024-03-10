@@ -1,11 +1,11 @@
 ﻿using System;
-using MacGame;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
     public class Beetle : Enemy
     {
@@ -19,7 +19,7 @@ namespace MacGame
         public Beetle(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            this.DisplayComponent = new AnimationDisplay();
+            DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var walk = new AnimationStrip(textures, new Rectangle(7 * Game1.TileSize, 5 * Game1.TileSize, 8, 8), 2, "walk");
@@ -37,14 +37,14 @@ namespace MacGame
 
             SetCenteredCollisionRectangle(6, 7);
 
-            startLocationY = this.WorldLocation.Y;
+            startLocationY = WorldLocation.Y;
         }
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(this.WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
 
-            this.Enabled = false;
+            Enabled = false;
             base.Kill();
         }
 
@@ -53,15 +53,15 @@ namespace MacGame
 
             if (Alive)
             {
-                this.velocity.Y = speed;
+                velocity.Y = speed;
                 if (goingUp)
                 {
-                    this.velocity.Y *= -1;
-                    this.Rotation = 0f;
+                    velocity.Y *= -1;
+                    Rotation = 0f;
                 }
                 else
                 {
-                    this.Rotation = MathHelper.Pi;
+                    Rotation = MathHelper.Pi;
                 }
             }
 
@@ -69,7 +69,7 @@ namespace MacGame
             // ditto for moving down.
             if (goingUp)
             {
-                var tileAbove = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldLocation + new Vector2(0, -Game1.TileSize - 1));
+                var tileAbove = Game1.CurrentMap.GetMapSquareAtPixel(WorldLocation + new Vector2(0, -Game1.TileSize - 1));
                 if (tileAbove == null || !tileAbove.IsVine)
                 {
                     goingUp = false;
@@ -77,7 +77,7 @@ namespace MacGame
             }
             else
             {
-                var tileAbove = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldLocation + new Vector2(0, 1));
+                var tileAbove = Game1.CurrentMap.GetMapSquareAtPixel(WorldLocation + new Vector2(0, 1));
                 if (tileAbove == null || !tileAbove.IsVine)
                 {
                     goingUp = true;

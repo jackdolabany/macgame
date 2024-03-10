@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using TileEngine;
 using MacGame.RevealBlocks;
+using MacGame.Enemies;
+using MacGame.Items;
 
 namespace MacGame
 {

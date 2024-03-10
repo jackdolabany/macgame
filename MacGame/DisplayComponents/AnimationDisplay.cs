@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace MacGame
+namespace MacGame.DisplayComponents
 {
     public class AnimationDisplay : DisplayComponent
     {
@@ -16,7 +16,7 @@ namespace MacGame
         public AnimationDisplay()
             : base()
         {
-            this.drawObject = new DrawObject();
+            drawObject = new DrawObject();
         }
 
         public void Add(string key, AnimationStrip animation)
@@ -37,12 +37,12 @@ namespace MacGame
                     drawObject.Texture,
                     new Vector2((int)drawObject.Position.X, (int)drawObject.Position.Y),
                     drawObject.SourceRectangle,
-                    this.TintColor,
-                    this.Rotation,
-                    this.RotationAndDrawOrigin,
-                    this.Scale,
+                    TintColor,
+                    Rotation,
+                    RotationAndDrawOrigin,
+                    Scale,
                     drawObject.Effect,
-                    this.DrawDepth);
+                    DrawDepth);
             }
         }
 
@@ -86,10 +86,10 @@ namespace MacGame
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)
         {
-            var currentAnimation = this.animations[this.currentAnimationName];
+            var currentAnimation = animations[currentAnimationName];
             return new Vector2(
               worldLocation.X,
-              worldLocation.Y - ((float)currentAnimation.FrameHeight / 2f));
+              worldLocation.Y - currentAnimation.FrameHeight / 2f);
         }
 
         public AnimationStrip? Play(string name, int startFrame)

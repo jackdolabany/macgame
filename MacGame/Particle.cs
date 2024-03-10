@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using TileEngine;
 using Microsoft.Xna.Framework.Graphics;
+using MacGame.DisplayComponents;
 
 namespace MacGame
 {

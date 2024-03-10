@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 using System.Collections.Generic;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
     public class Enemy : GameObject
     {
@@ -27,11 +27,11 @@ namespace MacGame
             }
         }
 
-        public bool Alive 
-        { 
-            get 
-            { 
-                return !Dead; 
+        public bool Alive
+        {
+            get
+            {
+                return !Dead;
             }
             set
             {
@@ -50,7 +50,7 @@ namespace MacGame
         public bool IsPlayerColliding = true;
 
 
-        public bool IsInvincibleAfterHit 
+        public bool IsInvincibleAfterHit
         {
             get
             {
@@ -77,7 +77,7 @@ namespace MacGame
 
         public Vector2 GetDirectionTo(GameObject target)
         {
-            var vect = target.WorldCenter - this.CollisionCenter;
+            var vect = target.WorldCenter - CollisionCenter;
             vect.Normalize();
             return vect;
         }
@@ -89,11 +89,11 @@ namespace MacGame
         public Enemy(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base()
         {
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
+            WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
             isEnemyTileColliding = true;
             IsAbleToMoveOutsideOfWorld = false;
-            this.Player = player;
+            Player = player;
             IsCustomPlayerColliding = false;
             this.camera = camera;
         }
@@ -121,10 +121,10 @@ namespace MacGame
         /// </summary>
         protected void GoToWaypoint(float speed, Vector2 wayPoint)
         {
-            var currentTargetWorldLocation = (wayPoint * new Vector2(TileMap.TileSize, TileMap.TileSize)) + new Vector2(TileMap.TileSize / 2, TileMap.TileSize / 2);
+            var currentTargetWorldLocation = wayPoint * new Vector2(TileMap.TileSize, TileMap.TileSize) + new Vector2(TileMap.TileSize / 2, TileMap.TileSize / 2);
             var vectorToLocation = currentTargetWorldLocation - CollisionCenter;
             vectorToLocation.Normalize();
-            this.Velocity = speed * vectorToLocation;
+            Velocity = speed * vectorToLocation;
         }
 
         /// <summary>
@@ -132,12 +132,12 @@ namespace MacGame
         /// </summary>
         protected bool IsAtWaypoint(Vector2 wayPoint)
         {
-            var center = this.CollisionCenter;
+            var center = CollisionCenter;
             var currentTarget = wayPoint * new Vector2(TileMap.TileSize, TileMap.TileSize);
-            return (center.X > currentTarget.X
+            return center.X > currentTarget.X
                 && center.X < currentTarget.X + TileMap.TileSize
                 && center.Y > currentTarget.Y
-                && center.Y < currentTarget.Y + TileMap.TileSize);
+                && center.Y < currentTarget.Y + TileMap.TileSize;
         }
 
         public virtual void HandleCustomPlayerCollision(Player player)
@@ -157,7 +157,7 @@ namespace MacGame
                 return;
             }
 
-            this.ForceVelocity += force;
+            ForceVelocity += force;
             isEnemyTileColliding = false;
             Health -= damage;
             if (Health <= 0)
@@ -196,11 +196,11 @@ namespace MacGame
 
                 if (_invincibleFlashTimer < 0)
                 {
-                    this.DisplayComponent.TintColor = Color.White * 0.4f;
+                    DisplayComponent.TintColor = Color.White * 0.4f;
                 }
                 else
                 {
-                    this.DisplayComponent.TintColor = Color.White;
+                    DisplayComponent.TintColor = Color.White;
                 }
                 if (_invincibleFlashTimer <= -0.1f)
                 {
@@ -227,25 +227,25 @@ namespace MacGame
 
             // decelerate the force from an impact
             var decelerateAmount = 2f;
-            if (this.ForceVelocity != Vector2.Zero)
+            if (ForceVelocity != Vector2.Zero)
             {
                 float newX = 0;
                 float newY = 0;
-                if (this.ForceVelocity.X > 0)
+                if (ForceVelocity.X > 0)
                 {
-                    newX = Math.Max(0f, this.ForceVelocity.X - decelerateAmount);
+                    newX = Math.Max(0f, ForceVelocity.X - decelerateAmount);
                 }
                 else
                 {
-                    newX = Math.Min(0f, this.ForceVelocity.X + decelerateAmount);
+                    newX = Math.Min(0f, ForceVelocity.X + decelerateAmount);
                 }
-                if (this.ForceVelocity.Y > 0)
+                if (ForceVelocity.Y > 0)
                 {
-                    newY = Math.Max(0f, this.ForceVelocity.Y - decelerateAmount);
+                    newY = Math.Max(0f, ForceVelocity.Y - decelerateAmount);
                 }
                 else
                 {
-                    newY = Math.Min(0f, this.ForceVelocity.Y + decelerateAmount);
+                    newY = Math.Min(0f, ForceVelocity.Y + decelerateAmount);
                 }
 
                 // Prevent enemies from sticking on the ceiling
@@ -254,7 +254,7 @@ namespace MacGame
                     newY = 0;
                 }
 
-                this.ForceVelocity = new Vector2(newX, newY);
+                ForceVelocity = new Vector2(newX, newY);
             }
         }
 

@@ -1,5 +1,4 @@
 ﻿using MacGame.Platforms;
-using MacGame;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,6 +9,8 @@ using System.Threading.Tasks;
 using TileEngine;
 using MacGame.RevealBlocks;
 using System.Runtime.CompilerServices;
+using MacGame.Enemies;
+using MacGame.Items;
 
 namespace MacGame
 {

@@ -1,11 +1,11 @@
 ﻿using System;
-using MacGame;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
     public class Frog : Enemy
     {
@@ -17,7 +17,7 @@ namespace MacGame
         public Frog(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            this.DisplayComponent = new AnimationDisplay();
+            DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var idle = new AnimationStrip(textures, new Rectangle(0, 6 * 8, 8, 16), 1, "idle");
@@ -50,23 +50,23 @@ namespace MacGame
 
             // Push him down 8 pixels because his collsiion rect is only the top 8 pixels to not
             // count his jumping frog legs.
-            this.worldLocation.Y += 8;
+            worldLocation.Y += 8;
             CollisionRectangle = new Rectangle(-4, -16, 8, 8);
 
         }
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(this.WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
 
-            this.Enabled = false;
+            Enabled = false;
             base.Kill();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (Alive && Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+            if (Alive && Game1.Camera.IsObjectVisible(CollisionRectangle))
             {
                 jumpTimer -= elapsed;
 
@@ -75,11 +75,11 @@ namespace MacGame
                     jumpTimer = 2;
                     animations.Play("jump");
                     SoundManager.PlaySound("jump", 0.5f, -0.2f);
-                    this.velocity.Y -= 150;
-                    this.velocity.X = 30;
+                    velocity.Y -= 150;
+                    velocity.X = 30;
                     if (Game1.Randy.NextBool())
                     {
-                        this.velocity.X *= -1;
+                        velocity.X *= -1;
                     }
                 }
             }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TileEngine;
+using MacGame.DisplayComponents;
 
 namespace MacGame
 {

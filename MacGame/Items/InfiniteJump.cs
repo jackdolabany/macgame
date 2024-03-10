@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MacGame.DisplayComponents;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,16 +12,16 @@ using System.Threading.Tasks;
 using TileEngine;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace MacGame
+namespace MacGame.Items
 {
-    public class Heart : Item
+    public class InfiniteJump : Item
     {
-        public Heart(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public InfiniteJump(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
-            this.DisplayComponent = image;
-            image.Source = new Rectangle(8, 16, 8, 8);
+            DisplayComponent = image;
+            image.Source = new Rectangle(0, 13 * TileMap.TileSize, TileMap.TileSize, TileMap.TileSize);
             SetCenteredCollisionRectangle(8, 8);
         }
 
@@ -32,7 +33,7 @@ namespace MacGame
                 player.Health = Player.MaxHealth;
             }
             SoundManager.PlaySound("health");
-            EffectsManager.EnemyPop(this.WorldCenter, 7, Color.Red, 20);
+            EffectsManager.EnemyPop(WorldCenter, 7, Color.Red, 20);
         }
     }
 }

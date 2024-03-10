@@ -1,11 +1,11 @@
 ﻿using System;
-using MacGame;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
     public class Cricket : Enemy
     {
@@ -20,7 +20,7 @@ namespace MacGame
         public Cricket(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            this.DisplayComponent = new AnimationDisplay();
+            DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var walk = new AnimationStrip(textures, new Rectangle(3 * 8, 7 * 8, 8, 8), 2, "walk");
@@ -37,14 +37,14 @@ namespace MacGame
 
             SetCenteredCollisionRectangle(8, 5);
 
-            startLocationX = this.WorldLocation.X;
+            startLocationX = WorldLocation.X;
         }
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(this.WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
 
-            this.Enabled = false;
+            Enabled = false;
             base.Kill();
         }
 
@@ -53,22 +53,22 @@ namespace MacGame
 
             if (Alive)
             {
-                this.velocity.X = speed;
+                velocity.X = speed;
                 if (flipped)
                 {
-                    this.velocity.X *= -1;
+                    velocity.X *= -1;
                 }
             }
 
-            var travelDistance = (int)this.WorldCenter.X - startLocationX;
+            var travelDistance = (int)WorldCenter.X - startLocationX;
 
-            if(this.velocity.X > 0 && travelDistance >= maxTravelDistance)
+            if (velocity.X > 0 && travelDistance >= maxTravelDistance)
             {
-                this.flipped = !this.flipped;
+                flipped = !flipped;
             }
-            else if (this.velocity.X < 0 && travelDistance <= -maxTravelDistance)
+            else if (velocity.X < 0 && travelDistance <= -maxTravelDistance)
             {
-                this.flipped = !this.flipped;
+                flipped = !flipped;
             }
 
             jumpTimer -= elapsed;
@@ -77,7 +77,7 @@ namespace MacGame
                 jumpTimer = 1.0f;
                 if (OnGround)
                 {
-                    this.velocity.Y -= 100;
+                    velocity.Y -= 100;
                 }
             }
 

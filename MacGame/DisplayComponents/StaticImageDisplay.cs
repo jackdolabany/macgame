@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace MacGame
+namespace MacGame.DisplayComponents
 {
     public class StaticImageDisplay : DisplayComponent
     {
@@ -39,7 +39,7 @@ namespace MacGame
         public StaticImageDisplay(Texture2D texture, Rectangle textureSourceRectangle)
             : base()
         {
-            this.DrawObject = new DrawObject()
+            DrawObject = new DrawObject()
             {
                 Texture = texture,
                 SourceRectangle = textureSourceRectangle
@@ -49,7 +49,7 @@ namespace MacGame
         public StaticImageDisplay(Texture2D texture)
             : base()
         {
-            this.DrawObject = new DrawObject()
+            DrawObject = new DrawObject()
             {
                 Texture = texture,
                 SourceRectangle = texture.BoundingRectangle()
@@ -64,12 +64,12 @@ namespace MacGame
                     DrawObject.Texture,
                     new Vector2((int)DrawObject.Position.X, (int)DrawObject.Position.Y),
                     DrawObject.SourceRectangle,
-                    this.TintColor,
-                    this.Rotation,
-                    this.RotationAndDrawOrigin,
-                    this.Scale,
+                    TintColor,
+                    Rotation,
+                    RotationAndDrawOrigin,
+                    Scale,
                     DrawObject.Effect,
-                    this.DrawDepth);
+                    DrawDepth);
             }
         }
 
@@ -93,7 +93,7 @@ namespace MacGame
         {
             return new Vector2(
               worldLocation.X,
-              worldLocation.Y - ((float)this.DrawObject.SourceRectangle.Height / 2f));
+              worldLocation.Y - DrawObject.SourceRectangle.Height / 2f);
         }
     }
 }

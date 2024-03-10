@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MacGame
+namespace MacGame.DisplayComponents
 {
     public class AnimationStrip
     {
         private float frameTimer = 0f;
 
         public int currentFrameIndex;
-        
+
         Rectangle FirstFrame { get; set; }
 
         public int FrameWidth
@@ -83,18 +83,18 @@ namespace MacGame
         /// <param name="frameCount">The number of frames in the animation.</param>
         public AnimationStrip(Texture2D texture, Rectangle firstFrame, int frameCount, string name)
         {
-            this.Texture = texture;
-            this.FirstFrame = firstFrame;
-            this.FrameCount = frameCount;
-            this.Name = name;
-            this.FrameLength = 0.05f;
-            this.NextAnimation = "";
+            Texture = texture;
+            FirstFrame = firstFrame;
+            FrameCount = frameCount;
+            Name = name;
+            FrameLength = 0.05f;
+            NextAnimation = "";
         }
 
         public AnimationStrip Play(int currentFrame)
         {
-            this.currentFrameIndex = currentFrame;
-            this.frameTimer = 0;
+            currentFrameIndex = currentFrame;
+            frameTimer = 0;
             FinishedPlaying = false;
             return this;
         }
@@ -106,7 +106,7 @@ namespace MacGame
 
         public AnimationStrip FollowedBy(string animationName)
         {
-            this.NextAnimation = animationName;
+            NextAnimation = animationName;
             return this;
         }
 
@@ -142,13 +142,13 @@ namespace MacGame
 
         public object Clone()
         {
-            AnimationStrip clone = new AnimationStrip(this.Texture, this.FirstFrame, this.FrameCount, this.Name);
-            clone.currentFrameIndex = this.currentFrameIndex;
-            clone.FrameLength = this.FrameLength;
-            clone.LoopAnimation = this.LoopAnimation;
-            clone.NextAnimation = this.NextAnimation;
-            clone.Oscillate = this.Oscillate;
-            clone.Reverse = this.Reverse;
+            AnimationStrip clone = new AnimationStrip(Texture, FirstFrame, FrameCount, Name);
+            clone.currentFrameIndex = currentFrameIndex;
+            clone.FrameLength = FrameLength;
+            clone.LoopAnimation = LoopAnimation;
+            clone.NextAnimation = NextAnimation;
+            clone.Oscillate = Oscillate;
+            clone.Reverse = Reverse;
             return clone;
         }
     }

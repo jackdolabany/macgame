@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MacGame
+namespace MacGame.DisplayComponents
 {
     public abstract class DisplayComponent
     {
@@ -41,7 +41,7 @@ namespace MacGame
 
         public virtual void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
         {
-            this.Flipped = flipped;
+            Flipped = flipped;
         }
 
         protected static Vector2 RotateAroundOrigin(Vector2 point, Vector2 origin, float rotation)

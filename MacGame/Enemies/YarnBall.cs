@@ -1,11 +1,11 @@
 ﻿using System;
-using MacGame;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
     public class YarnBall : Enemy
     {
@@ -16,9 +16,9 @@ namespace MacGame
             : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            this.DisplayComponent = new StaticImageDisplay(textures);
+            DisplayComponent = new StaticImageDisplay(textures);
             image.Source = new Rectangle(5 * 8, 2 * 8, 8, 8);
-           
+
             isTileColliding = false;
             isEnemyTileColliding = false;
             Attack = 1;
@@ -32,9 +32,9 @@ namespace MacGame
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(this.WorldCenter, 10, Color.Pink, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.Pink, 30f);
 
-            this.Enabled = false;
+            Enabled = false;
             base.Kill();
         }
     }

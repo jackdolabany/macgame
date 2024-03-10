@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace MacGame
+namespace MacGame.DisplayComponents
 {
     public class TextDisplay : DisplayComponent
     {
@@ -17,7 +17,7 @@ namespace MacGame
         /// </summary>
         public float GetHeight()
         {
-            return (float)Game1.Font.LineSpacing * Scale;
+            return Game1.Font.LineSpacing * Scale;
         }
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace MacGame
         public TextDisplay(string text)
             : base()
         {
-            this.Text = text;
-            this.RotationAndDrawOrigin = new Vector2(GetWidth() / 2, GetHeight() / 2);
+            Text = text;
+            RotationAndDrawOrigin = new Vector2(GetWidth() / 2, GetHeight() / 2);
         }
 
         private Vector2 WorldLocation { get; set; }
@@ -41,7 +41,7 @@ namespace MacGame
         {
             base.Update(gameTime, elapsed, position, flipped);
             WorldLocation = position;
-            this.Flipped = flipped;
+            Flipped = flipped;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -49,14 +49,14 @@ namespace MacGame
             if (!string.IsNullOrEmpty(Text))
             {
                 spriteBatch.DrawString(Game1.Font,
-                    this.Text,
-                    this.WorldLocation,
-                    this.TintColor,
-                    this.Rotation,
-                    this.RotationAndDrawOrigin,
-                    this.Scale,
-                    this.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    this.DrawDepth);
+                    Text,
+                    WorldLocation,
+                    TintColor,
+                    Rotation,
+                    RotationAndDrawOrigin,
+                    Scale,
+                    Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    DrawDepth);
             }
         }
 

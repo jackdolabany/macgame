@@ -1,11 +1,11 @@
 ﻿using System;
-using MacGame;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Enemies
 {
     public class CatBoss : Enemy
     {
@@ -27,7 +27,7 @@ namespace MacGame
         public CatBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            this.DisplayComponent = new AnimationDisplay();
+            DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var idle = new AnimationStrip(textures, new Rectangle(40, 0, 16, 16), 3, "idle");
@@ -54,7 +54,7 @@ namespace MacGame
                 yarnBalls[i].Enabled = false;
                 Level.AddEnemy(yarnBalls[i]);
             }
-            startLocationX = (int)this.WorldLocation.X;
+            startLocationX = (int)WorldLocation.X;
         }
 
         public override void TakeHit(int damage, Vector2 force)
@@ -68,9 +68,9 @@ namespace MacGame
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(this.WorldCenter, 40, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 40, Color.White, 30f);
 
-            this.Enabled = false;
+            Enabled = false;
             base.Kill();
         }
 
@@ -80,13 +80,13 @@ namespace MacGame
 
             if (!hasBeenSeen)
             {
-                if (Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+                if (Game1.Camera.IsObjectVisible(CollisionRectangle))
                 {
                     hasBeenSeen = true;
                     SoundManager.PlaySong("BossFight", true, 0.2f);
                     Game1.Camera.CanScrollLeft = false;
                 }
-            } 
+            }
 
             if (hasBeenSeen && Alive)
             {
@@ -97,7 +97,7 @@ namespace MacGame
                     var yarnBall = yarnBalls[nextYarnBallToThrowIndex];
                     yarnBall.Enabled = true;
                     yarnBall.Alive = true;
-                    yarnBall.WorldLocation = this.WorldCenter;
+                    yarnBall.WorldLocation = WorldCenter;
                     var direction = Player.WorldCenter - yarnBall.WorldCenter;
                     direction.Normalize();
                     yarnBall.Velocity = direction * 50;
@@ -110,21 +110,21 @@ namespace MacGame
                     throwTimer = maxThrowTimer;
                 }
 
-                this.velocity.X = walkSpeed;
+                velocity.X = walkSpeed;
                 if (flipped)
                 {
-                    this.velocity.X *= -1;
+                    velocity.X *= -1;
                 }
 
-                var travelDistance = (int)this.WorldCenter.X - startLocationX;
+                var travelDistance = (int)WorldCenter.X - startLocationX;
 
-                if (this.velocity.X > 0 && travelDistance >= maxTravelDistance)
+                if (velocity.X > 0 && travelDistance >= maxTravelDistance)
                 {
-                    this.flipped = !this.flipped;
+                    flipped = !flipped;
                 }
-                else if (this.velocity.X < 0 && travelDistance <= -maxTravelDistance)
+                else if (velocity.X < 0 && travelDistance <= -maxTravelDistance)
                 {
-                    this.flipped = !this.flipped;
+                    flipped = !flipped;
                 }
 
             }

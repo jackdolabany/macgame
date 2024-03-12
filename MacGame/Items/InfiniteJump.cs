@@ -17,8 +17,6 @@ namespace MacGame.Items
     public class InfiniteJump : Item
     {
 
-        private Camera _camera;
-
         public InfiniteJump(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
@@ -27,7 +25,7 @@ namespace MacGame.Items
             image.Source = new Rectangle(11 * TileMap.TileSize, 0, TileMap.TileSize, TileMap.TileSize);
             SetCenteredCollisionRectangle(8, 8);
             _player = player;
-            _camera = camera;
+            IsReenabled = true;
         }
 
         public override void WhenCollected(Player player)
@@ -39,15 +37,6 @@ namespace MacGame.Items
         public override void Update(GameTime gameTime, float elapsed)
         {
             base.Update(gameTime, elapsed);
-
-            if (!Enabled)
-            {
-                // re-enable if the player doesn't have it and they item is off screen.
-                if (_player.CurrentItem != this && !_camera.IsObjectVisible(this.CollisionRectangle))
-                {
-                    this.Enabled = true;
-                }
-            }
         }
     }
 }

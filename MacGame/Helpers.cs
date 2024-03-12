@@ -217,6 +217,11 @@ namespace MacGame
         {
             return new Vector2((float)Math.Floor(worldLocation.X / TileMap.TileSize), (float)Math.Floor(worldLocation.Y / TileMap.TileSize));
         }
+        
+        public static Vector2 ToIntegerVector(this Vector2 vector)
+        {
+            return new Vector2((int)vector.X, (int)vector.Y);
+        }
 
         public static Vector2 RelativeCenterVector(this Texture2D texture)
         {

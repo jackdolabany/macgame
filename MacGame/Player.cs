@@ -84,6 +84,11 @@ namespace MacGame
         private float InfiniteJumpTimer = 0f;
         public Item CurrentItem = null;
 
+        /// <summary>
+        /// if Mac is using the wing, it'll render behind him.
+        /// </summary>
+        MacWings wings;
+        
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -149,6 +154,9 @@ namespace MacGame
             InputManager = inputManager;
             _deadMenu = deadMenu;
 
+            // Use this one wing image to draw flapping wings.
+            wings = new MacWings(this, textures);
+
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -165,6 +173,11 @@ namespace MacGame
             else
             {
                 HandleInputs(elapsed);
+            }
+
+            if (HasInfiniteJump)
+            {
+                wings.Update(gameTime, elapsed);
             }
 
             if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
@@ -628,6 +641,8 @@ namespace MacGame
             // Limit the time the player has the infinite jump powerup. They'll only lose it after some time if they hit the ground.
             if (HasInfiniteJump)
             {
+
+
                 InfiniteJumpTimer += elapsed;
                 if ((InfiniteJumpTimer >= 6f && OnGround) || isClimbingLadder || isClimbingVine)
                 {
@@ -746,6 +761,10 @@ namespace MacGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if(HasInfiniteJump)
+            {
+                wings.Draw(spriteBatch);
+            }
             base.Draw(spriteBatch);
         }
 

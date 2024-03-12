@@ -98,17 +98,11 @@ namespace MacGame
                         Player.CheckEnemyInteractions(enemy);
                     }
                 }
+            }
 
-                foreach (var item in Items)
-                {
-                    if (item.Enabled)
-                    {
-                        if (Player.CollisionRectangle.Intersects(item.CollisionRectangle))
-                        {
-                            item.Collect(Player);
-                        }
-                    }
-                }
+            foreach (var item in Items)
+            {
+                item.Update(gameTime, elapsed);
             }
 
             // Doors

@@ -1,19 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MacGame.Platforms;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security;
-using System.Runtime.Intrinsics.X86;
-using Microsoft.Xna.Framework.Audio;
-using System.Net.Http;
-using System.Diagnostics;
 using TileEngine;
 using MacGame.Enemies;
 using MacGame.DisplayComponents;
@@ -81,8 +70,29 @@ namespace MacGame
             }
         }
 
+        public ObjectPool<Apple> Apples;
+
+        private bool HasApples
+        {
+            get
+            {
+                return this.CurrentItem is Apples;
+            }
+        }
+
+        private float appleCooldownTimer = 0f;
+        private const float appleCooldownTime = 0.3f;
+
         private float InfiniteJumpTimer = 0f;
         public Item CurrentItem = null;
+
+        private bool HasShovel
+        {
+            get
+            {
+                return this.CurrentItem is Shovel;
+            }
+        }
 
         /// <summary>
         /// if Mac is using the wing, it'll render behind him.
@@ -157,6 +167,9 @@ namespace MacGame
             // Use this one wing image to draw flapping wings.
             wings = new MacWings(this, textures);
 
+            Apples = new ObjectPool<Apple>(2);
+            Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
+            Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -210,6 +223,14 @@ namespace MacGame
             }
 
             base.Update(gameTime, elapsed);
+            
+            foreach (var apple in Apples.RawList)
+            {
+                if (apple.Enabled)
+                {
+                    apple.Update(gameTime, elapsed);
+                }
+            }
 
         }
 
@@ -237,7 +258,20 @@ namespace MacGame
                     }
 
                 }
-
+                else
+                {
+                    foreach (var apple in Apples.RawList)
+                    {
+                        if (apple.Enabled)
+                        {
+                            if(apple.CollisionRectangle.Intersects(enemy.CollisionRectangle))
+                            {
+                                apple.Smash();
+                                enemy.TakeHit(1, Vector2.Zero);
+                            }
+                        }
+                    }
+                }
             }
 
         }
@@ -661,6 +695,44 @@ namespace MacGame
                 velocity.X = 0;
             }
 
+            // Mac throws an apple if he has them.
+            if (HasApples && appleCooldownTimer < appleCooldownTime)
+            {
+                appleCooldownTimer += elapsed;
+            }
+
+            if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack && HasApples && appleCooldownTimer >= appleCooldownTime)
+            {
+                var apple = Apples.TryGetObject();
+                if (apple != null)
+                {
+                    apple.Enabled = true;
+                    apple.WorldLocation = this.WorldLocation;
+                    apple.Velocity = new Vector2(70, 0);
+                    if (flipped)
+                    {
+                        apple.Velocity *= -1;
+                    }
+                    appleCooldownTimer = 0;
+                }
+            }
+
+            if (HasShovel)
+            {
+                if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
+                {
+                    var tileToDig = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 2));
+                    if (tileToDig != null && tileToDig.IsSand)
+                    {
+                        tileToDig.Passable = true;
+                        for (int i = 0; i < tileToDig.LayerTiles.Length; i++)
+                        {
+                            tileToDig.LayerTiles[i].Color = Color.Transparent;
+                        }
+                    }
+                }
+            }
+
             string nextAnimation;
             if (isJumping)
             {
@@ -764,6 +836,14 @@ namespace MacGame
             if(HasInfiniteJump)
             {
                 wings.Draw(spriteBatch);
+            }
+
+            foreach (var apple in Apples.RawList)
+            {
+                if (apple.Enabled)
+                {
+                    apple.Draw(spriteBatch);
+                }
             }
             base.Draw(spriteBatch);
         }

@@ -145,7 +145,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
 
             // Load map and adjust Camera
-            CurrentLevel = sceneManager.LoadLevel("TestLevel3", Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
 
             Camera.Map = CurrentLevel.Map;
 

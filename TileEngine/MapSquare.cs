@@ -17,6 +17,8 @@ namespace TileEngine
         public bool EnemyPassable { get; set; } = true;
         public bool PlatformPassable { get; set; } = true;
         public bool IsSand { get; set; } = false;
+
+        public bool IsMinecartTrack { get; set; } = false;
         public bool IsIce { get; set; } = false;
         public bool IsLadder { get; set; } = false;
         public bool IsVine { get; set; } = false;

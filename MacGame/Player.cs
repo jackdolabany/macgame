@@ -314,7 +314,7 @@ namespace MacGame
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
             var isSand = mapSquareBelow != null && mapSquareBelow.IsSand;
             var isIce = mapSquareBelow != null && mapSquareBelow.IsIce;
-
+            
             var environmentMaxWalkSpeed = maxSpeed;
             var acceleration = maxAcceleration;
 
@@ -803,6 +803,19 @@ namespace MacGame
             if (animations.currentAnimationName != "mineCart")
             {
                 animations.Play("mineCart");
+            }
+
+            // If you land on a tile that isn't track, then exit the minecart.
+            var bottomLeftTile = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(-4, -4));
+            var bottomLeftIsTrack = bottomLeftTile != null && bottomLeftTile.IsMinecartTrack;
+            
+            var bottomRightTile = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(4, -4));
+            var bottomRightIsTrack = bottomRightTile != null && bottomRightTile.IsMinecartTrack;
+
+            if (OnGround && !bottomLeftIsTrack && !bottomRightIsTrack)
+            {
+                IsInMineCart = false;
+                return;
             }
 
             this.velocity.X = 60f;

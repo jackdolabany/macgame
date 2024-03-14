@@ -722,31 +722,6 @@ namespace Squared.Tiled
                         if (tileInfo.properties.ContainsKey("LoadClass"))
                         {
                             tileMap.MapCells[x][y].LayerTiles[z].LoadClass = tileInfo.properties["LoadClass"];
-
-                            // Search to see if something in the object layer is trying to add some custom properties here
-                            foreach (var objectGroup in this.ObjectGroups.Values)
-                            {
-                                foreach (var kvp in objectGroup.Objects)
-                                {
-                                    var obj = kvp.Value;
-                                    // Check if this tile is contained by the object
-                                    var relativeX = Math.Floor((float)obj.X / (float)TileWidth);
-                                    var relativeY = Math.Floor((float)obj.Y / (float)TileHeight);
-                                    var relativeWidth = Math.Ceiling((float)obj.Width / (float)TileWidth);
-                                    var relativeHeight = Math.Ceiling((float)obj.Height / (float)TileHeight);
-                                    if (x >= relativeX
-                                        && x <= relativeX + relativeWidth
-                                        && y >= relativeY
-                                        && y <= relativeY + relativeHeight)
-                                    {
-                                        foreach (var property in obj.Properties)
-                                        {
-                                            tileMap.MapCells[x][y].LayerTiles[z].Properties.Add(property.Key, property.Value);
-                                        }
-                                    }
-                                }
-                            }
-
                         }
                         else if (tileInfo.properties.ContainsKey("BlockPlayer"))
                         {
@@ -774,6 +749,10 @@ namespace Squared.Tiled
                         else if (tileInfo.properties.ContainsKey("Ice"))
                         {
                             tileMap.MapCells[x][y].IsIce = true;
+                        }
+                        else if (tileInfo.properties.ContainsKey("MinecartTrack"))
+                        {
+                            tileMap.MapCells[x][y].IsMinecartTrack = true;
                         }
                         else if (tileInfo.properties.ContainsKey("Ladder"))
                         {

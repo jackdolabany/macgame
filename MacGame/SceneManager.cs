@@ -43,6 +43,8 @@ namespace MacGame
                 {
                     var mapSquare = map.GetMapSquareAtCell(x, y);
 
+                    mapSquare.ResetSand();
+
                     if (mapSquare.IsLadder)
                     {
                         var mapSquareAbove = map.GetMapSquareAtCell(x, y - 1);

@@ -93,6 +93,7 @@ namespace MacGame
                 return this.CurrentItem is Shovel;
             }
         }
+        private MacShovel shovel;
 
         /// <summary>
         /// if Mac is using the wing, it'll render behind him.
@@ -170,6 +171,8 @@ namespace MacGame
             Apples = new ObjectPool<Apple>(2);
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
+
+            shovel = new MacShovel(this, textures);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -191,6 +194,10 @@ namespace MacGame
             if (HasInfiniteJump)
             {
                 wings.Update(gameTime, elapsed);
+            }
+            if(HasShovel)
+            {
+                shovel.Update(gameTime, elapsed);
             }
 
             if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
@@ -721,15 +728,24 @@ namespace MacGame
             {
                 if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
                 {
-                    var tileToDig = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 2));
-                    if (tileToDig != null && tileToDig.IsSand)
-                    {
-                        tileToDig.Passable = true;
-                        for (int i = 0; i < tileToDig.LayerTiles.Length; i++)
-                        {
-                            tileToDig.LayerTiles[i].Color = Color.Transparent;
-                        }
+                    var digDirection = flipped ? DigDirection.Left : DigDirection.Right;
+                    if(InputManager.CurrentAction.up)
+                    {                         
+                        digDirection = DigDirection.Up;
                     }
+                    else if (InputManager.CurrentAction.down)
+                    {
+                        digDirection = DigDirection.Down;
+                    }
+                    else if (InputManager.CurrentAction.left)
+                    {
+                        digDirection = DigDirection.Left;
+                    }
+                    else if (InputManager.CurrentAction.right)
+                    {
+                        digDirection = DigDirection.Right;
+                    }
+                    shovel.TryDig(digDirection);
                 }
             }
 
@@ -826,6 +842,7 @@ namespace MacGame
         {
             Health = 0;
             Enabled = false;
+            this.CurrentItem = null;
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 50f);
             SoundManager.PlaySound("mac_death");
             MenuManager.AddMenu(_deadMenu);
@@ -836,6 +853,11 @@ namespace MacGame
             if(HasInfiniteJump)
             {
                 wings.Draw(spriteBatch);
+            }
+
+            if (HasShovel)
+            {
+                shovel.Draw(spriteBatch);
             }
 
             foreach (var apple in Apples.RawList)

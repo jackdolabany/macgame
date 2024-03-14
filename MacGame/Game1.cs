@@ -38,7 +38,7 @@ namespace MacGame
 
         private static SceneManager sceneManager;
 
-        private static Level currentLevel;
+        public static Level CurrentLevel;
 
         public static string TransitionToMap;
         public static string PutPlayerAtDoor;
@@ -47,7 +47,7 @@ namespace MacGame
         {
             get
             {
-                return currentLevel.Platforms;
+                return CurrentLevel.Platforms;
             }
         }
 
@@ -55,7 +55,7 @@ namespace MacGame
         {
             get
             {
-                return currentLevel?.Map;
+                return CurrentLevel?.Map;
             }
         }
 
@@ -145,9 +145,9 @@ namespace MacGame
             SoundManager.Initialize(Content);
 
             // Load map and adjust Camera
-            currentLevel = sceneManager.LoadLevel("TestLevel3", Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel("TestLevel3", Content, Player, Camera);
 
-            Camera.Map = currentLevel.Map;
+            Camera.Map = CurrentLevel.Map;
 
             // Basic Camera Setup
             Camera.Zoom = Camera.DEFAULT_ZOOM;
@@ -177,8 +177,8 @@ namespace MacGame
 
             if (loadLevel)
             {
-                currentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
-                Camera.Map = currentLevel.Map;
+                CurrentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+                Camera.Map = CurrentLevel.Map;
             }
         }
 
@@ -259,7 +259,7 @@ namespace MacGame
                 }
                 else
                 {
-                    currentLevel.Update(gameTime, elapsed);
+                    CurrentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
                 }
@@ -267,13 +267,13 @@ namespace MacGame
                 // See if it's time to go to another level.
                 if (!string.IsNullOrEmpty(TransitionToMap))
                 {
-                    currentLevel = sceneManager.LoadLevel(TransitionToMap, Content, Player, Camera);
-                    Camera.Map = currentLevel.Map;
+                    CurrentLevel = sceneManager.LoadLevel(TransitionToMap, Content, Player, Camera);
+                    Camera.Map = CurrentLevel.Map;
                     TransitionToMap = null;
 
                     if (!string.IsNullOrEmpty(PutPlayerAtDoor))
                     {
-                        foreach(var door in currentLevel.Doors)
+                        foreach(var door in CurrentLevel.Doors)
                         {
                             if (door.Name == PutPlayerAtDoor)
                             {
@@ -365,7 +365,7 @@ namespace MacGame
                         null,
                         cameraTransformation);
 
-                    currentLevel.Draw(spriteBatch, Camera.ViewPort);
+                    CurrentLevel.Draw(spriteBatch, Camera.ViewPort);
 
                     EffectsManager.Draw(spriteBatch);
 

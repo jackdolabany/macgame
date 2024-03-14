@@ -6,6 +6,9 @@ using TileEngine;
 
 namespace MacGame.Items
 {
+    /// <summary>
+    /// This item gives Mac a shovel to use to dig sand.
+    /// </summary>
     public class Shovel : Item
     {
 

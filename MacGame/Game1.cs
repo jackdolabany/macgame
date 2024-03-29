@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using TileEngine;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace MacGame
 {
@@ -42,6 +43,9 @@ namespace MacGame
 
         public static string TransitionToMap;
         public static string PutPlayerAtDoor;
+
+        // Must be set each time a level is loaded.
+        public static bool IsInHubWorld = true;
 
         public static IEnumerable<Platform> Platforms
         {
@@ -88,6 +92,9 @@ namespace MacGame
         private bool IsFading;
 
         InputManager inputManager;
+
+        // Some number strings so that we don't need to create garbage by boxing and unboxing numbers.
+        public static string[] Numbers = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
         public Game1()
         {
@@ -145,7 +152,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
 
             // Load map and adjust Camera
-            CurrentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel("TestMainRoom", Content, Player, Camera);
 
             Camera.Map = CurrentLevel.Map;
 
@@ -174,10 +181,12 @@ namespace MacGame
 
             Player.Enabled = true;
             Player.Health = Player.MaxHealth;
+            Player.CurrentItem = null;
+            Player.Tacos = 0;
 
             if (loadLevel)
             {
-                CurrentLevel = sceneManager.LoadLevel("TestLevel2", Content, Player, Camera);
+                CurrentLevel = sceneManager.LoadLevel("TestMainRoom", Content, Player, Camera);
                 Camera.Map = CurrentLevel.Map;
             }
         }
@@ -369,31 +378,23 @@ namespace MacGame
 
                     EffectsManager.Draw(spriteBatch);
 
-                    // Draw the HUD
-                    var yPos = (int)Camera.ViewPort.Y + 3;
-                    for (int i = 0; i < Player.Health; i++)
-                    {
-                        var xPos = (int)Camera.ViewPort.X + 2 + (i * 8);
-                        spriteBatch.Draw(textures, new Rectangle(xPos, yPos, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
-                    }
+                    spriteBatch.End();
 
-                    if (Player.CurrentItem != null)
-                    {
-                        spriteBatch.Draw(textures, new Rectangle((int)Camera.ViewPort.X + 118, yPos, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
-                    }
+                    // Draw the HUD over everything.
+                    spriteBatch.Begin();
+                    DrawHud(spriteBatch);
+                    spriteBatch.End();
 
                     break;
                 case GameState.TitleScreen:
 
                     spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
-
+                    spriteBatch.End();
                     break;
                 default:
                     throw new NotImplementedException($"Invalid game state: {_gameState}");
             }
-
-            spriteBatch.End();
 
             // Draw the menus to a new sprite batch ignoring the camera stuff.
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null);
@@ -429,6 +430,93 @@ namespace MacGame
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public static void DrawHud(SpriteBatch spriteBatch)
+        {
+            // Draw the hearts in the HUD
+            var hudYPos = 3;
+            for (int i = 0; i < Player.MaxHealth; i++)
+            {
+                var heartXPos = 2 + (i * 8);
+                if (i < Player.Health)
+                {
+                    spriteBatch.Draw(textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
+                }
+                else
+                {
+                    spriteBatch.Draw(textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(16, 16, 8, 8), Color.White);
+                }
+            }
+
+            // Draw the player's current item
+            if (Player.CurrentItem != null)
+            {
+                spriteBatch.Draw(textures, new Rectangle(2, 12, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
+            }
+
+            // Draw the number of tacos in the HUD for regular levels, or draw the Cricket coins for the Hub level.
+            Rectangle imageSource;
+            int count;
+
+            if (IsInHubWorld)
+            {
+                var cricketCoinSourceRect = new Rectangle(9 * TileSize, 2 * TileSize, 8, 8);
+                DrawNumberOfThingsOnRight(spriteBatch, cricketCoinSourceRect, Player.CricketCoins, GAME_X_RESOLUTION - 10, hudYPos);
+            }
+            else
+            {
+                var tacoIconSource = new Rectangle(8 * TileSize, 2 * TileSize, 8, 8);
+                DrawNumberOfThingsOnRight(spriteBatch, tacoIconSource, Player.Tacos, GAME_X_RESOLUTION - 10, hudYPos);
+            }
+
+            //var tacoXPos = GAME_X_RESOLUTION - 10;
+
+            //int onesPlace = Player.Tacos % 10;
+
+            //spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(tacoXPos, hudYPos), Color.White);
+
+            //if (Player.Tacos > 9)
+            //{
+            //    int tensPlace = (Player.Tacos / 10) % 10;
+            //    tacoXPos -= 8;
+            //    spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(tacoXPos, hudYPos), Color.White);
+            //}
+            //if (Player.Tacos > 99)
+            //{
+            //    int hundredsPlace = (Player.Tacos / 100) % 10;
+            //    tacoXPos -= 8;
+            //    spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(tacoXPos, hudYPos), Color.White);
+            //}
+
+            // Draw the taco image
+            /////////spriteBatch.Draw(textures, new Rectangle(tacoXPos - 8, hudYPos + 1, 8, 8), new Rectangle(8 * TileSize, 2 * TileSize, 8, 8), Color.White);
+        }
+
+        /// <summary>
+        /// Draws a thing and a count of it to the right side of the screen.
+        /// </summary>
+        private static void DrawNumberOfThingsOnRight(SpriteBatch spriteBatch, Rectangle iconSourceRectangle, int count, int rightMostX, int yPos)
+        {
+            int onesPlace = count % 10;
+
+            spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(rightMostX, yPos), Color.White);
+
+            if (count > 9)
+            {
+                int tensPlace = (count / 10) % 10;
+                rightMostX -= 8;
+                spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(rightMostX, yPos), Color.White);
+            }
+            if (count > 99)
+            {
+                int hundredsPlace = (count / 100) % 10;
+                rightMostX -= 8;
+                spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Color.White);
+            }
+
+            // Draw the icon image
+            spriteBatch.Draw(textures, new Rectangle(rightMostX - 8, yPos + 1, 8, 8), iconSourceRectangle, Color.White);
         }
 
         public static void DrawBlackOverScreen(SpriteBatch spriteBatch, float opacity)

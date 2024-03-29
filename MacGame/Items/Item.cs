@@ -43,7 +43,10 @@ namespace MacGame.Items
         /// <summary>
         /// Determines whether or not the item goes back in the box if you walk the box off screen.
         /// </summary>
-        protected bool IsReenabled = false;
+        protected bool IsReenabledOnceOffScreen = false;
+
+        // Whether nor not the item is free floating or starts locked in a chest.
+        protected bool IsInChest = true;
 
         public Item(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
         {
@@ -61,9 +64,6 @@ namespace MacGame.Items
             ClosedChest = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(14 * Game1.TileSize, 1 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
             OpenChestBottom = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(15 * Game1.TileSize, 1 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
             OpenChestTop = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(15 * Game1.TileSize, 0 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
-
-            
-        
         }
 
         private void Collect(Player player)
@@ -77,7 +77,7 @@ namespace MacGame.Items
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (!isInitialized)
+            if (!isInitialized && IsInChest)
             {
                 // Items render in a chest, they're blocking and only open up when the player jumps on them from below.
                 var cell = Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY);
@@ -88,11 +88,14 @@ namespace MacGame.Items
                 isInitialized = true;
             }
 
-            ClosedChest.Update(gameTime, elapsed, ChestPosition, false);
-            OpenChestBottom.Update(gameTime, elapsed, ChestPosition, false);
-            OpenChestTop.Update(gameTime, elapsed, ChestPosition, false);
+            if (IsInChest)
+            {
+                ClosedChest.Update(gameTime, elapsed, ChestPosition, false);
+                OpenChestBottom.Update(gameTime, elapsed, ChestPosition, false);
+                OpenChestTop.Update(gameTime, elapsed, ChestPosition, false);
+            }
 
-            if (!isOpen)
+            if (IsInChest && !isOpen)
             {
                 // Check if the pixel above the player is hitting the bottom of the chest.
                 var topOfPlayer = new Rectangle(_player.CollisionRectangle.X, _player.CollisionRectangle.Top, _player.CollisionRectangle.Width, 1);
@@ -100,12 +103,6 @@ namespace MacGame.Items
                 if (topOfPlayer.Intersects(bottomOfChest))
                 {
                     isOpen = true;
-                    //var cell = Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY);
-                    //if (cell != null)
-                    //{
-                    //    cell.Passable = true;
-                    //}
-                    // this.worldLocation.Y -= 3;
                 }
             }
             else if (Enabled)
@@ -116,7 +113,7 @@ namespace MacGame.Items
                     this.Collect(_player);
                 }
             }
-            else if (IsReenabled)
+            else if (IsReenabledOnceOffScreen)
             {
 
                 // re-enable if the player doesn't have it and they item is off screen.
@@ -130,7 +127,7 @@ namespace MacGame.Items
             }
 
             // Move up until it's just above the chest.
-            if(isOpen && this.worldLocation.Y > ChestPosition.Y - 7)
+            if (IsInChest && isOpen && this.worldLocation.Y > ChestPosition.Y - 7)
             {
                 this.velocity.Y = -4;
             }
@@ -144,19 +141,25 @@ namespace MacGame.Items
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!isOpen)
-            {
-                // Item renders as a chest until it's opened.
-                ClosedChest.Draw(spriteBatch);
+            if (IsInChest)
+            { 
+                if (!isOpen)
+                {
+                    // Item renders as a chest until it's opened.
+                    ClosedChest.Draw(spriteBatch);
+                }
+                else
+                {
+                    // Draw the item between the open top and bottom of the chest.
+                    OpenChestTop.Draw(spriteBatch);
+                    base.Draw(spriteBatch);
+                    OpenChestBottom.Draw(spriteBatch);
+                }
             }
             else
-            {
-                // Draw the item between the open top and bottom of the chest.
-                OpenChestTop.Draw(spriteBatch);
-                base.Draw(spriteBatch);
-                OpenChestBottom.Draw(spriteBatch);
+            { 
+                base.Draw(spriteBatch); 
             }
-
         }
     }
 }

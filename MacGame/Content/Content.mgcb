@@ -28,6 +28,16 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel2.tmx
 
+#begin Maps/TestLevel2.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestLevel2.tmx
+
+#begin Maps/TestLevel3.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestLevel3.tmx
+
 #begin Maps/TestLevel3.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -38,10 +48,30 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel4.tmx
 
+#begin Maps/TestLevel4.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestLevel4.tmx
+
+#begin Maps/TestMainRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestMainRoom.tmx
+
 #begin Maps/TestWingLevel.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/TestWingLevel.tmx
+
+#begin Maps/TestWingLevel.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWingLevel.tmx
+
+#begin Maps/TestWorld1.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWorld1.tmx
 
 #begin Music/BossFight.mp3
 /importer:Mp3Importer

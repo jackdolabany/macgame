@@ -61,9 +61,34 @@
    <property name="LoadClass" value="Enemy.Bee"/>
   </properties>
  </tile>
+ <tile id="40">
+  <properties>
+   <property name="LoadClass" value="Item.Taco"/>
+  </properties>
+ </tile>
+ <tile id="42">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="43">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="56">
   <properties>
    <property name="LoadClass" value="Enemy.Bird"/>
+  </properties>
+ </tile>
+ <tile id="58">
+  <properties>
+   <property name="LoadClass" value="Item.CricketCoin"/>
+  </properties>
+ </tile>
+ <tile id="59">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="64">

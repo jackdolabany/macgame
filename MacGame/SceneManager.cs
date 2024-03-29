@@ -22,12 +22,22 @@ namespace MacGame
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
 
+            var wasInHubRoom = Game1.IsInHubWorld;
+
+            Game1.IsInHubWorld = mapName == "TestMainRoom";
+
+            // If you transition in or out of a hub world, reset the tacos.
+            if (wasInHubRoom != Game1.IsInHubWorld)
+            {
+                player.Tacos = 0;
+            }
+
             TimerManager.Clear();
             Game1.Camera.CanScrollLeft = true;
             
             player.Velocity = Vector2.Zero;
             player.IsInMineCart = false;
-            
+
             SoundManager.PlaySong("Stage1", true, 0.2f);
 
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");

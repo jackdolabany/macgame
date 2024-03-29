@@ -2,15 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using TileEngine;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MacGame.Items
 {
@@ -25,7 +17,7 @@ namespace MacGame.Items
             image.Source = new Rectangle(11 * TileMap.TileSize, 0, TileMap.TileSize, TileMap.TileSize);
             SetCenteredCollisionRectangle(8, 8);
             _player = player;
-            IsReenabled = true;
+            IsReenabledOnceOffScreen = true;
         }
 
         public override void WhenCollected(Player player)

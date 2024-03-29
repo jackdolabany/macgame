@@ -20,7 +20,7 @@ namespace MacGame.Items
             image.Source = new Rectangle(11 * TileMap.TileSize, 1 * TileMap.TileSize, TileMap.TileSize, TileMap.TileSize);
             SetCenteredCollisionRectangle(8, 8);
             _player = player;
-            IsReenabled = true;
+            IsReenabledOnceOffScreen = true;
         }
 
         public override void WhenCollected(Player player)

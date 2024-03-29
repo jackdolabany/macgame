@@ -18,6 +18,9 @@ namespace MacGame
 
         public int Health { get; set; } = MaxHealth;
 
+        public int Tacos = 0;
+        public int CricketCoins = 0;
+
         public InputManager InputManager { get; private set; }
 
         private DeadMenu _deadMenu;
@@ -84,7 +87,7 @@ namespace MacGame
         private const float appleCooldownTime = 0.3f;
 
         private float InfiniteJumpTimer = 0f;
-        public Item CurrentItem = null;
+        public Item? CurrentItem = null;
 
         private bool HasShovel
         {

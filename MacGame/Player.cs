@@ -64,7 +64,6 @@ namespace MacGame
         private Rectangle _previousCollisionRectangle;
 
         // Ladder climbing stuff
-        //private bool isClimbingLadder = false;
         AnimationStrip climbingLadderAnimation;
         private const int climbingSpeed = 30;
 
@@ -76,7 +75,6 @@ namespace MacGame
 
         // Vine climbing stuff
         AnimationStrip climbingVineAnimation;
-        //private bool isClimbingVine;
 
         /// <summary>
         /// When you jump off a vine, we temporarily prevent you from grabbing onto another 
@@ -586,7 +584,6 @@ namespace MacGame
             // Climbing Vine
             var tileAtCenter = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
             var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
-            Vector2 currentVineCell = Vector2.Zero;
 
             if (!IsClimbingVine && canClimbVines && isOverVine && (!OnGround || InputManager.CurrentAction.up))
             {
@@ -624,12 +621,6 @@ namespace MacGame
                 {
                     this.worldLocation.X = TileMap.TileSize * vineTile.X + 6;
                 }
-
-                //// snap to vine.
-                //isFalling = false;
-                //isJumping = false;
-                //isRunning = false;
-                //isSliding = false;
 
                 this.velocity.X = 0;
 
@@ -690,11 +681,10 @@ namespace MacGame
                 {
                     _state = MacState.Falling;
                 }
-                //else
-                //{
-                //    isJumping = false;
-                //    isFalling = false;
-                //}
+                else if ((IsJumping || IsFalling) && OnGround)
+                {
+                    _state = MacState.Idle;
+                }
             }
             
             var isClimbingAnimationPlaying = (IsClimbingLadder || IsClimbingVine) && velocity != Vector2.Zero;
@@ -716,8 +706,6 @@ namespace MacGame
             // Limit the time the player has the infinite jump powerup. They'll only lose it after some time if they hit the ground.
             if (HasInfiniteJump)
             {
-
-
                 InfiniteJumpTimer += elapsed;
                 if ((InfiniteJumpTimer >= 6f && OnGround) || IsClimbingLadder || IsClimbingVine)
                 {

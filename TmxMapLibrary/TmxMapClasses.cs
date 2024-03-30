@@ -36,6 +36,7 @@ Copyright (C) 2009 Kevin Gadd
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices.ObjectiveC;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using TileEngine;
@@ -790,6 +791,7 @@ namespace Squared.Tiled
                 
                 var om = new ObjectModifier();
                 om.Rectangle = new Rectangle(obj.Value.X, obj.Value.Y, obj.Value.Width, obj.Value.Height);
+                om.Name = obj.Value.Name;
 
                 foreach(var kvp in obj.Value.Properties)
                 {

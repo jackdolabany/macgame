@@ -23,6 +23,16 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenPixel.spritefont
 
+#begin Maps/TestFinalBoss.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestFinalBoss.tmx
+
+#begin Maps/TestHub.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestHub.tmx
+
 #begin Maps/TestLevel2.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -58,6 +68,11 @@
 /processor:PassThroughProcessor
 /build:Maps/TestMainRoom.tmx
 
+#begin Maps/TestMainRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestMainRoom.tmx
+
 #begin Maps/TestWingLevel.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -72,6 +87,16 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/TestWorld1.tmx
+
+#begin Maps/TestWorld1.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWorld1.tmx
+
+#begin Maps/TestWorld2.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWorld2.tmx
 
 #begin Music/BossFight.mp3
 /importer:Mp3Importer

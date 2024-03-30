@@ -44,8 +44,7 @@ namespace MacGame
         public static string TransitionToMap;
         public static string PutPlayerAtDoor;
 
-        // Must be set each time a level is loaded.
-        public static bool IsInHubWorld = true;
+        public const string StartingHubWorld = "TestHub";
 
         public static IEnumerable<Platform> Platforms
         {
@@ -84,6 +83,8 @@ namespace MacGame
                 transitionToState = value;
             }
         }
+
+        public static string DoorJustEntered { get; internal set; }
 
         // State to go to on the next update cycle
         private GameState transitionToState;
@@ -152,7 +153,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
 
             // Load map and adjust Camera
-            CurrentLevel = sceneManager.LoadLevel("TestMainRoom", Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
 
             Camera.Map = CurrentLevel.Map;
 
@@ -168,10 +169,12 @@ namespace MacGame
 
             CurrentGameState = GameState.Playing;
 
-            StartNewGame(false);
+            GoToHub(false);
         }
 
-        public void StartNewGame(bool loadLevel = true)
+        /// <param name="isBackToHub">True if the player died or selected to go back to the hub in the menu. False for the 
+        /// start of a new game.</param>
+        public void GoToHub(bool isBackToHub = true)
         {
             MenuManager.ClearMenus();
 
@@ -184,10 +187,29 @@ namespace MacGame
             Player.CurrentItem = null;
             Player.Tacos = 0;
 
-            if (loadLevel)
+            if (isBackToHub)
             {
-                CurrentLevel = sceneManager.LoadLevel("TestMainRoom", Content, Player, Camera);
+                string hubDoorPlayerCameFrom = "";
+                if (CurrentLevel != null && !string.IsNullOrEmpty(CurrentLevel.HubDoorNameYouCameFrom))
+                {
+                    hubDoorPlayerCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
+                }
+
+                CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
                 Camera.Map = CurrentLevel.Map;
+
+                // Place the player at the door they came from.
+                if (hubDoorPlayerCameFrom != "")
+                {
+                    foreach (var door in CurrentLevel.Doors)
+                    {
+                        if (door.Name == hubDoorPlayerCameFrom)
+                        {
+                            Player.SlideOutOfDoor(door.WorldLocation);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -276,9 +298,20 @@ namespace MacGame
                 // See if it's time to go to another level.
                 if (!string.IsNullOrEmpty(TransitionToMap))
                 {
+                    var cameFromHubWorld = CurrentLevel.IsHubWorld;
+
                     CurrentLevel = sceneManager.LoadLevel(TransitionToMap, Content, Player, Camera);
+
+                    var leftHubWorld = cameFromHubWorld && !CurrentLevel.IsHubWorld;
+
+                    if (leftHubWorld)
+                    {
+                        CurrentLevel.HubDoorNameYouCameFrom = DoorJustEntered;
+                    }
+
                     Camera.Map = CurrentLevel.Map;
-                    TransitionToMap = null;
+                    TransitionToMap = "";
+                    DoorJustEntered = "";
 
                     if (!string.IsNullOrEmpty(PutPlayerAtDoor))
                     {
@@ -291,8 +324,7 @@ namespace MacGame
                             }
                         }
                         
-                        PutPlayerAtDoor = null;
-
+                        PutPlayerAtDoor = "";
                     }
                 }
             }
@@ -459,7 +491,7 @@ namespace MacGame
             Rectangle imageSource;
             int count;
 
-            if (IsInHubWorld)
+            if (CurrentLevel.IsHubWorld)
             {
                 var cricketCoinSourceRect = new Rectangle(9 * TileSize, 2 * TileSize, 8, 8);
                 DrawNumberOfThingsOnRight(spriteBatch, cricketCoinSourceRect, Player.CricketCoins, GAME_X_RESOLUTION - 10, hudYPos);

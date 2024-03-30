@@ -22,16 +22,6 @@ namespace MacGame
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
 
-            var wasInHubRoom = Game1.IsInHubWorld;
-
-            Game1.IsInHubWorld = mapName == "TestMainRoom";
-
-            // If you transition in or out of a hub world, reset the tacos.
-            if (wasInHubRoom != Game1.IsInHubWorld)
-            {
-                player.Tacos = 0;
-            }
-
             TimerManager.Clear();
             Game1.Camera.CanScrollLeft = true;
             
@@ -43,6 +33,9 @@ namespace MacGame
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 
             var level = new Level(player, map, camera);
+
+            // This will need to be more complicated later if the starting hub world has multiple rooms.
+            level.IsHubWorld = mapName == Game1.StartingHubWorld;
 
             // Do y direction first and count backwards. This is important because we want to add game objects bottom
             // to top. This helps the drawdepth code so that items above are always in front so you can stack objects that
@@ -120,19 +113,16 @@ namespace MacGame
                                             }
                                             if (obj.Properties.ContainsKey("GoToDoor"))
                                             {
-                                                door.GoToDoor = obj.Properties["GoToDoor"];
+                                                door.GoToDoorName = obj.Properties["GoToDoor"];
                                             }
-                                            if (obj.Properties.ContainsKey("Name"))
-                                            {
-                                                door.Name = obj.Properties["Name"];
-                                            }
+                                            door.Name = obj.Name;
                                         }
                                     }
                                 }
 
-                                if(string.IsNullOrEmpty(door.GoToMap) || string.IsNullOrEmpty(door.GoToDoor) || string.IsNullOrEmpty(door.Name))
+                                if(string.IsNullOrEmpty(door.GoToMap) && string.IsNullOrEmpty(door.GoToDoorName))
                                 {
-                                    throw new Exception("Doors must have a custom object add these props in the map file.");
+                                    throw new Exception("Doors must have a custom object on the map that specify the map or door it goes to (or both).");
                                 }
                             }
                             else if (loadClass == "RevealBlock")

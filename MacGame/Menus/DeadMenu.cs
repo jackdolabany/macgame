@@ -11,7 +11,7 @@ namespace MacGame
             
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 3f)));
             
-            AddOption("Restart", (a, b) => Game.StartNewGame());
+            AddOption("Back to Hub", (a, b) => Game.GoToHub());
             AddOption("Title Screen", (a, b) => Game.GoToTitleScreen());
 
            

@@ -11,7 +11,7 @@ namespace MacGame
         {
             this.menuTitle = "";
 
-            AddOption("New Game", (sender, args) => game.StartNewGame());
+            AddOption("New Game", (sender, args) => game.GoToHub());
 
             confirmMenu = new YesNoMenu(Game, "Are you sure you want\nto exit the game?", (sender, args) => this.Game.Exit());
             confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 30);

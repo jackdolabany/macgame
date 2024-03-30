@@ -20,6 +20,17 @@ namespace MacGame
     public class Level
     {
 
+        /// <summary>
+        /// If you aren't in a hub world, this is the name of the door you came from.
+        /// You'd return here if you quit or die.
+        /// </summary>
+        public string HubDoorNameYouCameFrom = "";
+
+        /// <summary>
+        /// True if this map represents a room in the main hub world. As opposed to a level looking for a specific cricket coin.
+        /// </summary>
+        public bool IsHubWorld = true;
+
         public Player Player;
         public TileMap Map;
         public Camera Camera;
@@ -115,7 +126,8 @@ namespace MacGame
                         if (door.CollisionRectangle.Contains(Player.CollisionCenter))
                         {
                             Game1.TransitionToMap = door.GoToMap;
-                            Game1.PutPlayerAtDoor = door.GoToDoor;
+                            Game1.PutPlayerAtDoor = door.GoToDoorName;
+                            Game1.DoorJustEntered = door.Name;
                         }
                     }
                 }

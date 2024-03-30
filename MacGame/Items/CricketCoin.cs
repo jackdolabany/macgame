@@ -17,7 +17,7 @@ namespace MacGame.Items
             var spin = new AnimationStrip(textures, new Rectangle(10 * Game1.TileSize, 2 * Game1.TileSize, 16, 16), 3, "spin");
             spin.LoopAnimation = true;
             spin.Oscillate = true;
-            spin.FrameLength = 0.15f;
+            spin.FrameLength = 0.25f;
             animations.Add(spin);
 
             animations.Play("spin");

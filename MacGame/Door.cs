@@ -9,7 +9,7 @@ namespace MacGame
     public class Door : GameObject
     {
         public string GoToMap = "";
-        public string GoToDoor = "";
+        public string GoToDoorName = "";
         public string Name = "";
 
         public Door(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()

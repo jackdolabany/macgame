@@ -10,6 +10,21 @@ using MacGame.Items;
 
 namespace MacGame
 {
+
+    public enum MacState
+    {
+        Idle,
+        Running,
+        Jumping,
+        Falling,
+        Sliding,
+        ClimbingLadder,
+        ClimbingVine,
+        Dead,
+        IsKnockedDown
+    }
+
+
     public class Player : GameObject
     {
         AnimationDisplay animations;
@@ -28,10 +43,16 @@ namespace MacGame
         private const float maxAcceleration = 150;
         private const float maxSpeed = 80;
 
-        private bool isRunning = false;
-        private bool isJumping = false;
-        private bool isSliding = false;
-        private bool isFalling = false;
+        private MacState _state = MacState.Idle;
+
+        private bool IsRunning => _state == MacState.Running;
+        private bool IsJumping => _state == MacState.Jumping;
+        private bool IsSliding => _state == MacState.Sliding;
+        private bool IsFalling => _state == MacState.Falling;
+        private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
+        private bool IsClimbingVine => _state == MacState.ClimbingVine;
+
+        private bool IsKnockedDown => _state == MacState.IsKnockedDown;
 
         private float invincibleTimeRemaining = 0.0f;
         private float invincibleFlashTimer = 0.0f;
@@ -43,7 +64,7 @@ namespace MacGame
         private Rectangle _previousCollisionRectangle;
 
         // Ladder climbing stuff
-        private bool isClimbingLadder = false;
+        //private bool isClimbingLadder = false;
         AnimationStrip climbingLadderAnimation;
         private const int climbingSpeed = 30;
 
@@ -55,7 +76,7 @@ namespace MacGame
 
         // Vine climbing stuff
         AnimationStrip climbingVineAnimation;
-        private bool isClimbingVine;
+        //private bool isClimbingVine;
 
         /// <summary>
         /// When you jump off a vine, we temporarily prevent you from grabbing onto another 
@@ -138,7 +159,6 @@ namespace MacGame
             climbingLadderAnimation.FrameLength = 0.14f;
             animations.Add(climbingLadderAnimation);
 
-
             climbingVineAnimation = new AnimationStrip(textures, new Rectangle(48, 16, 8, 8), 2, "climbVine");
             climbingVineAnimation.LoopAnimation = true;
             climbingVineAnimation.FrameLength = 0.14f;
@@ -148,6 +168,11 @@ namespace MacGame
             mineCart.LoopAnimation = false;
             mineCart.FrameLength = 0.1f;
             animations.Add(mineCart);
+
+            var knockedDown = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 0, Game1.TileSize, Game1.TileSize), 1, "knockedDown");
+            knockedDown.LoopAnimation = false;
+            knockedDown.FrameLength = 0.1f;
+            animations.Add(knockedDown);
 
             Enabled = true;
 
@@ -189,6 +214,10 @@ namespace MacGame
             {
                 HandleMineCartInputs(elapsed);
             }
+            if (IsKnockedDown)
+            {
+                HandleKnockedDownInputs(elapsed);
+            }
             else
             {
                 HandleInputs(elapsed);
@@ -198,7 +227,7 @@ namespace MacGame
             {
                 wings.Update(gameTime, elapsed);
             }
-            if(HasShovel)
+            if (HasShovel)
             {
                 shovel.Update(gameTime, elapsed);
             }
@@ -244,6 +273,16 @@ namespace MacGame
 
         }
 
+        // Send the player sliding out of a hub door after being killed or whatever.
+        public void SlideOutOfDoor(Vector2 doorLocation)
+        {
+            this.worldLocation = doorLocation + new Vector2(0, -4);
+            this.flipped = true;
+            this.velocity = new Vector2(70, 0);
+            this._state = MacState.IsKnockedDown;
+            // TODO: Play sound
+        }
+
         public void CheckEnemyInteractions(Enemy enemy)
         {
             if (enemy.Alive)
@@ -256,7 +295,7 @@ namespace MacGame
                     // Pad 1 pixel to make it a little easier
                     var wasAboveEnemy = _previousCollisionRectangle.Bottom - 1 <= enemy.CollisionRectangle.Top;
 
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !isClimbingLadder && !isClimbingVine)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
@@ -340,21 +379,21 @@ namespace MacGame
             }
 
             // If they aren't running max walk speed is cut in half.
-            if (!InputManager.CurrentAction.attack && (onGround || isClimbingLadder))
+            if (!InputManager.CurrentAction.attack && (onGround || IsClimbingLadder))
             {
                 environmentMaxWalkSpeed /= 2;
             }
 
             // Cut the acceleration in half if they are in the air.
-            if (!OnGround && !isClimbingLadder && !isClimbingVine)
+            if (!OnGround && !IsClimbingLadder && !IsClimbingVine)
             {
                 acceleration /= 2;
             }
 
             // Walk Right
-            if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !isClimbingVine)
+            if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !IsClimbingVine)
             {
-                if (!isClimbingLadder)
+                if (!IsClimbingLadder)
                 {
                     this.velocity.X += acceleration * elapsed;
                     if (OnGround && velocity.X > environmentMaxWalkSpeed)
@@ -366,15 +405,18 @@ namespace MacGame
                 {
                     this.velocity.X = climbingSpeed;
                 }
-                isRunning = onGround;
-                isSliding = false;
+
+                if (onGround)
+                {
+                    _state = MacState.Running;
+                }
                 flipped = false;
             }
 
             // Walk left
-            if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right && !isClimbingVine)
+            if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right && !IsClimbingVine)
             {
-                if (!isClimbingLadder)
+                if (!IsClimbingLadder)
                 {
                     this.velocity.X -= acceleration * elapsed;
                     if (OnGround && velocity.X < -environmentMaxWalkSpeed)
@@ -386,25 +428,27 @@ namespace MacGame
                 {
                     this.velocity.X = -climbingSpeed;
                 }
-                isRunning = onGround;
-                isSliding = false;
+                
+                if (onGround)
+                {
+                    _state = MacState.Running;
+                }
                 flipped = true;
             }
 
-            if (OnGround && !isClimbingLadder && !isClimbingVine)
+            if (OnGround && !IsClimbingLadder && !IsClimbingVine)
             {
                 this.velocity.X -= (this.velocity.X * friction * elapsed);
             }
 
             // Sliding is a special state when you are still moving after walking.
-            if (isRunning
+            if (IsRunning
                 && !InputManager.CurrentAction.left
                 && !InputManager.CurrentAction.right
-                && !isFalling
-                && !isJumping)
+                && !IsFalling
+                && !IsJumping)
             {
-                isRunning = false;
-                isSliding = true;
+                _state = MacState.Sliding;
             }
             
             // Ladder stuff.
@@ -412,20 +456,18 @@ namespace MacGame
             var tileAtTop = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation - new Vector2(0, CollisionRectangle.Height));
             var isOverALadder = (tileAtBottom?.IsLadder ?? false) || (tileAtTop?.IsLadder ?? false);
 
-            if (!isOverALadder)
+            if (!isOverALadder && IsClimbingLadder)
             {
-                isClimbingLadder = false;
+                _state = MacState.Idle;
             }
             
             // Climbing a ladder from standstill.
             if (isOverALadder 
                 && canClimbLadders
-                && (InputManager.CurrentAction.up || (isClimbingLadder && InputManager.CurrentAction.down)) // Need to press up to latch onto a ladder. Down only if you are already climbing.
+                && (InputManager.CurrentAction.up || (IsClimbingLadder && InputManager.CurrentAction.down)) // Need to press up to latch onto a ladder. Down only if you are already climbing.
                 && !(PlatformThatThisIsOn is LadderPlatform)) // Don't climb if you are standing on a ladder platform. Climbing down from atop a ladder is handled below.
             {
-                isClimbingLadder = true;
-                isJumping = false;
-                isFalling = false;
+                _state = MacState.ClimbingLadder;
                 this.velocity.X -= maxAcceleration * elapsed;
                 if (velocity.X < -environmentMaxWalkSpeed)
                 {
@@ -440,15 +482,15 @@ namespace MacGame
                 // No moving left or right on the ladder unless you are not going up or down.
                 this.velocity.X = 0;
             }
-            this.IsAffectedByGravity = !isClimbingLadder && !isClimbingVine;
+            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine;
 
             // Stop moving while climbing if you aren't pressing up or down.
-            if ((isClimbingLadder || isClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
+            if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
             {
                 this.velocity.Y = 0;
             }
 
-            if (isClimbingLadder && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+            if (IsClimbingLadder && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
             {
                 this.velocity.X = 0;
             }
@@ -456,16 +498,13 @@ namespace MacGame
             // Stop climbing if you move down towards the ground.
             if (InputManager.CurrentAction.down && onGround)
             {
-                isClimbingLadder = false;
-                isClimbingVine = false;
+                _state = MacState.Idle;
             }
 
             // If you are on a ladder platform you can press down to climb down through it.
             if (canClimbLadders && !InputManager.CurrentAction.jump && InputManager.CurrentAction.down && OnPlatform && PlatformThatThisIsOn is LadderPlatform)
             {
-                isClimbingLadder = true;
-                isJumping = false;
-                isFalling = false;
+                _state = MacState.ClimbingLadder;
                 this.velocity.Y = climbingSpeed;
                 this.PoisonPlatforms.Add(PlatformThatThisIsOn);
             }
@@ -495,21 +534,19 @@ namespace MacGame
             {
                 // Regular jump.
                 this.velocity.Y -= jumpBoost;
-                isSliding = false;
+                _state = MacState.Jumping;
                 SoundManager.PlaySound("jump");
-                isClimbingLadder = false;
             }
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasInfiniteJump && this.Velocity.Y >= 0)
             {
                 // Infinite Jump Jump.
                 this.velocity.Y = -jumpBoost;
-                isSliding = false;
+                _state = MacState.Jumping;
                 SoundManager.PlaySound("jump");
-                isClimbingLadder = false;
             }
             else if (InputManager.CurrentAction.jump
                 && !InputManager.PreviousAction.jump
-                && isClimbingLadder)
+                && IsClimbingLadder)
             {
                 // Jump off ladder
                 this.velocity.Y -= (jumpBoost / 2); // weaker jump
@@ -517,21 +554,20 @@ namespace MacGame
 
                 // block their ability to climb ladders until they release up. This prevents you from
                 // insta-climbing the ladder above you.
-                if (isClimbingLadder && InputManager.CurrentAction.up)
+                if (IsClimbingLadder && InputManager.CurrentAction.up)
                 {
                     canClimbLadders = false;
                 }
-                isClimbingLadder = false;
+                _state = MacState.Jumping;
             }
             else if (InputManager.CurrentAction.jump
                 && !InputManager.PreviousAction.jump
-                && isClimbingVine)
+                && IsClimbingVine)
             {
 
-                isClimbingVine = false;
                 canClimbVines = false;
                 yPositionWhenLastOnVine = this.worldLocation.Y;
-                isJumping = true;
+                _state = MacState.Jumping;
                 this.velocity = new Vector2(75, -75);
                 if (flipped)
                 {
@@ -552,12 +588,12 @@ namespace MacGame
             var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
             Vector2 currentVineCell = Vector2.Zero;
 
-            if (!isClimbingVine && canClimbVines && isOverVine && (!OnGround || InputManager.CurrentAction.up))
+            if (!IsClimbingVine && canClimbVines && isOverVine && (!OnGround || InputManager.CurrentAction.up))
             {
-                isClimbingVine = true;
+                _state = MacState.ClimbingVine;
             }
 
-            if (isClimbingVine)
+            if (IsClimbingVine)
             {
 
                 Vector2 vineTile;
@@ -589,11 +625,11 @@ namespace MacGame
                     this.worldLocation.X = TileMap.TileSize * vineTile.X + 6;
                 }
 
-                // snap to vine.
-                isFalling = false;
-                isJumping = false;
-                isRunning = false;
-                isSliding = false;
+                //// snap to vine.
+                //isFalling = false;
+                //isJumping = false;
+                //isRunning = false;
+                //isSliding = false;
 
                 this.velocity.X = 0;
 
@@ -624,49 +660,44 @@ namespace MacGame
             }
 
             // Just in case.
-            if (tileAtCenter != null && !tileAtCenter.IsVine)
+            if (tileAtCenter != null && !tileAtCenter.IsVine && IsClimbingVine)
             {
-                isClimbingVine = false;
+                _state = MacState.Idle;
             }
 
             // Level.cs will check door collisions if this is true.
             this.IsTryingToOpenDoor = InputManager.CurrentAction.up && !InputManager.PreviousAction.up;
 
             // slightly sliding is not sliding, so we want to see the idle animation.
-            if (velocity.X < 20 && velocity.X > -20 && isSliding)
+            if (velocity.X < 20 && velocity.X > -20 && IsSliding)
             {
-                isRunning = false;
-                isSliding = false;
+                _state = MacState.Idle;
             }
 
             // stop the player if they are nearly stopped so you don't get weird 1px movement.
-            if (velocity.X < 6 && velocity.X > -6 && !isRunning && onGround)
+            if (velocity.X < 6 && velocity.X > -6 && !IsRunning && onGround)
             {
                 velocity.X = 0;
             }
 
-            if (!isClimbingLadder && !isClimbingVine)
+            if (!IsClimbingLadder && !IsClimbingVine)
             {
                 if (!OnGround && velocity.Y > 0)
                 {
-                    isJumping = true;
-                    isFalling = false;
-                    isRunning = false;
+                    _state = MacState.Jumping;
                 }
                 else if (!OnGround && velocity.Y < 0)
                 {
-                    isJumping = false;
-                    isFalling = true;
-                    isRunning = false;
+                    _state = MacState.Falling;
                 }
-                else
-                {
-                    isJumping = false;
-                    isFalling = false;
-                }
+                //else
+                //{
+                //    isJumping = false;
+                //    isFalling = false;
+                //}
             }
             
-            var isClimbingAnimationPlaying = (isClimbingLadder || isClimbingVine) && velocity != Vector2.Zero;
+            var isClimbingAnimationPlaying = (IsClimbingLadder || IsClimbingVine) && velocity != Vector2.Zero;
 
             if (isClimbingAnimationPlaying)
             {
@@ -688,7 +719,7 @@ namespace MacGame
 
 
                 InfiniteJumpTimer += elapsed;
-                if ((InfiniteJumpTimer >= 6f && OnGround) || isClimbingLadder || isClimbingVine)
+                if ((InfiniteJumpTimer >= 6f && OnGround) || IsClimbingLadder || IsClimbingVine)
                 {
                     InfiniteJumpTimer = 0;
                     this.CurrentItem = null;
@@ -753,28 +784,28 @@ namespace MacGame
             }
 
             string nextAnimation;
-            if (isJumping)
+            if (IsJumping)
             {
                 nextAnimation = "jump";
             }
-            else if (isFalling)
+            else if (IsFalling)
             {
                 nextAnimation = "fall";
             }
-            else if (isRunning)
+            else if (IsRunning)
             {
                 nextAnimation = "run";
             }
-            else if (isSliding)
+            else if (IsSliding)
             {
                 nextAnimation = "slide";
             }
-            else if (isClimbingLadder)
+            else if (IsClimbingLadder)
             {
                 nextAnimation = "climbLadder";
                 climbingLadderAnimation.IsPaused = !isClimbingAnimationPlaying;
             }
-            else if (isClimbingVine)
+            else if (IsClimbingVine)
             {
                 nextAnimation = "climbVine";
                 climbingVineAnimation.IsPaused = !isClimbingAnimationPlaying;
@@ -817,7 +848,7 @@ namespace MacGame
 
             if (OnGround && !bottomLeftIsTrack && !bottomRightIsTrack)
             {
-                IsInMineCart = false;
+                _state = MacState.Idle;
                 return;
             }
 
@@ -852,6 +883,22 @@ namespace MacGame
                     this.flipped = false;
                 }
             }
+        }
+
+        private void HandleKnockedDownInputs(float elapsed)
+        {
+
+            // Friction
+            if (OnGround)
+            {
+                this.velocity.X -= (this.velocity.X * 2.5f * elapsed);
+            }
+            animations.Play("knockedDown");
+            // When you're knocked down you can't do anything until some time passes.
+            TimerManager.AddNewTimer(0.5f, () =>
+            {
+                _state = MacState.Idle;
+            }); 
         }
 
         public void Kill()
@@ -900,7 +947,7 @@ namespace MacGame
         {
             // Whe climbing a vine, the player's position may snap to the vine, or snap when he faces left and right
             // so we need to more slowly move the camera to track the player.
-            if(isClimbingVine)
+            if(IsClimbingVine)
             {
                 var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.1f);
                 return cameraPosition;

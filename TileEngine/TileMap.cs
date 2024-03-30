@@ -18,6 +18,15 @@ namespace TileEngine
         public const float BACKGROUND_DRAW_DEPTH = 0.9f;
         public const float BACKMOST_DRAW_DEPTH = 1f;
 
+        /// <summary>
+        /// A default starting spot for the player. It's expected that the Player is put on each map somewhere.
+        /// The player would start elsewhere though if he came in from a door.
+        /// </summary>
+        public Vector2 PlayerStart { get; set; }
+
+        public float PlayerDrawDepth = 0f;
+        public float Zoom = 1f;
+
         public TileMap()
         {
             this.Backgrounds = new List<String>();
@@ -90,11 +99,6 @@ namespace TileEngine
         private const int defaultTile = 0;
 
         public MapSquare[][] MapCells = new MapSquare[100][];
-
-        public Vector2 PlayerStart { get; set; }
-
-        public float PlayerDrawDepth = 0f;
-        public float Zoom = 1f;
 
         /// <summary>
         /// Gets the draw depth of some things relative to the player

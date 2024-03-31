@@ -43,8 +43,9 @@ namespace MacGame
 
         public static string TransitionToMap;
         public static string PutPlayerAtDoor;
-
         public const string StartingHubWorld = "TestHub";
+
+        AlertBoxMenu gotACricketCoinMenu;
 
         public static IEnumerable<Platform> Platforms
         {
@@ -110,6 +111,16 @@ namespace MacGame
             Window.Title = "Mac Game";
 
             Content.RootDirectory = "Content";
+
+            GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
+        }
+
+        private void OnCricketCoinCollected(object? sender, EventArgs e)
+        {
+            pauseForCoinTimer = 2f;
+            // TODO: play some kind of jingle.
+            SoundManager.PlaySound("health");
+            TransitionToState(GameState.GotCoin, false);
         }
 
         /// <summary>
@@ -169,12 +180,19 @@ namespace MacGame
 
             CurrentGameState = GameState.Playing;
 
-            GoToHub(false);
+            gotACricketCoinMenu = new AlertBoxMenu(this, "You got a Cricket Coin!", (a, b) =>
+            {
+                TransitionToState(GameState.Playing);
+                GoToHub(true, false);
+            });
+
+            GoToHub(false, false);
         }
 
-        /// <param name="isBackToHub">True if the player died or selected to go back to the hub in the menu. False for the 
+        /// <param name="isReturning">True if the player died or selected to go back to the hub in the menu. False for the 
         /// start of a new game.</param>
-        public void GoToHub(bool isBackToHub = true)
+        /// <param name="isYeet">True to yeet the player out of the door as punishment for quitting or dying.</param>
+        public void GoToHub(bool isReturning, bool isYeet)
         {
             MenuManager.ClearMenus();
 
@@ -187,7 +205,7 @@ namespace MacGame
             Player.CurrentItem = null;
             Player.Tacos = 0;
 
-            if (isBackToHub)
+            if (isReturning)
             {
                 string hubDoorPlayerCameFrom = "";
                 if (CurrentLevel != null && !string.IsNullOrEmpty(CurrentLevel.HubDoorNameYouCameFrom))
@@ -205,7 +223,14 @@ namespace MacGame
                     {
                         if (door.Name == hubDoorPlayerCameFrom)
                         {
-                            Player.SlideOutOfDoor(door.WorldLocation);
+                            if(isYeet)
+                            {
+                                Player.SlideOutOfDoor(door.WorldLocation);
+                            }
+                            else
+                            {
+                                Player.WorldLocation = door.WorldLocation;
+                            }
                             break;
                         }
                     }
@@ -217,7 +242,6 @@ namespace MacGame
         {
             MenuManager.ClearMenus();
             TransitionToState(GameState.TitleScreen);
-
         }
 
         public void Pause()
@@ -267,6 +291,8 @@ namespace MacGame
                 gameRenderTarget = null;
             }
         }
+
+        float pauseForCoinTimer = 0f;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -325,6 +351,18 @@ namespace MacGame
                         }
                         
                         PutPlayerAtDoor = "";
+                    }
+                }
+            }
+
+            if(_gameState == GameState.GotCoin)
+            {
+                if (pauseForCoinTimer > 0)
+                {
+                    pauseForCoinTimer -= elapsed;
+                    if (pauseForCoinTimer <= 0)
+                    {
+                        MenuManager.AddMenu(gotACricketCoinMenu);
                     }
                 }
             }
@@ -397,6 +435,7 @@ namespace MacGame
             {
                 case GameState.Playing:
                 case GameState.Paused:
+                case GameState.GotCoin:
 
                     spriteBatch.Begin(SpriteSortMode.Deferred,
                         BlendState.AlphaBlend,
@@ -501,28 +540,6 @@ namespace MacGame
                 var tacoIconSource = new Rectangle(8 * TileSize, 2 * TileSize, 8, 8);
                 DrawNumberOfThingsOnRight(spriteBatch, tacoIconSource, Player.Tacos, GAME_X_RESOLUTION - 10, hudYPos);
             }
-
-            //var tacoXPos = GAME_X_RESOLUTION - 10;
-
-            //int onesPlace = Player.Tacos % 10;
-
-            //spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(tacoXPos, hudYPos), Color.White);
-
-            //if (Player.Tacos > 9)
-            //{
-            //    int tensPlace = (Player.Tacos / 10) % 10;
-            //    tacoXPos -= 8;
-            //    spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(tacoXPos, hudYPos), Color.White);
-            //}
-            //if (Player.Tacos > 99)
-            //{
-            //    int hundredsPlace = (Player.Tacos / 100) % 10;
-            //    tacoXPos -= 8;
-            //    spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(tacoXPos, hudYPos), Color.White);
-            //}
-
-            // Draw the taco image
-            /////////spriteBatch.Draw(textures, new Rectangle(tacoXPos - 8, hudYPos + 1, 8, 8), new Rectangle(8 * TileSize, 2 * TileSize, 8, 8), Color.White);
         }
 
         /// <summary>
@@ -560,6 +577,10 @@ namespace MacGame
         {
             TitleScreen,
             Playing,
+            /// <summary>
+            /// Freeze the game for a moment but still draw and play a jingle when you get a coin.
+            /// </summary>
+            GotCoin,
             Paused,
             Dead
         }

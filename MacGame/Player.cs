@@ -24,7 +24,6 @@ namespace MacGame
         IsKnockedDown
     }
 
-
     public class Player : GameObject
     {
         AnimationDisplay animations;
@@ -52,6 +51,10 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
 
+        // Add time here to make the camera track Mac slowly for a period of time. This will help 
+        // move the camera more naturally for a period when he does "snapping" actions like snapping to the
+        // other side of a vine, or snapping to other objects.
+        private float cameraTrackingTimer = 0f;
         private bool IsKnockedDown => _state == MacState.IsKnockedDown;
 
         private float invincibleTimeRemaining = 0.0f;
@@ -207,6 +210,11 @@ namespace MacGame
             IsTryingToOpenDoor = false;
 
             _previousCollisionRectangle = this.CollisionRectangle;
+
+            if(cameraTrackingTimer >= 0)
+            {                 
+                cameraTrackingTimer -= elapsed;
+            }
 
             if (IsInMineCart)
             {
@@ -604,12 +612,14 @@ namespace MacGame
                 }
 
                 // You can't move left and right on the vine, but Mac can flip.
-                if (InputManager.CurrentAction.left)
+                if (!flipped && InputManager.CurrentAction.left)
                 {
+                    cameraTrackingTimer = 0.2f;
                     flipped = true;
                 }
-                else if (InputManager.CurrentAction.right)
+                else if (flipped && InputManager.CurrentAction.right)
                 {
+                    cameraTrackingTimer = 0.2f;
                     flipped = false;
                 }
 
@@ -933,9 +943,9 @@ namespace MacGame
 
         public Vector2 GetCameraPosition(Camera camera)
         {
-            // Whe climbing a vine, the player's position may snap to the vine, or snap when he faces left and right
-            // so we need to more slowly move the camera to track the player.
-            if(IsClimbingVine)
+            // For a brief time the camera will slowly track Mac so that it doesn't adjust too quickly after he does some kind of 
+            // snapping or quick moving action.
+            if (cameraTrackingTimer >= 0)
             {
                 var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.1f);
                 return cameraPosition;

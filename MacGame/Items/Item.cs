@@ -59,7 +59,6 @@ namespace MacGame.Items
             _player = player;
             _camera = camera;
             
-
             // Initialize the chest images.
             ClosedChest = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(14 * Game1.TileSize, 1 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
             OpenChestBottom = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(15 * Game1.TileSize, 1 * Game1.TileSize, Game1.TileSize, Game1.TileSize));

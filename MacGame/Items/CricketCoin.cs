@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MacGame.Items
 {
@@ -34,7 +35,7 @@ namespace MacGame.Items
 
             // TODO: Stuff
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
-
+            GlobalEvents.FireCricketCoinCollected(this, EventArgs.Empty);
 
             // TODO: Play sound
             //SoundManager.PlaySound("CricketCoinCollected");

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="16" tilewidth="8" tileheight="8" infinite="0" nextlayerid="8" nextobjectid="12">
+ <properties>
+  <property name="LevelNumber" value="99"/>
+ </properties>
  <tileset firstgid="1" source="Textures.tsx"/>
  <layer id="3" name="Background" width="128" height="16">
   <data encoding="base64">
@@ -31,28 +34,24 @@
    <properties>
     <property name="GoToDoor" value="GroundDoor"/>
     <property name="GoToMap" value="TestLevel3"/>
-    <property name="Name" value="GroundDoor"/>
    </properties>
   </object>
   <object id="8" name="Door2" x="29.3636" y="45.3636" width="12.5455" height="22.0909">
    <properties>
     <property name="GoToDoor" value="TopDoor"/>
     <property name="GoToMap" value="TestLevel3"/>
-    <property name="Name" value="Door2"/>
    </properties>
   </object>
   <object id="10" name="FlyingDoor" x="60.5" y="81.75" width="18.75" height="27.5">
    <properties>
     <property name="GoToDoor" value="FirstDoor"/>
     <property name="GoToMap" value="TestWingLevel"/>
-    <property name="Name" value="FlyingDoor"/>
    </properties>
   </object>
   <object id="11" name="MineCartDoor" x="84.5" y="83" width="17.75" height="25.75">
    <properties>
     <property name="GoToDoor" value="FirstDoor"/>
     <property name="GoToMap" value="TestLevel4"/>
-    <property name="Name" value="MineCartDoor"/>
    </properties>
   </object>
  </objectgroup>

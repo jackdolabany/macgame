@@ -19,6 +19,11 @@ namespace MacGame
     /// </summary>
     public class Level
     {
+        /// <summary>
+        /// Each level has a unique number. The hub world is 0.
+        /// </summary>
+        public int LevelNumber = 0;
+        public string Description = "";
 
         /// <summary>
         /// If you aren't in a hub world, this is the name of the door you came from.
@@ -29,7 +34,13 @@ namespace MacGame
         /// <summary>
         /// True if this map represents a room in the main hub world. As opposed to a level looking for a specific cricket coin.
         /// </summary>
-        public bool IsHubWorld = true;
+        public bool IsHubWorld
+        {
+            get
+            {
+                return LevelNumber == 0;
+            }
+        }
 
         public Player Player;
         public TileMap Map;
@@ -59,7 +70,12 @@ namespace MacGame
             GameObjects = new List<GameObject>();
             Doors = new List<Door>();
             RevealBlockManager = new RevealBlockManager();
+            CoinHints = new Dictionary<int, string>();
         }
+
+        public int SelectedHintIndex;
+
+        public Dictionary<int, string> CoinHints;
 
         public static void AddEnemy(Enemy enemy)
         {
@@ -116,7 +132,7 @@ namespace MacGame
                 item.Update(gameTime, elapsed);
             }
 
-            // Doors
+            // Handle the player going through a door.
             if (Player.IsTryingToOpenDoor)
             {
                 foreach (var door in Doors)
@@ -125,9 +141,16 @@ namespace MacGame
                     {
                         if (door.CollisionRectangle.Contains(Player.CollisionCenter))
                         {
-                            Game1.TransitionToMap = door.GoToMap;
-                            Game1.PutPlayerAtDoor = door.GoToDoorName;
-                            Game1.DoorJustEntered = door.Name;
+                            if (door.IsToSubworld)
+                            {
+                                GlobalEvents.FireSubWorldDoorEntered(this, door.Name, door.GoToMap);
+                                break;
+                            }
+                            else
+                            {
+                                GlobalEvents.FireDoorEntered(this, door.GoToMap, door.GoToDoorName, door.Name);
+                                break;
+                            }
                         }
                     }
                 }

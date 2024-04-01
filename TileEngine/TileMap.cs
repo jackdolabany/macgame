@@ -31,9 +31,13 @@ namespace TileEngine
         {
             this.Backgrounds = new List<String>();
             this.Layers = new List<Layer>();
+            this.Properties = new Dictionary<string, string>();
+            this.ObjectModifiers = new List<ObjectModifier>();
         }
 
-        public List<ObjectModifier> ObjectModifiers = new List<ObjectModifier>();
+        public List<ObjectModifier> ObjectModifiers;
+
+        public Dictionary<string, string> Properties;
 
         public const int TileSize = 8;
 

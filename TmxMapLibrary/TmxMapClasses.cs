@@ -645,6 +645,8 @@ namespace Squared.Tiled
 
             var tileMap = new TileEngine.TileMap();
 
+            tileMap.Properties = this.Properties.ToDictionary(p => p.Key, p => p.Value);
+
             //populate our map properties from the .tmx map
             int height = this.Height;
             int width = this.Width;

@@ -10,9 +10,11 @@ using TileEngine;
 using MacGame.RevealBlocks;
 using MacGame.Enemies;
 using MacGame.Items;
+using System.Reflection.Emit;
 
 namespace MacGame
 {
+
     /// <summary>
     /// Use to load levels and title screens and whatever else. Update handles interactions between unrelated GameObjects, like collisions.
     /// </summary>
@@ -34,9 +36,13 @@ namespace MacGame
 
             var level = new Level(player, map, camera);
 
-            // This will need to be more complicated later if the starting hub world has multiple rooms.
-            level.IsHubWorld = mapName == Game1.StartingHubWorld;
+            level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
 
+            if(map.Properties.ContainsKey("Description"))
+            {
+                level.Description = map.Properties["Description"];
+            }
+            
             // Do y direction first and count backwards. This is important because we want to add game objects bottom
             // to top. This helps the drawdepth code so that items above are always in front so you can stack objects that
             // are slightly facing downwards like barrels
@@ -93,6 +99,22 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Item).Namespace + "." + classname);
                                 var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Items.Add(item);
+
+                                // Coins are special. We expect each one to be wrapped in an object on the map that contains the number and hint.
+                                if (item is CricketCoin)
+                                {
+                                    foreach (var obj in map.ObjectModifiers)
+                                    {
+                                        if (obj.Rectangle.Contains(item.CollisionRectangle))
+                                        {
+                                            var coin = (CricketCoin)item;
+                                            coin.Number = int.Parse(obj.Properties["Number"]);
+                                            coin.Hint = obj.Properties["Hint"];
+                                            level.CoinHints.Add(coin.Number, coin.Hint);
+                                        }
+                                    }
+                                }
+
                             }
                             else if (loadClass == "Door")
                             {
@@ -114,6 +136,10 @@ namespace MacGame
                                             if (obj.Properties.ContainsKey("GoToDoor"))
                                             {
                                                 door.GoToDoorName = obj.Properties["GoToDoor"];
+                                            }
+                                            if (obj.Properties.ContainsKey("IsToSubworld"))
+                                            {
+                                                door.IsToSubworld = obj.Properties["IsToSubworld"] == "1";
                                             }
                                             door.Name = obj.Name;
                                         }
@@ -145,6 +171,34 @@ namespace MacGame
             camera.Map = level.Map;
 
             return level;
+        }
+
+        /// <summary>
+        ///  Sneak a peek at another level without actually calling LoadLevel which has tons of side effects.
+        ///  This can be used to see if you are going to a sub world and what the hints are and whatever you need.
+        /// </summary>
+        public NextLevelInfo GetNextLevelInfo(string mapName, ContentManager contentManager)
+        {
+            var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
+
+            var hintObjects = map.ObjectModifiers.Where(obj => obj.Properties.ContainsKey("Hint"))
+                .Select(x => new { Number = int.Parse(x.Properties["Number"]), Hint = x.Properties["Hint"] })
+                .OrderBy(x => x.Number);
+
+            var nextLevelInfo = new NextLevelInfo();
+            nextLevelInfo.MapName = mapName;
+            nextLevelInfo.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
+            if (map.Properties.ContainsKey("Description"))
+            {
+                nextLevelInfo.Description = map.Properties["Description"];
+            }
+            
+            foreach (var hintObject in hintObjects)
+            {
+                nextLevelInfo.CoinHints.Add(hintObject.Number, hintObject.Hint);
+            }
+
+            return nextLevelInfo;
         }
     }
 }

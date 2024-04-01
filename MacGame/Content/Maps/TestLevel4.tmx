@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="4">
+ <properties>
+  <property name="LevelNumber" value="99"/>
+ </properties>
  <tileset firstgid="1" source="Textures.tsx"/>
  <layer id="2" name="Background" width="128" height="128">
   <data encoding="base64">
@@ -16,14 +19,12 @@
    <properties>
     <property name="GoToDoor" value="MineCartDoor"/>
     <property name="GoToMap" value="TestLevel2"/>
-    <property name="Name" value="FirstDoor"/>
    </properties>
   </object>
   <object id="2" name="SecondDoor" x="418.5" y="210" width="17.75" height="30">
    <properties>
     <property name="GoToDoor" value="MineCartDoor"/>
     <property name="GoToMap" value="TestLevel2"/>
-    <property name="Name" value="SecondDoor"/>
    </properties>
   </object>
  </objectgroup>

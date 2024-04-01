@@ -41,8 +41,19 @@ namespace MacGame
 
         public static Level CurrentLevel;
 
-        public static string TransitionToMap;
-        public static string PutPlayerAtDoor;
+        ///// <summary>
+        ///// The name of the door the player just entered.
+        ///// </summary>
+        //public static string DoorJustEntered { get; internal set; }
+
+        //// If a player goes through a door here's the map you're going to.
+        //public static string TransitionToMap;
+
+        //// If you enter a door connected to another door, this is the door you are going to.
+        //public static string PutPlayerAtDoor;
+
+        //public static bool IsTransitionToSubWorld;
+
         public const string StartingHubWorld = "TestHub";
 
         AlertBoxMenu gotACricketCoinMenu;
@@ -85,8 +96,6 @@ namespace MacGame
             }
         }
 
-        public static string DoorJustEntered { get; internal set; }
-
         // State to go to on the next update cycle
         private GameState transitionToState;
         private float transitionTimer;
@@ -113,6 +122,8 @@ namespace MacGame
             Content.RootDirectory = "Content";
 
             GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
+            GlobalEvents.DoorEntered += OnDoorEntered;
+            GlobalEvents.SubWorldDoorEntered += OnSubWorldDoorEntered;
         }
 
         private void OnCricketCoinCollected(object? sender, EventArgs e)
@@ -121,6 +132,46 @@ namespace MacGame
             // TODO: play some kind of jingle.
             SoundManager.PlaySound("health");
             TransitionToState(GameState.GotCoin, false);
+        }
+
+        private void OnDoorEntered(object? sender, DoorEnteredEventArgs args)
+        {
+
+            CurrentLevel = sceneManager.LoadLevel(args.TransitionToMap, Content, Player, Camera);
+            Camera.Map = CurrentLevel.Map;
+
+            if(args.NewHintIndex.HasValue)
+            {
+                CurrentLevel.SelectedHintIndex = args.NewHintIndex.Value;
+
+                // Only when a hint is selected do we care to also track the door you came from. This is so we can
+                // boot you out the same door if you die.
+                CurrentLevel.HubDoorNameYouCameFrom = args.DoorNameEntered;
+            }
+
+            // Player just went through a door, put him where he's supposed to be.
+            if (!string.IsNullOrEmpty(args.PutPlayerAtDoor))
+            {
+                foreach (var door in CurrentLevel.Doors)
+                {
+                    if (door.Name == args.PutPlayerAtDoor)
+                    {
+                        Player.WorldLocation = door.WorldLocation;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void OnSubWorldDoorEntered(object? sender, SubWorldDoorEnteredEventArgs args)
+        {
+            var nextLevelInfo = sceneManager.GetNextLevelInfo(args.TransitionToMap, Content);
+
+            // Show the hint menu and they'll get a chance to choose which level to go to.
+            var hintMenu = new HintMenu(this, nextLevelInfo, args.DoorNameEntered); // Creating garbage, I know it's bad!
+            MenuManager.AddMenu(hintMenu);
+       
+            TransitionToState(GameState.PausedWithMenu, false);
         }
 
         /// <summary>
@@ -246,7 +297,7 @@ namespace MacGame
 
         public void Pause()
         {
-            TransitionToState(GameState.Paused, false);
+            TransitionToState(GameState.PausedWithMenu, false);
             MenuManager.AddMenu(pauseMenu);
         }
 
@@ -319,39 +370,6 @@ namespace MacGame
                     CurrentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
-                }
-
-                // See if it's time to go to another level.
-                if (!string.IsNullOrEmpty(TransitionToMap))
-                {
-                    var cameFromHubWorld = CurrentLevel.IsHubWorld;
-
-                    CurrentLevel = sceneManager.LoadLevel(TransitionToMap, Content, Player, Camera);
-
-                    var leftHubWorld = cameFromHubWorld && !CurrentLevel.IsHubWorld;
-
-                    if (leftHubWorld)
-                    {
-                        CurrentLevel.HubDoorNameYouCameFrom = DoorJustEntered;
-                    }
-
-                    Camera.Map = CurrentLevel.Map;
-                    TransitionToMap = "";
-                    DoorJustEntered = "";
-
-                    if (!string.IsNullOrEmpty(PutPlayerAtDoor))
-                    {
-                        foreach(var door in CurrentLevel.Doors)
-                        {
-                            if (door.Name == PutPlayerAtDoor)
-                            {
-                                Player.WorldLocation = door.WorldLocation;
-                                break;
-                            }
-                        }
-                        
-                        PutPlayerAtDoor = "";
-                    }
                 }
             }
 
@@ -434,7 +452,7 @@ namespace MacGame
             switch (_gameState)
             {
                 case GameState.Playing:
-                case GameState.Paused:
+                case GameState.PausedWithMenu:
                 case GameState.GotCoin:
 
                     spriteBatch.Begin(SpriteSortMode.Deferred,
@@ -581,7 +599,10 @@ namespace MacGame
             /// Freeze the game for a moment but still draw and play a jingle when you get a coin.
             /// </summary>
             GotCoin,
-            Paused,
+            /// <summary>
+            /// Gameplay with some menu displaying. The menu will transition the state back.
+            /// </summary>
+            PausedWithMenu,
             Dead
         }
     }

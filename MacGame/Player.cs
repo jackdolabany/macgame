@@ -7,6 +7,7 @@ using TileEngine;
 using MacGame.Enemies;
 using MacGame.DisplayComponents;
 using MacGame.Items;
+using System.Collections.Generic;
 
 namespace MacGame
 {
@@ -44,6 +45,12 @@ namespace MacGame
 
         private MacState _state = MacState.Idle;
 
+        /// <summary>
+        /// Each coin should have a unique index 1-x. Each level should have a number representing the sub world
+        /// you entered from the hub world. If there are coins in the hub world they can be 0.
+        /// </summary>
+        private Dictionary<int, int> LevelsToCoins = new Dictionary<int, int>();
+        
         private bool IsRunning => _state == MacState.Running;
         private bool IsJumping => _state == MacState.Jumping;
         private bool IsSliding => _state == MacState.Sliding;

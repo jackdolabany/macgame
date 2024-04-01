@@ -8,6 +8,10 @@ namespace MacGame.Items
 {
     public class CricketCoin : Item
     {
+
+        public int Number { get; set; }
+        public string Hint { get; set; } = "";
+
         public CricketCoin(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");

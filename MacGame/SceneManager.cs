@@ -107,10 +107,12 @@ namespace MacGame
                                     {
                                         if (obj.Rectangle.Contains(item.CollisionRectangle))
                                         {
+                                            // Coins are special items.
                                             var coin = (CricketCoin)item;
                                             coin.Number = int.Parse(obj.Properties["Number"]);
                                             coin.Hint = obj.Properties["Hint"];
                                             level.CoinHints.Add(coin.Number, coin.Hint);
+                                            coin.InitializeAlreadyCollected(level);
                                         }
                                     }
                                 }

@@ -33,6 +33,11 @@ namespace MacGame
             });
         }
 
+        public void SetupTitle(string title)
+        {
+            this.menuTitle = title;
+        }
+
         protected override void OnCancel()
         {
             //SoundManager.PlaySound("rollover2");

@@ -45,11 +45,7 @@ namespace MacGame
 
         private MacState _state = MacState.Idle;
 
-        /// <summary>
-        /// Each coin should have a unique index 1-x. Each level should have a number representing the sub world
-        /// you entered from the hub world. If there are coins in the hub world they can be 0.
-        /// </summary>
-        private Dictionary<int, int> LevelsToCoins = new Dictionary<int, int>();
+        public StorageState StorageState { get; set; }
         
         private bool IsRunning => _state == MacState.Running;
         private bool IsJumping => _state == MacState.Jumping;
@@ -209,6 +205,8 @@ namespace MacGame
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
 
             shovel = new MacShovel(this, textures);
+
+            StorageState = new StorageState();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

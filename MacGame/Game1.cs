@@ -149,6 +149,14 @@ namespace MacGame
                 CurrentLevel.HubDoorNameYouCameFrom = args.DoorNameEntered;
             }
 
+            var hint = "";
+            if(CurrentLevel.CoinHints.ContainsKey(CurrentLevel.SelectedHintIndex))
+            {
+                hint = "\"" + CurrentLevel.CoinHints[CurrentLevel.SelectedHintIndex] + "\"";
+            }
+
+            pauseMenu.SetupTitle($"{CurrentLevel.Description}\n{hint}");
+
             // Player just went through a door, put him where he's supposed to be.
             if (!string.IsNullOrEmpty(args.PutPlayerAtDoor))
             {
@@ -250,6 +258,8 @@ namespace MacGame
             TransitionToState(GameState.Playing);
 
             EffectsManager.Initialize(Content);
+
+            pauseMenu.SetupTitle("Paused");
 
             Player.Enabled = true;
             Player.Health = Player.MaxHealth;

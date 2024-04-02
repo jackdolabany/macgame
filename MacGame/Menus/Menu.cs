@@ -11,7 +11,8 @@ namespace MacGame
         protected List<MenuOption> menuOptions = new List<MenuOption>();
         protected int selectedEntryIndex = 0;
         protected string menuTitle;
-        
+        protected int defaultSelectedEntryIndex = 0;
+
         public Vector2 Position { get; set; }
         
         public float Scale = 1f;
@@ -82,7 +83,7 @@ namespace MacGame
 
         public void ResestMenuIndex()
         {
-            selectedEntryIndex = 0;
+            selectedEntryIndex = defaultSelectedEntryIndex;
         }
 
         public virtual void HandleSelectionInputs(ref Action ca, ref Action pa, float elapsed)

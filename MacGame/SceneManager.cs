@@ -116,7 +116,6 @@ namespace MacGame
                                         }
                                     }
                                 }
-
                             }
                             else if (loadClass == "Door")
                             {
@@ -168,6 +167,19 @@ namespace MacGame
                 }
             }
 
+            // Add the special 100 taco coin, if the level has coins.
+            if (level.CoinHints.Any())
+            {
+                var tacoCoin = new CricketCoin(contentManager, 0, 0, player, camera);
+                tacoCoin.Enabled = false; // will be enabled once you collect 100 tacos.
+                tacoCoin.Hint = "100 Tacos";
+                tacoCoin.IsTacoCoin = true;
+                tacoCoin.Number = level.CoinHints.Count + 1;
+                tacoCoin.InitializeAlreadyCollected(level);
+                level.TacoCoin = tacoCoin;
+                level.Items.Add(tacoCoin);
+            }
+
             level.RevealBlockManager.OrganizeRawBlocksIntoGroups();
             player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + 4, ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
             camera.Map = level.Map;
@@ -199,6 +211,12 @@ namespace MacGame
             {
                 nextLevelInfo.CoinHints.Add(hintObject.Number, hintObject.Hint);
             }
+
+            // If it has coin hints, it has a 100 taco hint.
+            if(nextLevelInfo.CoinHints.Any())
+            {
+                nextLevelInfo.CoinHints.Add(nextLevelInfo.CoinHints.Count + 1, "100 Tacos");
+            }   
 
             return nextLevelInfo;
         }

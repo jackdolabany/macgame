@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MacGame.Items
 {
@@ -21,6 +22,12 @@ namespace MacGame.Items
         public override void WhenCollected(Player player)
         {
             player.Tacos += 1;
+
+            if(player.Tacos == 10)
+            {
+                GlobalEvents.FireOneHundredTacosCollected(this, EventArgs.Empty);
+            }
+            
             // TODO: Play sound
             //SoundManager.PlaySound("CollectItem");
         }

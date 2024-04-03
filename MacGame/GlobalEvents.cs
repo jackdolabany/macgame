@@ -3,11 +3,16 @@ using System.Globalization;
 
 namespace MacGame
 {
+    /// <summary>
+    /// You can fire events that make major changes to game state from here. These events help decouple classes that shouldn't know
+    /// about each other. Usually the game instance and items or doors or something.
+    /// </summary>
     public static class GlobalEvents
     {
         public static event EventHandler? CricketCoinCollected;
         public static event EventHandler<DoorEnteredEventArgs>? DoorEntered;
         public static event EventHandler<SubWorldDoorEnteredEventArgs>? SubWorldDoorEntered;
+        public static event EventHandler? OneHundredTacosCollected;
 
         public static void FireCricketCoinCollected(Object sender, EventArgs args)
         {
@@ -17,16 +22,6 @@ namespace MacGame
                 evt(sender, args);
             }
         }
-
-        public static string DoorJustEntered { get; internal set; }
-
-        // If a player goes through a door here's the map you're going to.
-        public static string TransitionToMap;
-
-        // If you enter a door connected to another door, this is the door you are going to.
-        public static string PutPlayerAtDoor;
-
-        public static bool IsTransitionToSubWorld;
 
         public static void FireDoorEntered(Object sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered, int? newHintIndex = null)
         {
@@ -44,6 +39,15 @@ namespace MacGame
             if (evt != null)
             {
                 var args = new SubWorldDoorEnteredEventArgs(doorNameEntered, transitionToMap);
+                evt(sender, args);
+            }
+        }
+
+        public static void FireOneHundredTacosCollected(Object sender, EventArgs args)
+        {
+            var evt = OneHundredTacosCollected;
+            if (evt != null)
+            {
                 evt(sender, args);
             }
         }

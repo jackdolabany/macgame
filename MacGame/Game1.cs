@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TileEngine;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using MacGame.Items;
 
 namespace MacGame
 {
@@ -40,19 +41,6 @@ namespace MacGame
         private static SceneManager sceneManager;
 
         public static Level CurrentLevel;
-
-        ///// <summary>
-        ///// The name of the door the player just entered.
-        ///// </summary>
-        //public static string DoorJustEntered { get; internal set; }
-
-        //// If a player goes through a door here's the map you're going to.
-        //public static string TransitionToMap;
-
-        //// If you enter a door connected to another door, this is the door you are going to.
-        //public static string PutPlayerAtDoor;
-
-        //public static bool IsTransitionToSubWorld;
 
         public const string StartingHubWorld = "TestHub";
 
@@ -124,6 +112,7 @@ namespace MacGame
             GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
             GlobalEvents.SubWorldDoorEntered += OnSubWorldDoorEntered;
+            GlobalEvents.OneHundredTacosCollected += OnOneHundredTacosCollected;
         }
 
         private void OnCricketCoinCollected(object? sender, EventArgs e)
@@ -180,6 +169,31 @@ namespace MacGame
             MenuManager.AddMenu(hintMenu);
        
             TransitionToState(GameState.PausedWithMenu, false);
+        }
+
+        private void OnOneHundredTacosCollected(object? sender, EventArgs args)
+        {
+            // TODO: Some kind of reveal jingle
+            SoundManager.PlaySound("health");
+
+            var taco = (Taco)sender!;
+            var tacoCoin = CurrentLevel.TacoCoin;
+
+            // Shift it slightly because coins are larger than tacos.
+            tacoCoin.WorldLocation = taco.WorldLocation;
+            tacoCoin.Enabled = true;
+
+            tacoCoinRevealTimer = 2f;
+
+            // Block immmediate collection. The RevealTacoCoin state change will enable it again.
+            tacoCoin.CanBeCollected = false;
+
+            // Coin should bounce up then down.
+            TimerManager.AddNewTimer(0.3f, () => tacoCoin.Velocity = new Vector2(0, -40f), false) // wait a sec and then move the coin up.
+                .Then(0.5f, () => tacoCoin.Velocity = -tacoCoin.Velocity, false) // then down
+                .Then(0.5f, () => tacoCoin.Velocity = Vector2.Zero, false); // then stop
+
+            TransitionToState(GameState.RevealTacoCoin, false);
         }
 
         /// <summary>
@@ -354,6 +368,7 @@ namespace MacGame
         }
 
         float pauseForCoinTimer = 0f;
+        float tacoCoinRevealTimer = 0f;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -381,6 +396,22 @@ namespace MacGame
                     EffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
                 }
+            }
+
+            if (_gameState == GameState.RevealTacoCoin)
+            {
+                // Pause for a bit while we play a jingle and just update the taco coin.
+                TimerManager.Update(elapsed);
+                CurrentLevel.TacoCoin.Update(gameTime, elapsed);
+                tacoCoinRevealTimer -= elapsed;
+                if(tacoCoinRevealTimer <= 0)
+                {
+                    // Replace the hard block on collection with a timer that will 
+                    // make it flash for a bit.
+                    CurrentLevel.TacoCoin.CanBeCollected = true;
+                    CurrentLevel.TacoCoin.CanNotBeCollectedForTimer = 3f;
+                    TransitionToState(GameState.Playing, false);
+                }   
             }
 
             if(_gameState == GameState.GotCoin)
@@ -464,6 +495,7 @@ namespace MacGame
                 case GameState.Playing:
                 case GameState.PausedWithMenu:
                 case GameState.GotCoin:
+                case GameState.RevealTacoCoin:
 
                     spriteBatch.Begin(SpriteSortMode.Deferred,
                         BlendState.AlphaBlend,
@@ -613,6 +645,10 @@ namespace MacGame
             /// Gameplay with some menu displaying. The menu will transition the state back.
             /// </summary>
             PausedWithMenu,
+            /// <summary>
+            /// Once you get 100 tacos the game will sort of pause while we reveal the 100 taco coin.
+            /// </summary>
+            RevealTacoCoin,
             Dead
         }
     }

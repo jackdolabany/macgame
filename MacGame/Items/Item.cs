@@ -31,6 +31,31 @@ namespace MacGame.Items
         StaticImageDisplay OpenChestBottom;
         StaticImageDisplay OpenChestTop;
 
+        /// <summary>
+        /// Set this to some value to make the item flash and 
+        /// prevent it from being collected for some time.
+        /// </summary>
+        public float CanNotBeCollectedForTimer = 0;
+
+        // Set this to hard block the item from being collected.
+        private bool canBeCollected = true;
+
+        public bool CanBeCollected
+        {
+            get
+            {
+                return canBeCollected && CanNotBeCollectedForTimer <= 0;
+            }
+            set
+            {
+                canBeCollected = value;
+                if (canBeCollected)
+                {
+                    CanNotBeCollectedForTimer = 0;
+                }
+            }
+        }
+
         private bool isOpen = false;
         
         // The item may move up, but the chest never moves.
@@ -73,8 +98,45 @@ namespace MacGame.Items
 
         public abstract void WhenCollected(Player player);
 
+        /// <summary>
+        /// Store the original tint for when we make it flash.
+        /// </summary>
+        private Color originalTint;
+        private float flashTimer = 0;
+        private const float flashDuration = 0.3f;
+        private bool isFlashingInvisible = false;
+
         public override void Update(GameTime gameTime, float elapsed)
         {
+            if (CanNotBeCollectedForTimer > 0)
+            {
+                CanNotBeCollectedForTimer -= elapsed;
+
+                flashTimer += elapsed;
+                if (flashTimer >= flashDuration)
+                {
+                    flashTimer -= flashDuration;
+                    if (isFlashingInvisible)
+                    {
+                        this.DisplayComponent.TintColor = originalTint;
+                    }
+                    else
+                    {
+                        this.DisplayComponent.TintColor = originalTint * 0.3f;
+                    }
+                    isFlashingInvisible = !isFlashingInvisible;
+                }
+
+                // Don't let it get stuck invisible.
+                if (CanNotBeCollectedForTimer <= 0)
+                {
+                    this.DisplayComponent.TintColor = originalTint;
+                }
+            }
+            else
+            {
+                originalTint = this.DisplayComponent.TintColor;
+            }
 
             if (!isInitialized && IsInChest)
             {
@@ -107,7 +169,7 @@ namespace MacGame.Items
             else if (Enabled)
             {
                 // Check for player/item collision.
-                if (_player.CollisionRectangle.Intersects(this.CollisionRectangle))
+                if (_player.CollisionRectangle.Intersects(this.CollisionRectangle) && CanBeCollected)
                 {
                     this.Collect(_player);
                 }
@@ -122,19 +184,20 @@ namespace MacGame.Items
                     isOpen = false;
                     WorldLocation = ChestPosition;
                 }
-
             }
 
             // Move up until it's just above the chest.
-            if (IsInChest && isOpen && this.worldLocation.Y > ChestPosition.Y - 7)
+            if (IsInChest)
             {
-                this.velocity.Y = -4;
+                if (isOpen && this.worldLocation.Y > ChestPosition.Y - 7)
+                {
+                    this.velocity.Y = -4;
+                }
+                else
+                {
+                    this.velocity.Y = 0;
+                }
             }
-            else
-            {
-                this.velocity.Y = 0;
-            }
-
             base.Update(gameTime, elapsed);
         }
 

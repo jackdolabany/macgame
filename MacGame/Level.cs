@@ -52,6 +52,11 @@ namespace MacGame
         public List<Door> Doors;
 
         /// <summary>
+        /// The coin you get when you get 100 tacos.
+        /// </summary>
+        public CricketCoin TacoCoin;
+
+        /// <summary>
         /// For enemies that need to add enemies. 
         /// They can add them to this list and they will be added to the world before the next update cycle.
         /// </summary>

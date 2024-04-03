@@ -23,7 +23,7 @@ namespace MacGame.Items
         {
             player.Tacos += 1;
 
-            if(player.Tacos == 10)
+            if(player.Tacos == 100)
             {
                 GlobalEvents.FireOneHundredTacosCollected(this, EventArgs.Empty);
             }

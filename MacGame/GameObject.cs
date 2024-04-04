@@ -601,7 +601,7 @@ namespace MacGame
             if (DrawCollisionRect || Game1.DrawAllCollisisonRects && !collisionRectangle.IsEmpty)
             {
                 Color color = Color.Red * 0.25f;
-                spriteBatch.Draw(Game1.textures, CollisionRectangle, Game1.whiteSourceRect, color);
+                spriteBatch.Draw(Game1.Textures, CollisionRectangle, Game1.WhiteSourceRect, color);
             }
 
             // Draw a square at the GameObjects location
@@ -612,12 +612,12 @@ namespace MacGame
 
                 // Draw location in green
                 //spriteBatch.Draw(Game1.simpleSprites, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize / 2, rectSize / 2), Game1.whiteSourceRect, Color.Green);
-                spriteBatch.Draw(Game1.textures, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize, rectSize), Game1.whiteSourceRect, Color.Green);
+                spriteBatch.Draw(Game1.Textures, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize, rectSize), Game1.WhiteSourceRect, Color.Green);
 
                 location = WorldCenter;
 
                 // Draw world center in Yellow
-                spriteBatch.Draw(Game1.textures, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize, rectSize), Game1.whiteSourceRect, Color.Yellow);
+                spriteBatch.Draw(Game1.Textures, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize, rectSize), Game1.WhiteSourceRect, Color.Yellow);
             }
         }
 

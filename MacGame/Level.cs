@@ -142,20 +142,21 @@ namespace MacGame
             {
                 foreach (var door in Doors)
                 {
-                    if (door.Enabled)
+                    if (door.Enabled && door.CollisionRectangle.Contains(Player.CollisionCenter))
                     {
-                        if (door.CollisionRectangle.Contains(Player.CollisionCenter))
+                        if (door.CoinsNeeded > Player.CricketCoinCount)
                         {
-                            if (door.IsToSubworld)
-                            {
-                                GlobalEvents.FireSubWorldDoorEntered(this, door.Name, door.GoToMap);
-                                break;
-                            }
-                            else
-                            {
-                                GlobalEvents.FireDoorEntered(this, door.GoToMap, door.GoToDoorName, door.Name);
-                                break;
-                            }
+                            ConversationManager.AddMessage($"You need {door.CoinsNeeded} coins to unlock this door.", ConversationManager.Float.Bottom);
+                        }
+                        else if (door.IsToSubworld)
+                        {
+                            GlobalEvents.FireSubWorldDoorEntered(this, door.Name, door.GoToMap);
+                            break;
+                        }
+                        else
+                        {
+                            GlobalEvents.FireDoorEntered(this, door.GoToMap, door.GoToDoorName, door.Name);
+                            break;
                         }
                     }
                 }

@@ -111,7 +111,7 @@ namespace MacGame
                         Color.White * 0.8f);
                 pop.Scale = 1f;
                 pop.FinalScale = 1f;
-                pop.SetStaticImage(Game1.textures, WhiteSquareSourceRectangle);
+                pop.SetStaticImage(Game1.Textures, WhiteSquareSourceRectangle);
                 // pop.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
             }
         }

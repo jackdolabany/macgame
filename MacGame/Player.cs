@@ -34,7 +34,7 @@ namespace MacGame
         public int Health { get; set; } = MaxHealth;
 
         public int Tacos = 0;
-        public int CricketCoins = 0;
+        public int CricketCoinCount = 0;
 
         public InputManager InputManager { get; private set; }
 

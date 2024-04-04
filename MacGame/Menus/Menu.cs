@@ -179,7 +179,7 @@ namespace MacGame
             // A blocking square
             if (IsOverlay)
             {
-                spriteBatch.Draw(Game1.textures, new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION), Game1.whiteSourceRect, new Color(0f, 0f, 0f, 0.8f), 0f, Vector2.Zero, SpriteEffects.None, DrawDepth + 2 * Game1.MIN_DRAW_INCREMENT);
+                spriteBatch.Draw(Game1.Textures, new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION), Game1.WhiteSourceRect, new Color(0f, 0f, 0f, 0.8f), 0f, Vector2.Zero, SpriteEffects.None, DrawDepth + 2 * Game1.MIN_DRAW_INCREMENT);
             }
 
             // Menu title

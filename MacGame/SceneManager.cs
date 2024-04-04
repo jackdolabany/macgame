@@ -142,6 +142,10 @@ namespace MacGame
                                             {
                                                 door.IsToSubworld = obj.Properties["IsToSubworld"] == "1";
                                             }
+                                            if (obj.Properties.ContainsKey("CoinsNeeded"))
+                                            {
+                                                door.CoinsNeeded = int.Parse(obj.Properties["CoinsNeeded"]);
+                                            }
                                             door.Name = obj.Name;
                                         }
                                     }

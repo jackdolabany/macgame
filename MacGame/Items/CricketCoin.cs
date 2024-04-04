@@ -71,13 +71,13 @@ namespace MacGame.Items
                 if (!coins.Contains(Number))
                 {
                     coins.Add(Number);
-                    player.CricketCoins++;
+                    player.CricketCoinCount++;
                 }
             }
             else
             {
                 player.StorageState.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new List<int> { Number });
-                player.CricketCoins++;
+                player.CricketCoinCount++;
             }
 
             // take the player back to the main room. Reset tacos, health, etc. Save the game.

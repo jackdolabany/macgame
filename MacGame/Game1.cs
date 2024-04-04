@@ -27,10 +27,10 @@ namespace MacGame
 
         public static bool DrawAllCollisisonRects = false;
 
-        public static Texture2D textures;
+        public static Texture2D Textures;
         public static Texture2D titleScreen;
 
-        public static Rectangle whiteSourceRect = new Rectangle(11, 27, 2, 2);
+        public static Rectangle WhiteSourceRect = new Rectangle(11, 27, 2, 2);
 
         public const int TileSize = TileEngine.TileMap.TileSize;
 
@@ -217,7 +217,7 @@ namespace MacGame
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            textures = Content.Load<Texture2D>(@"Textures\Textures");
+            Textures = Content.Load<Texture2D>(@"Textures\Textures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
 
             var kenPixelFont = Content.Load<SpriteFont>(@"Fonts\KenPixel");
@@ -247,7 +247,8 @@ namespace MacGame
             Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
             EffectsManager.Initialize(Content);
-            
+            ConversationManager.Initialize(Content);
+
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
 
@@ -390,6 +391,11 @@ namespace MacGame
                 {
                     Pause();
                 }
+                else if (ConversationManager.IsInConversation() && transitionTimer <= 0)
+                {
+                    CurrentGameState = GameState.Conversation;
+                    return;
+                }
                 else
                 {
                     CurrentLevel.Update(gameTime, elapsed);
@@ -397,8 +403,7 @@ namespace MacGame
                     TimerManager.Update(elapsed);
                 }
             }
-
-            if (_gameState == GameState.RevealTacoCoin)
+            else if (_gameState == GameState.RevealTacoCoin)
             {
                 // Pause for a bit while we play a jingle and just update the taco coin.
                 TimerManager.Update(elapsed);
@@ -413,8 +418,7 @@ namespace MacGame
                     TransitionToState(GameState.Playing, false);
                 }   
             }
-
-            if(_gameState == GameState.GotCoin)
+            else if(_gameState == GameState.GotCoin)
             {
                 if (pauseForCoinTimer > 0)
                 {
@@ -426,12 +430,20 @@ namespace MacGame
                 }
             }
 
-            if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
+            else if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
             {
                 if (!MenuManager.IsMenu)
                 {
                     // Show the title screen menu only after we've transitioned here.
                     MenuManager.AddMenu(mainMenu);
+                }
+            }
+            else if (CurrentGameState == GameState.Conversation)
+            {
+                ConversationManager.Update(elapsed);
+                if (!ConversationManager.IsInConversation())
+                {
+                    CurrentGameState = GameState.Playing;
                 }
             }
 
@@ -496,6 +508,7 @@ namespace MacGame
                 case GameState.PausedWithMenu:
                 case GameState.GotCoin:
                 case GameState.RevealTacoCoin:
+                case GameState.Conversation:
 
                     spriteBatch.Begin(SpriteSortMode.Deferred,
                         BlendState.AlphaBlend,
@@ -514,6 +527,12 @@ namespace MacGame
                     // Draw the HUD over everything.
                     spriteBatch.Begin();
                     DrawHud(spriteBatch);
+
+                    if (CurrentGameState == GameState.Conversation)
+                    {
+                        ConversationManager.Draw(spriteBatch);
+                    }
+
                     spriteBatch.End();
 
                     break;
@@ -572,18 +591,18 @@ namespace MacGame
                 var heartXPos = 2 + (i * 8);
                 if (i < Player.Health)
                 {
-                    spriteBatch.Draw(textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
+                    spriteBatch.Draw(Textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
                 }
                 else
                 {
-                    spriteBatch.Draw(textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(16, 16, 8, 8), Color.White);
+                    spriteBatch.Draw(Textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(16, 16, 8, 8), Color.White);
                 }
             }
 
             // Draw the player's current item
             if (Player.CurrentItem != null)
             {
-                spriteBatch.Draw(textures, new Rectangle(2, 12, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
+                spriteBatch.Draw(Textures, new Rectangle(2, 12, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
             }
 
             // Draw the number of tacos in the HUD for regular levels, or draw the Cricket coins for the Hub level.
@@ -593,7 +612,7 @@ namespace MacGame
             if (CurrentLevel.IsHubWorld)
             {
                 var cricketCoinSourceRect = new Rectangle(9 * TileSize, 2 * TileSize, 8, 8);
-                DrawNumberOfThingsOnRight(spriteBatch, cricketCoinSourceRect, Player.CricketCoins, GAME_X_RESOLUTION - 10, hudYPos);
+                DrawNumberOfThingsOnRight(spriteBatch, cricketCoinSourceRect, Player.CricketCoinCount, GAME_X_RESOLUTION - 10, hudYPos);
             }
             else
             {
@@ -625,12 +644,12 @@ namespace MacGame
             }
 
             // Draw the icon image
-            spriteBatch.Draw(textures, new Rectangle(rightMostX - 8, yPos + 1, 8, 8), iconSourceRectangle, Color.White);
+            spriteBatch.Draw(Textures, new Rectangle(rightMostX - 8, yPos + 1, 8, 8), iconSourceRectangle, Color.White);
         }
 
         public static void DrawBlackOverScreen(SpriteBatch spriteBatch, float opacity)
         {
-            spriteBatch.Draw(Game1.textures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Game1.whiteSourceRect, Color.Black * opacity);
+            spriteBatch.Draw(Game1.Textures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Game1.WhiteSourceRect, Color.Black * opacity);
         }
 
         public enum GameState
@@ -649,6 +668,10 @@ namespace MacGame
             /// Once you get 100 tacos the game will sort of pause while we reveal the 100 taco coin.
             /// </summary>
             RevealTacoCoin,
+            /// <summary>
+            /// Talking to an NPC or text coming up because of some action (trying to open a locked door, etc.)
+            /// </summary>
+            Conversation,
             Dead
         }
     }

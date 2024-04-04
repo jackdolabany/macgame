@@ -17,6 +17,8 @@ namespace MacGame
         /// </summary>
         public bool IsToSubworld = false;
 
+        public int CoinsNeeded;
+
         public Door(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
         {
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);

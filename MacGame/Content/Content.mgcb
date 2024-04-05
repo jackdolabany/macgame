@@ -16,6 +16,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/emulogic.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/emulogic.spritefont
+
 #begin Fonts/KenPixel.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

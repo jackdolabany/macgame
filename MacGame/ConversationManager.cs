@@ -12,11 +12,12 @@ namespace MacGame
     public static class ConversationManager
     {
 
-        /// <summary>
-        /// All of the components that we'll need to draw to create a menu block
-        /// </summary>
-        //static Rectangle cornerSourceRect;
-        //static Rectangle blueSourceRect;
+        // Dialog box background and border components
+        static Rectangle borderCornerSourceRect;
+        static Rectangle borderLeftEdgeSourceRect;
+        static Rectangle borderTopEdgeSourceRect;
+        static Rectangle dialogBoxBackgroundSourceRect;
+
         //static Rectangle horizontalEdgeSourceRect;
         //static Rectangle verticalEdgeSourceRect;
         //static Rectangle advanceMessageArrowSourceRect;
@@ -29,6 +30,7 @@ namespace MacGame
         //static int personPictureScaledWidth;
         //static float personPictureScale;
         static int textWidth;
+        static int textHeight;
 
         static float textScale = 1f;
 
@@ -41,7 +43,6 @@ namespace MacGame
         static float ChoicePointerWidth = 0f;
 
         private static SpriteFont Font;
-        private static Vector2 FontSize;
 
         /// <summary>
         /// Represents the face of the person that is talking.
@@ -106,8 +107,8 @@ namespace MacGame
             }
 
             // Calculate the number of lines we can display.
-            var wordHeight = FontSize.Y * textScale;
-            var linesToDisplay = (int)Math.Floor((float)bubbleHeight / wordHeight);
+            var wordHeight = Game1.TileSize; // Game will only work with tile size fonts.
+            var linesToDisplay = (int)((float)textHeight / (float)wordHeight);
 
             var lines = GetLineWrappedText(text, textWidth, textScale);
 
@@ -154,15 +155,20 @@ namespace MacGame
 
         public static void Initialize(ContentManager content)
         {
-            bubbleWidth = 100;
-            bubbleHeight = 35;
+            bubbleWidth = 14 * Game1.TileSize;
+            bubbleHeight = 6 * Game1.TileSize;
 
-            textWidth = bubbleWidth;
+            textWidth = bubbleWidth - 2 * Game1.TileSize;
+            textHeight = bubbleHeight - 2 * Game1.TileSize;
 
             ChoicePointerWidth = Game1.Font.MeasureString(ChoicePointerString).X * textScale;
 
             Font = Game1.Font;
-            FontSize = Font.MeasureString("A");
+
+            borderCornerSourceRect = new Rectangle(0, 11 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            borderLeftEdgeSourceRect = new Rectangle(0, 12 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            borderTopEdgeSourceRect = new Rectangle(Game1.TileSize, 11 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            dialogBoxBackgroundSourceRect = new Rectangle(Game1.TileSize, 12 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
         }
 
         public static bool IsInConversation()
@@ -254,18 +260,76 @@ namespace MacGame
             int bottomMargin = leftMargin;
             int topMargin = Game1.GAME_Y_RESOLUTION - bubbleHeight - bottomMargin;
 
-            ////     draw the conversation bubble
-            //// background filler. Edges are handled below     
-            //int offset = 24;
-            //spriteBatch.Draw(menuTexture, new Rectangle(leftMargin + offset, topMargin + offset, bubbleWidth - 2 * offset, bubbleHeight - 2 * offset), blueSourceRect, Color.White, 0f, Vector2.Zero, SpriteEffects.None, bubbleDepth);
+            // Draw the bordered rectangle behind the text
+            spriteBatch.Draw(Game1.Textures, new Rectangle(leftMargin, topMargin, bubbleWidth, bubbleHeight), Game1.WhiteSourceRect, Color.Blue * 0.5f);
 
-            ////     Corners
-            //// top left corner
-            //spriteBatch.Draw(menuTexture, new Rectangle(leftMargin, topMargin, cornerSourceRect.Width, cornerSourceRect.Height), cornerSourceRect, Color.White, 0f, new Vector2(cornerSourceRect.Width / 2, cornerSourceRect.Height / 2), SpriteEffects.None, bubbleDepth);
+            Color borderColor = Color.White;
 
-            //// top right corner
-            //spriteBatch.Draw(menuTexture, new Rectangle(leftMargin + bubbleWidth, topMargin, cornerSourceRect.Width, cornerSourceRect.Height), cornerSourceRect, Color.White, MathHelper.PiOver2, new Vector2(cornerSourceRect.Width / 2, cornerSourceRect.Height / 2), SpriteEffects.None, bubbleDepth);
+            // Draw the dialog box
+            var tileWidth = bubbleWidth / Game1.TileSize;
+            var tileHeight = bubbleHeight / Game1.TileSize;
 
+            for (int i = 0; i < tileWidth; i++)
+            {
+                for (int j = 0; j < tileHeight; j++)
+                {
+                    var dialogBoxSpriteEffect = SpriteEffects.None;
+                    var sourceRect = dialogBoxBackgroundSourceRect;
+                    if (i == 0 && j == 0)
+                    {
+                        // top left corner
+                        sourceRect = borderCornerSourceRect;
+                    }
+                    else if (i == 0 && j == tileHeight - 1)
+                    {
+                        // bottom left corner
+                        sourceRect = borderCornerSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipVertically;
+                    }
+                    else if (i == tileWidth - 1 && j == 0)
+                    {
+                        // top right corner
+                        sourceRect = borderCornerSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally;
+                    }
+                    else if (i == tileWidth - 1 && j == tileHeight - 1)
+                    {
+                        // bottom right corner
+                        sourceRect = borderCornerSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically;
+                    }
+                    else if (i == tileWidth - 1)
+                    {
+                        // Right edge
+                        sourceRect = borderLeftEdgeSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally;
+                    }
+                    else if (j == tileHeight - 1)
+                    {
+                        // bottom edge
+                        sourceRect = borderTopEdgeSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipVertically;
+                    }
+                    else if (i == 0)
+                    {
+                        sourceRect = borderLeftEdgeSourceRect;
+                    }
+                    else if (j == 0)
+                    {
+                        sourceRect = borderTopEdgeSourceRect;
+                    }
+
+                    spriteBatch.Draw(Game1.Textures, new Rectangle(leftMargin + i * Game1.TileSize, topMargin + j * Game1.TileSize, Game1.TileSize, Game1.TileSize), sourceRect, borderColor, 0f, Vector2.Zero, dialogBoxSpriteEffect, 0f);
+                }
+            }
+
+            //     Corners
+            // top left corner
+            //spriteBatch.Draw(Game1.Textures, new Rectangle(leftMargin, topMargin, Game1.TileSize, Game1.TileSize), borderCornerSourceRect, borderColor, 0f, Vector2.Zero, SpriteEffects.None, textDepth);
+
+            // top right corner
+            //spriteBatch.Draw(Game1.Textures, new Rectangle(leftMargin + bubbleWidth - Game1.TileSize, topMargin, Game1.TileSize, Game1.TileSize), borderCornerSourceRect, borderColor, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, textDepth);
+            
             //// bottom right corner
             //spriteBatch.Draw(menuTexture, new Rectangle(leftMargin + bubbleWidth, topMargin + bubbleHeight, cornerSourceRect.Width, cornerSourceRect.Height), cornerSourceRect, Color.White, MathHelper.Pi, new Vector2(cornerSourceRect.Width / 2, cornerSourceRect.Height / 2), SpriteEffects.None, bubbleDepth);
 
@@ -325,7 +389,7 @@ namespace MacGame
             }
 
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Text, new Vector2(leftMargin, topMargin + 10), textScale, textDepth, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Text, new Vector2(leftMargin + Game1.TileSize, topMargin + Game1.TileSize), textScale, textDepth, currentLetterIndex);
 
             // Draw the choices. Start in the bottom right corner
             var location = new Vector2(leftMargin + bubbleWidth, topMargin + bubbleHeight);
@@ -342,7 +406,7 @@ namespace MacGame
                 location.X -= totalWidth;
 
                 // Hack it up a bit
-                location += new Vector2(-90, -85);
+                // location += new Vector2(-90, -85);
 
                 for (int i = 0; i < currentMessage.Choices.Count; i++)
                 {
@@ -374,7 +438,9 @@ namespace MacGame
         /// </summary>
         private static void DrawTexts(SpriteBatch spriteBatch, List<string> strings, Vector2 position, float scale, float depth, int maxLetters = int.MaxValue)
         {
-            var wordHeight = FontSize.Y * scale;
+            // We could use the font height but instead this game will only work with TileSize height fonts.
+            var wordHeight = Game1.TileSize;
+
             Vector2 drawLocation = position;
 
             int previousLinesLetterCount = 0;

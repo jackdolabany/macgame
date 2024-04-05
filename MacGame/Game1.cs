@@ -220,8 +220,7 @@ namespace MacGame
             Textures = Content.Load<Texture2D>(@"Textures\Textures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
 
-            var kenPixelFont = Content.Load<SpriteFont>(@"Fonts\KenPixel");
-            Font = kenPixelFont;
+            Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 

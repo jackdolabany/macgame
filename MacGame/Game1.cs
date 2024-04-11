@@ -221,6 +221,7 @@ namespace MacGame
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
 
             Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
+            //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 

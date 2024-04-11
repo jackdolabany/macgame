@@ -147,7 +147,7 @@ namespace MacGame
                         if (door.CoinsNeeded > Player.CricketCoinCount)
                         {
                             // TODO: Temp
-                            ConversationManager.AddMessage($"You need {door.CoinsNeeded} coins to unlock this door. This is an extra long message for testing stuff. Will it fit in one block? no.", ConversationManager.Float.Bottom);
+                            ConversationManager.AddMessage($"You need {door.CoinsNeeded} coins to unlock this door. This is an extra long message for testing stuff. Will it fit in one block? no.");
                             //ConversationManager.AddMessage($"You need {door.CoinsNeeded} coins to unlock this door.", ConversationManager.Float.Bottom);
                         }
                         else if (door.IsToSubworld)

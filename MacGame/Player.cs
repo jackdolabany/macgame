@@ -964,5 +964,17 @@ namespace MacGame
             // Normally the Camera tracks the player
             return this.worldLocation;
         }
+
+        public void AddUnlockedDoor(string doorName)
+        {
+            if (StorageState.UnlockedDoors.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            {
+                StorageState.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Add(doorName);
+            }
+            else
+            {
+                StorageState.UnlockedDoors.Add(Game1.CurrentLevel.LevelNumber, new List<string> { doorName });
+            }
+        }
     }
 }

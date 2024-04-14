@@ -20,6 +20,8 @@ namespace MacGame
 
         public Dictionary<int, int> MaxTacosPerLevel = new Dictionary<int, int>();
 
+        public Dictionary<int, List<string>> UnlockedDoors = new Dictionary<int, List<string>>();
+
         /// <summary>
         ///  Set to true if you beat the game. Maybe we'll display a star or something on your save file.
         /// </summary>

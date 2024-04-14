@@ -19,6 +19,18 @@ namespace MacGame.DisplayComponents
             drawObject = new DrawObject();
         }
 
+        public AnimationStrip? CurrentAnimation
+        {
+            get
+            {
+                if (animations.ContainsKey(currentAnimationName))
+                {
+                    return animations[currentAnimationName];
+                }
+                return null;
+            }
+        }
+
         public Vector2 WorldLocation
         {
             get { return drawObject.Position; }

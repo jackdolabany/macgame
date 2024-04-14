@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MacGame
 {
@@ -20,13 +19,7 @@ namespace MacGame
 
         public int CoinsNeeded;
 
-        public bool IsLocked
-        {
-            get
-            {
-                return _player.CricketCoinCount < CoinsNeeded;
-            }
-        }
+        public bool IsLocked { get; set; }
 
         private DoorState State;
 
@@ -45,51 +38,79 @@ namespace MacGame
         /// </summary>
         float pauseBeforeTransitionTimer = 0;
 
-        private AnimationDisplay Animations => (AnimationDisplay)DisplayComponent;
+        private AnimationDisplay DoorAnimations;
+        private AnimationDisplay JailBarAnimations;
 
         public OpenCloseDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
-            var animations = new AnimationDisplay();
-            this.DisplayComponent = animations;
+            DoorAnimations = new AnimationDisplay();
+            JailBarAnimations = new AnimationDisplay();
+            var aggDisplay = new AggregateDisplay(new DisplayComponent[] { DoorAnimations, JailBarAnimations });
+            this.DisplayComponent = aggDisplay;
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var idle = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 1, "idle");
             idle.LoopAnimation = false;
             idle.FrameLength = 0.15f;
-            animations.Add(idle);
+            DoorAnimations.Add(idle);
             
             var open = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 3, "open");
             open.LoopAnimation = false;
             open.FrameLength = 0.15f;
-            animations.Add(open);
+            DoorAnimations.Add(open);
 
             var close = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 1, "close");
             close.LoopAnimation = false;
             close.FrameLength = 0.15f;
             close.Reverse = true;
-            animations.Add(close);
+            DoorAnimations.Add(close);
 
+            var closedJailBars = new AnimationStrip(textures, new Rectangle(3 * Game1.TileSize, 12 * Game1.TileSize, 8, 16), 1, "closed");
+            closedJailBars.LoopAnimation = false;
+            JailBarAnimations.Add(closedJailBars);
+
+            var openJailBars = new AnimationStrip(textures, new Rectangle(3 * Game1.TileSize, 12 * Game1.TileSize, 8, 16), 3, "open");
+            openJailBars.LoopAnimation = false;
+            openJailBars.FrameLength = 0.15f;
+            JailBarAnimations.Add(openJailBars);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+            if (IsLocked && JailBarAnimations.CurrentAnimation == null)
+            {                 
+                JailBarAnimations.Play("closed");
+            }
+            
+            // Hide the jail bars if the door is unlocked.
+            if(!IsLocked)
+            {
+                JailBarAnimations.TintColor = Color.White * 0;
+            }
+
+            if (JailBarAnimations.currentAnimationName == "open" && JailBarAnimations.CurrentAnimation!.FinishedPlaying)
+            {
+                IsLocked = false;
+                _player.AddUnlockedDoor(Name);
+            }
+
             if (this.State == DoorState.Idle)
             {
-                Animations.Play("idle");
+                DoorAnimations.Play("idle");
             }
             else if (this.State == DoorState.Opening)
             {
-                if (Animations.animations[Animations.currentAnimationName].FinishedPlaying)
+                if (DoorAnimations.animations[DoorAnimations.currentAnimationName].FinishedPlaying)
                 {
                     pauseBeforeTransitionTimer = 1f;
                     this.State = DoorState.Closing;
-                    Animations.Play("close");
+                    DoorAnimations.Play("close");
                 }
             }
             else if (this.State == DoorState.Closing)
             {
-                if (Animations.animations[Animations.currentAnimationName].FinishedPlaying)
+                if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 0 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
                 {
                     // hide Mac because he just got shut in the door.
                     _player.IsInvisible = true;
@@ -110,7 +131,7 @@ namespace MacGame
             // Need to offset the position of the DrawObject because it gets all screwed up since the
             // graphic for the door is twice the size of the door. That's because it opens/closes and the
             // animation graphic spills to the left of the door.
-            Animations.WorldLocation -= new Vector2(4, 0);
+            DoorAnimations.WorldLocation -= new Vector2(4, 0);
         }
 
         /// <summary>
@@ -118,7 +139,7 @@ namespace MacGame
         /// </summary>
         public void OpenThenCloseThenTransition(int? hintIndex = null)
         {
-            Animations.Play("open");
+            DoorAnimations.Play("open");
             this.State = DoorState.Opening;
             this.hintIndex = hintIndex;
             GlobalEvents.FireBeginDoorEnter(this, EventArgs.Empty);
@@ -129,6 +150,13 @@ namespace MacGame
             if (CoinsNeeded > player.CricketCoinCount)
             {
                 ConversationManager.AddMessage($"You need {CoinsNeeded} coins to unlock this door.");
+            }
+            else if (IsLocked)
+            {
+                // locked but the player now has enough coins to open it.
+                JailBarAnimations.Play("open");
+
+                // TODO: Play a sound effect here.
             }
             else if (IsToSubworld)
             {

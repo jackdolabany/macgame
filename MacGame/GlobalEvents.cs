@@ -10,13 +10,38 @@ namespace MacGame
     public static class GlobalEvents
     {
         public static event EventHandler? CricketCoinCollected;
+
+        /// <summary>
+        /// A door is starting to open/close on Mac. This event notifieds the game state to stop 
+        /// updating Mac and enemies and such. When the door closes it will raise DoorEntered to actually transition
+        /// the player to the new map. 
+        /// </summary>
+        public static event EventHandler? BeginDoorEnter;
+
+        /// <summary>
+        /// You successfully entered a door and are transitioning to a new map.
+        /// </summary>
         public static event EventHandler<DoorEnteredEventArgs>? DoorEntered;
-        public static event EventHandler<SubWorldDoorEnteredEventArgs>? SubWorldDoorEntered;
+        
+        /// <summary>
+        /// You entered a sub world door from the main hub. We need to show you a special menu to choose where you want to go.
+        /// </summary>
+        public static event EventHandler<SubWorldDoorEnteredEventArgs>? BeginSubWorldDoorEnter;
+
         public static event EventHandler? OneHundredTacosCollected;
 
         public static void FireCricketCoinCollected(Object sender, EventArgs args)
         {
             var evt = CricketCoinCollected;
+            if (evt != null)
+            {
+                evt(sender, args);
+            }
+        }
+
+        public static void FireBeginDoorEnter(Object sender, EventArgs args)
+        {
+            var evt = BeginDoorEnter;
             if (evt != null)
             {
                 evt(sender, args);
@@ -35,7 +60,7 @@ namespace MacGame
 
         public static void FireSubWorldDoorEntered(Object sender, string doorNameEntered, string transitionToMap)
         {
-            var evt = SubWorldDoorEntered;
+            var evt = BeginSubWorldDoorEnter;
             if (evt != null)
             {
                 var args = new SubWorldDoorEnteredEventArgs(doorNameEntered, transitionToMap);

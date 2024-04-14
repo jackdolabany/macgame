@@ -23,18 +23,24 @@ namespace MacGame
 
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
-
             TimerManager.Clear();
             Game1.Camera.CanScrollLeft = true;
-            
+
             player.Velocity = Vector2.Zero;
             player.IsInMineCart = false;
+            player.IsInvisible = false;
 
-            SoundManager.PlaySong("Stage1", true, 0.2f);
+            // Music is annoying for testing.
+            if (!Game1.IS_DEBUG)
+            {
+                SoundManager.PlaySong("Stage1", true, 0.2f);
+            }
 
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 
             var level = new Level(player, map, camera);
+            
+            level.Name = mapName;
 
             level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
 
@@ -117,9 +123,19 @@ namespace MacGame
                                     }
                                 }
                             }
-                            else if (loadClass == "Door")
+                            else if (loadClass == "Doorway" || loadClass == "OpenCloseDoor")
                             {
-                                var door = new Door(contentManager, x, y, player, camera);
+                                Door door = null;
+                                switch (loadClass)
+                                {
+                                    case "Doorway":
+                                        door = new Doorway(contentManager, x, y, player, camera);
+                                        break;
+                                    case "OpenCloseDoor":
+                                        door = new OpenCloseDoor(contentManager, x, y, player, camera);
+                                        break;
+                                }
+
                                 level.Doors.Add(door);
 
                                 // Doors need to know what level to go to. I expect an object on the map that contains the door and 
@@ -140,11 +156,11 @@ namespace MacGame
                                             }
                                             if (obj.Properties.ContainsKey("IsToSubworld"))
                                             {
-                                                door.IsToSubworld = obj.Properties["IsToSubworld"] == "1";
+                                                ((OpenCloseDoor)door).IsToSubworld = obj.Properties["IsToSubworld"] == "1";
                                             }
                                             if (obj.Properties.ContainsKey("CoinsNeeded"))
                                             {
-                                                door.CoinsNeeded = int.Parse(obj.Properties["CoinsNeeded"]);
+                                                ((OpenCloseDoor)door).CoinsNeeded = int.Parse(obj.Properties["CoinsNeeded"]);
                                             }
                                             door.Name = obj.Name;
                                         }

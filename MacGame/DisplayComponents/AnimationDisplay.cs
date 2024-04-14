@@ -19,6 +19,12 @@ namespace MacGame.DisplayComponents
             drawObject = new DrawObject();
         }
 
+        public Vector2 WorldLocation
+        {
+            get { return drawObject.Position; }
+            set { drawObject.Position = value; }
+        }
+
         public void Add(string key, AnimationStrip animation)
         {
             animations.Add(key, animation);
@@ -62,9 +68,6 @@ namespace MacGame.DisplayComponents
             {
                 anim.Update(elapsed);
             }
-
-            // Setup the DrawObject
-            //drawObject.Position = position;
 
             SpriteEffects effect = SpriteEffects.None;
             if (flipped)

@@ -6,18 +6,13 @@ using TileEngine;
 
 namespace MacGame
 {
-    public class Door : GameObject
+    public abstract class Door : GameObject
     {
         public string Name = "";
         public string GoToMap = "";
         public string GoToDoorName = "";
 
-        /// <summary>
-        /// If the door is coming from a hub world and going to a sub world display the hints from that sub world.
-        /// </summary>
-        public bool IsToSubworld = false;
-
-        public int CoinsNeeded;
+        protected Player _player;
 
         public Door(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
         {
@@ -25,9 +20,13 @@ namespace MacGame
             Enabled = true;
 
             this.CollisionRectangle = new Rectangle(-4, -16, 8, 16);
-            var sid = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(0, 72, 8, 16));
-            this.DisplayComponent = sid;
 
+            _player = player;
+        }
+
+        public virtual void PlayerTriedToOpen(Player player)
+        {
+            GlobalEvents.FireDoorEntered(this, this.GoToMap, this.GoToDoorName, this.Name);
         }
     }
 }

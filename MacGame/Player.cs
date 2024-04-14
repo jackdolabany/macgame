@@ -127,7 +127,9 @@ namespace MacGame
         /// if Mac is using the wing, it'll render behind him.
         /// </summary>
         MacWings wings;
-        
+
+        public bool IsInvisible { get; set; } = false;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -916,6 +918,9 @@ namespace MacGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+            if (IsInvisible) return;
+
             if(HasInfiniteJump)
             {
                 wings.Draw(spriteBatch);

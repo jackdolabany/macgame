@@ -187,6 +187,11 @@
    <property name="LoadClass" value="Enemy.Cricket"/>
   </properties>
  </tile>
+ <tile id="118">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="128">
   <properties>
    <property name="LoadClass" value="Enemy.Bat"/>
@@ -209,6 +214,21 @@
    <property name="MinecartTrack" value="1"/>
   </properties>
  </tile>
+ <tile id="134">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="135">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="136">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="146">
   <properties>
    <property name="LoadClass" value="MineCart"/>
@@ -216,7 +236,12 @@
  </tile>
  <tile id="160">
   <properties>
-   <property name="LoadClass" value="Door"/>
+   <property name="LoadClass" value="Doorway"/>
+  </properties>
+ </tile>
+ <tile id="181">
+  <properties>
+   <property name="LoadClass" value="OpenCloseDoor"/>
   </properties>
  </tile>
 </tileset>

@@ -8,6 +8,8 @@ using TileEngine;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using MacGame.Items;
+using static MacGame.Game1;
+using System.Runtime.Intrinsics.X86;
 
 namespace MacGame
 {
@@ -45,6 +47,24 @@ namespace MacGame
         public const string StartingHubWorld = "TestHub";
 
         AlertBoxMenu gotACricketCoinMenu;
+
+        public enum TransitionType
+        {
+            /// <summary>
+            /// State changes immediately with no transition effects.
+            /// </summary>
+            Instant,
+
+            /// <summary>
+            /// Screen fades to black, then the state changes, then the screen fades to clear.
+            /// </summary>
+            Fade,
+
+            /// <summary>
+            /// Same as fade, but much faster for quick level transitions.
+            /// </summary>
+            FastFade
+        }
 
         public static IEnumerable<Platform> Platforms
         {
@@ -86,9 +106,18 @@ namespace MacGame
 
         // State to go to on the next update cycle
         private GameState transitionToState;
+        private TransitionType transitionType;
         private float transitionTimer;
+        
         const float totalTransitionTime = 0.5f;
+        
         private bool IsFading;
+
+        // Map to go to, but first we need to transition to the loading screen and stuff
+        private string _goToMap;
+        private string _putPlayerAtDoor;
+        private string _hubDoorEntered;
+        private int? _hintIndex;
 
         InputManager inputManager;
 
@@ -111,8 +140,9 @@ namespace MacGame
 
             GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
-            GlobalEvents.SubWorldDoorEntered += OnSubWorldDoorEntered;
+            GlobalEvents.BeginSubWorldDoorEnter += OnBeginSubWorldDoorEnter;
             GlobalEvents.OneHundredTacosCollected += OnOneHundredTacosCollected;
+            GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
         }
 
         private void OnCricketCoinCollected(object? sender, EventArgs e)
@@ -120,55 +150,33 @@ namespace MacGame
             pauseForCoinTimer = 2f;
             // TODO: play some kind of jingle.
             SoundManager.PlaySound("health");
-            TransitionToState(GameState.GotCoin, false);
+            TransitionToState(GameState.GotCoin, TransitionType.Instant);
         }
 
         private void OnDoorEntered(object? sender, DoorEnteredEventArgs args)
         {
+            // Set these and transition to loading which is a black screen. Then
+            // that game state will actually load the level.
+            _goToMap = args.TransitionToMap;
+            _putPlayerAtDoor = args.PutPlayerAtDoor;
+            _hubDoorEntered = args.DoorNameEntered;
+            _hintIndex = args.NewHintIndex;
 
-            CurrentLevel = sceneManager.LoadLevel(args.TransitionToMap, Content, Player, Camera);
-            Camera.Map = CurrentLevel.Map;
+            // Immediately pause
+            TransitionToState(GameState.PausedForAction, TransitionType.Instant);
 
-            if(args.NewHintIndex.HasValue)
-            {
-                CurrentLevel.SelectedHintIndex = args.NewHintIndex.Value;
-
-                // Only when a hint is selected do we care to also track the door you came from. This is so we can
-                // boot you out the same door if you die.
-                CurrentLevel.HubDoorNameYouCameFrom = args.DoorNameEntered;
-            }
-
-            var hint = "";
-            if(CurrentLevel.CoinHints.ContainsKey(CurrentLevel.SelectedHintIndex))
-            {
-                hint = "\"" + CurrentLevel.CoinHints[CurrentLevel.SelectedHintIndex] + "\"";
-            }
-
-            pauseMenu.SetupTitle($"{CurrentLevel.Description}\n{hint}");
-
-            // Player just went through a door, put him where he's supposed to be.
-            if (!string.IsNullOrEmpty(args.PutPlayerAtDoor))
-            {
-                foreach (var door in CurrentLevel.Doors)
-                {
-                    if (door.Name == args.PutPlayerAtDoor)
-                    {
-                        Player.WorldLocation = door.WorldLocation;
-                        break;
-                    }
-                }
-            }
+            // Then transition to loading asap.
+            TimerManager.AddNewTimer(0.0001f, () => TransitionToState(GameState.LoadingLevel, TransitionType.FastFade), false);
         }
 
-        private void OnSubWorldDoorEntered(object? sender, SubWorldDoorEnteredEventArgs args)
+        private void OnBeginSubWorldDoorEnter(object? sender, SubWorldDoorEnteredEventArgs args)
         {
             var nextLevelInfo = sceneManager.GetNextLevelInfo(args.TransitionToMap, Content);
 
             // Show the hint menu and they'll get a chance to choose which level to go to.
             var hintMenu = new HintMenu(this, nextLevelInfo, args.DoorNameEntered); // Creating garbage, I know it's bad!
             MenuManager.AddMenu(hintMenu);
-       
-            TransitionToState(GameState.PausedWithMenu, false);
+            TransitionToState(GameState.PausedWithMenu, TransitionType.Instant);
         }
 
         private void OnOneHundredTacosCollected(object? sender, EventArgs args)
@@ -193,7 +201,12 @@ namespace MacGame
                 .Then(0.5f, () => tacoCoin.Velocity = -tacoCoin.Velocity, false) // then down
                 .Then(0.5f, () => tacoCoin.Velocity = Vector2.Zero, false); // then stop
 
-            TransitionToState(GameState.RevealTacoCoin, false);
+            TransitionToState(GameState.RevealTacoCoin, TransitionType.Instant);
+        }
+
+        private void OnBeginDoorEnter(object? sender, EventArgs args)
+        {
+            TransitionToState(GameState.PausedForAction, TransitionType.Instant);
         }
 
         /// <summary>
@@ -322,22 +335,23 @@ namespace MacGame
 
         public void Pause()
         {
-            TransitionToState(GameState.PausedWithMenu, false);
+            TransitionToState(GameState.PausedWithMenu, TransitionType.Instant);
             MenuManager.AddMenu(pauseMenu);
         }
 
         public void Unpause()
         {
             MenuManager.RemoveTopMenu();
-            TransitionToState(GameState.Playing, false);
+            TransitionToState(GameState.Playing, TransitionType.Instant);
         }
 
-        public void TransitionToState(GameState transitionToState, bool isFading = true)
+        public void TransitionToState(GameState transitionToState, TransitionType transitionType = TransitionType.Fade)
         {
-            IsFading = isFading;
+            IsFading = transitionType == TransitionType.Fade || transitionType == TransitionType.FastFade;
             if (this.transitionToState != transitionToState)
             {
                 this.transitionToState = transitionToState;
+                this.transitionType = transitionType;
                 if (IsFading)
                 {
                     transitionTimer = totalTransitionTime;
@@ -415,7 +429,7 @@ namespace MacGame
                     // make it flash for a bit.
                     CurrentLevel.TacoCoin.CanBeCollected = true;
                     CurrentLevel.TacoCoin.CanNotBeCollectedForTimer = 3f;
-                    TransitionToState(GameState.Playing, false);
+                    TransitionToState(GameState.Playing, TransitionType.Instant);
                 }   
             }
             else if(_gameState == GameState.GotCoin)
@@ -429,7 +443,56 @@ namespace MacGame
                     }
                 }
             }
+            else if (_gameState == GameState.LoadingLevel)
+            {
 
+                if (_goToMap != "" && CurrentLevel.Name != _goToMap)
+                {
+
+                    // This state will just draw a black screen for a frame until we can play.
+                    CurrentLevel = sceneManager.LoadLevel(_goToMap, Content, Player, Camera);
+                    Camera.Map = CurrentLevel.Map;
+
+                    if (_hintIndex.HasValue)
+                    {
+                        CurrentLevel.SelectedHintIndex = _hintIndex.Value;
+
+                        // Only when a hint is selected do we care to also track the door you came from. This is so we can
+                        // boot you out the same door if you die.
+                        CurrentLevel.HubDoorNameYouCameFrom = _hubDoorEntered;
+                    }
+
+                    var hint = "";
+                    if (CurrentLevel.CoinHints.ContainsKey(CurrentLevel.SelectedHintIndex))
+                    {
+                        hint = "\"" + CurrentLevel.CoinHints[CurrentLevel.SelectedHintIndex] + "\"";
+                    }
+
+                    pauseMenu.SetupTitle($"{CurrentLevel.Description}\n{hint}");
+
+                    // Player just went through a door, put him where he's supposed to be.
+                    if (!string.IsNullOrEmpty(_putPlayerAtDoor))
+                    {
+                        foreach (var door in CurrentLevel.Doors)
+                        {
+                            if (door.Name == _putPlayerAtDoor)
+                            {
+                                Player.WorldLocation = door.WorldLocation;
+                                break;
+                            }
+                        }
+                    }
+
+                    TransitionToState(GameState.Playing, TransitionType.FastFade);
+
+                    // Reset everyone.
+                    _putPlayerAtDoor = "";
+                    _goToMap = "";
+                    _hubDoorEntered = "";
+                    _hintIndex = null;
+                }
+
+            }
             else if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
             {
                 if (!MenuManager.IsMenu)
@@ -445,6 +508,13 @@ namespace MacGame
                 {
                     CurrentGameState = GameState.Playing;
                 }
+            }
+            else if (CurrentGameState == GameState.PausedForAction)
+            {
+                // Limited update of things that may transition state.
+                // This shouldn't update the player or enemies.
+                TimerManager.Update(elapsed);
+                CurrentLevel.PausedUpdate(gameTime, elapsed);
             }
 
             if (Game1.IS_DEBUG)
@@ -471,9 +541,10 @@ namespace MacGame
             }
 
             // Handle transitions
+            var multiplier = this.transitionType == TransitionType.FastFade ? 2.5f : 1f;
             if (transitionTimer > 0)
             {
-                transitionTimer -= elapsed;
+                transitionTimer -= (elapsed * multiplier);
             }
 
             if (transitionTimer <= 0 && transitionToState != CurrentGameState)
@@ -498,7 +569,7 @@ namespace MacGame
 
             // We'll draw everything to gameRenderTarget, including the white render target.
             GraphicsDevice.SetRenderTarget(gameRenderTarget);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
@@ -509,6 +580,7 @@ namespace MacGame
                 case GameState.GotCoin:
                 case GameState.RevealTacoCoin:
                 case GameState.Conversation:
+                case GameState.PausedForAction:
 
                     spriteBatch.Begin(SpriteSortMode.Deferred,
                         BlendState.AlphaBlend,
@@ -535,6 +607,19 @@ namespace MacGame
 
                     spriteBatch.End();
 
+                    break;
+                
+                case GameState.LoadingLevel:
+                    spriteBatch.Begin(SpriteSortMode.Deferred,
+                        BlendState.AlphaBlend,
+                        SamplerState.PointClamp,
+                        null,
+                        null,
+                        null,
+                        cameraTransformation);
+
+                    spriteBatch.Draw(Textures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), WhiteSourceRect, Color.Black);
+                    spriteBatch.End();
                     break;
                 case GameState.TitleScreen:
 
@@ -569,7 +654,7 @@ namespace MacGame
             GraphicsDevice.SetRenderTarget(null);
 
             // XNA draws a bright purple color to the backbuffer by default when we switch to it. Lame! Let's clear it out.
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // Draw the gameRenderTarget with everything in it to the back buffer. We'll reuse spritebatch and just stretch it to fit.
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
@@ -655,23 +740,37 @@ namespace MacGame
         public enum GameState
         {
             TitleScreen,
+            
             Playing,
+            
             /// <summary>
             /// Freeze the game for a moment but still draw and play a jingle when you get a coin.
             /// </summary>
             GotCoin,
+            
             /// <summary>
             /// Gameplay with some menu displaying. The menu will transition the state back.
             /// </summary>
             PausedWithMenu,
+            
             /// <summary>
             /// Once you get 100 tacos the game will sort of pause while we reveal the 100 taco coin.
             /// </summary>
             RevealTacoCoin,
+            
             /// <summary>
             /// Talking to an NPC or text coming up because of some action (trying to open a locked door, etc.)
             /// </summary>
             Conversation,
+
+            /// <summary>
+            /// Use this to pause the game for some kind of action, like a door opening and closing.
+            /// The enemies and player won't update but something else will trigger a later state transition.
+            /// </summary>
+            PausedForAction,
+
+            LoadingLevel,
+
             Dead
         }
     }

@@ -19,6 +19,9 @@ namespace MacGame
     /// </summary>
     public class Level
     {
+
+        public string Name = "";
+
         /// <summary>
         /// Each level has a unique number. The hub world is 0.
         /// </summary>
@@ -144,22 +147,8 @@ namespace MacGame
                 {
                     if (door.Enabled && door.CollisionRectangle.Contains(Player.CollisionCenter))
                     {
-                        if (door.CoinsNeeded > Player.CricketCoinCount)
-                        {
-                            // TODO: Temp
-                            ConversationManager.AddMessage($"You need {door.CoinsNeeded} coins to unlock this door. This is an extra long message for testing stuff. Will it fit in one block? no.");
-                            //ConversationManager.AddMessage($"You need {door.CoinsNeeded} coins to unlock this door.", ConversationManager.Float.Bottom);
-                        }
-                        else if (door.IsToSubworld)
-                        {
-                            GlobalEvents.FireSubWorldDoorEntered(this, door.Name, door.GoToMap);
-                            break;
-                        }
-                        else
-                        {
-                            GlobalEvents.FireDoorEntered(this, door.GoToMap, door.GoToDoorName, door.Name);
-                            break;
-                        }
+                        door.PlayerTriedToOpen(Player);
+                        break;
                     }
                 }
             }
@@ -167,6 +156,18 @@ namespace MacGame
             while (EnemiesToAdd.Count > 0)
             {
                 Enemies.Add(EnemiesToAdd.Dequeue());
+            }
+        }
+
+        /// <summary>
+        ///  Only updates a subset of elements for when the game is virutally paused like for state
+        ///  transitions or menus. You can add things here as needed, but don't update the player or enemies.
+        /// </summary>
+        public void PausedUpdate(GameTime gameTime, float elapsed)
+        {
+            foreach (var door in Doors)
+            {
+                door.Update(gameTime, elapsed);
             }
         }
 

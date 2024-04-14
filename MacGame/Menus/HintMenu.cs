@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
+using static MacGame.Game1;
 
 namespace MacGame
 {
@@ -28,8 +30,8 @@ namespace MacGame
                 {
                     var option = AddOption(hint.Value, (a, b) =>
                     {
-                        GlobalEvents.FireDoorEntered(this, nextLevelInfo.MapName, "", doorNameEntered, hint.Key);
-                        game.TransitionToState(Game1.GameState.Playing);
+                        var door = (OpenCloseDoor)Game1.CurrentLevel.Doors.Single(d => d.Name == doorNameEntered);
+                        door.OpenThenCloseThenTransition(hint.Key);
                         Cancel(this, EventArgs.Empty);
                     });
 
@@ -48,7 +50,7 @@ namespace MacGame
             }
             
             AddOption("Back", (a, b) => {
-                game.TransitionToState(Game1.GameState.Playing, false);
+                game.TransitionToState(Game1.GameState.Playing, TransitionType.Instant);
                 Cancel(this, EventArgs.Empty);
             });
 

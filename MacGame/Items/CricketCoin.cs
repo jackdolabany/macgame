@@ -37,9 +37,9 @@ namespace MacGame.Items
         }
         public void InitializeAlreadyCollected(Level level)
         {
-            if (Game1.Player.StorageState.LevelsToCoins.ContainsKey(level.LevelNumber))
+            if (Game1.State.LevelsToCoins.ContainsKey(level.LevelNumber))
             {
-                var coins = Game1.Player.StorageState.LevelsToCoins[level.LevelNumber];
+                var coins = Game1.State.LevelsToCoins[level.LevelNumber];
                 if (coins.Contains(Number))
                 {
                     AlreadyCollected = true;
@@ -55,19 +55,19 @@ namespace MacGame.Items
         public override void WhenCollected(Player player)
         {
             // Set max tacos for this level.
-            if (player.StorageState.MaxTacosPerLevel.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            if (Game1.State.MaxTacosPerLevel.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
-                player.StorageState.MaxTacosPerLevel[Game1.CurrentLevel.LevelNumber] = Math.Max(player.StorageState.MaxTacosPerLevel[Game1.CurrentLevel.LevelNumber], player.Tacos);
+                Game1.State.MaxTacosPerLevel[Game1.CurrentLevel.LevelNumber] = Math.Max(Game1.State.MaxTacosPerLevel[Game1.CurrentLevel.LevelNumber], player.Tacos);
             }
             else
             {
-                player.StorageState.MaxTacosPerLevel.Add(Game1.CurrentLevel.LevelNumber, player.Tacos);
+                Game1.State.MaxTacosPerLevel.Add(Game1.CurrentLevel.LevelNumber, player.Tacos);
             }
 
             // Add this cricket coin if they don't already have it.
-            if(player.StorageState.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            if(Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
-                var coins = player.StorageState.LevelsToCoins[Game1.CurrentLevel.LevelNumber];
+                var coins = Game1.State.LevelsToCoins[Game1.CurrentLevel.LevelNumber];
                 if (!coins.Contains(Number))
                 {
                     coins.Add(Number);
@@ -76,7 +76,7 @@ namespace MacGame.Items
             }
             else
             {
-                player.StorageState.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new List<int> { Number });
+                Game1.State.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new List<int> { Number });
                 player.CricketCoinCount++;
             }
 

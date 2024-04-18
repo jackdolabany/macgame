@@ -60,7 +60,7 @@ namespace MacGame
             open.FrameLength = 0.15f;
             DoorAnimations.Add(open);
 
-            var close = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 1, "close");
+            var close = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 3, "close");
             close.LoopAnimation = false;
             close.FrameLength = 0.15f;
             close.Reverse = true;
@@ -110,7 +110,7 @@ namespace MacGame
             }
             else if (this.State == DoorState.Closing)
             {
-                if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 0 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
+                if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 2 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
                 {
                     // hide Mac because he just got shut in the door.
                     _player.IsInvisible = true;

@@ -24,7 +24,7 @@ namespace MacGame
             // Create a menu option for each coin hint.
             foreach (var hint in nextLevelInfo.CoinHints)
             {
-                var alreadyGotCoin = (Game1.Player.StorageState.LevelsToCoins.ContainsKey(nextLevelInfo.LevelNumber) && Game1.Player.StorageState.LevelsToCoins[nextLevelInfo.LevelNumber].Contains(hint.Key));
+                var alreadyGotCoin = (Game1.State.LevelsToCoins.ContainsKey(nextLevelInfo.LevelNumber) && Game1.State.LevelsToCoins[nextLevelInfo.LevelNumber].Contains(hint.Key));
                
                 if (alreadyGotCoin || !showedAHintThatYouDidNotGetYet)
                 {

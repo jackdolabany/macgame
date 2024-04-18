@@ -69,7 +69,7 @@ namespace MacGame.DisplayComponents
                 }
 
                 return new Rectangle(
-                    FirstFrame.X + realCurrentFrameIndex * FrameWidth,
+                    FirstFrame.X + (realCurrentFrameIndex * FrameWidth),
                     FirstFrame.Y,
                     FrameWidth,
                     FrameHeight);

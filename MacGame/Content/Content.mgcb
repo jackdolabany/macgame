@@ -55,6 +55,11 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel4.tmx
 
+#begin Maps/TestLittleSection.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestLittleSection.tmx
+
 #begin Maps/TestWingLevel.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

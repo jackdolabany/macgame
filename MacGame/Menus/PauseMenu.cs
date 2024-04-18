@@ -19,8 +19,14 @@ namespace MacGame
                 this.Game.GoToTitleScreen();
             });
             confirmExitGame.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 30);
-
             confirmExitGame.Scale = this.Scale;
+
+            var saveMenu = new SaveMenu(game);
+
+            AddOption("Save", (a, b) => {
+                //SoundManager.PlaySound("rollover2");
+                MenuManager.AddMenu(saveMenu);
+            });
 
             AddOption("Back", (a, b) => {
                 //SoundManager.PlaySound("rollover2");

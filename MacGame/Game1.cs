@@ -124,6 +124,9 @@ namespace MacGame
         // Some number strings so that we don't need to create garbage by boxing and unboxing numbers.
         public static string[] Numbers = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
+        // The current game state that can be saved or loaded.
+        public static StorageState State { get; set; }
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -238,8 +241,9 @@ namespace MacGame
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 
+            Game1.State = new StorageState();
             Player = new Player(Content, inputManager, deadMenu);
-
+            
             // test
             Player.WorldLocation = new Vector2(10, 10);
 
@@ -248,6 +252,7 @@ namespace MacGame
             Camera = new Camera();
 
             SoundManager.Initialize(Content);
+            StorageManager.Initialize(Textures);
 
             // Load map and adjust Camera
             CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
@@ -341,7 +346,7 @@ namespace MacGame
 
         public void Unpause()
         {
-            MenuManager.RemoveTopMenu();
+            MenuManager.ClearMenus();
             TransitionToState(GameState.Playing, TransitionType.Instant);
         }
 
@@ -396,8 +401,15 @@ namespace MacGame
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            MenuManager.Update(elapsed);
             SoundManager.Update(elapsed);
+            StorageManager.Update(elapsed);
+
+            if (StorageManager.IsSavingOrLoading)
+            {
+                return;
+            }
+
+            MenuManager.Update(elapsed);
 
             if (_gameState == GameState.Playing)
             {
@@ -634,6 +646,9 @@ namespace MacGame
             // Draw the menus to a new sprite batch ignoring the camera stuff.
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null);
             MenuManager.Draw(spriteBatch);
+
+            // Draw the saving/loading menu
+            StorageManager.Draw(spriteBatch);
 
             // Draw some fading black over the screen if we are transitioning between screens
             if (transitionTimer > 0 && IsFading)

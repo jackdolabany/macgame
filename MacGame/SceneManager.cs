@@ -45,9 +45,9 @@ namespace MacGame
             level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
 
             // Make sure this exists for each level.
-            if (!player.StorageState.UnlockedDoors.ContainsKey(level.LevelNumber))
+            if (!Game1.State.UnlockedDoors.ContainsKey(level.LevelNumber))
             {
-                player.StorageState.UnlockedDoors.Add(level.LevelNumber, new List<string>());
+                Game1.State.UnlockedDoors.Add(level.LevelNumber, new List<string>());
             }
 
             if(map.Properties.ContainsKey("Description"))
@@ -174,7 +174,7 @@ namespace MacGame
                                             if (door is OpenCloseDoor)
                                             {
                                                 var openClosedDoor = (OpenCloseDoor)door;
-                                                if (openClosedDoor.CoinsNeeded == 0 || player.StorageState.UnlockedDoors[level.LevelNumber].Contains(door.Name))
+                                                if (openClosedDoor.CoinsNeeded == 0 || Game1.State.UnlockedDoors[level.LevelNumber].Contains(door.Name))
                                                 {
                                                     openClosedDoor.IsLocked = false;
                                                 }

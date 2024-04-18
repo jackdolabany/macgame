@@ -45,8 +45,6 @@ namespace MacGame
 
         private MacState _state = MacState.Idle;
 
-        public StorageState StorageState { get; set; }
-        
         private bool IsRunning => _state == MacState.Running;
         private bool IsJumping => _state == MacState.Jumping;
         private bool IsSliding => _state == MacState.Sliding;
@@ -207,8 +205,6 @@ namespace MacGame
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
 
             shovel = new MacShovel(this, textures);
-
-            StorageState = new StorageState();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -967,13 +963,13 @@ namespace MacGame
 
         public void AddUnlockedDoor(string doorName)
         {
-            if (StorageState.UnlockedDoors.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            if (Game1.State.UnlockedDoors.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
-                StorageState.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Add(doorName);
+                Game1.State.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Add(doorName);
             }
             else
             {
-                StorageState.UnlockedDoors.Add(Game1.CurrentLevel.LevelNumber, new List<string> { doorName });
+                Game1.State.UnlockedDoors.Add(Game1.CurrentLevel.LevelNumber, new List<string> { doorName });
             }
         }
     }

@@ -44,6 +44,11 @@ namespace MacGame
 
         public static Level CurrentLevel;
 
+        /// <summary>
+        /// putting this here so it can easily be seen.
+        /// </summary>
+        public const string SaveGameFolder = "MacsAdventure";
+
         public const string StartingHubWorld = "TestHub";
 
         AlertBoxMenu gotACricketCoinMenu;
@@ -252,7 +257,7 @@ namespace MacGame
             Camera = new Camera();
 
             SoundManager.Initialize(Content);
-            StorageManager.Initialize(Textures);
+            StorageManager.Initialize(Textures, this);
 
             // Load map and adjust Camera
             CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
@@ -750,6 +755,23 @@ namespace MacGame
         public static void DrawBlackOverScreen(SpriteBatch spriteBatch, float opacity)
         {
             spriteBatch.Draw(Game1.Textures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Game1.WhiteSourceRect, Color.Black * opacity);
+        }
+
+        public void LoadSavedGame(StorageState? ss)
+        {
+            SoundManager.StopSong();
+            MenuManager.ClearMenus();
+            Game1.State = (StorageState)ss.Clone();
+
+            _goToMap = "";
+            _putPlayerAtDoor = "";
+            _hubDoorEntered = "";
+            _hintIndex = null;
+
+            CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
+            Camera.Map = CurrentLevel.Map;
+
+            GoToHub(false, false);
         }
 
         public enum GameState

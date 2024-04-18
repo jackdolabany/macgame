@@ -6,7 +6,6 @@ namespace MacGame
     /// <summary>
     /// This represents a savable game file.
     /// </summary>
-    [Serializable]
     public class StorageState: ICloneable
     {
         /// <summary>

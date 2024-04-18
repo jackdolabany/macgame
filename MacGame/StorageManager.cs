@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Xml;
 using MacGame;
+using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace MacGame
 {
@@ -17,6 +19,9 @@ namespace MacGame
     {
         //const string GameFolderName = "Macs_Adventure";
         const string SavedGameFileName = "Savegame{0}.sav";
+
+        private static Game1 _game;
+
         //const string gameSettingsFileName = "GameSettings";
         //const string soundSettingsFileName = "SoundSettings";
 
@@ -59,78 +64,99 @@ namespace MacGame
         public static void TrySaveGame(int saveSlot)
         {
             IsSaving = true;
-            //Game1.LastSaveState = Game1.State.Clone();
-            var stateToSave = Game1.State.Clone();
 
-            //XmlSerializer serializer = new XmlSerializer(typeof(StorageState));
+            // Clone to be safe since we're going to a background thread.
+            var stateToSave = Game1.State.Clone();
 
             var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var fileName = string.Format(SavedGameFileName, saveSlot);
 
             Task.Run(() =>
             {
-                //using (var saveFile = File.Create(appFolderPath + @"\" + fileName))
-                //{
-                //    serializer.Serialize(saveFile, stateToSave);
-                //    DoneSavingOrLoading();
-                //}
+                // Convert to Json using JSON.NET and write the file.
+                var json = JsonConvert.SerializeObject(stateToSave);
+                var bytes = Encoding.UTF8.GetBytes(json);
+
+                // Zip compress the bytes.
+                using (var compressedStream = new MemoryStream())
+                {
+                    using (var zipStream = new GZipStream(compressedStream, CompressionMode.Compress))
+                    {
+                        zipStream.Write(bytes, 0, bytes.Length);
+                    }
+                    bytes = compressedStream.ToArray();
+                }
+
+                var filePath = appFolderPath + $@"\{Game1.SaveGameFolder}\" + fileName;
+
+                var file = new FileInfo(filePath);
+                file.Directory!.Create();
+                File.WriteAllBytes(filePath, bytes);
                 
-
-                // TEsting
-                System.Threading.Thread.Sleep(2000); 
                 DoneSavingOrLoading();
-
-
-
             });
 
         }
 
-        //public static void TryLoadGame(int saveSlot)
-        //{
-        //    IsLoading = true;
-        //    LoadCurrentSlotStorageState(saveSlot);
-        //}
-
-        //private static async void LoadCurrentSlotStorageState(int saveSlot)
-        //{
-        //    var ss = await LoadSlotStorageState(saveSlot);
-        //    LevelManager.CurrentGame.LoadSavedGame(ss);
-        //    DoneSavingOrLoading();
-        //}
-
-        //private static async Task<StorageState> LoadSlotStorageState(int saveSlot)
-        //{
-        //    var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        //    var fileName = string.Format(SavedGameFileName, saveSlot);
-        //    var fullFilePath = appFolderPath + @"\" + fileName;
-
-        //    return await System.Threading.Tasks.Task.Run(() =>
-        //    {
-        //        if (!File.Exists(fullFilePath)) return null;
-        //        using (var savedFile = File.Open(fullFilePath, FileMode.Open))
-        //        {
-        //            var serializer = new XmlSerializer(typeof(StorageState));
-        //            var ss = serializer.Deserialize(savedFile) as StorageState;
-        //            DoneSavingOrLoading();
-        //            return ss;
-        //        }
-        //    });
-        //}
-
-        public static void Initialize(Texture2D textures)
+        public static void TryLoadGame(int saveSlot)
         {
-            // StorageManager.players = players;
+            IsLoading = true;
+            LoadCurrentSlotStorageState(saveSlot);
+        }
+
+        private static async void LoadCurrentSlotStorageState(int saveSlot)
+        {
+            var ss = await LoadSlotStorageState(saveSlot);
+            _game.LoadSavedGame(ss);
+            // TODO : Load the game state from the StorageState object
+            //LevelManager.CurrentGame.LoadSavedGame(ss);
+            DoneSavingOrLoading();
+        }
+
+        private static async Task<StorageState?> LoadSlotStorageState(int saveSlot)
+        {
+            var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var fileName = string.Format(SavedGameFileName, saveSlot);
+            var filePath = appFolderPath + $@"\{Game1.SaveGameFolder}\" + fileName;
+
+            return await Task.Run(() =>
+            {
+                if (!File.Exists(filePath)) return null;
+
+                StorageState? ss = null;
+
+                using (var savedFile = File.Open(filePath, FileMode.Open))
+                {
+                    // Unzip savedFile
+                    using (var zipStream = new GZipStream(savedFile, CompressionMode.Decompress))
+                    {
+                        using (var decompressedStream = new MemoryStream())
+                        {
+                            zipStream.CopyTo(decompressedStream);
+                            decompressedStream.Position = 0;
+                            var bytes = decompressedStream.ToArray();
+                            var json = Encoding.UTF8.GetString(bytes);
+                            ss = JsonConvert.DeserializeObject<StorageState>(json);
+                        }
+                    }
+                }
+
+                DoneSavingOrLoading();
+                return ss;
+            });
+        }
+
+        public static void Initialize(Texture2D textures, Game1 game)
+        {
             spinnerTexture = textures;
             spinnerSourceRect = new Rectangle(9 * Game1.TileSize, 4 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
             DoneSavingOrLoading();
+            _game = game;
         }
 
         public static void Update(float elapsed)
         {
             if (!IsSavingOrLoading) return; // save some clock cycles, this is by far the most common case.
-
-            //spinnerRotation += 2f * elapsed;
         }
 
         internal static void Draw(SpriteBatch spriteBatch)

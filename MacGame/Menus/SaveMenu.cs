@@ -11,7 +11,7 @@ namespace MacGame
         public SaveMenu(Game1 game)
             : base(game)
         {
-            this.menuTitle = "Game Over";
+            this.menuTitle = "Save Game";
             
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 3f)));
 

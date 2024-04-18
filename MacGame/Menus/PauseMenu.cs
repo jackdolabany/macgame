@@ -22,10 +22,16 @@ namespace MacGame
             confirmExitGame.Scale = this.Scale;
 
             var saveMenu = new SaveMenu(game);
+            var loadMenu = new LoadMenu(game);
 
             AddOption("Save", (a, b) => {
                 //SoundManager.PlaySound("rollover2");
                 MenuManager.AddMenu(saveMenu);
+            });
+
+            AddOption("Load", (a, b) => {
+                //SoundManager.PlaySound("rollover2");
+                MenuManager.AddMenu(loadMenu);
             });
 
             AddOption("Back", (a, b) => {

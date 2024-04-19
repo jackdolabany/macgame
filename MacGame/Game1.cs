@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using MacGame.Items;
 using static MacGame.Game1;
 using System.Runtime.Intrinsics.X86;
+using System.Linq;
 
 namespace MacGame
 {
@@ -762,6 +763,8 @@ namespace MacGame
             SoundManager.StopSong();
             MenuManager.ClearMenus();
             Game1.State = (StorageState)ss.Clone();
+
+            Player.CricketCoinCount = Game1.State.LevelsToCoins.Sum(l => l.Value.Count);
 
             _goToMap = "";
             _putPlayerAtDoor = "";

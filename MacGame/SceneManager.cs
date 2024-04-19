@@ -47,7 +47,7 @@ namespace MacGame
             // Make sure this exists for each level.
             if (!Game1.State.UnlockedDoors.ContainsKey(level.LevelNumber))
             {
-                Game1.State.UnlockedDoors.Add(level.LevelNumber, new List<string>());
+                Game1.State.UnlockedDoors.Add(level.LevelNumber, new HashSet<string>());
             }
 
             if(map.Properties.ContainsKey("Description"))

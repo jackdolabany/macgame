@@ -965,11 +965,14 @@ namespace MacGame
         {
             if (Game1.State.UnlockedDoors.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
-                Game1.State.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Add(doorName);
+                if (!Game1.State.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Contains(doorName))
+                {
+                    Game1.State.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Add(doorName);
+                }
             }
             else
             {
-                Game1.State.UnlockedDoors.Add(Game1.CurrentLevel.LevelNumber, new List<string> { doorName });
+                Game1.State.UnlockedDoors.Add(Game1.CurrentLevel.LevelNumber, new HashSet<string> { doorName });
             }
         }
     }

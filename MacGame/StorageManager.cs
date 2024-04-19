@@ -108,8 +108,6 @@ namespace MacGame
         {
             var ss = await LoadSlotStorageState(saveSlot);
             _game.LoadSavedGame(ss);
-            // TODO : Load the game state from the StorageState object
-            //LevelManager.CurrentGame.LoadSavedGame(ss);
             DoneSavingOrLoading();
         }
 

@@ -65,7 +65,7 @@ namespace MacGame.Items
             }
 
             // Add this cricket coin if they don't already have it.
-            if(Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
                 var coins = Game1.State.LevelsToCoins[Game1.CurrentLevel.LevelNumber];
                 if (!coins.Contains(Number))
@@ -76,7 +76,7 @@ namespace MacGame.Items
             }
             else
             {
-                Game1.State.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new List<int> { Number });
+                Game1.State.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new HashSet<int> { Number });
                 player.CricketCoinCount++;
             }
 

@@ -103,7 +103,7 @@ namespace MacGame
             {
                 if (DoorAnimations.animations[DoorAnimations.currentAnimationName].FinishedPlaying)
                 {
-                    pauseBeforeTransitionTimer = 1f;
+                    pauseBeforeTransitionTimer = 0.5f;
                     this.State = DoorState.Closing;
                     DoorAnimations.Play("close");
                 }

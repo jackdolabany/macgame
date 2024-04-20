@@ -191,7 +191,7 @@ namespace MacGame
                                             {
                                                 var openClosedDoor = (OpenCloseDoor)door;
 
-                                                if (!openClosedDoor.IsInitiallyLocked || Game1.State.UnlockedDoors[level.LevelNumber].Contains(door.Name))
+                                                if (!openClosedDoor.IsInitiallyLocked || (Game1.State.UnlockedDoors[level.LevelNumber].Contains(door.Name) && openClosedDoor.CanPlayerUnlock(player)))
                                                 {
                                                     openClosedDoor.IsLocked = false;
                                                 }

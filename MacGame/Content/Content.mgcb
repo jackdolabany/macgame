@@ -30,6 +30,21 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenPixel.spritefont
 
+#begin Maps/BlueRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/BlueRoom.tmx
+
+#begin Maps/GreenRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/GreenRoom.tmx
+
+#begin Maps/RedRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/RedRoom.tmx
+
 #begin Maps/TestFinalBoss.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

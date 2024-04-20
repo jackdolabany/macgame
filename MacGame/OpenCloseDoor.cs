@@ -50,30 +50,60 @@ namespace MacGame
             this.DisplayComponent = aggDisplay;
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var idle = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 1, "idle");
+            
+            var idle = new AnimationStrip(textures, DoorImageTextureSourceRectangle, 1, "idle");
             idle.LoopAnimation = false;
             idle.FrameLength = 0.15f;
             DoorAnimations.Add(idle);
-            
-            var open = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 3, "open");
+
+            var open = new AnimationStrip(textures, DoorImageTextureSourceRectangle, 3, "open");
             open.LoopAnimation = false;
             open.FrameLength = 0.15f;
             DoorAnimations.Add(open);
 
-            var close = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 10 * Game1.TileSize, 16, 16), 3, "close");
+            var close = new AnimationStrip(textures, DoorImageTextureSourceRectangle, 3, "close");
             close.LoopAnimation = false;
             close.FrameLength = 0.15f;
             close.Reverse = true;
             DoorAnimations.Add(close);
 
-            var closedJailBars = new AnimationStrip(textures, new Rectangle(3 * Game1.TileSize, 12 * Game1.TileSize, 8, 16), 1, "closed");
+            var closedJailBars = new AnimationStrip(textures, new Rectangle(13 * Game1.TileSize, 13 * Game1.TileSize, 8, 16), 1, "closed");
             closedJailBars.LoopAnimation = false;
             JailBarAnimations.Add(closedJailBars);
 
-            var openJailBars = new AnimationStrip(textures, new Rectangle(3 * Game1.TileSize, 12 * Game1.TileSize, 8, 16), 3, "open");
+            var openJailBars = new AnimationStrip(textures, new Rectangle(13 * Game1.TileSize, 13 * Game1.TileSize, 8, 16), 3, "open");
             openJailBars.LoopAnimation = false;
             openJailBars.FrameLength = 0.15f;
             JailBarAnimations.Add(openJailBars);
+        }
+
+        /// <summary>
+        /// Override this for inherited classes that have doors that look different. Like red/blue/green doors.
+        /// </summary>
+        public virtual Rectangle DoorImageTextureSourceRectangle
+        {
+            get
+            {
+                return new Rectangle(10 * Game1.TileSize, 5 * Game1.TileSize, 16, 16);
+            }
+        }
+
+        public virtual bool IsInitiallyLocked
+        {
+            get
+            {
+                return CoinsNeeded > 0;
+            }
+        }
+
+        public virtual bool CanPlayerUnlock(Player player)
+        {
+            return player.CricketCoinCount >= CoinsNeeded;
+        }
+
+        public virtual string LockMessage()
+        {
+            return $"You need {CoinsNeeded} coins to unlock this door.";
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -84,7 +114,7 @@ namespace MacGame
             }
             
             // Hide the jail bars if the door is unlocked.
-            if(!IsLocked)
+            if (!IsLocked)
             {
                 JailBarAnimations.TintColor = Color.White * 0;
             }
@@ -147,9 +177,9 @@ namespace MacGame
 
         public override void PlayerTriedToOpen(Player player)
         {
-            if (CoinsNeeded > player.CricketCoinCount)
+            if (!CanPlayerUnlock(player))
             {
-                ConversationManager.AddMessage($"You need {CoinsNeeded} coins to unlock this door.");
+                ConversationManager.AddMessage(LockMessage());
             }
             else if (IsLocked)
             {

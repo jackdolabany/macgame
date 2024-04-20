@@ -126,6 +126,10 @@ namespace MacGame
         /// </summary>
         MacWings wings;
 
+        public bool HasRedKey { get; set; } = false;
+        public bool HasGreenKey { get; set; } = false;
+        public bool HasBlueKey { get; set; } = false;
+
         public bool IsInvisible { get; set; } = false;
 
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
@@ -282,7 +286,31 @@ namespace MacGame
 
         }
 
-        // Send the player sliding out of a hub door after being killed or whatever.
+        /// <summary>
+        /// Reset health and items and stuff once Mac changes levels or dies or whatever.
+        /// </summary>
+        /// <param name="isNewLevel">True if you are transitioning to or from the hub. False if you are just changing rooms in a level.</param>
+        public void ResetStateForLevelTransition(bool isNewLevel)
+        {
+            if (isNewLevel)
+            {
+                Health = Player.MaxHealth;
+                CurrentItem = null;
+                Tacos = 0;
+                HasRedKey = false;
+                HasGreenKey = false;
+                HasBlueKey = false;
+            }
+
+            Enabled = true;
+            Velocity = Vector2.Zero;
+            IsInMineCart = false;
+            IsInvisible = false;
+        }
+
+        /// <summary>
+        /// Send the player sliding out of a hub door after being killed or whatever.
+        /// </summary>
         public void SlideOutOfDoor(Vector2 doorLocation)
         {
             this.worldLocation = doorLocation + new Vector2(0, -4);

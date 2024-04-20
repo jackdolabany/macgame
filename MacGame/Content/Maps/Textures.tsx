@@ -116,6 +116,21 @@
    <property name="Vine" value="1"/>
   </properties>
  </tile>
+ <tile id="77">
+  <properties>
+   <property name="LoadClass" value="Item.RedKey"/>
+  </properties>
+ </tile>
+ <tile id="78">
+  <properties>
+   <property name="LoadClass" value="Item.GreenKey"/>
+  </properties>
+ </tile>
+ <tile id="79">
+  <properties>
+   <property name="LoadClass" value="Item.BlueKey"/>
+  </properties>
+ </tile>
  <tile id="80">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -182,6 +197,11 @@
    <property name="Ice" value="1"/>
   </properties>
  </tile>
+ <tile id="107">
+  <properties>
+   <property name="LoadClass" value="OpenCloseDoor"/>
+  </properties>
+ </tile>
  <tile id="115">
   <properties>
    <property name="LoadClass" value="Enemy.Cricket"/>
@@ -229,6 +249,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="139">
+  <properties>
+   <property name="LoadClass" value="RedDoor"/>
+  </properties>
+ </tile>
  <tile id="146">
   <properties>
    <property name="LoadClass" value="MineCart"/>
@@ -239,9 +264,14 @@
    <property name="LoadClass" value="Doorway"/>
   </properties>
  </tile>
- <tile id="181">
+ <tile id="171">
   <properties>
-   <property name="LoadClass" value="OpenCloseDoor"/>
+   <property name="LoadClass" value="GreenDoor"/>
+  </properties>
+ </tile>
+ <tile id="203">
+  <properties>
+   <property name="LoadClass" value="BlueDoor"/>
   </properties>
  </tile>
 </tileset>

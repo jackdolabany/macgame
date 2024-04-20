@@ -293,10 +293,7 @@ namespace MacGame
 
             pauseMenu.SetupTitle("Paused");
 
-            Player.Enabled = true;
-            Player.Health = Player.MaxHealth;
-            Player.CurrentItem = null;
-            Player.Tacos = 0;
+            Player.ResetStateForLevelTransition(true);
 
             string hubDoorPlayerCameFrom = "";
             if (CurrentLevel != null && !string.IsNullOrEmpty(CurrentLevel.HubDoorNameYouCameFrom))
@@ -714,6 +711,26 @@ namespace MacGame
             {
                 var tacoIconSource = new Rectangle(8 * TileSize, 2 * TileSize, 8, 8);
                 DrawNumberOfThingsOnRight(spriteBatch, tacoIconSource, Player.Tacos, GAME_X_RESOLUTION - 10, hudYPos);
+            }
+
+            // Draw red/green/blue keys on the right below the tacos
+            Vector2 keyLocation = new Vector2(GAME_X_RESOLUTION - 10, hudYPos + 12);
+            if (Player.HasRedKey)
+            {
+                var redKeySourceRect = new Rectangle(13 * TileSize, 4 * TileSize, 8, 8);
+                spriteBatch.Draw(Textures, keyLocation, redKeySourceRect, Color.White);
+                keyLocation.Y += 6;
+            }
+            if (Player.HasGreenKey)
+            {
+                var greenKeySourceRect = new Rectangle(14 * TileSize, 4 * TileSize, 8, 8);
+                spriteBatch.Draw(Textures, keyLocation, greenKeySourceRect, Color.White);
+                keyLocation.Y += 6;
+            }
+            if (Player.HasBlueKey)
+            {
+                var blueKeySourceRect = new Rectangle(15 * TileSize, 4 * TileSize, 8, 8);
+                spriteBatch.Draw(Textures, keyLocation, blueKeySourceRect, Color.White);
             }
         }
 

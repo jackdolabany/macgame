@@ -11,6 +11,7 @@ using MacGame.RevealBlocks;
 using MacGame.Enemies;
 using MacGame.Items;
 using System.Reflection.Emit;
+using System.ComponentModel.Design;
 
 namespace MacGame
 {
@@ -26,10 +27,6 @@ namespace MacGame
             TimerManager.Clear();
             Game1.Camera.CanScrollLeft = true;
 
-            player.Velocity = Vector2.Zero;
-            player.IsInMineCart = false;
-            player.IsInvisible = false;
-
             // Music is annoying for testing.
             if (!Game1.IS_DEBUG)
             {
@@ -43,6 +40,14 @@ namespace MacGame
             level.Name = mapName;
 
             level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
+
+            var priorLevelNumber = -1;
+            if (Game1.CurrentLevel != null)
+            {
+                priorLevelNumber = Game1.CurrentLevel.LevelNumber;
+            }
+            var isNewLevel = level.LevelNumber != priorLevelNumber;
+            player.ResetStateForLevelTransition(isNewLevel);
 
             // Make sure this exists for each level.
             if (!Game1.State.UnlockedDoors.ContainsKey(level.LevelNumber))
@@ -76,6 +81,8 @@ namespace MacGame
                             level.Platforms.Add(ladderPlatform);
                         }
                     }
+
+                    string[] DoorClasses = new string[] { "Doorway", "OpenCloseDoor", "RedDoor", "GreenDoor", "BlueDoor" };
 
                     for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
                     {
@@ -129,7 +136,7 @@ namespace MacGame
                                     }
                                 }
                             }
-                            else if (loadClass == "Doorway" || loadClass == "OpenCloseDoor")
+                            else if (DoorClasses.Contains(loadClass))
                             {
                                 Door door = null;
                                 switch (loadClass)
@@ -139,6 +146,15 @@ namespace MacGame
                                         break;
                                     case "OpenCloseDoor":
                                         door = new OpenCloseDoor(contentManager, x, y, player, camera);
+                                        break;
+                                    case "RedDoor":
+                                        door = new RedDoor(contentManager, x, y, player, camera);
+                                        break;
+                                    case "GreenDoor":
+                                        door = new GreenDoor(contentManager, x, y, player, camera);
+                                        break;
+                                    case "BlueDoor":
+                                        door = new BlueDoor(contentManager, x, y, player, camera);
                                         break;
                                 }
 
@@ -174,7 +190,8 @@ namespace MacGame
                                             if (door is OpenCloseDoor)
                                             {
                                                 var openClosedDoor = (OpenCloseDoor)door;
-                                                if (openClosedDoor.CoinsNeeded == 0 || Game1.State.UnlockedDoors[level.LevelNumber].Contains(door.Name))
+
+                                                if (!openClosedDoor.IsInitiallyLocked || Game1.State.UnlockedDoors[level.LevelNumber].Contains(door.Name))
                                                 {
                                                     openClosedDoor.IsLocked = false;
                                                 }

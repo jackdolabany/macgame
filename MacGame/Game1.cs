@@ -259,9 +259,12 @@ namespace MacGame
 
             SoundManager.Initialize(Content);
             StorageManager.Initialize(Textures, this);
+            EffectsManager.Initialize(Content);
 
-            // Load map and adjust Camera
-            CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
+            pauseMenu = new PauseMenu(this);
+            mainMenu = new MainMenu(this);
+
+            GoToHub(false);
 
             Camera.Map = CurrentLevel.Map;
 
@@ -270,33 +273,23 @@ namespace MacGame
             Camera.ViewPortWidth = Game1.GAME_X_RESOLUTION;
             Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
-            EffectsManager.Initialize(Content);
             ConversationManager.Initialize(Content);
-
-            pauseMenu = new PauseMenu(this);
-            mainMenu = new MainMenu(this);
 
             CurrentGameState = GameState.Playing;
 
             gotACricketCoinMenu = new AlertBoxMenu(this, "You got a Cricket Coin!", (a, b) =>
             {
                 TransitionToState(GameState.Playing);
-                GoToHub(true, false);
+                GoToHub(false);
             });
-
-            GoToHub(false, false);
         }
 
-        /// <param name="isReturning">True if the player died or selected to go back to the hub in the menu. False for the 
-        /// start of a new game.</param>
         /// <param name="isYeet">True to yeet the player out of the door as punishment for quitting or dying.</param>
-        public void GoToHub(bool isReturning, bool isYeet)
+        public void GoToHub(bool isYeet)
         {
             MenuManager.ClearMenus();
 
             TransitionToState(GameState.Playing);
-
-            EffectsManager.Initialize(Content);
 
             pauseMenu.SetupTitle("Paused");
 
@@ -305,34 +298,31 @@ namespace MacGame
             Player.CurrentItem = null;
             Player.Tacos = 0;
 
-            if (isReturning)
+            string hubDoorPlayerCameFrom = "";
+            if (CurrentLevel != null && !string.IsNullOrEmpty(CurrentLevel.HubDoorNameYouCameFrom))
             {
-                string hubDoorPlayerCameFrom = "";
-                if (CurrentLevel != null && !string.IsNullOrEmpty(CurrentLevel.HubDoorNameYouCameFrom))
-                {
-                    hubDoorPlayerCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
-                }
+                hubDoorPlayerCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
+            }
 
-                CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
-                Camera.Map = CurrentLevel.Map;
+            CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
+            Camera.Map = CurrentLevel.Map;
 
-                // Place the player at the door they came from.
-                if (hubDoorPlayerCameFrom != "")
+            // Place the player at the door they came from.
+            if (hubDoorPlayerCameFrom != "")
+            {
+                foreach (var door in CurrentLevel.Doors)
                 {
-                    foreach (var door in CurrentLevel.Doors)
+                    if (door.Name == hubDoorPlayerCameFrom)
                     {
-                        if (door.Name == hubDoorPlayerCameFrom)
+                        if(isYeet)
                         {
-                            if(isYeet)
-                            {
-                                Player.SlideOutOfDoor(door.WorldLocation);
-                            }
-                            else
-                            {
-                                Player.WorldLocation = door.WorldLocation;
-                            }
-                            break;
+                            Player.SlideOutOfDoor(door.WorldLocation);
                         }
+                        else
+                        {
+                            Player.WorldLocation = door.WorldLocation;
+                        }
+                        break;
                     }
                 }
             }
@@ -774,7 +764,7 @@ namespace MacGame
             CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
 
-            GoToHub(false, false);
+            GoToHub(false);
         }
 
         public enum GameState

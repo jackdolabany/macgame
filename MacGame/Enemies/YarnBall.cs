@@ -17,7 +17,7 @@ namespace MacGame.Enemies
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             DisplayComponent = new StaticImageDisplay(textures);
-            image.Source = new Rectangle(5 * 8, 2 * 8, 8, 8);
+            image.Source = Helpers.GetTileRect(5, 2);
 
             isTileColliding = false;
             isEnemyTileColliding = false;

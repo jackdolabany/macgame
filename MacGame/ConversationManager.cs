@@ -174,11 +174,11 @@ namespace MacGame
 
             Font = Game1.Font;
 
-            borderCornerSourceRect = new Rectangle(0, 11 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            borderLeftEdgeSourceRect = new Rectangle(0, 12 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            borderTopEdgeSourceRect = new Rectangle(Game1.TileSize, 11 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            dialogBoxBackgroundSourceRect = new Rectangle(Game1.TileSize, 12 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
-            advanceMessageArrowSourceRect = new Rectangle(0 * Game1.TileSize, 14 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            borderCornerSourceRect = Helpers.GetTileRect(0, 11);
+            borderLeftEdgeSourceRect = Helpers.GetTileRect(0, 12);
+            borderTopEdgeSourceRect = Helpers.GetTileRect(1, 11);
+            dialogBoxBackgroundSourceRect = Helpers.GetTileRect(1, 12);
+            advanceMessageArrowSourceRect = Helpers.GetTileRect(0, 14);
         }
 
         public static bool IsInConversation()
@@ -338,7 +338,7 @@ namespace MacGame
                         sourceRect = borderTopEdgeSourceRect;
                     }
 
-                    spriteBatch.Draw(Game1.Textures, new Rectangle(leftMargin + i * Game1.TileSize, topMargin + (j * Game1.TileSize) + 2, Game1.TileSize, Game1.TileSize), sourceRect, borderColor, 0f, Vector2.Zero, dialogBoxSpriteEffect, 0f);
+                    spriteBatch.Draw(Game1.TileTextures, new Rectangle(leftMargin + i * Game1.TileSize, topMargin + (j * Game1.TileSize) + 2, Game1.TileSize, Game1.TileSize), sourceRect, borderColor, 0f, Vector2.Zero, dialogBoxSpriteEffect, 0f);
                 }
             }
 
@@ -381,7 +381,7 @@ namespace MacGame
             // draw the advance the text arrow
             if (Messages.Count > 1 && currentLetterIndex >= totalLetters)
             {
-                spriteBatch.Draw(Game1.Textures, new Vector2(arrowX, topMargin + bubbleHeight - advanceMessageArrowSourceRect.Height + 1), advanceMessageArrowSourceRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, textDepth);
+                spriteBatch.Draw(Game1.TileTextures, new Vector2(arrowX, topMargin + bubbleHeight - advanceMessageArrowSourceRect.Height + 1), advanceMessageArrowSourceRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, textDepth);
             }
 
             //// draw the image of the person talking. We expect conversation texture to be a spritesheet of squares so we'll use height for everything.

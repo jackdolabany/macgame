@@ -68,9 +68,13 @@ namespace MacGame.DisplayComponents
                     realCurrentFrameIndex = FrameCount - 1 - currentFrameIndex;
                 }
 
+                int x = FirstFrame.X + (realCurrentFrameIndex * FrameWidth);
+                int y = FirstFrame.Y;
+
+                // Add padding to deal with the 2 pixel border between tiles.
                 return new Rectangle(
-                    FirstFrame.X + (realCurrentFrameIndex * FrameWidth),
-                    FirstFrame.Y,
+                    x + (2 * realCurrentFrameIndex),
+                    y,
                     FrameWidth,
                     FrameHeight);
             }

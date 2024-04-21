@@ -138,46 +138,46 @@ namespace MacGame
             this.DisplayComponent = animations;
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var idle = new AnimationStrip(textures, new Rectangle(8, 0, 8, 8), 1, "idle");
+            var idle = new AnimationStrip(textures, Helpers.GetTileRect(1, 0), 1, "idle");
             idle.LoopAnimation = true;
             idle.FrameLength = 0.1f;
             animations.Add(idle);
 
-            var walk = new AnimationStrip(textures, new Rectangle(8, 0, 8, 8), 2, "run");
+            var walk = new AnimationStrip(textures, Helpers.GetTileRect(1, 0), 2, "run");
             walk.LoopAnimation = true;
             walk.FrameLength = 0.14f;
             animations.Add(walk);
 
-            var slide = new AnimationStrip(textures, new Rectangle(24, 0, 8, 8), 1, "slide");
+            var slide = new AnimationStrip(textures, Helpers.GetTileRect(3, 0), 1, "slide");
             slide.LoopAnimation = false;
             slide.FrameLength = 0.1f;
             animations.Add(slide);
 
-            var jump = new AnimationStrip(textures, new Rectangle(8, 8, 8, 8), 1, "jump");
+            var jump = new AnimationStrip(textures, Helpers.GetTileRect(1, 1), 1, "jump");
             jump.FrameLength = 0.1f;
             animations.Add(jump);
 
-            var fall = new AnimationStrip(textures, new Rectangle(16, 8, 8, 8), 1, "fall");
+            var fall = new AnimationStrip(textures, Helpers.GetTileRect(2, 1), 1, "fall");
             fall.LoopAnimation = true;
             fall.FrameLength = 0.1f;
             animations.Add(fall);
 
-            climbingLadderAnimation = new AnimationStrip(textures, new Rectangle(40, 24, 8, 8), 2, "climbLadder");
+            climbingLadderAnimation = new AnimationStrip(textures, Helpers.GetTileRect(5, 3), 2, "climbLadder");
             climbingLadderAnimation.LoopAnimation = true;
             climbingLadderAnimation.FrameLength = 0.14f;
             animations.Add(climbingLadderAnimation);
 
-            climbingVineAnimation = new AnimationStrip(textures, new Rectangle(48, 16, 8, 8), 2, "climbVine");
+            climbingVineAnimation = new AnimationStrip(textures, Helpers.GetTileRect(6, 2), 2, "climbVine");
             climbingVineAnimation.LoopAnimation = true;
             climbingVineAnimation.FrameLength = 0.14f;
             animations.Add(climbingVineAnimation);
 
-            var mineCart = new AnimationStrip(textures, new Rectangle(2 * Game1.TileSize, 8 * Game1.TileSize, Game1.TileSize, Game1.TileSize), 1, "mineCart");
+            var mineCart = new AnimationStrip(textures, Helpers.GetTileRect(2, 1), 1, "mineCart");
             mineCart.LoopAnimation = false;
             mineCart.FrameLength = 0.1f;
             animations.Add(mineCart);
 
-            var knockedDown = new AnimationStrip(textures, new Rectangle(4 * Game1.TileSize, 0, Game1.TileSize, Game1.TileSize), 1, "knockedDown");
+            var knockedDown = new AnimationStrip(textures, Helpers.GetTileRect(4, 0), 1, "knockedDown");
             knockedDown.LoopAnimation = false;
             knockedDown.FrameLength = 0.1f;
             animations.Add(knockedDown);

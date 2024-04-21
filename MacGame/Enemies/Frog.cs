@@ -19,15 +19,15 @@ namespace MacGame.Enemies
         {
             DisplayComponent = new AnimationDisplay();
 
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var idle = new AnimationStrip(textures, new Rectangle(0, 6 * 8, 8, 16), 1, "idle");
+            var textures = content.Load<Texture2D>(@"Textures\BigTextures");
+            var idle = new AnimationStrip(textures, Helpers.GetBigTileRect(3, 0), 1, "idle");
             idle.LoopAnimation = true;
             idle.FrameLength = 0.14f;
             animations.Add(idle);
 
             animations.Play("idle");
 
-            var jump = new AnimationStrip(textures, new Rectangle(0, 6 * 8, 8, 16), 3, "jump");
+            var jump = new AnimationStrip(textures, Helpers.GetBigTileRect(3, 0), 3, "jump");
             jump.LoopAnimation = false;
             jump.FrameLength = 0.1f;
             jump.Oscillate = true;
@@ -35,7 +35,7 @@ namespace MacGame.Enemies
             animations.Add(jump);
 
 
-            var reverseJump = new AnimationStrip(textures, new Rectangle(0, 6 * 8, 8, 16), 3, "reverseJump");
+            var reverseJump = new AnimationStrip(textures, Helpers.GetBigTileRect(3, 0), 3, "reverseJump");
             reverseJump.LoopAnimation = false;
             reverseJump.FrameLength = 0.1f;
             reverseJump.Oscillate = true;

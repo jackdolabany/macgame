@@ -49,7 +49,7 @@ namespace MacGame
             var aggDisplay = new AggregateDisplay(new DisplayComponent[] { DoorAnimations, JailBarAnimations });
             this.DisplayComponent = aggDisplay;
 
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
+            var textures = content.Load<Texture2D>(@"Textures\BigTextures");
             
             var idle = new AnimationStrip(textures, DoorImageTextureSourceRectangle, 1, "idle");
             idle.LoopAnimation = false;
@@ -67,11 +67,11 @@ namespace MacGame
             close.Reverse = true;
             DoorAnimations.Add(close);
 
-            var closedJailBars = new AnimationStrip(textures, new Rectangle(13 * Game1.TileSize, 13 * Game1.TileSize, 8, 16), 1, "closed");
+            var closedJailBars = new AnimationStrip(textures, Helpers.GetBigTileRect(0, 6), 1, "closed");
             closedJailBars.LoopAnimation = false;
             JailBarAnimations.Add(closedJailBars);
 
-            var openJailBars = new AnimationStrip(textures, new Rectangle(13 * Game1.TileSize, 13 * Game1.TileSize, 8, 16), 3, "open");
+            var openJailBars = new AnimationStrip(textures, Helpers.GetBigTileRect(0, 6), 3, "open");
             openJailBars.LoopAnimation = false;
             openJailBars.FrameLength = 0.15f;
             JailBarAnimations.Add(openJailBars);
@@ -84,7 +84,7 @@ namespace MacGame
         {
             get
             {
-                return new Rectangle(10 * Game1.TileSize, 5 * Game1.TileSize, 16, 16);
+                return Helpers.GetBigTileRect(0, 2);
             }
         }
 
@@ -162,6 +162,7 @@ namespace MacGame
             // graphic for the door is twice the size of the door. That's because it opens/closes and the
             // animation graphic spills to the left of the door.
             DoorAnimations.WorldLocation -= new Vector2(4, 0);
+            JailBarAnimations.WorldLocation -= new Vector2(4, 0);
         }
 
         /// <summary>
@@ -196,6 +197,11 @@ namespace MacGame
             {
                 OpenThenCloseThenTransition();
             }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
         }
     }
 }

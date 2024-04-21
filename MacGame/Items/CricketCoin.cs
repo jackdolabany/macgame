@@ -18,12 +18,12 @@ namespace MacGame.Items
 
         public CricketCoin(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
+            var textures = content.Load<Texture2D>(@"Textures\BigTextures");
 
             var animations = new AnimationDisplay();
             this.DisplayComponent = animations;
 
-            var spin = new AnimationStrip(textures, new Rectangle(10 * Game1.TileSize, 2 * Game1.TileSize, 16, 16), 3, "spin");
+            var spin = new AnimationStrip(textures, Helpers.GetBigTileRect(0, 1), 3, "spin");
             spin.LoopAnimation = true;
             spin.Oscillate = true;
             spin.FrameLength = 0.25f;

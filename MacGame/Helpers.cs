@@ -23,27 +23,16 @@ namespace MacGame
         /// </summary>
         public static Rectangle GetTileRect(int x, int y)
         {
-            return new Rectangle(x * TileMap.TileSize + (2 * x) + 1, y * TileMap.TileSize + (2 * y) + 1, TileMap.TileSize, TileMap.TileSize);
+            return TileEngine.Helpers.GetTileRect(x, y);
         }
 
         /// <summary>
-        /// Converts from any rectangle on the texture to one that maps to the procssed texture with 
-        /// 1px borders around every cell.
+        /// Gets a big 16 x 16 tile from a big tile set. Expects a 1px border around every tile.
+        /// x and y refer to the tile's position in units of 16x16 tiles.
         /// </summary>
-        public static Rectangle ToTileRect(this Rectangle rect)
+        public static Rectangle GetBigTileRect(int x, int y)
         {
-            int x = rect.X / TileMap.TileSize;
-            int offsetX = rect.X % TileMap.TileSize;
-            int y = rect.Y / TileMap.TileSize;
-            int offsetY = rect.Y % TileMap.TileSize;
-
-            // need to add the 2px border for anything over one tile wide
-            int tilesWide = (rect.Width / TileMap.TileSize);
-            int extraWidth = Math.Max(tilesWide - 1, 0) * 2;
-
-            return new Rectangle(
-                (x * TileMap.TileSize) + (2 * x) + offsetX + 1,
-                (y * TileMap.TileSize) + (2 * y) + offsetY + 1, rect.Width + extraWidth, rect.Height);
+            return TileEngine.Helpers.GetBigTileRect(x, y);
         }
 
         /// <summary>

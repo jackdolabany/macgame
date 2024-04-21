@@ -147,7 +147,7 @@ namespace MacGame
         public static void Initialize(Texture2D textures, Game1 game)
         {
             spinnerTexture = textures;
-            spinnerSourceRect = new Rectangle(9 * Game1.TileSize, 4 * Game1.TileSize, Game1.TileSize, Game1.TileSize);
+            spinnerSourceRect = Helpers.GetTileRect(9, 4);
             DoneSavingOrLoading();
             _game = game;
         }

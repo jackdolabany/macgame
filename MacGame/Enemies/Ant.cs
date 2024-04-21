@@ -21,7 +21,7 @@ namespace MacGame.Enemies
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var walk = new AnimationStrip(textures, new Rectangle(24, 8, 8, 8), 2, "walk");
+            var walk = new AnimationStrip(textures, Helpers.GetTileRect(3, 1), 2, "walk");
             walk.LoopAnimation = true;
             walk.FrameLength = 0.14f;
             animations.Add(walk);

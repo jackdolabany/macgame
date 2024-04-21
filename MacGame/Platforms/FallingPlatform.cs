@@ -16,7 +16,7 @@ namespace MacGame.Platforms
         public FallingPlatform(ContentManager content, int cellX, int cellY)
            : base(content, cellX, cellY)
         {
-            this.DisplayComponent = new StaticImageDisplay(content.Load<Texture2D>(@"Textures/Textures"), new Rectangle(0, 4*8, 8, 3));
+            this.DisplayComponent = new StaticImageDisplay(content.Load<Texture2D>(@"Textures/Textures"), Helpers.GetTileRect(0, 4));
             SetCenteredCollisionRectangle(16, 5);
 
             checkCollisionWithPlayerRect = new Rectangle(this.CollisionRectangle.X, this.CollisionRectangle.Y - 2, this.CollisionRectangle.Width, 2);

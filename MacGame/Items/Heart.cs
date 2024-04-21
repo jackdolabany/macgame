@@ -12,7 +12,7 @@ namespace MacGame.Items
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
-            image.Source = new Rectangle(8, 16, 8, 8);
+            image.Source = Helpers.GetTileRect(1, 2);
             SetCenteredCollisionRectangle(8, 8);
         }
 

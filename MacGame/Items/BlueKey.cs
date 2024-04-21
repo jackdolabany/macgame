@@ -17,7 +17,7 @@ namespace MacGame.Items
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
-            image.Source = new Rectangle(15 * TileMap.TileSize, 4 * TileMap.TileSize, TileMap.TileSize, TileMap.TileSize);
+            image.Source = Helpers.GetTileRect(15, 4);
             SetCenteredCollisionRectangle(8, 8);
             _player = player;
             IsInChest = false;

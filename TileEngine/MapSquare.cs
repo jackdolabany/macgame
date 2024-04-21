@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 
 namespace TileEngine
 {
@@ -31,9 +27,9 @@ namespace TileEngine
         /// </summary>
         private Rectangle[] SandTextures = new Rectangle[]
             {
-                new Rectangle(4 * 8, 5 * 8, 8, 8),
-                new Rectangle(5 * 8, 5 * 8, 8, 8),
-                new Rectangle(6 * 8, 5 * 8, 8, 8)
+                Helpers.GetTileRect(4, 5),
+                Helpers.GetTileRect(5, 5),
+                Helpers.GetTileRect(6, 5)
             };
 
     public MapSquare(int depth, bool passable)

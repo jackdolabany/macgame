@@ -30,10 +30,11 @@ namespace MacGame
 
         public static bool DrawAllCollisisonRects = false;
 
-        public static Texture2D Textures;
+        public static Texture2D TileTextures;
+        public static Texture2D BigTileTextures;
         public static Texture2D titleScreen;
 
-        public static Rectangle WhiteSourceRect = new Rectangle(11, 27, 2, 2);
+        public static Rectangle WhiteSourceRect;
 
         public const int TileSize = TileEngine.TileMap.TileSize;
 
@@ -152,6 +153,11 @@ namespace MacGame
             GlobalEvents.BeginSubWorldDoorEnter += OnBeginSubWorldDoorEnter;
             GlobalEvents.OneHundredTacosCollected += OnOneHundredTacosCollected;
             GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
+
+            var whiteTileRect = Helpers.GetTileRect(1, 3);
+
+            // Grab a 2 x 2 rectangle from the middle of this tile rect.
+            WhiteSourceRect = new Rectangle(whiteTileRect.X + 4, whiteTileRect.Y + 4, 2, 2);
         }
 
         private void OnCricketCoinCollected(object? sender, EventArgs e)
@@ -239,7 +245,8 @@ namespace MacGame
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Textures = Content.Load<Texture2D>(@"Textures\Textures");
+            TileTextures = Content.Load<Texture2D>(@"Textures\Textures");
+            BigTileTextures = Content.Load<Texture2D>(@"Textures\BigTextures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
 
             Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
@@ -258,7 +265,7 @@ namespace MacGame
             Camera = new Camera();
 
             SoundManager.Initialize(Content);
-            StorageManager.Initialize(Textures, this);
+            StorageManager.Initialize(TileTextures, this);
             EffectsManager.Initialize(Content);
 
             pauseMenu = new PauseMenu(this);
@@ -623,7 +630,7 @@ namespace MacGame
                         null,
                         cameraTransformation);
 
-                    spriteBatch.Draw(Textures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), WhiteSourceRect, Color.Black);
+                    spriteBatch.Draw(TileTextures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), WhiteSourceRect, Color.Black);
                     spriteBatch.End();
                     break;
                 case GameState.TitleScreen:
@@ -684,18 +691,18 @@ namespace MacGame
                 var heartXPos = 2 + (i * 8);
                 if (i < Player.Health)
                 {
-                    spriteBatch.Draw(Textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(8, 16, 8, 8), Color.White);
+                    spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, 8, 8), Helpers.GetTileRect(1, 2), Color.White);
                 }
                 else
                 {
-                    spriteBatch.Draw(Textures, new Rectangle(heartXPos, hudYPos, 8, 8), new Rectangle(16, 16, 8, 8), Color.White);
+                    spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, 8, 8), Helpers.GetTileRect(2, 2), Color.White);
                 }
             }
 
             // Draw the player's current item
             if (Player.CurrentItem != null)
             {
-                spriteBatch.Draw(Textures, new Rectangle(2, 12, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
+                spriteBatch.Draw(TileTextures, new Rectangle(2, 12, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
             }
 
             // Draw the number of tacos in the HUD for regular levels, or draw the Cricket coins for the Hub level.
@@ -704,12 +711,12 @@ namespace MacGame
 
             if (CurrentLevel.IsHubWorld)
             {
-                var cricketCoinSourceRect = new Rectangle(9 * TileSize, 2 * TileSize, 8, 8);
+                var cricketCoinSourceRect = Helpers.GetTileRect(9, 2);
                 DrawNumberOfThingsOnRight(spriteBatch, cricketCoinSourceRect, Player.CricketCoinCount, GAME_X_RESOLUTION - 10, hudYPos);
             }
             else
             {
-                var tacoIconSource = new Rectangle(8 * TileSize, 2 * TileSize, 8, 8);
+                var tacoIconSource = Helpers.GetTileRect(8, 2);
                 DrawNumberOfThingsOnRight(spriteBatch, tacoIconSource, Player.Tacos, GAME_X_RESOLUTION - 10, hudYPos);
             }
 
@@ -717,20 +724,20 @@ namespace MacGame
             Vector2 keyLocation = new Vector2(GAME_X_RESOLUTION - 10, hudYPos + 12);
             if (Player.HasRedKey)
             {
-                var redKeySourceRect = new Rectangle(13 * TileSize, 4 * TileSize, 8, 8);
-                spriteBatch.Draw(Textures, keyLocation, redKeySourceRect, Color.White);
+                var redKeySourceRect = Helpers.GetTileRect(13, 4);
+                spriteBatch.Draw(TileTextures, keyLocation, redKeySourceRect, Color.White);
                 keyLocation.Y += 6;
             }
             if (Player.HasGreenKey)
             {
-                var greenKeySourceRect = new Rectangle(14 * TileSize, 4 * TileSize, 8, 8);
-                spriteBatch.Draw(Textures, keyLocation, greenKeySourceRect, Color.White);
+                var greenKeySourceRect = Helpers.GetTileRect(14, 4);
+                spriteBatch.Draw(TileTextures, keyLocation, greenKeySourceRect, Color.White);
                 keyLocation.Y += 6;
             }
             if (Player.HasBlueKey)
             {
-                var blueKeySourceRect = new Rectangle(15 * TileSize, 4 * TileSize, 8, 8);
-                spriteBatch.Draw(Textures, keyLocation, blueKeySourceRect, Color.White);
+                var blueKeySourceRect = Helpers.GetTileRect(15, 4);
+                spriteBatch.Draw(TileTextures, keyLocation, blueKeySourceRect, Color.White);
             }
         }
 
@@ -757,12 +764,12 @@ namespace MacGame
             }
 
             // Draw the icon image
-            spriteBatch.Draw(Textures, new Rectangle(rightMostX - 8, yPos + 1, 8, 8), iconSourceRectangle, Color.White);
+            spriteBatch.Draw(TileTextures, new Rectangle(rightMostX - 8, yPos + 1, 8, 8), iconSourceRectangle, Color.White);
         }
 
         public static void DrawBlackOverScreen(SpriteBatch spriteBatch, float opacity)
         {
-            spriteBatch.Draw(Game1.Textures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Game1.WhiteSourceRect, Color.Black * opacity);
+            spriteBatch.Draw(Game1.TileTextures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Game1.WhiteSourceRect, Color.Black * opacity);
         }
 
         public void LoadSavedGame(StorageState? ss)

@@ -18,7 +18,7 @@ namespace MacGame
         public MineCart(ContentManager content, int cellX, int cellY, Player player) : base()
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var image = new StaticImageDisplay(textures, new Rectangle(2 * Game1.TileSize, 9 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
+            var image = new StaticImageDisplay(textures, Helpers.GetTileRect(2, 9));
             this.DisplayComponent = image;
             this.CollisionRectangle = new Rectangle(-4, -8, Game1.TileSize, Game1.TileSize);
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);

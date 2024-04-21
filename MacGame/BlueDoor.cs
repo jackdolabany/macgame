@@ -19,8 +19,7 @@ namespace MacGame
        
         }
 
-        public override Rectangle DoorImageTextureSourceRectangle =>
-            new Rectangle(10 * Game1.TileSize, 11 * Game1.TileSize, 16, 16);
+        public override Rectangle DoorImageTextureSourceRectangle => TileEngine.Helpers.GetBigTileRect(0, 5);
 
         public override bool IsInitiallyLocked
         {

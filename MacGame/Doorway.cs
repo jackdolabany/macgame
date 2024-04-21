@@ -16,7 +16,7 @@ namespace MacGame
         public Doorway(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            var sid = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(0, 72, 8, 16));
+            var sid = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\BigTextures"), Helpers.GetBigTileRect(3, 1));
             this.DisplayComponent = sid;
         }
     }

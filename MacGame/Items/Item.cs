@@ -85,9 +85,9 @@ namespace MacGame.Items
             _camera = camera;
             
             // Initialize the chest images.
-            ClosedChest = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(14 * Game1.TileSize, 1 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
-            OpenChestBottom = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(15 * Game1.TileSize, 1 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
-            OpenChestTop = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), new Rectangle(15 * Game1.TileSize, 0 * Game1.TileSize, Game1.TileSize, Game1.TileSize));
+            ClosedChest = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), Helpers.GetTileRect(14, 1));
+            OpenChestBottom = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), Helpers.GetTileRect(15, 1));
+            OpenChestTop = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), Helpers.GetTileRect(15, 0));
         }
 
         private void Collect(Player player)

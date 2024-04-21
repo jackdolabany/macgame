@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
@@ -44,11 +41,8 @@ namespace TileEngine
                 var x = TileIndex % TilesPerRow;
                 var y = TileIndex / TilesPerRow;
 
-                return new Rectangle(
-                    x * TileWidth,
-                    y * TileHeight,
-                    TileWidth,
-                    TileHeight);
+                // Padding to take the 2px border between tiles into account.
+                return Helpers.GetTileRect(x, y);
             }
         }
 
@@ -56,7 +50,7 @@ namespace TileEngine
         {
             get
             {
-                return (Texture?.Width ?? 0) / (TileWidth);
+                return (Texture?.Width ?? 0) / (TileWidth + 2);
             }
         }
     }

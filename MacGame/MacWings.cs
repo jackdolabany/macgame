@@ -16,7 +16,7 @@ namespace MacGame
 
         public MacWings(Player player, Texture2D textures)
         {
-            wingSourceRect = new Rectangle(11 * TileMap.TileSize, 0, TileMap.TileSize, TileMap.TileSize);
+            wingSourceRect = Helpers.GetTileRect(11, 0);
             wingImage = textures;
             _player = player;
 

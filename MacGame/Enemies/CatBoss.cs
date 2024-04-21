@@ -29,8 +29,8 @@ namespace MacGame.Enemies
         {
             DisplayComponent = new AnimationDisplay();
 
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var idle = new AnimationStrip(textures, new Rectangle(40, 0, 16, 16), 3, "idle");
+            var textures = content.Load<Texture2D>(@"Textures\BigTextures");
+            var idle = new AnimationStrip(textures, Helpers.GetBigTileRect(0, 0), 3, "idle");
             idle.LoopAnimation = true;
             idle.Oscillate = true;
             idle.FrameLength = 0.14f;

@@ -10,9 +10,9 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TileEngine.dll
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TmxMapLibrary.dll
+/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -44,6 +44,11 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/RedRoom.tmx
+
+#begin Maps/SmallestTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/SmallestTest.tmx
 
 #begin Maps/TestFinalBoss.tmx
 /importer:TMXMapImporter
@@ -144,9 +149,21 @@
 /processorParam:Quality=Best
 /build:SoundEffects/take_hit.wav
 
+#begin Textures/BigTextures.png
+/importer:TextureImporter
+/processor:BigTileBorderImageProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/BigTextures.png
+
 #begin Textures/Textures.png
 /importer:TextureImporter
-/processor:TextureProcessor
+/processor:SmallTileBorderImageProcessor
 /processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False

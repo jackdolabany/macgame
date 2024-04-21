@@ -9,7 +9,6 @@ using TileEngine;
 
 namespace MacGame
 {
-
     public enum DigDirection
     {
         Up,
@@ -17,7 +16,6 @@ namespace MacGame
         Left,
         Right
     }
-
     
     // This is the shovel Mac uses. Not the item to get the shovel (Shovel.cs).
     public class MacShovel : GameObject
@@ -47,7 +45,7 @@ namespace MacGame
             _player = player;
 
             // We'll draw the wings all custom like.
-            var image = new StaticImageDisplay(textures, new Rectangle(11 * TileMap.TileSize, 1 * TileMap.TileSize, TileMap.TileSize, TileMap.TileSize));
+            var image = new StaticImageDisplay(textures, Helpers.GetTileRect(11, 1));
             DisplayComponent = image;
             Enabled = false;
 

@@ -30,12 +30,11 @@ namespace MacGame.DisplayComponents
             RotationAndDrawOrigin = Vector2.Zero;
             DrawDepth = 0f;// TODO: Figure this out based on layer or whatever.
             Scale = 1f;
-            currentAnimationName = "";
         }
 
         public abstract Vector2 GetWorldCenter(ref Vector2 worldLocation);
 
-        public string currentAnimationName;
+        
 
         public abstract void Draw(SpriteBatch spriteBatch);
 

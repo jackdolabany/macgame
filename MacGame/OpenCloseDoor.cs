@@ -119,7 +119,7 @@ namespace MacGame
                 JailBarAnimations.TintColor = Color.White * 0;
             }
 
-            if (JailBarAnimations.currentAnimationName == "open" && JailBarAnimations.CurrentAnimation!.FinishedPlaying)
+            if (JailBarAnimations.CurrentAnimationName == "open" && JailBarAnimations.CurrentAnimation!.FinishedPlaying)
             {
                 IsLocked = false;
                 _player.AddUnlockedDoor(Name);
@@ -131,7 +131,7 @@ namespace MacGame
             }
             else if (this.State == DoorState.Opening)
             {
-                if (DoorAnimations.animations[DoorAnimations.currentAnimationName].FinishedPlaying)
+                if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
                     pauseBeforeTransitionTimer = 0.5f;
                     this.State = DoorState.Closing;
@@ -185,8 +185,10 @@ namespace MacGame
             else if (IsLocked)
             {
                 // locked but the player now has enough coins to open it.
-                JailBarAnimations.Play("open");
-
+                if (JailBarAnimations.CurrentAnimationName != "open")
+                {
+                    JailBarAnimations.Play("open");
+                }
                 // TODO: Play a sound effect here.
             }
             else if (IsToSubworld)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
@@ -17,15 +14,18 @@ namespace MacGame.DisplayComponents
             : base()
         {
             drawObject = new DrawObject();
+            CurrentAnimationName = "";
         }
+
+        public string CurrentAnimationName;
 
         public AnimationStrip? CurrentAnimation
         {
             get
             {
-                if (animations.ContainsKey(currentAnimationName))
+                if (animations.ContainsKey(CurrentAnimationName))
                 {
-                    return animations[currentAnimationName];
+                    return animations[CurrentAnimationName];
                 }
                 return null;
             }
@@ -69,9 +69,9 @@ namespace MacGame.DisplayComponents
             base.Update(gameTime, elapsed, position, flipped);
 
             // Update the animation
-            if (!animations.ContainsKey(currentAnimationName)) return;
+            if (!animations.ContainsKey(CurrentAnimationName)) return;
 
-            var anim = animations[currentAnimationName];
+            var anim = animations[CurrentAnimationName];
             if (anim.FinishedPlaying)
             {
                 Play(anim.NextAnimation);
@@ -88,7 +88,7 @@ namespace MacGame.DisplayComponents
             }
             drawObject.Effect = effect;
 
-            if (!animations.ContainsKey(currentAnimationName)) return;
+            if (!animations.ContainsKey(CurrentAnimationName)) return;
 
             drawObject.Texture = anim.Texture;
             drawObject.SourceRectangle = anim.FrameRectangle;
@@ -101,7 +101,7 @@ namespace MacGame.DisplayComponents
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)
         {
-            var currentAnimation = animations[currentAnimationName];
+            var currentAnimation = animations[CurrentAnimationName];
             return new Vector2(
               worldLocation.X,
               worldLocation.Y - currentAnimation.FrameHeight / 2f);
@@ -111,7 +111,7 @@ namespace MacGame.DisplayComponents
         {
             if (name != null && animations.ContainsKey(name))
             {
-                currentAnimationName = name;
+                CurrentAnimationName = name;
                 animations[name].Play(startFrame);
                 return animations[name];
             }

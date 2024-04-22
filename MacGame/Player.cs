@@ -400,19 +400,19 @@ namespace MacGame
             if (isSand)
             {
                 friction = 5f;
-                jumpBoost = 300;
+                jumpBoost = 370;
                 environmentMaxWalkSpeed /= 2;
             }
             else if (isIce)
             {
                 friction = 0.95f;
-                jumpBoost = 450;
+                jumpBoost = 520;
             }
             else
             {
                 // Normal
                 friction = 2.5f;
-                jumpBoost = 450;
+                jumpBoost = 520;
             }
 
             // If they aren't running max walk speed is cut in half.
@@ -844,7 +844,7 @@ namespace MacGame
                 nextAnimation = "idle";
             }
 
-            if (animations.currentAnimationName != nextAnimation)
+            if (animations.CurrentAnimationName != nextAnimation)
             {
                 animations.Play(nextAnimation);
             }
@@ -863,7 +863,7 @@ namespace MacGame
 
         private void HandleMineCartInputs(float elapsed)
         {
-            if (animations.currentAnimationName != "mineCart")
+            if (animations.CurrentAnimationName != "mineCart")
             {
                 animations.Play("mineCart");
             }

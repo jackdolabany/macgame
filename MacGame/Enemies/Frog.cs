@@ -48,16 +48,16 @@ namespace MacGame.Enemies
             Health = 1;
             IsAffectedByGravity = true;
 
-            // Push him down 8 pixels because his collsiion rect is only the top 8 pixels to not
+            // Push him down 8 pixels because his collsion rect is only the top 8 pixels to not
             // count his jumping frog legs.
-            worldLocation.Y += 8;
-            CollisionRectangle = new Rectangle(-4, -16, 8, 8);
-
+            worldLocation.Y += 8 * Game1.TileScale;
+            CollisionRectangle =  new Rectangle(-4 * Game1.TileScale, -16 * Game1.TileScale, Game1.TileSize, Game1.TileSize);
+           
         }
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 120f);
 
             Enabled = false;
             base.Kill();
@@ -75,8 +75,8 @@ namespace MacGame.Enemies
                     jumpTimer = 2;
                     animations.Play("jump");
                     SoundManager.PlaySound("jump", 0.5f, -0.2f);
-                    velocity.Y -= 150;
-                    velocity.X = 30;
+                    velocity.Y -= 400;
+                    velocity.X = 120;
                     if (Game1.Randy.NextBool())
                     {
                         velocity.X *= -1;

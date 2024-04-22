@@ -14,7 +14,7 @@ namespace MacGame.Platforms
             : base(content, cellX, cellY)
         {
             this.DisplayComponent = new NoDisplay();
-            this.CollisionRectangle = new Rectangle(-3, -8, 6, 3);
+            this.CollisionRectangle = new Rectangle(-12, -32, 24, 12);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace MacGame.Enemies
         const float maxThrowTimer = 2f;
         float throwTimer = maxThrowTimer;
 
-        int walkSpeed = 20;
+        int walkSpeed = 80;
         int maxTravelDistance = 24;
         int startLocationX;
 
@@ -68,7 +68,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 40, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 40, Color.White, 120f);
 
             Enabled = false;
             base.Kill();
@@ -100,7 +100,7 @@ namespace MacGame.Enemies
                     yarnBall.WorldLocation = WorldCenter;
                     var direction = Player.WorldCenter - yarnBall.WorldCenter;
                     direction.Normalize();
-                    yarnBall.Velocity = direction * 50;
+                    yarnBall.Velocity = direction * 200;
 
                     nextYarnBallToThrowIndex++;
                     if (nextYarnBallToThrowIndex >= yarnBalls.Length)

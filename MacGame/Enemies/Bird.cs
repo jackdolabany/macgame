@@ -50,7 +50,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 120f);
 
             Enabled = false;
             base.Kill();
@@ -75,14 +75,14 @@ namespace MacGame.Enemies
                     var rando = Game1.Randy.Next(1, 4);
                     if (rando == 1)
                     {
-                        worldLocation.Y += 16;
+                        worldLocation.Y += Game1.TileSize * 2;
                     }
                     else if (rando == 2)
                     {
-                        worldLocation.Y -= 16;
+                        worldLocation.Y -= Game1.TileSize * 2;
                     }
 
-                    Velocity = new Vector2(-30, 0);
+                    Velocity = new Vector2(-120, 0);
                 }
             }
 

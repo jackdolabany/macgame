@@ -49,7 +49,7 @@ namespace MacGame
 
         public Camera()
         {
-            Velocity = 30f;
+            Velocity = 120f;
         }
 
         public Vector2 ParallaxScale = new Vector2(0.75f, 0.75f);
@@ -190,7 +190,19 @@ namespace MacGame
 
         public bool IsObjectVisible(Rectangle bounds)
         {
-            return ViewPort.Intersects(bounds);
+            // Pad the bounds by 20% since sometimes the collision rect is smaller than the object.
+            // Better to overdraw than have stuff pop in.
+            const float paddingPercent = 0.25f;
+            var widthPadding = bounds.Width * paddingPercent;
+            var heightPadding = bounds.Width * paddingPercent;
+
+            var paddedBounds = new Rectangle(
+                (int)(bounds.X - (widthPadding / 2f)),
+                (int)(bounds.Y - (heightPadding / 2f)), 
+                (int)(bounds.Width + widthPadding), 
+                (int)(bounds.Height + heightPadding));
+
+            return ViewPort.Intersects(paddedBounds);
         }
 
         public Vector2 GetRelativeScreenPosition(Vector2 worldPosition)

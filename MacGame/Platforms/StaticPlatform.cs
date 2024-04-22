@@ -11,7 +11,7 @@ namespace MacGame.Platforms
             : base(content, cellX, cellY)
         {
             this.DisplayComponent = new StaticImageDisplay(content.Load<Texture2D>(@"Textures/Textures"), Helpers.GetTileRect(0, 4));
-            this.CollisionRectangle = new Rectangle(-3, -8, 6, 3);
+            this.CollisionRectangle = new Rectangle(-12, -32, 24, 12);
         }
     }
 }

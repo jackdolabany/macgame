@@ -40,8 +40,8 @@ namespace MacGame
 
         private DeadMenu _deadMenu;
 
-        private const float maxAcceleration = 150;
-        private const float maxSpeed = 80;
+        private const float maxAcceleration = 600;
+        private const float maxSpeed = 240;
 
         private MacState _state = MacState.Idle;
 
@@ -69,7 +69,7 @@ namespace MacGame
 
         // Ladder climbing stuff
         AnimationStrip climbingLadderAnimation;
-        private const int climbingSpeed = 30;
+        private const int climbingSpeed = 120;
 
         // Used to temporarily prevent you from climbing ladders if you jump while holding up
         // until you release up and press it again. This way you don't just insta-climb the ladder above you.
@@ -172,7 +172,7 @@ namespace MacGame
             climbingVineAnimation.FrameLength = 0.14f;
             animations.Add(climbingVineAnimation);
 
-            var mineCart = new AnimationStrip(textures, Helpers.GetTileRect(2, 1), 1, "mineCart");
+            var mineCart = new AnimationStrip(textures, Helpers.GetTileRect(2, 8), 1, "mineCart");
             mineCart.LoopAnimation = false;
             mineCart.FrameLength = 0.1f;
             animations.Add(mineCart);
@@ -196,7 +196,7 @@ namespace MacGame
 
             this.IsAffectedByPlatforms = true;
 
-            this.CollisionRectangle = new Rectangle(-3, -7, 6, 7);
+            SetCenteredCollisionRectangle(6, 7);
 
             InputManager = inputManager;
             _deadMenu = deadMenu;
@@ -227,7 +227,7 @@ namespace MacGame
             {
                 HandleMineCartInputs(elapsed);
             }
-            if (IsKnockedDown)
+            else if (IsKnockedDown)
             {
                 HandleKnockedDownInputs(elapsed);
             }
@@ -315,7 +315,7 @@ namespace MacGame
         {
             this.worldLocation = doorLocation + new Vector2(0, -4);
             this.flipped = true;
-            this.velocity = new Vector2(70, 0);
+            this.velocity = new Vector2(280, 0);
             this._state = MacState.IsKnockedDown;
             // TODO: Play sound
         }
@@ -330,13 +330,13 @@ namespace MacGame
                     enemy.HandleCustomPlayerCollision(this);
 
                     // Pad 1 pixel to make it a little easier
-                    var wasAboveEnemy = _previousCollisionRectangle.Bottom - 1 <= enemy.CollisionRectangle.Top;
+                    var wasAboveEnemy = _previousCollisionRectangle.Bottom - 8 <= enemy.CollisionRectangle.Top;
 
                     if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
-                        velocity.Y = -120;
+                        velocity.Y = -450;
                     }
                     else if (enemy.Alive && !enemy.IsInvincibleAfterHit)
                     {
@@ -376,7 +376,7 @@ namespace MacGame
             {
                 invincibleTimeRemaining = 0.75f;
                 SoundManager.PlaySound("take_hit");
-                var hitBackBoost = new Vector2(50, -100);
+                var hitBackBoost = new Vector2(100, -200);
                 if (CollisionCenter.X < enemy.CollisionCenter.X)
                 {
                     hitBackBoost.X *= -1;
@@ -400,19 +400,19 @@ namespace MacGame
             if (isSand)
             {
                 friction = 5f;
-                jumpBoost = 100;
+                jumpBoost = 300;
                 environmentMaxWalkSpeed /= 2;
             }
             else if (isIce)
             {
                 friction = 0.95f;
-                jumpBoost = 150;
+                jumpBoost = 450;
             }
             else
             {
                 // Normal
                 friction = 2.5f;
-                jumpBoost = 150f;
+                jumpBoost = 450;
             }
 
             // If they aren't running max walk speed is cut in half.
@@ -605,7 +605,7 @@ namespace MacGame
                 canClimbVines = false;
                 yPositionWhenLastOnVine = this.worldLocation.Y;
                 _state = MacState.Jumping;
-                this.velocity = new Vector2(75, -75);
+                this.velocity = new Vector2(300, -250);
                 if (flipped)
                 {
                     this.velocity.X *= -1;
@@ -656,11 +656,11 @@ namespace MacGame
 
                 if (!flipped)
                 {
-                    this.worldLocation.X = (TileMap.TileSize * vineTile.X) + 2;
+                    this.worldLocation.X = (TileMap.TileSize * vineTile.X) + 8;
                 }
                 else
                 {
-                    this.worldLocation.X = TileMap.TileSize * vineTile.X + 6;
+                    this.worldLocation.X = TileMap.TileSize * vineTile.X + 24;
                 }
 
                 this.velocity.X = 0;
@@ -686,7 +686,7 @@ namespace MacGame
             }
 
             // Unset canClimbVines if they move enough away from the vine.
-            if (!canClimbVines && Math.Abs(this.worldLocation.Y - yPositionWhenLastOnVine) > 5)
+            if (!canClimbVines && Math.Abs(this.worldLocation.Y - yPositionWhenLastOnVine) > 20)
             {
                 canClimbVines = true;
             }
@@ -701,13 +701,13 @@ namespace MacGame
             this.IsTryingToOpenDoor = InputManager.CurrentAction.up && !InputManager.PreviousAction.up;
 
             // slightly sliding is not sliding, so we want to see the idle animation.
-            if (velocity.X < 20 && velocity.X > -20 && IsSliding)
+            if (velocity.X < 80 && velocity.X > -80 && IsSliding)
             {
                 _state = MacState.Idle;
             }
 
             // stop the player if they are nearly stopped so you don't get weird 1px movement.
-            if (velocity.X < 6 && velocity.X > -6 && !IsRunning && onGround)
+            if (velocity.X < 24 && velocity.X > -24 && !IsRunning && onGround)
             {
                 velocity.X = 0;
             }
@@ -778,7 +778,7 @@ namespace MacGame
                 {
                     apple.Enabled = true;
                     apple.WorldLocation = this.WorldLocation;
-                    apple.Velocity = new Vector2(70, 0);
+                    apple.Velocity = new Vector2(280, 0);
                     if (flipped)
                     {
                         apple.Velocity *= -1;
@@ -869,19 +869,20 @@ namespace MacGame
             }
 
             // If you land on a tile that isn't track, then exit the minecart.
-            var bottomLeftTile = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(-4, -4));
+            var bottomLeftTile = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(-10, -4));
             var bottomLeftIsTrack = bottomLeftTile != null && bottomLeftTile.IsMinecartTrack;
             
-            var bottomRightTile = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(4, -4));
+            var bottomRightTile = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(10, -4));
             var bottomRightIsTrack = bottomRightTile != null && bottomRightTile.IsMinecartTrack;
 
             if (OnGround && !bottomLeftIsTrack && !bottomRightIsTrack)
             {
                 _state = MacState.Idle;
+                IsInMineCart = false;
                 return;
             }
 
-            this.velocity.X = 60f;
+            this.velocity.X = 240f;
             if (flipped)
             {
                 this.velocity.X *= -1;
@@ -891,7 +892,7 @@ namespace MacGame
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
             {
                 // Regular jump.
-                this.velocity.Y -= 150;
+                this.velocity.Y -= 450;
                 SoundManager.PlaySound("jump");
             }
 
@@ -935,7 +936,7 @@ namespace MacGame
             Health = 0;
             Enabled = false;
             this.CurrentItem = null;
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 50f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
             SoundManager.PlaySound("mac_death");
             MenuManager.AddMenu(_deadMenu);
         }

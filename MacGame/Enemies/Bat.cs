@@ -12,7 +12,7 @@ namespace MacGame.Enemies
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        private float speed = 10;
+        private float speed = 40;
         private float startLocationX;
         private float maxTravelDistance = 12;
 
@@ -41,7 +41,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 30f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 120f);
 
             Enabled = false;
             base.Kill();

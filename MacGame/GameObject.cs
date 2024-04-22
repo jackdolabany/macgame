@@ -55,7 +55,7 @@ namespace MacGame
         protected bool onLeftWall;
         protected bool onRightWall;
 
-        public Platform PlatformThatThisIsOn;
+        public Platform? PlatformThatThisIsOn;
 
         /// <summary>
         /// A single platform that this game object won't consider. You can use this to jump
@@ -159,8 +159,8 @@ namespace MacGame
         public bool IsAffectedByGravity { get; set; }
         public bool IsAffectedByPlatforms { get; set; }
 
-        public static Vector2 Gravity = new Vector2(0, 500);
-        public const float MaxFallSpeed = 4;
+        public static Vector2 Gravity = new Vector2(0, 1200);
+        public const float MaxFallSpeed = 16;
 
         protected Vector2 velocity;
         public Vector2 Velocity
@@ -261,9 +261,14 @@ namespace MacGame
             }
         }
 
+        /// <summary>
+        /// Creates a collision Rectangle for the game object centered vertically on the GameObject. Assumes the default
+        /// world location of the bottom center of the GameObject.
+        /// Enter Width and Height in units of the original art, they'll be scaled from 8 pixel to 32 pixel tiles.
+        /// </summary>
         protected void SetCenteredCollisionRectangle(int width, int height)
         {
-            this.CollisionRectangle = new Rectangle(-width / 2, -height, width, height);
+            this.CollisionRectangle = new Rectangle(-width * Game1.TileScale / 2, -height * Game1.TileScale, width * Game1.TileScale, height * Game1.TileScale);
         }
 
         public GameObject()
@@ -272,6 +277,7 @@ namespace MacGame
             IsAbleToSurviveOutsideOfWorld = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = true;
+            PlatformThatThisIsOn = null;
         }
 
         private Vector2 horizontalCollisionTest(Vector2 moveAmount)

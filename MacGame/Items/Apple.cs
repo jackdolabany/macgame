@@ -52,7 +52,7 @@ namespace MacGame.Items
         public void Smash()
         {
             ReturnApple();
-            EffectsManager.EnemyPop(this.WorldCenter, 7, Color.Red, 20);
+            EffectsManager.EnemyPop(this.WorldCenter, 7, Color.Red, 80);
         }
     }
 }

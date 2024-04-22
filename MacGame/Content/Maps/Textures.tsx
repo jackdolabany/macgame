@@ -174,6 +174,11 @@
    <property name="LoadClass" value="Enemy.Beetle"/>
   </properties>
  </tile>
+ <tile id="91">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="96">
   <properties>
    <property name="LoadClass" value="Enemy.Frog"/>
@@ -210,6 +215,11 @@
  <tile id="118">
   <properties>
    <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="123">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="128">
@@ -254,9 +264,19 @@
    <property name="LoadClass" value="RedDoor"/>
   </properties>
  </tile>
+ <tile id="144">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="146">
   <properties>
    <property name="LoadClass" value="MineCart"/>
+  </properties>
+ </tile>
+ <tile id="155">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="160">
@@ -267,6 +287,11 @@
  <tile id="171">
   <properties>
    <property name="LoadClass" value="GreenDoor"/>
+  </properties>
+ </tile>
+ <tile id="187">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="203">

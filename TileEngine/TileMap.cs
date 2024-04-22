@@ -252,7 +252,7 @@ namespace TileEngine
 
         public void Draw(SpriteBatch spriteBatch, Rectangle scaledViewPort, bool isDrawingParallaxLayer = false)
         {
-
+            // Add this random 10 pixel padding so that items don't pop in suddenly.
             int startX = GetCellByPixelX(scaledViewPort.X - 1);
             int endX = GetCellByPixelX(scaledViewPort.Right + 1);
             int startY = GetCellByPixelY(scaledViewPort.Y - 1);

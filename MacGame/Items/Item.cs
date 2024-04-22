@@ -159,8 +159,8 @@ namespace MacGame.Items
             if (IsInChest && !isOpen)
             {
                 // Check if the pixel above the player is hitting the bottom of the chest.
-                var topOfPlayer = new Rectangle(_player.CollisionRectangle.X, _player.CollisionRectangle.Top, _player.CollisionRectangle.Width, 1);
-                var bottomOfChest = new Rectangle((int)ChestPosition.X - 4, (int)ChestPosition.Y, 8, 1);
+                var topOfPlayer = new Rectangle(_player.CollisionRectangle.X, _player.CollisionRectangle.Top, _player.CollisionRectangle.Width, 4);
+                var bottomOfChest = new Rectangle((int)ChestPosition.X - 16, (int)ChestPosition.Y, 32, 4);
                 if (topOfPlayer.Intersects(bottomOfChest))
                 {
                     isOpen = true;
@@ -189,9 +189,9 @@ namespace MacGame.Items
             // Move up until it's just above the chest.
             if (IsInChest)
             {
-                if (isOpen && this.worldLocation.Y > ChestPosition.Y - 7)
+                if (isOpen && this.worldLocation.Y > ChestPosition.Y - 28)
                 {
-                    this.velocity.Y = -4;
+                    this.velocity.Y = -16;
                 }
                 else
                 {

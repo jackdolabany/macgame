@@ -103,12 +103,12 @@ namespace MacGame
                         location,
                         RandomDirection(speed) * (float)speedFactor,
                         Vector2.Zero,
-                        20,
-                        30,
+                        100,
+                        40,
                         color * 0.8f,
                         Color.White * 0.8f);
-                pop.Scale = 1f;
-                pop.FinalScale = 1f;
+                pop.Scale = 1f * Game1.TileScale;
+                pop.FinalScale = 1f * Game1.TileScale;
                 pop.SetStaticImage(Game1.TileTextures, WhiteSquareSourceRectangle);
                 // pop.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
             }

@@ -342,7 +342,7 @@ namespace MacGame
                 }
             }
 
-            int arrowX = leftMargin + bubbleWidth - advanceMessageArrowSourceRect.Width - 2;
+            int arrowX = leftMargin + bubbleWidth - advanceMessageArrowSourceRect.Width - 8;
 
             // draw the text
             DrawTexts(spriteBatch, currentMessage.Text, new Vector2(leftMargin + Game1.TileSize, topMargin + Game1.TileSize - 1), textScale, textDepth, currentLetterIndex);
@@ -381,7 +381,7 @@ namespace MacGame
             // draw the advance the text arrow
             if (Messages.Count > 1 && currentLetterIndex >= totalLetters)
             {
-                spriteBatch.Draw(Game1.TileTextures, new Vector2(arrowX, topMargin + bubbleHeight - advanceMessageArrowSourceRect.Height + 1), advanceMessageArrowSourceRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, textDepth);
+                spriteBatch.Draw(Game1.TileTextures, new Vector2(arrowX, topMargin + bubbleHeight - advanceMessageArrowSourceRect.Height - 2), advanceMessageArrowSourceRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, textDepth);
             }
 
             //// draw the image of the person talking. We expect conversation texture to be a spritesheet of squares so we'll use height for everything.

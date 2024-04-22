@@ -19,7 +19,7 @@ namespace MacGame
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
 
-            this.CollisionRectangle = new Rectangle(-4, -16, 8, 16);
+            SetCenteredCollisionRectangle(8, 16);
 
             _player = player;
         }

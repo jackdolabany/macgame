@@ -38,7 +38,7 @@ namespace MacGame
 
         // To help us animate the shovel going out and then coming back.
         bool isShovelGoingOut = false;
-        const int shovelSpeed = 35;
+        const int shovelSpeed = 140;
 
         public MacShovel(Player player, Texture2D textures)
         {
@@ -59,7 +59,7 @@ namespace MacGame
                 if (isShovelGoingOut)
                 {
                     this.localLocation += movementDirection * shovelSpeed * elapsed;
-                    if ((startOfMovementLocation - localLocation).Length() > 5)
+                    if ((startOfMovementLocation - localLocation).Length() > 20)
                     {
                         isShovelGoingOut = false;
                         startOfMovementLocation = localLocation;
@@ -68,7 +68,7 @@ namespace MacGame
                 else
                 {
                     this.localLocation -= movementDirection * shovelSpeed * elapsed;
-                    if((startOfMovementLocation - localLocation).Length() > 5)
+                    if((startOfMovementLocation - localLocation).Length() > 20)
                     {
                         this.Enabled = false;
                     }
@@ -108,20 +108,20 @@ namespace MacGame
             switch(digDirection)
             {
                 case DigDirection.Up:
-                    this.localLocation = new Vector2(0, -2);
-                    tileToCheck = new Vector2(0, -10);
+                    this.localLocation = new Vector2(0, -8);
+                    tileToCheck = new Vector2(0, -40);
                     break;
                 case DigDirection.Down:
-                    this.localLocation = new Vector2(0, 2);
-                    tileToCheck = new Vector2(0, 10);
+                    this.localLocation = new Vector2(0, 8);
+                    tileToCheck = new Vector2(0, 40);
                     break;
                 case DigDirection.Left:
-                    this.localLocation = new Vector2(-2, 0);
-                    tileToCheck = new Vector2(-10, 0);
+                    this.localLocation = new Vector2(-8, 0);
+                    tileToCheck = new Vector2(-40, 0);
                     break;
                 case DigDirection.Right:
-                    this.localLocation = new Vector2(2, 0);
-                    tileToCheck = new Vector2(10, 0);
+                    this.localLocation = new Vector2(8, 0);
+                    tileToCheck = new Vector2(40, 0);
                     break;
                 default:
                     throw new Exception("Invalid dig direction");

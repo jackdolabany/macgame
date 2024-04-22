@@ -103,7 +103,7 @@ namespace MacGame
 
         public virtual string LockMessage()
         {
-            return $"You need {CoinsNeeded} coins to unlock this door.";
+            return $"You need {CoinsNeeded} coins to unlock this door. This is some bonus message. How is that character thing coming along?";
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -161,8 +161,8 @@ namespace MacGame
             // Need to offset the position of the DrawObject because it gets all screwed up since the
             // graphic for the door is twice the size of the door. That's because it opens/closes and the
             // animation graphic spills to the left of the door.
-            DoorAnimations.WorldLocation -= new Vector2(4, 0);
-            JailBarAnimations.WorldLocation -= new Vector2(4, 0);
+            DoorAnimations.WorldLocation -= new Vector2(16, 0);
+            JailBarAnimations.WorldLocation -= new Vector2(16, 0);
         }
 
         /// <summary>

@@ -68,21 +68,18 @@ namespace CustomContentProcessorLibrary
 
                     }
 
-                    // corners should be a mix of the two adjecent pixels in this tile.
+                    // Corners
                     // Top Left
-                    outputMipmap.SetPixel(newLeft, newTop, Color.Lerp(inputImage.GetPixel(x, y + 1), inputImage.GetPixel(x + 1, y), 0.5f));
+                    outputMipmap.SetPixel(newLeft, newTop, inputImage.GetPixel(x, y));
 
                     // Top Right
-                    outputMipmap.SetPixel(newRight, newTop, Color.Lerp(inputImage.GetPixel(x + tileSize - 2, y), inputImage.GetPixel(x + tileSize - 1, y + 1), 0.5f));
+                    outputMipmap.SetPixel(newRight, newTop, inputImage.GetPixel(x + tileSize - 1, y));
 
                     // Bottom Left
-                    var toTheRight = inputImage.GetPixel(x + 1, y + tileSize - 1);
-                    var above = inputImage.GetPixel(x, y + tileSize - 2);
-                    outputMipmap.SetPixel(newLeft, newBottom, Color.Lerp(toTheRight, above, 0.5f));
+                    outputMipmap.SetPixel(newLeft, newBottom, inputImage.GetPixel(x, y + tileSize - 1));
 
                     // Bottom Right
-                    outputMipmap.SetPixel(newRight, newBottom, Color.Lerp(inputImage.GetPixel(x + tileSize - 2, y + tileSize - 1), inputImage.GetPixel(x + tileSize - 1, y + tileSize - 2), 0.5f));
-
+                    outputMipmap.SetPixel(newRight, newBottom, inputImage.GetPixel(x + tileSize - 1, y + tileSize - 1));
                 }
             }
 

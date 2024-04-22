@@ -14,7 +14,7 @@ namespace MacGame.Enemies
 
         private float speed = 40;
         private float startLocationX;
-        private float maxTravelDistance = 16;
+        private float maxTravelDistance = 64;
         private float jumpTimer = 1f;
 
         public Cricket(ContentManager content, int cellX, int cellY, Player player, Camera camera)
@@ -77,7 +77,7 @@ namespace MacGame.Enemies
                 jumpTimer = 1.0f;
                 if (OnGround)
                 {
-                    velocity.Y -= 100;
+                    velocity.Y -= 350;
                 }
             }
 

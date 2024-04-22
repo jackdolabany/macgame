@@ -613,16 +613,16 @@ namespace MacGame
             // Draw a square at the GameObjects location
             if (DrawLocation || Game1.DrawAllCollisisonRects)
             {
-                var rectSize = 1;
+                var rectSize = 4;
                 var location = WorldLocation;
 
                 // Draw location in green
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize, rectSize), Game1.WhiteSourceRect, Color.Green);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle(-(int)(rectSize / 2f + location.X), -(int)(rectSize / 2f + location.Y), rectSize, rectSize), Game1.WhiteSourceRect, Color.Green);
 
                 location = WorldCenter;
 
                 // Draw world center in Yellow
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle(-rectSize / 2 + (int)location.X, -rectSize / 2 + (int)location.Y, rectSize, rectSize), Game1.WhiteSourceRect, Color.Yellow);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle(-(int)(rectSize / 2f + location.X), -(int)(rectSize / 2 + location.Y), rectSize, rectSize), Game1.WhiteSourceRect, Color.Yellow);
             }
         }
 

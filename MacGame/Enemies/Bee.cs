@@ -14,7 +14,7 @@ namespace MacGame.Enemies
 
         private float speed = 40;
         private float startLocationY;
-        private float maxTravelDistance = 8;
+        private float maxTravelDistance = Game1.TileSize;
         private bool goingUp = false;
         public Bee(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)

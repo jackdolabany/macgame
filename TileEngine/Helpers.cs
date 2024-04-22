@@ -16,7 +16,7 @@ namespace TileEngine
 
         /// <summary>
         /// Gets a rectangle for tile sprites. The tile sprite processor adds a 1px border around
-        /// every tile on the sheet.
+        /// every tile on the sheet and scales it.
         /// </summary>
         public static Rectangle GetTileRect(int x, int y)
         {

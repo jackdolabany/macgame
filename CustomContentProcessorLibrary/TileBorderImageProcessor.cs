@@ -43,9 +43,10 @@ namespace CustomContentProcessorLibrary
                     int y = row * tileSize;
 
                     // Copy the original tile into the correct location in the output
-                    BitmapContent.Copy(
-                        inputImage, new Rectangle(x, y, tileSize, tileSize),
-                        outputMipmap, new Rectangle(x * scale + (2 * column) + 1, y * scale + (2 * row) + 1, tileSize * scale, tileSize * scale));
+                    Copy(inputImage,
+                        new Rectangle(x, y, tileSize, tileSize),
+                        outputMipmap,
+                        new Rectangle(x * scale + (2 * column) + 1, y * scale + (2 * row) + 1, tileSize * scale, tileSize * scale));
 
                     // prepare to Fill in the borders with the adjacent pixel
                     var newLeft = x * scale + (2 * column);
@@ -57,13 +58,13 @@ namespace CustomContentProcessorLibrary
                     for (int i = 0; i < tileSize * scale; i++)
                     {
                         // Left
-                        outputMipmap.SetPixel(newLeft, newTop + 1 + i, inputImage.GetPixel(x, y + i));
+                        outputMipmap.SetPixel(newLeft, newTop + 1 + i, inputImage.GetPixel(x, y + i / scale));
                         // Right
-                        outputMipmap.SetPixel(newRight, newTop + 1 + i, inputImage.GetPixel(x + tileSize - 1, y + i));
+                        outputMipmap.SetPixel(newRight, newTop + 1 + i, inputImage.GetPixel(x + tileSize - 1, y + i / scale));
                         // Top
-                        outputMipmap.SetPixel(newLeft + 1 + i, newTop, inputImage.GetPixel(x + i, y));
+                        outputMipmap.SetPixel(newLeft + 1 + i, newTop, inputImage.GetPixel(x + i / scale, y));
                         // Bottom
-                        outputMipmap.SetPixel(newLeft + 1 + i, newBottom, inputImage.GetPixel(x + i, y + tileSize - 1));
+                        outputMipmap.SetPixel(newLeft + 1 + i, newBottom, inputImage.GetPixel(x + i / scale, y + tileSize - 1));
 
                     }
 
@@ -89,5 +90,37 @@ namespace CustomContentProcessorLibrary
 
             return base.Process(output, context);
         }
+
+        /// <summary>
+        /// This method replaces BitmapContent.Copy() which would be nice but it applies smooth scaling to the image.
+        /// </summary>
+        public static void Copy(PixelBitmapContent<Color> sourceBitmap, Rectangle sourceRegion, PixelBitmapContent<Color> destinationBitmap, Rectangle destinationRegion)
+        {
+
+            // Who knows what this will do if you don't scale it in whole numbers.            
+            var scale = destinationRegion.Width / sourceRegion.Width;
+
+            for (int x = 0; x < sourceRegion.Width; x++)
+            {
+                for (int y = 0; y < sourceRegion.Height; y++)
+                {
+                    var sourcePixel = sourceBitmap.GetPixel(sourceRegion.X + x, sourceRegion.Y + y);
+
+                    // for each pixel in the source, write scale * scale pixels to the destination.
+                    for (int i = 0; i < scale; i++)
+                    {
+                        for (int j = 0; j < scale; j++)
+                        {
+                            var destinationX = destinationRegion.X + (x * scale) + i;
+                            var destinationY = destinationRegion.Y + (y * scale) + j;
+                            destinationBitmap.SetPixel(destinationX, destinationY, sourcePixel);
+                        }
+                    }
+
+                }
+            }
+
+        }
+
     }
 }

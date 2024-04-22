@@ -39,7 +39,7 @@ namespace TileEngine
 
         public Dictionary<string, string> Properties;
 
-        public const int TileSize = 8;
+        public const int TileSize = 32;
 
         public List<Layer> Layers;
 
@@ -241,38 +241,6 @@ namespace TileEngine
                 for (int j = 0; j <= height - 1; j++)
                 {
                     MapCells[i][j] = new MapSquare(1, true);
-                }
-            }
-        }
-
-        public void DrawAllWithOffset(SpriteBatch spriteBatch, int xOffset, int yOffset)
-        {
-            for (int x = 0; x < MapCells.Length; x++)
-            {
-                for (int y = 0; y < MapCells[0].Length; y++)
-                {
-                    var mapCell = MapCells[x][y];
-                    var rect = CellWorldRectangle(x, y);
-                    rect.X += xOffset;
-                    rect.Y += yOffset;
-
-                    for (int z = 0; z < MapDepth; z++)
-                    {
-                        var texture = mapCell.LayerTiles[z].Texture;
-                        if (texture != null)
-                        {
-
-                            spriteBatch.Draw(
-                                texture,
-                                rect,
-                                mapCell.LayerTiles[z].TextureRectangle,
-                                Color.White,
-                                0.0f,
-                                Vector2.Zero,
-                                SpriteEffects.None,
-                                GetLayerDrawDepth(z));
-                        }
-                    }
                 }
             }
         }

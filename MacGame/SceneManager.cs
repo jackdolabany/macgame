@@ -124,7 +124,12 @@ namespace MacGame
                                 {
                                     foreach (var obj in map.ObjectModifiers)
                                     {
-                                        if (obj.Rectangle.Contains(item.CollisionRectangle))
+                                        var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
+                                            obj.Rectangle.Y * Game1.TileScale,
+                                            obj.Rectangle.Width * Game1.TileScale,
+                                            obj.Rectangle.Height * Game1.TileScale);
+
+                                        if (scaledRect.Contains(item.CollisionRectangle))
                                         {
                                             // Coins are special items.
                                             var coin = (CricketCoin)item;
@@ -164,7 +169,12 @@ namespace MacGame
                                 // tells it where to go.
                                 foreach (var obj in map.ObjectModifiers)
                                 {
-                                    if (obj.Rectangle.Contains(door.CollisionRectangle))
+                                    var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
+                                            obj.Rectangle.Y * Game1.TileScale,
+                                            obj.Rectangle.Width * Game1.TileScale,
+                                            obj.Rectangle.Height * Game1.TileScale);
+
+                                    if (scaledRect.Contains(door.CollisionRectangle))
                                     {
                                         foreach (var prop in obj.Properties)
                                         {

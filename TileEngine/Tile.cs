@@ -42,7 +42,8 @@ namespace TileEngine
                 var y = TileIndex / TilesPerRow;
 
                 // Padding to take the 2px border between tiles into account.
-                return Helpers.GetTileRect(x, y);
+                var rect =  Helpers.GetTileRect(x, y);
+                return rect;
             }
         }
 

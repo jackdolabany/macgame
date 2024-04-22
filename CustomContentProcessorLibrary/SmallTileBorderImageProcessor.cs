@@ -5,7 +5,7 @@ namespace CustomContentProcessorLibrary
     [ContentProcessor(DisplayName = "SmallTileBorderImageProcessor")]
     public class SmallTileBorderImageProcessor : TileBorderImageProcessor
     {
-        public SmallTileBorderImageProcessor() : base (8, 1)
+        public SmallTileBorderImageProcessor() : base (8, 4)
         {
         }
     }

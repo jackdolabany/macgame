@@ -5,11 +5,7 @@ using MacGame.Platforms;
 using System;
 using System.Collections.Generic;
 using TileEngine;
-using System.Globalization;
-using System.Runtime.CompilerServices;
 using MacGame.Items;
-using static MacGame.Game1;
-using System.Runtime.Intrinsics.X86;
 using System.Linq;
 
 namespace MacGame
@@ -22,8 +18,8 @@ namespace MacGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public const int GAME_X_RESOLUTION = 128;
-        public const int GAME_Y_RESOLUTION = 128;
+        public const int GAME_X_RESOLUTION = 128 * TileScale;
+        public const int GAME_Y_RESOLUTION = 128 * TileScale;
 
         public static Random Randy = new Random();
         public const float MIN_DRAW_INCREMENT = 0.0000005f;
@@ -36,7 +32,13 @@ namespace MacGame
 
         public static Rectangle WhiteSourceRect;
 
-        public const int TileSize = TileEngine.TileMap.TileSize;
+        public const int TileSize = TileMap.TileSize;
+        
+        /// <summary>
+        /// The scale that the content processor will apply to the tiles.
+        /// For this game, we have 8x8 tiles, but they are scaled up to 32x32 for smooth scrolling.
+        /// </summary>
+        public const int TileScale = 4;
 
         private static RenderTarget2D gameRenderTarget;
 
@@ -138,7 +140,7 @@ namespace MacGame
         {
             graphics = new GraphicsDeviceManager(this);
 
-            var scale = 8;
+            var scale = 2;
 
             graphics.PreferredBackBufferWidth = GAME_X_RESOLUTION * scale;
             graphics.PreferredBackBufferHeight = GAME_Y_RESOLUTION * scale;
@@ -619,6 +621,18 @@ namespace MacGame
 
                     spriteBatch.End();
 
+                    //// Test draw the processed textures
+                    //spriteBatch.Begin(SpriteSortMode.Deferred,
+                    // BlendState.AlphaBlend,
+                    // SamplerState.PointClamp,
+                    // null,
+                    // null,
+                    // null,
+                    // cameraTransformation);
+                    //spriteBatch.Draw(TileTextures, new Rectangle(0, 0, 1000, 1000), WhiteSourceRect, Color.Black);
+                    //spriteBatch.Draw(TileTextures, new Vector2(0, 0), Color.White);
+                    //spriteBatch.End();
+
                     break;
                 
                 case GameState.LoadingLevel:
@@ -688,21 +702,21 @@ namespace MacGame
             var hudYPos = 3;
             for (int i = 0; i < Player.MaxHealth; i++)
             {
-                var heartXPos = 2 + (i * 8);
+                var heartXPos = 2 + (i * TileSize);
                 if (i < Player.Health)
                 {
-                    spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, 8, 8), Helpers.GetTileRect(1, 2), Color.White);
+                    spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, TileSize, TileSize), Helpers.GetTileRect(1, 2), Color.White);
                 }
                 else
                 {
-                    spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, 8, 8), Helpers.GetTileRect(2, 2), Color.White);
+                    spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, TileSize, TileSize), Helpers.GetTileRect(2, 2), Color.White);
                 }
             }
 
             // Draw the player's current item
             if (Player.CurrentItem != null)
             {
-                spriteBatch.Draw(TileTextures, new Rectangle(2, 12, 8, 8), Player.CurrentItem.ItemIcon.Source, Color.White);
+                spriteBatch.Draw(TileTextures, new Rectangle(2, TileSize + 5, TileSize, TileSize), Player.CurrentItem.ItemIcon.Source, Color.White);
             }
 
             // Draw the number of tacos in the HUD for regular levels, or draw the Cricket coins for the Hub level.

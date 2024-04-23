@@ -95,6 +95,11 @@
 /processor:PassThroughProcessor
 /build:Maps/TestWorld2.tmx
 
+#begin Maps/World1.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1.tmx
+
 #begin Music/BossFight.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

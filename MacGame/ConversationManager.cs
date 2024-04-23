@@ -267,16 +267,15 @@ namespace MacGame
             var currentMessage = Messages[0];
 
             int leftMargin = (Game1.GAME_X_RESOLUTION - bubbleWidth) / 2;
-            int bottomMargin = leftMargin;
             int topMargin;
 
             switch (currentMessage.Float)
             {
                 case Float.Top:
-                    topMargin = 15;
+                    topMargin = 60;
                     break;
                 case Float.Bottom:
-                    topMargin = Game1.GAME_Y_RESOLUTION - bubbleHeight - 10;
+                    topMargin = Game1.GAME_Y_RESOLUTION - bubbleHeight - 40;
                     break;
                 default:
                     throw new Exception("Float not supported");
@@ -345,7 +344,7 @@ namespace MacGame
             int arrowX = leftMargin + bubbleWidth - advanceMessageArrowSourceRect.Width - 8;
 
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Text, new Vector2(leftMargin + Game1.TileSize, topMargin + Game1.TileSize - 1), textScale, textDepth, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Text, new Vector2(leftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, currentLetterIndex);
 
             // Draw the choices. Start in the bottom right corner
             var location = new Vector2(leftMargin + bubbleWidth, topMargin + bubbleHeight);
@@ -395,7 +394,7 @@ namespace MacGame
         private static void DrawTexts(SpriteBatch spriteBatch, List<string> strings, Vector2 position, float scale, float depth, int maxLetters = int.MaxValue)
         {
             // We could use the font height but instead this game will only work with TileSize height fonts.
-            var wordHeight = Game1.TileSize + 1;
+            var wordHeight = Game1.TileSize + 4;
 
             Vector2 drawLocation = position;
 

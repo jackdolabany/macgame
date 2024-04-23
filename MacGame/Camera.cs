@@ -54,7 +54,7 @@ namespace MacGame
 
         public Vector2 ParallaxScale = new Vector2(0.75f, 0.75f);
 
-        public void UpdateTransformation(GraphicsDevice graphicsDevice)
+        public void UpdateTransformation()
         {
             var translationMatrix = Matrix.CreateTranslation(new Vector3(-position.X, -position.Y, 0));
             var rotationMatrix = Matrix.CreateRotationZ(Rotation);
@@ -64,7 +64,7 @@ namespace MacGame
             Transform = translationMatrix * rotationMatrix * scaleMatrix * originMatrix;
         }
 
-        public Matrix GetParallaxScrollingBackgroundTransformation(GraphicsDevice graphicsDevice)
+        public Matrix GetParallaxScrollingBackgroundTransformation()
         {
             var translationMatrix = Matrix.CreateTranslation(new Vector3(-position, 0));
             var rotationMatrix = Matrix.CreateRotationZ(Rotation);

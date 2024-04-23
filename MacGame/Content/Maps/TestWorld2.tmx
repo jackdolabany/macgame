@@ -2,7 +2,7 @@
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="7">
  <properties>
   <property name="Description" value="A Tall Tree"/>
-  <property name="LevelNumber" value="1"/>
+  <property name="LevelNumber" value="2"/>
  </properties>
  <tileset firstgid="1" source="Textures.tsx"/>
  <layer id="2" name="Background" width="128" height="128">

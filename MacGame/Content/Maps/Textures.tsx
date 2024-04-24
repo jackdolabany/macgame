@@ -269,6 +269,36 @@
    <property name="LoadClass" value="Doorway"/>
   </properties>
  </tile>
+ <tile id="163">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="164">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="165">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="166">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="167">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="168">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="171">
   <properties>
    <property name="LoadClass" value="GreenDoor"/>

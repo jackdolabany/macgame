@@ -26,8 +26,21 @@ namespace MacGame
 
         public static bool DrawAllCollisisonRects = false;
 
+        /// <summary>
+        /// 8 x 8 Tiles
+        /// </summary>
         public static Texture2D TileTextures;
+        
+        /// <summary>
+        /// 16 x 16 tiles
+        /// </summary>
         public static Texture2D BigTileTextures;
+
+        /// <summary>
+        /// 24 x 24 tiles
+        /// </summary>
+        public static Texture2D ReallyBigTileTextures;
+
         public static Texture2D titleScreen;
 
         public static Rectangle WhiteSourceRect;
@@ -249,6 +262,7 @@ namespace MacGame
 
             TileTextures = Content.Load<Texture2D>(@"Textures\Textures");
             BigTileTextures = Content.Load<Texture2D>(@"Textures\BigTextures");
+            ReallyBigTileTextures = Content.Load<Texture2D>(@"Textures\ReallyBigTextures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
 
             Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");

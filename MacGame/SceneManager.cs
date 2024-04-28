@@ -10,8 +10,6 @@ using TileEngine;
 using MacGame.RevealBlocks;
 using MacGame.Enemies;
 using MacGame.Items;
-using System.Reflection.Emit;
-using System.ComponentModel.Design;
 
 namespace MacGame
 {
@@ -110,6 +108,15 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Platform).Namespace + "." + classname);
                                 var platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y });
                                 level.Platforms.Add(platform);
+
+                                if (platform is StaticPlatform)
+                                {
+                                    // Use the image from the map tile.
+                                    var staticPlatform = (StaticPlatform)platform;
+                                    var texture = mapSquare.LayerTiles[z].Texture;
+                                    var textureRect = mapSquare.LayerTiles[z].TextureRectangle;
+                                    staticPlatform.SetTextureRectangle(texture!, textureRect);
+                                }
                             }
                             else if (loadClass.StartsWith("Item."))
                             {
@@ -208,13 +215,13 @@ namespace MacGame
                                                 else
                                                 {
                                                     openClosedDoor.IsLocked = true;
-                                                }   
+                                                }
                                             }
                                         }
                                     }
                                 }
 
-                                if(string.IsNullOrEmpty(door.GoToMap) && string.IsNullOrEmpty(door.GoToDoorName))
+                                if (string.IsNullOrEmpty(door.GoToMap) && string.IsNullOrEmpty(door.GoToDoorName))
                                 {
                                     throw new Exception("Doors must have a custom object on the map that specify the map or door it goes to (or both).");
                                 }
@@ -228,6 +235,11 @@ namespace MacGame
                             {
                                 var mineCart = new MineCart(contentManager, x, y, player);
                                 level.GameObjects.Add(mineCart);
+                            }
+                            else if (loadClass == "Ottie")
+                            {
+                                var ottie = new Ottie(contentManager, x, y, player, camera);
+                                level.GameObjects.Add(ottie);
                             }
                         }
                     }

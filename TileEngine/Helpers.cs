@@ -31,5 +31,14 @@ namespace TileEngine
         {
             return new Rectangle(x * TileMap.TileSize * 2 + (2 * x) + 1, y * TileMap.TileSize * 2 + (2 * y) + 1, TileMap.TileSize * 2, TileMap.TileSize * 2);
         }
+
+        /// <summary>
+        /// Gets a big 24 x 24 tile from a big tile set. Expects a 1px border around every tile.
+        /// x and y refer to the tile's position in units of 24x24 tiles.
+        /// </summary>
+        public static Rectangle GetReallyBigTileRect(int x, int y)
+        {
+            return new Rectangle(x * TileMap.TileSize * 3 + (2 * x) + 1, y * TileMap.TileSize * 3 + (2 * y) + 1, TileMap.TileSize * 3, TileMap.TileSize * 3);
+        }
     }
 }

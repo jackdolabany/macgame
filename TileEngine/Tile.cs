@@ -29,6 +29,8 @@ namespace TileEngine
         /// </summary>
         public string LoadClass { get; set; } = "";
 
+        public bool ShouldDraw { get; set; } = true;
+
         /// <summary>
         /// Some custom properties to apply to the LoadClass
         /// </summary>

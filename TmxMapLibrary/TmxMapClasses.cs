@@ -766,22 +766,21 @@ namespace Squared.Tiled
                             tileMap.MapCells[x][y].IsVine = true;
                         }
 
+                        // Only if the cell doesn't have the previous properties do we consider it something we should draw!
+                        var tile = tileMap.MapCells[x][y].LayerTiles[z];
+                        tile.TexturePath = tileInfo.TexturePath;
+                            
+                        // The tile ID from the layer's tile is global and stretches across multiple tilesets.
+                        // we need an ID local the the tile set to draw it against the texture.
+                        int localIndex = layer.GetTile(x, y) - tileInfo.Tileset.FirstTileID;
+                        tile.TileIndex = localIndex;
 
-                        var shouldDrawTile = layer.Name.ToLower() != "collisions" 
+                        // These tiles don't need to draw even though they have textures.
+                        var shouldDrawTile = layer.Name.ToLower() != "collisions"
                             && !tileInfo.properties.ContainsKey("LoadClass")
                             && !tileInfo.properties.ContainsKey("PlayerStart")
                             && !tileInfo.properties.ContainsKey("Hidden");
-
-                        if (shouldDrawTile)
-                        {
-                            //only if the cell doesn't have the previous properties do we consider it something we should draw!
-                            var tile = tileMap.MapCells[x][y].LayerTiles[z];
-                            tile.TexturePath = tileInfo.TexturePath;
-                            //the tile ID from the layer's tile is global and stretches across multiple tilesets.
-                            //we need an ID local the the tile set to draw it against the texture.
-                            int localIndex = layer.GetTile(x, y) - tileInfo.Tileset.FirstTileID;
-                            tile.TileIndex = localIndex;
-                        }
+                        tile.ShouldDraw = shouldDrawTile;
 
                     } // end for y
                 } // end for x

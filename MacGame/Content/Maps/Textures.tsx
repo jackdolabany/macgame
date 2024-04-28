@@ -212,6 +212,11 @@
    <property name="LoadClass" value="Enemy.Cricket"/>
   </properties>
  </tile>
+ <tile id="117">
+  <properties>
+   <property name="LoadClass" value="Platform.StaticPlatform"/>
+  </properties>
+ </tile>
  <tile id="123">
   <properties>
    <property name="Hidden" value="1"/>
@@ -257,6 +262,16 @@
  <tile id="146">
   <properties>
    <property name="LoadClass" value="MineCart"/>
+  </properties>
+ </tile>
+ <tile id="150">
+  <properties>
+   <property name="LoadClass" value="Platform.StaticPlatform"/>
+  </properties>
+ </tile>
+ <tile id="151">
+  <properties>
+   <property name="LoadClass" value="Platform.StaticPlatform"/>
   </properties>
  </tile>
  <tile id="155">
@@ -312,6 +327,11 @@
  <tile id="203">
   <properties>
    <property name="LoadClass" value="BlueDoor"/>
+  </properties>
+ </tile>
+ <tile id="225">
+  <properties>
+   <property name="LoadClass" value="Ottie"/>
   </properties>
  </tile>
 </tileset>

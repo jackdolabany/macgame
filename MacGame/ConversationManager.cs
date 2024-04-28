@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using MacGame;
 
 namespace MacGame
 {
@@ -18,17 +15,12 @@ namespace MacGame
         static Rectangle borderTopEdgeSourceRect;
         static Rectangle dialogBoxBackgroundSourceRect;
 
-        //static Rectangle horizontalEdgeSourceRect;
-        //static Rectangle verticalEdgeSourceRect;
         static Rectangle advanceMessageArrowSourceRect;
 
         const float textDepth = 0.1f;
-        //const float bubbleDepth = 0.2f;
 
         static int bubbleHeight;
         static int bubbleWidth;
-        //static int personPictureScaledWidth;
-        //static float personPictureScale;
         static int textWidth;
         static int textHeight;
 
@@ -47,15 +39,18 @@ namespace MacGame
         /// <summary>
         /// Represents the face of the person that is talking.
         /// </summary>
-        //static Texture2D conversationTexture;
+        static Texture2D conversationTexture;
+        
+        // Local state for the picture of the person talking.
+        private static SpriteEffects personSpriteEffect = SpriteEffects.None;
+        private static Rectangle personSourceRect;
+        private static int personXOffset;
 
-        //public enum Image
-        //{
-        //    Player,
-        //    Fishhead,
-        //    Kiosk,
-        //    ShopKeep
-        //}
+        public enum Image
+        {
+            Mac,
+            Ottie
+        }
 
         public enum Float
         {
@@ -98,12 +93,31 @@ namespace MacGame
 
         private static List<ConversationMessage> Messages = new List<ConversationMessage>();
 
-        public static void AddMessage(string text, List<ConversationChoice> choices = null)
+        public static void AddMessage(string text, Image? image = null, List<ConversationChoice> choices = null)
         {
             bool isFirstMessage = false;
             if (Messages.Count == 0)
             {
                 isFirstMessage = true;
+            }
+
+            if (image != null)
+            {
+                switch (image)
+                {
+                    case Image.Mac:
+                        personSourceRect = Helpers.GetReallyBigTileRect(0, 0);
+                        personXOffset = 0;
+                        personSpriteEffect = SpriteEffects.None;
+                        break;
+                    case Image.Ottie:
+                        personSourceRect = Helpers.GetReallyBigTileRect(1, 0);
+                        personXOffset = Game1.GAME_X_RESOLUTION - Game1.TileSize * 2;
+                        personSpriteEffect = SpriteEffects.FlipHorizontally;
+                        break;
+                    default:
+                        throw new Exception("Image not supported");
+                }
             }
 
             // Calculate the number of lines we can display.
@@ -165,7 +179,7 @@ namespace MacGame
         public static void Initialize(ContentManager content)
         {
             bubbleWidth = 14 * Game1.TileSize;
-            bubbleHeight = 6 * Game1.TileSize;
+            bubbleHeight = 5 * Game1.TileSize;
 
             textWidth = bubbleWidth - 2 * Game1.TileSize;
             textHeight = bubbleHeight - 2 * Game1.TileSize;
@@ -179,6 +193,8 @@ namespace MacGame
             borderTopEdgeSourceRect = Helpers.GetTileRect(1, 11);
             dialogBoxBackgroundSourceRect = Helpers.GetTileRect(1, 12);
             advanceMessageArrowSourceRect = Helpers.GetTileRect(0, 14);
+
+            conversationTexture = content.Load<Texture2D>(@"Textures\ReallyBigTextures");
         }
 
         public static bool IsInConversation()
@@ -360,9 +376,6 @@ namespace MacGame
                 }
                 location.X -= totalWidth;
 
-                // Hack it up a bit
-                // location += new Vector2(-90, -85);
-
                 for (int i = 0; i < currentMessage.Choices.Count; i++)
                 {
                     var choice = currentMessage.Choices[i];
@@ -383,8 +396,8 @@ namespace MacGame
                 spriteBatch.Draw(Game1.TileTextures, new Vector2(arrowX, topMargin + bubbleHeight - advanceMessageArrowSourceRect.Height - 2), advanceMessageArrowSourceRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, textDepth);
             }
 
-            //// draw the image of the person talking. We expect conversation texture to be a spritesheet of squares so we'll use height for everything.
-            //spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, topMargin + bubbleHeight - (personSourceRect.Height * personPictureScale) + (int)personImageOffset.Y), personSourceRect, Color.White, 0f, Vector2.Zero, personPictureScale, personSpriteEffect, textDepth);
+            // draw the image of the person talking. We expect conversation texture to be a spritesheet of squares so we'll use height for everything.
+            spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, topMargin + bubbleHeight - (personSourceRect.Height)), personSourceRect, Color.White, 0f, Vector2.Zero, 1f, personSpriteEffect, textDepth);
 
         }
 

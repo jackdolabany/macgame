@@ -273,13 +273,14 @@ namespace TileEngine
                     {
                         if ((x >= 0) && (y >= 0) && (x < MapWidth) && (y < MapHeight))
                         {
-                            if (MapCells[x][y].LayerTiles[z].Texture != null)
+                            var tile = MapCells[x][y].LayerTiles[z];
+                            if (tile.ShouldDraw && tile.Texture != null)
                             {
                                 spriteBatch.Draw(
-                                    MapCells[x][y].LayerTiles[z].Texture,
+                                    tile.Texture,
                                     new Vector2(x * TileSize, y * TileSize),
-                                    MapCells[x][y].LayerTiles[z].TextureRectangle,
-                                    MapCells[x][y].LayerTiles[z].Color,
+                                    tile.TextureRectangle,
+                                    tile.Color,
                                     0.0f,
                                     Vector2.Zero,
                                     1f,

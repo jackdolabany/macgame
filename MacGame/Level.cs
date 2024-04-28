@@ -185,8 +185,6 @@ namespace MacGame
                 door.Draw(spriteBatch);
             }
 
-            Player.Draw(spriteBatch);
-
             foreach (var enemy in Enemies)
             {
                 enemy.Draw(spriteBatch);
@@ -201,6 +199,8 @@ namespace MacGame
             {
                 gameObject.Draw(spriteBatch);
             }
+
+            Player.Draw(spriteBatch);
 
         }
     }

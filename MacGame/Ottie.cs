@@ -41,6 +41,11 @@ namespace MacGame
             bark.FrameLength = 0.2f;
             animations.Add(bark);
 
+            var look = new AnimationStrip(textures, Helpers.GetBigTileRect(5, 7), 1, "look");  
+            look.LoopAnimation = false;
+            look.FrameLength = 0.8f;
+            animations.Add(look);
+
             Enabled = true;
 
             SetCenteredCollisionRectangle(6, 14);
@@ -58,12 +63,12 @@ namespace MacGame
             if (actionTimer >= actionTimeLimit)
             {
                 actionTimer = 0.0f;
+                velocity.X = 0;
 
-                int action = Game1.Randy.Next(0, 3);
+                int action = Game1.Randy.Next(0, 4);
                 if (action == 0 || animations.CurrentAnimationName == "walk")
                 {
                     animations.Play("idle");
-                    velocity.X = 0;
                 }
                 else if (action == 1)
                 {
@@ -81,8 +86,11 @@ namespace MacGame
                 {
                     animations.Play("bark").FollowedBy("idle");
                     // TODO: Play a bark sound.
-                    velocity.X = 0;
 
+                }
+                else if (action == 3)
+                {
+                    animations.Play("look").FollowedBy("idle");
                 }
             }
 

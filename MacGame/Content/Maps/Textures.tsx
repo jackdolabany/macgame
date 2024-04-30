@@ -334,4 +334,19 @@
    <property name="LoadClass" value="Ottie"/>
   </properties>
  </tile>
+ <tile id="226">
+  <properties>
+   <property name="LoadClass" value="Cat"/>
+  </properties>
+ </tile>
+ <tile id="228">
+  <properties>
+   <property name="LoadClass" value="Mouse"/>
+  </properties>
+ </tile>
+ <tile id="231">
+  <properties>
+   <property name="LoadClass" value="Chicken"/>
+  </properties>
+ </tile>
 </tileset>

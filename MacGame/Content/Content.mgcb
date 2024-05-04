@@ -100,6 +100,26 @@
 /processor:PassThroughProcessor
 /build:Maps/World1.tmx
 
+#begin Maps/World1FirstRedHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1FirstRedHouse.tmx
+
+#begin Maps/World1PurpleHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1PurpleHouse.tmx
+
+#begin Maps/World1SecondRedHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1SecondRedHouse.tmx
+
+#begin Maps/World1YellowHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1YellowHouse.tmx
+
 #begin Music/BossFight.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

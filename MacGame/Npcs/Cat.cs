@@ -37,7 +37,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            ConversationManager.AddMessage("Meow", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("Meow lot of text lot of text lot of text lot of text lot of text ", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

@@ -41,11 +41,6 @@ namespace MacGame
         /// </summary>
         static Texture2D conversationTexture;
         
-        // Local state for the picture of the person talking.
-        private static SpriteEffects personSpriteEffect = SpriteEffects.None;
-        private static Rectangle personSourceRect;
-        private static int personXOffset;
-
         public enum ImagePosition
         {
             Left, Right
@@ -74,9 +69,9 @@ namespace MacGame
 
         public class ConversationMessage
         {
-            public List<string> Text;
-            //public Image Image;
-            public Float Float;
+            public List<string> Texts;
+            public ImagePosition ImagePosition;
+            public Rectangle? ImageSourceRectangle;
 
             public int selectedChoice = 0;
 
@@ -100,50 +95,30 @@ namespace MacGame
                 isFirstMessage = true;
             }
 
-            if (imageSource != null)
-            {
-                personSourceRect = imageSource.Value;
-                switch (imagePosition)
-                {
-                    case ImagePosition.Left:
-                        personXOffset = 0;
-                        personSpriteEffect = SpriteEffects.None;
-                        break;
-                    case ImagePosition.Right:
-                        personXOffset = Game1.GAME_X_RESOLUTION - Game1.TileSize * 2;
-                        personSpriteEffect = SpriteEffects.FlipHorizontally;
-                        break;
-                    default:
-                        throw new Exception("Image not supported");
-                }
-            }
-
             // Calculate the number of lines we can display.
             var wordHeight = Game1.TileSize; // Game will only work with tile size fonts.
             var linesToDisplay = (int)((float)textHeight / (float)wordHeight);
 
-            var lines = GetLineWrappedText(text, textWidth, textScale);
+            var lineWidth = textWidth;
+            if (imageSource != null)
+            {
+                lineWidth -= imageSource.Value.Width;
+                lineWidth += 18; // Cheat a little bit to make it look better.
+            }
+
+            var lines = GetLineWrappedText(text, lineWidth, textScale);
 
             ConversationMessage lastMessage = null;
-
-            // float to top or bottom depending on Mac's position.
-            Float @float = Float.Bottom;
-
-            // Display the message on the top if Mac is near the bottom of the screen.
-            if(Game1.Player.WorldLocation.Y > Game1.Camera.Position.Y + Game1.TileSize)
-            {
-                @float = Float.Top;
-            }
 
             // each add may create multiple messages if there is enough text.
             for (int i = 0; i < lines.Count; i += linesToDisplay)
             {
-                var currentMessage = new ConversationMessage() { Text = new List<string>(), Float = @float };
+                var currentMessage = new ConversationMessage() { Texts = new List<string>(), ImagePosition = imagePosition, ImageSourceRectangle = imageSource };
                 lastMessage = currentMessage;
                 Messages.Add(currentMessage);
                 for (int j = 0; j < linesToDisplay && i + j < lines.Count; j++)
                 {
-                    currentMessage.Text.Add(lines[i + j]);
+                    currentMessage.Texts.Add(lines[i + j]);
                 }
             }
 
@@ -167,7 +142,7 @@ namespace MacGame
             if (Messages.Count > 0)
             {
                 Messages[0].PlaySound();
-                foreach (var text in Messages[0].Text)
+                foreach (var text in Messages[0].Texts)
                 {
                     totalLetters += text.Length;
                 }
@@ -283,7 +258,18 @@ namespace MacGame
             int leftMargin = (Game1.GAME_X_RESOLUTION - bubbleWidth) / 2;
             int topMargin;
 
-            switch (currentMessage.Float)
+
+            // float to top or bottom depending on Mac's position.
+            Float @float = Float.Bottom;
+
+            // Display the message on the top if Mac is near the bottom of the screen.
+            if (Game1.Player.WorldLocation.Y > Game1.Camera.Position.Y + Game1.TileSize)
+            {
+                @float = Float.Top;
+            }
+
+
+            switch (@float)
             {
                 case Float.Top:
                     topMargin = 60;
@@ -294,6 +280,27 @@ namespace MacGame
                 default:
                     throw new Exception("Float not supported");
             }
+
+            SpriteEffects personSpriteEffect = SpriteEffects.None;
+            int personXOffset = 0;
+
+            if (currentMessage.ImageSourceRectangle != null)
+            {
+                switch (currentMessage.ImagePosition)
+                {
+                    case ImagePosition.Left:
+                        personXOffset = Game1.TileSize + 10;
+                        personSpriteEffect = SpriteEffects.None;
+                        break;
+                    case ImagePosition.Right:
+                        personXOffset = Game1.GAME_X_RESOLUTION - currentMessage.ImageSourceRectangle.Value.Width - Game1.TileSize - 18;
+                        personSpriteEffect = SpriteEffects.FlipHorizontally;
+                        break;
+                    default:
+                        throw new Exception("Image not supported");
+                }
+            }
+
 
             Color borderColor = Color.White;
 
@@ -357,11 +364,17 @@ namespace MacGame
 
             int arrowX = leftMargin + bubbleWidth - advanceMessageArrowSourceRect.Width - 8;
 
+            int textLeftMargin = leftMargin;
+            if (currentMessage.ImagePosition == ImagePosition.Left && currentMessage.ImageSourceRectangle.HasValue)
+            {
+                textLeftMargin += currentMessage.ImageSourceRectangle.Value.Width;
+            }
+
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Text, new Vector2(leftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, currentLetterIndex);
 
             // Draw the choices. Start in the bottom right corner
-            var location = new Vector2(leftMargin + bubbleWidth, topMargin + bubbleHeight);
+            var location = new Vector2(textLeftMargin + bubbleWidth, topMargin + bubbleHeight);
             if (currentMessage.Choices != null)
             {
 
@@ -395,8 +408,10 @@ namespace MacGame
             }
 
             // draw the image of the person talking. We expect conversation texture to be a spritesheet of squares so we'll use height for everything.
-            spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, topMargin + bubbleHeight - (personSourceRect.Height)), personSourceRect, Color.White, 0f, Vector2.Zero, 1f, personSpriteEffect, textDepth);
-
+            if (currentMessage.ImageSourceRectangle != null)
+            {
+                spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, topMargin + Game1.TileSize + 16), currentMessage.ImageSourceRectangle.Value, Color.White, 0f, Vector2.Zero, 1f, personSpriteEffect, textDepth);
+            }
         }
 
         /// <summary>

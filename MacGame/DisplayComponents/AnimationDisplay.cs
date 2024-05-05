@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace MacGame.DisplayComponents
 {
@@ -101,10 +102,19 @@ namespace MacGame.DisplayComponents
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)
         {
-            var currentAnimation = animations[CurrentAnimationName];
+            AnimationStrip animationToCheck;
+            if (CurrentAnimationName != "")
+            {
+                animationToCheck = animations[CurrentAnimationName];
+            }
+            else
+            {
+                animationToCheck = animations.Values.First();
+            }
+
             return new Vector2(
               worldLocation.X,
-              worldLocation.Y - currentAnimation.FrameHeight / 2f);
+              worldLocation.Y - animationToCheck.FrameHeight / 2f);
         }
 
         public AnimationStrip? Play(string name, int startFrame)

@@ -75,6 +75,9 @@ namespace MacGame
             openJailBars.LoopAnimation = false;
             openJailBars.FrameLength = 0.15f;
             JailBarAnimations.Add(openJailBars);
+
+            State = DoorState.Idle;
+            DoorAnimations.Play("Idle");
         }
 
         /// <summary>

@@ -17,19 +17,14 @@ namespace MacGame.Npcs
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var idle = new AnimationStrip(textures, Helpers.GetTileRect(4, 14), 1, "idle");
+            var idle = new AnimationStrip(textures, Helpers.GetTileRect(4, 14), 2, "idle");
             idle.LoopAnimation = true;
-            idle.FrameLength = 0.2f;
+            idle.FrameLength = 0.5f;
             animations.Add(idle);
-
-            var walk = new AnimationStrip(textures, Helpers.GetTileRect(4, 14), 2, "walk");
-            walk.LoopAnimation = true;
-            walk.FrameLength = 0.2f;
-            animations.Add(walk);
 
             SetCenteredCollisionRectangle(8, 8);
 
-            Behavior = new WalkRandomlyBehavior("idle", "walk");
+            Behavior = new JustIdle("idle");
         }
 
         public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(3, 0);

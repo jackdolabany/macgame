@@ -150,25 +150,49 @@ namespace MacGame
 
             // Handle the player going through a door.
             if (Player.InteractButtonPressedThisFrame)
-            { 
-                bool enteredDoor = false;
-                // For now, doors take precedence over talking to NPCs.
+            {
+
+                Door? doorToEnter = null;
+                Npc? npcToTalkTo = null;
+
                 foreach (var door in Doors)
                 {
                     if (door.Enabled && door.CollisionRectangle.Contains(Player.CollisionCenter))
                     {
-                        door.PlayerTriedToOpen(Player);
-                        enteredDoor = true;
+                        doorToEnter = door;
                         break;
                     }
                 }
-                if (!enteredDoor)
+                foreach (var npc in Npcs)
                 {
-                    foreach (var npc in Npcs)
+                    if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.CollisionRectangle))
                     {
-                        npc.CheckPlayerInteractions(Player);
+                        npcToTalkTo = npc;
+                        break;
                     }
                 }
+                
+
+                // if there's a door to go through and an NPC to talk to, prefer the one closer to Mac
+                if (doorToEnter != null && npcToTalkTo != null)
+                {
+                    if (Vector2.Distance(Player.WorldLocation, doorToEnter.WorldLocation) < Vector2.Distance(Player.WorldLocation, npcToTalkTo.WorldLocation))
+                    {
+                        doorToEnter.PlayerTriedToOpen(Player);
+                    }
+                    else
+                    {
+                        npcToTalkTo.CheckPlayerInteractions(Player);
+                    }
+                }
+                else if (doorToEnter != null)
+                {
+                    doorToEnter.PlayerTriedToOpen(Player);
+                }
+                else if (npcToTalkTo != null)
+                {
+                    npcToTalkTo.CheckPlayerInteractions(Player);
+                }   
             }
 
             while (EnemiesToAdd.Count > 0)

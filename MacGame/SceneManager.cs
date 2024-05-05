@@ -10,6 +10,7 @@ using TileEngine;
 using MacGame.RevealBlocks;
 using MacGame.Enemies;
 using MacGame.Items;
+using MacGame.Npcs;
 
 namespace MacGame
 {
@@ -120,7 +121,7 @@ namespace MacGame
                             }
                             else if (loadClass.StartsWith("Item."))
                             {
-                                // Use reflection to load the enemies from the code
+                                // Use reflection to load the items from the code
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Item).Namespace + "." + classname);
                                 var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
@@ -236,10 +237,13 @@ namespace MacGame
                                 var mineCart = new MineCart(contentManager, x, y, player);
                                 level.GameObjects.Add(mineCart);
                             }
-                            else if (loadClass == "Ottie")
+                            else if (loadClass.StartsWith("Npc."))
                             {
-                                var ottie = new Ottie(contentManager, x, y, player, camera);
-                                level.GameObjects.Add(ottie);
+                                // Use reflection to load the items from the code
+                                string classname = loadClass.Split('.')[1];
+                                Type t = Type.GetType(typeof(Npc).Namespace! + "." + classname)!;
+                                var npc = (Npc)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
+                                level.Npcs.Add(npc);
                             }
                         }
                     }

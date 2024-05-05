@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Npcs
 {
     /// <summary>
     /// An npc who can talk to the player.
     /// </summary>
-    public class Ottie : GameObject
+    public class Ottie : Npc
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
@@ -18,10 +18,11 @@ namespace MacGame
         public float actionTimer = 0.0f;
         public float actionTimeLimit = 3.0f;
 
-        public Ottie(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
+        public Ottie(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+            : base(content, cellX, cellY, player, camera)
         {
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
-            this.OriginalPosition = this.WorldLocation;
+            WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
+            OriginalPosition = WorldLocation;
 
             DisplayComponent = new AnimationDisplay();
 
@@ -41,7 +42,7 @@ namespace MacGame
             bark.FrameLength = 0.2f;
             animations.Add(bark);
 
-            var look = new AnimationStrip(textures, Helpers.GetBigTileRect(5, 7), 1, "look");  
+            var look = new AnimationStrip(textures, Helpers.GetBigTileRect(5, 7), 1, "look");
             look.LoopAnimation = false;
             look.FrameLength = 0.8f;
             animations.Add(look);
@@ -73,13 +74,13 @@ namespace MacGame
                 else if (action == 1)
                 {
                     animations.Play("walk");
-                    
+
                     velocity.X = 20;
-                    flipped = true;
+                    Flipped = false;
                     if (WorldLocation.X > OriginalPosition.X)
                     {
                         velocity.X *= -1;
-                        flipped = false;
+                        Flipped = true;
                     }
                 }
                 else if (action == 2)
@@ -97,6 +98,12 @@ namespace MacGame
             base.Update(gameTime, elapsed);
         }
 
+        public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(1, 0);
 
+        public override void InitiateConversation()
+        {
+            ConversationManager.AddMessage("Hi I'm Mac!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+            ConversationManager.AddMessage("My name is Ottis. I am a good boy.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+        }
     }
 }

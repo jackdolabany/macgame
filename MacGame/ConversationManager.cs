@@ -46,10 +46,9 @@ namespace MacGame
         private static Rectangle personSourceRect;
         private static int personXOffset;
 
-        public enum Image
+        public enum ImagePosition
         {
-            Mac,
-            Ottie
+            Left, Right
         }
 
         public enum Float
@@ -93,7 +92,7 @@ namespace MacGame
 
         private static List<ConversationMessage> Messages = new List<ConversationMessage>();
 
-        public static void AddMessage(string text, Image? image = null, List<ConversationChoice> choices = null)
+        public static void AddMessage(string text, Rectangle? imageSource = null, ImagePosition imagePosition = ImagePosition.Left, List<ConversationChoice> choices = null)
         {
             bool isFirstMessage = false;
             if (Messages.Count == 0)
@@ -101,17 +100,16 @@ namespace MacGame
                 isFirstMessage = true;
             }
 
-            if (image != null)
+            if (imageSource != null)
             {
-                switch (image)
+                personSourceRect = imageSource.Value;
+                switch (imagePosition)
                 {
-                    case Image.Mac:
-                        personSourceRect = Helpers.GetReallyBigTileRect(0, 0);
+                    case ImagePosition.Left:
                         personXOffset = 0;
                         personSpriteEffect = SpriteEffects.None;
                         break;
-                    case Image.Ottie:
-                        personSourceRect = Helpers.GetReallyBigTileRect(1, 0);
+                    case ImagePosition.Right:
                         personXOffset = Game1.GAME_X_RESOLUTION - Game1.TileSize * 2;
                         personSpriteEffect = SpriteEffects.FlipHorizontally;
                         break;

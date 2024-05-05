@@ -11,6 +11,7 @@ using MacGame.RevealBlocks;
 using System.Runtime.CompilerServices;
 using MacGame.Enemies;
 using MacGame.Items;
+using MacGame.Npcs;
 
 namespace MacGame
 {
@@ -50,6 +51,7 @@ namespace MacGame
         public Camera Camera;
         public List<Enemy> Enemies;
         public List<Item> Items;
+        public List<Npc> Npcs;
         public List<GameObject> GameObjects;
         public List<Platform> Platforms;
         public List<Door> Doors;
@@ -76,6 +78,7 @@ namespace MacGame
             Items = new List<Item>();
             Platforms = new List<Platform>();
             GameObjects = new List<GameObject>();
+            Npcs = new List<Npc>();
             Doors = new List<Door>();
             RevealBlockManager = new RevealBlockManager();
             CoinHints = new Dictionary<int, string>();
@@ -106,6 +109,11 @@ namespace MacGame
             foreach (var enemy in Enemies)
             {
                 enemy.Update(gameTime, elapsed);
+            }
+
+            foreach (var npc in Npcs)
+            {
+                npc.Update(gameTime, elapsed);
             }
 
             foreach (var item in Items)
@@ -141,14 +149,24 @@ namespace MacGame
             }
 
             // Handle the player going through a door.
-            if (Player.IsTryingToOpenDoor)
-            {
+            if (Player.InteractButtonPressedThisFrame)
+            { 
+                bool enteredDoor = false;
+                // For now, doors take precedence over talking to NPCs.
                 foreach (var door in Doors)
                 {
                     if (door.Enabled && door.CollisionRectangle.Contains(Player.CollisionCenter))
                     {
                         door.PlayerTriedToOpen(Player);
+                        enteredDoor = true;
                         break;
+                    }
+                }
+                if (!enteredDoor)
+                {
+                    foreach (var npc in Npcs)
+                    {
+                        npc.CheckPlayerInteractions(Player);
                     }
                 }
             }
@@ -188,6 +206,11 @@ namespace MacGame
             foreach (var enemy in Enemies)
             {
                 enemy.Draw(spriteBatch);
+            }
+
+            foreach (var npc in Npcs)
+            {
+                npc.Draw(spriteBatch);
             }
 
             foreach (var item in Items)

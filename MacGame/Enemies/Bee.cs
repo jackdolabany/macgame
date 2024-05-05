@@ -71,7 +71,7 @@ namespace MacGame.Enemies
                 goingUp = !goingUp;
             }
 
-            flipped = WorldCenter.X >= Player.WorldCenter.X;
+            Flipped = WorldCenter.X >= Player.WorldCenter.X;
 
             base.Update(gameTime, elapsed);
 

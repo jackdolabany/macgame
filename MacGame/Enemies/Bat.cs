@@ -53,7 +53,7 @@ namespace MacGame.Enemies
             if (Alive)
             {
                 velocity.X = speed;
-                if (flipped)
+                if (Flipped)
                 {
                     velocity.X *= -1;
                 }
@@ -63,11 +63,11 @@ namespace MacGame.Enemies
 
             if (velocity.X > 0 && travelDistance >= maxTravelDistance)
             {
-                flipped = !flipped;
+                Flipped = !Flipped;
             }
             else if (velocity.X < 0 && travelDistance <= -maxTravelDistance)
             {
-                flipped = !flipped;
+                Flipped = !Flipped;
             }
 
             base.Update(gameTime, elapsed);

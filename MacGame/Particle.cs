@@ -95,7 +95,7 @@ namespace MacGame
             this.InitialScale = 1f;
             this.FinalScale = 1f;
             this.Enabled = true;
-            this.flipped = false;
+            this.Flipped = false;
             this.collisionRectangle = new Rectangle();
         }
 

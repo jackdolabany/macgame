@@ -44,7 +44,7 @@ namespace MacGame.Enemies
 
             tileLocation = WorldLocation;
             Enabled = false;
-            flipped = true;
+            Flipped = true;
             nextBirdTimer = 1f;
         }
 

@@ -331,22 +331,22 @@
  </tile>
  <tile id="225">
   <properties>
-   <property name="LoadClass" value="Ottie"/>
+   <property name="LoadClass" value="Npc.Ottie"/>
   </properties>
  </tile>
  <tile id="226">
   <properties>
-   <property name="LoadClass" value="Cat"/>
+   <property name="LoadClass" value="Npc.Cat"/>
   </properties>
  </tile>
  <tile id="228">
   <properties>
-   <property name="LoadClass" value="Mouse"/>
+   <property name="LoadClass" value="Npc.Mouse"/>
   </properties>
  </tile>
  <tile id="231">
   <properties>
-   <property name="LoadClass" value="Chicken"/>
+   <property name="LoadClass" value="Npc.Chicken"/>
   </properties>
  </tile>
 </tileset>

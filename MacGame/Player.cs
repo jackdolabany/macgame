@@ -61,7 +61,7 @@ namespace MacGame
         private float invincibleTimeRemaining = 0.0f;
         private float invincibleFlashTimer = 0.0f;
 
-        public bool IsTryingToOpenDoor = false;
+        public bool InteractButtonPressedThisFrame = false;
 
         public bool IsInvincible => invincibleTimeRemaining > 0.0f;
 
@@ -214,7 +214,7 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            IsTryingToOpenDoor = false;
+            InteractButtonPressedThisFrame = false;
 
             _previousCollisionRectangle = this.CollisionRectangle;
 
@@ -314,7 +314,7 @@ namespace MacGame
         public void SlideOutOfDoor(Vector2 doorLocation)
         {
             this.worldLocation = doorLocation + new Vector2(0, -4);
-            this.flipped = true;
+            this.Flipped = true;
             this.velocity = new Vector2(280, 0);
             this._state = MacState.IsKnockedDown;
             // TODO: Play sound
@@ -447,7 +447,7 @@ namespace MacGame
                 {
                     _state = MacState.Running;
                 }
-                flipped = false;
+                Flipped = false;
             }
 
             // Walk left
@@ -470,7 +470,7 @@ namespace MacGame
                 {
                     _state = MacState.Running;
                 }
-                flipped = true;
+                Flipped = true;
             }
 
             if (OnGround && !IsClimbingLadder && !IsClimbingVine)
@@ -606,7 +606,7 @@ namespace MacGame
                 yPositionWhenLastOnVine = this.worldLocation.Y;
                 _state = MacState.Jumping;
                 this.velocity = new Vector2(300, -250);
-                if (flipped)
+                if (Flipped)
                 {
                     this.velocity.X *= -1;
                 }
@@ -633,7 +633,7 @@ namespace MacGame
             {
 
                 Vector2 vineTile;
-                if (!flipped)
+                if (!Flipped)
                 {
                     vineTile = Game1.CurrentMap.GetCellByPixel(new Vector2(this.CollisionRectangle.Right, this.CollisionCenter.Y));
                 }
@@ -643,18 +643,18 @@ namespace MacGame
                 }
 
                 // You can't move left and right on the vine, but Mac can flip.
-                if (!flipped && InputManager.CurrentAction.left)
+                if (!Flipped && InputManager.CurrentAction.left)
                 {
                     cameraTrackingTimer = 0.2f;
-                    flipped = true;
+                    Flipped = true;
                 }
-                else if (flipped && InputManager.CurrentAction.right)
+                else if (Flipped && InputManager.CurrentAction.right)
                 {
                     cameraTrackingTimer = 0.2f;
-                    flipped = false;
+                    Flipped = false;
                 }
 
-                if (!flipped)
+                if (!Flipped)
                 {
                     this.worldLocation.X = (TileMap.TileSize * vineTile.X) + 8;
                 }
@@ -698,7 +698,7 @@ namespace MacGame
             }
 
             // Level.cs will check door collisions if this is true.
-            this.IsTryingToOpenDoor = InputManager.CurrentAction.up && !InputManager.PreviousAction.up;
+            this.InteractButtonPressedThisFrame = InputManager.CurrentAction.up && !InputManager.PreviousAction.up;
 
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 80 && velocity.X > -80 && IsSliding)
@@ -779,7 +779,7 @@ namespace MacGame
                     apple.Enabled = true;
                     apple.WorldLocation = this.WorldLocation;
                     apple.Velocity = new Vector2(280, 0);
-                    if (flipped)
+                    if (Flipped)
                     {
                         apple.Velocity *= -1;
                     }
@@ -791,7 +791,7 @@ namespace MacGame
             {
                 if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
                 {
-                    var digDirection = flipped ? DigDirection.Left : DigDirection.Right;
+                    var digDirection = Flipped ? DigDirection.Left : DigDirection.Right;
                     if(InputManager.CurrentAction.up)
                     {                         
                         digDirection = DigDirection.Up;
@@ -883,7 +883,7 @@ namespace MacGame
             }
 
             this.velocity.X = 240f;
-            if (flipped)
+            if (Flipped)
             {
                 this.velocity.X *= -1;
             }
@@ -897,12 +897,12 @@ namespace MacGame
             }
 
             // If the tile to the right is colliding, flip the player
-            if (!flipped)
+            if (!Flipped)
             {
                 var tileToTheRight = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Right + 1, this.CollisionRectangle.Center.Y));
                 if (tileToTheRight != null && !tileToTheRight.Passable)
                 {
-                    this.flipped = true;
+                    this.Flipped = true;
                 }
             }
             else
@@ -910,7 +910,7 @@ namespace MacGame
                 var tileToTheLeft = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Left - 1, this.CollisionRectangle.Center.Y));
                 if (tileToTheLeft != null && !tileToTheLeft.Passable)
                 {
-                    this.flipped = false;
+                    this.Flipped = false;
                 }
             }
         }
@@ -968,7 +968,7 @@ namespace MacGame
 
         public bool IsFacingRight()
         {
-            return !this.flipped;
+            return !this.Flipped;
         }
 
         public bool IsFacingLeft()

@@ -17,7 +17,7 @@ namespace MacGame
         /// <summary>
         /// Default is facing to the right. If you're flipped you are facing left.
         /// </summary>
-        protected bool flipped
+        public bool Flipped
         {
             get
             {
@@ -509,7 +509,7 @@ namespace MacGame
 
         public virtual void Flip()
         {
-            flipped = !flipped;
+            Flipped = !Flipped;
         }
 
         public void RotateTo(Vector2 direction)
@@ -593,7 +593,7 @@ namespace MacGame
 
         public void SetupDraw(GameTime gameTime, float elapsed)
         {
-            this.DisplayComponent.Update(gameTime, elapsed, this.worldLocation, this.flipped);
+            this.DisplayComponent.Update(gameTime, elapsed, this.worldLocation, this.Flipped);
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)

@@ -190,17 +190,17 @@ namespace MacGame
 
         public bool IsObjectVisible(Rectangle bounds)
         {
-            // Pad the bounds by 20% since sometimes the collision rect is smaller than the object.
+            // Pad the bounds by 25% since sometimes the collision rect is smaller than the object.
             // Better to overdraw than have stuff pop in.
             const float paddingPercent = 0.25f;
             var widthPadding = bounds.Width * paddingPercent;
-            var heightPadding = bounds.Width * paddingPercent;
+            var heightPadding = bounds.Height * paddingPercent;
 
             var paddedBounds = new Rectangle(
-                (int)(bounds.X - (widthPadding / 2f)),
-                (int)(bounds.Y - (heightPadding / 2f)), 
-                (int)(bounds.Width + widthPadding), 
-                (int)(bounds.Height + heightPadding));
+                (int)(bounds.X - widthPadding),
+                (int)(bounds.Y - heightPadding), 
+                (int)(bounds.Width + widthPadding * 2), 
+                (int)(bounds.Height + heightPadding * 2));
 
             return ViewPort.Intersects(paddedBounds);
         }

@@ -39,9 +39,8 @@ namespace MacGame.Platforms
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            // Check a custom rectangle because platforms images are 1 square tile size but the collision rectangle
-            // may be smaller.
-            if (Game1.Camera.IsObjectVisible(new Rectangle((int)this.WorldLocation.X - (Game1.TileSize / 2), (int)this.WorldLocation.Y - Game1.TileSize, Game1.TileSize, Game1.TileSize)))
+            // Account for WorldLocation being the bottom center of the platform, and then pad a bit.
+            if (Game1.Camera.IsObjectVisible(new Rectangle((int)this.WorldLocation.X - (Game1.TileSize / 2) - 8, (int)this.WorldLocation.Y - Game1.TileSize - 8, Game1.TileSize + 16, Game1.TileSize + 16)))
             {
                 base.Draw(spriteBatch);
             }

@@ -329,6 +329,11 @@
    <property name="LoadClass" value="BlueDoor"/>
   </properties>
  </tile>
+ <tile id="214">
+  <properties>
+   <property name="LoadClass" value="Npc.HyperBluey"/>
+  </properties>
+ </tile>
  <tile id="225">
   <properties>
    <property name="LoadClass" value="Npc.Ottie"/>
@@ -347,6 +352,11 @@
  <tile id="231">
   <properties>
    <property name="LoadClass" value="Npc.Chicken"/>
+  </properties>
+ </tile>
+ <tile id="233">
+  <properties>
+   <property name="LoadClass" value="Npc.Dog"/>
   </properties>
  </tile>
 </tileset>

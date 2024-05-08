@@ -15,6 +15,7 @@ namespace MacGame.Npcs
         public Behavior? Behavior { get; set; }
         public abstract Rectangle ConversationSourceRectangle { get; }
 
+        public Rectangle PlayerConversationRectangle => Helpers.GetReallyBigTileRect(0, 0);
 
         public Npc(ContentManager content, int cellX, int cellY, Player player, Camera camera)
         {

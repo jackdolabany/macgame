@@ -52,6 +52,11 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
 
+        // Track if the player jumped off of sand or ice so that we can maintain the adjusted
+        // movement speed through the jump.
+        private bool isJumpFromSand = false;
+        private bool isJumpFromIce = false;
+
         // Add time here to make the camera track Mac slowly for a period of time. This will help 
         // move the camera more naturally for a period when he does "snapping" actions like snapping to the
         // other side of a vine, or snapping to other objects.
@@ -391,8 +396,8 @@ namespace MacGame
             float jumpBoost;
 
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
-            var isSand = mapSquareBelow != null && mapSquareBelow.IsSand;
-            var isIce = mapSquareBelow != null && mapSquareBelow.IsIce;
+            var isSand = mapSquareBelow != null && mapSquareBelow.IsSand || (!OnGround && isJumpFromSand);
+            var isIce = mapSquareBelow != null && mapSquareBelow.IsIce || (!OnGround && isJumpFromIce);
             
             var environmentMaxWalkSpeed = maxSpeed;
             var acceleration = maxAcceleration;
@@ -407,6 +412,7 @@ namespace MacGame
             {
                 friction = 0.95f;
                 jumpBoost = 520;
+                environmentMaxWalkSpeed *= 1.25f;
             }
             else
             {
@@ -433,7 +439,7 @@ namespace MacGame
                 if (!IsClimbingLadder)
                 {
                     this.velocity.X += acceleration * elapsed;
-                    if (OnGround && velocity.X > environmentMaxWalkSpeed)
+                    if (velocity.X > environmentMaxWalkSpeed)
                     {
                         velocity.X = environmentMaxWalkSpeed;
                     }
@@ -456,7 +462,7 @@ namespace MacGame
                 if (!IsClimbingLadder)
                 {
                     this.velocity.X -= acceleration * elapsed;
-                    if (OnGround && velocity.X < -environmentMaxWalkSpeed)
+                    if (velocity.X < -environmentMaxWalkSpeed)
                     {
                         velocity.X = -environmentMaxWalkSpeed;
                     }
@@ -549,6 +555,8 @@ namespace MacGame
             if (OnGround)
             {
                 PoisonPlatforms.Clear();
+                isJumpFromSand = false;
+                isJumpFromIce = false;
             }
 
             // Jump down from platform(s). 
@@ -573,6 +581,14 @@ namespace MacGame
                 this.velocity.Y -= jumpBoost;
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("jump");
+                if (isSand)
+                {
+                    isJumpFromSand = true;
+                }
+                else if (isIce)
+                {
+                    isJumpFromIce = true;
+                }
             }
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasInfiniteJump && this.Velocity.Y >= 0)
             {

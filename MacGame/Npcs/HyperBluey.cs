@@ -50,7 +50,7 @@ namespace MacGame.Npcs
             {
                 ConversationManager.AddMessage("Hi I'm Mac", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
                 ConversationManager.AddMessage("My name is Hyper Bluey", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                ConversationManager.AddMessage("If you don't like it you can chew on walnuts", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("If you don't like it you can go chew on walnuts buddy", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                 ConversationManager.AddMessage("I love it", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
             }
         }

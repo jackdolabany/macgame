@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MacGame.DisplayComponents;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
@@ -38,7 +39,9 @@ namespace MacGame.Platforms
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+            // Check a custom rectangle because platforms images are 1 square tile size but the collision rectangle
+            // may be smaller.
+            if (Game1.Camera.IsObjectVisible(new Rectangle((int)this.WorldLocation.X - (Game1.TileSize / 2), (int)this.WorldLocation.Y - Game1.TileSize, Game1.TileSize, Game1.TileSize)))
             {
                 base.Draw(spriteBatch);
             }

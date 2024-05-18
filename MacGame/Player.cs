@@ -137,6 +137,20 @@ namespace MacGame
 
         public bool IsInvisible { get; set; } = false;
 
+        public bool IsInCannon 
+        {
+            get
+            {
+                return CannonYouAreIn != null;
+            }
+        }
+        /// <summary>
+        /// After being shot out of a cannon you are not effected by gravity for a period of time.
+        /// </summary>
+        public bool IsShotOutOfCannon { get; set; } = false;
+
+        public Cannon CannonYouAreIn { get; set; }
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -235,6 +249,10 @@ namespace MacGame
             else if (IsKnockedDown)
             {
                 HandleKnockedDownInputs(elapsed);
+            }
+            else if (IsInCannon)
+            {
+                HandleCannonInputs(elapsed);
             }
             else
             {
@@ -525,7 +543,7 @@ namespace MacGame
                 // No moving left or right on the ladder unless you are not going up or down.
                 this.velocity.X = 0;
             }
-            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine;
+            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsShotOutOfCannon;
 
             // Stop moving while climbing if you aren't pressing up or down.
             if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
@@ -557,6 +575,7 @@ namespace MacGame
                 PoisonPlatforms.Clear();
                 isJumpFromSand = false;
                 isJumpFromIce = false;
+                IsShotOutOfCannon = false;
             }
 
             // Jump down from platform(s). 
@@ -947,6 +966,22 @@ namespace MacGame
             }); 
         }
 
+        private void HandleCannonInputs(float elapsed)
+        {
+            this.WorldLocation = CannonYouAreIn.WorldLocation;
+            if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
+            {
+                this.CannonYouAreIn.Shoot();
+                this.IsShotOutOfCannon = true;
+
+                TimerManager.AddNewTimer(0.8f, () =>
+                {
+                    IsShotOutOfCannon = false;
+                });
+
+            }
+        }
+
         public void Kill()
         {
             Health = 0;
@@ -961,6 +996,8 @@ namespace MacGame
         {
 
             if (IsInvisible) return;
+
+            if (IsInCannon) return;
 
             if(HasInfiniteJump)
             {

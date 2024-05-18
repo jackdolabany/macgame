@@ -184,6 +184,11 @@
    <property name="LoadClass" value="Enemy.Frog"/>
   </properties>
  </tile>
+ <tile id="97">
+  <properties>
+   <property name="LoadClass" value="Cannon"/>
+  </properties>
+ </tile>
  <tile id="100">
   <properties>
    <property name="BlockPlayer" value="1"/>

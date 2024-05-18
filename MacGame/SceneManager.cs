@@ -245,6 +245,11 @@ namespace MacGame
                                 var npc = (Npc)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
                                 level.Npcs.Add(npc);
                             }
+                            else if (loadClass == "Cannon")
+                            {
+                                var cannon = new Cannon(contentManager, x, y, player, camera);
+                                level.GameObjects.Add(cannon);
+                            }
                         }
                     }
                 }

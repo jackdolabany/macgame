@@ -34,8 +34,6 @@ namespace MacGame.DisplayComponents
 
         public abstract Vector2 GetWorldCenter(ref Vector2 worldLocation);
 
-        
-
         public abstract void Draw(SpriteBatch spriteBatch);
 
         public virtual void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)

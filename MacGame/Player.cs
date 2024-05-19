@@ -147,7 +147,7 @@ namespace MacGame
         /// <summary>
         /// After being shot out of a cannon you are not effected by gravity for a period of time.
         /// </summary>
-        public bool IsShotOutOfCannon { get; set; } = false;
+        public bool IsJustShotOutOfCannon { get; set; } = false;
 
         public Cannon CannonYouAreIn { get; set; }
 
@@ -543,7 +543,7 @@ namespace MacGame
                 // No moving left or right on the ladder unless you are not going up or down.
                 this.velocity.X = 0;
             }
-            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsShotOutOfCannon;
+            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsJustShotOutOfCannon && !IsInCannon;
 
             // Stop moving while climbing if you aren't pressing up or down.
             if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
@@ -575,7 +575,7 @@ namespace MacGame
                 PoisonPlatforms.Clear();
                 isJumpFromSand = false;
                 isJumpFromIce = false;
-                IsShotOutOfCannon = false;
+                IsJustShotOutOfCannon = false;
             }
 
             // Jump down from platform(s). 
@@ -966,17 +966,26 @@ namespace MacGame
             }); 
         }
 
+        public void EnterCannon(Cannon cannon)
+        {
+            this.WorldLocation = cannon.WorldLocation;
+            this.CannonYouAreIn = cannon;
+            this.IsJustShotOutOfCannon = false;
+            this.IsAffectedByGravity = false;
+            // TODO: Play the sound of the player entering the cannon.
+        }
+
         private void HandleCannonInputs(float elapsed)
         {
             this.WorldLocation = CannonYouAreIn.WorldLocation;
-            if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
+            if (this.CannonYouAreIn.PlayerCanShootOut && InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
             {
                 this.CannonYouAreIn.Shoot();
-                this.IsShotOutOfCannon = true;
+                this.IsJustShotOutOfCannon = true;
 
                 TimerManager.AddNewTimer(0.8f, () =>
                 {
-                    IsShotOutOfCannon = false;
+                    IsJustShotOutOfCannon = false;
                 });
 
             }

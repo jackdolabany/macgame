@@ -249,6 +249,27 @@ namespace MacGame
                             {
                                 var cannon = new Cannon(contentManager, x, y, player, camera);
                                 level.GameObjects.Add(cannon);
+
+                                // Cannon modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
+                                            obj.Rectangle.Y * Game1.TileScale,
+                                            obj.Rectangle.Width * Game1.TileScale,
+                                            obj.Rectangle.Height * Game1.TileScale);
+
+                                    if (scaledRect.Contains(cannon.CollisionRectangle))
+                                    {
+                                        foreach (var prop in obj.Properties)
+                                        {
+                                            if (obj.Properties.ContainsKey("AutoShoot"))
+                                            {
+                                                var direction = Enum.Parse<RotationDirection>(obj.Properties["AutoShoot"]);
+                                                cannon.AutoShootDirection = direction;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

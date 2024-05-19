@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="8" tileheight="8" infinite="0" nextlayerid="6" nextobjectid="11">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="8" tileheight="8" infinite="0" nextlayerid="6" nextobjectid="12">
  <properties>
   <property name="LevelNumber" value="0"/>
  </properties>
@@ -75,6 +75,11 @@
    <properties>
     <property name="GoToDoor" value="BlueDoor"/>
     <property name="GoToMap" value="BlueRoom"/>
+   </properties>
+  </object>
+  <object id="11" x="110.909" y="28.7273" width="12" height="14">
+   <properties>
+    <property name="AutoShoot" value="Right"/>
    </properties>
   </object>
  </objectgroup>

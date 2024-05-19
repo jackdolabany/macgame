@@ -36,6 +36,24 @@ namespace MacGame.DisplayComponents
             }
         }
 
+        public SpriteEffects Effect
+        {
+            get
+            {
+                return DrawObject.Effect;
+            }
+            set
+            {
+                DrawObject.Effect = value;
+            }
+        }
+
+        public Vector2 WorldLocation
+        {
+            get { return DrawObject.Position; }
+            set { DrawObject.Position = value; }
+        }
+
         public StaticImageDisplay(Texture2D texture, Rectangle textureSourceRectangle)
             : base()
         {
@@ -86,7 +104,7 @@ namespace MacGame.DisplayComponents
             {
                 effect = SpriteEffects.FlipHorizontally;
             }
-            DrawObject.Effect = effect;
+            DrawObject.Effect |= effect;
         }
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)

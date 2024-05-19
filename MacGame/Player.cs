@@ -983,7 +983,7 @@ namespace MacGame
                 this.CannonYouAreIn.Shoot();
                 this.IsJustShotOutOfCannon = true;
 
-                TimerManager.AddNewTimer(0.8f, () =>
+                TimerManager.AddNewTimer(0.5f, () =>
                 {
                     IsJustShotOutOfCannon = false;
                 });

@@ -159,7 +159,8 @@ namespace MacGame
         public bool IsAffectedByGravity { get; set; }
         public bool IsAffectedByPlatforms { get; set; }
 
-        public static Vector2 Gravity = new Vector2(0, 1200);
+        public Vector2 Gravity = new Vector2(0, 1600);
+
         public const float MaxFallSpeed = 16;
 
         protected Vector2 velocity;

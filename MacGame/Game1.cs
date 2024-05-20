@@ -22,7 +22,7 @@ namespace MacGame
         public const int GAME_Y_RESOLUTION = 128 * TileScale;
 
         public static Random Randy = new Random();
-        public const float MIN_DRAW_INCREMENT = 0.0000005f;
+        public const float MIN_DRAW_INCREMENT = 0.000001f;
 
         public static bool DrawAllCollisisonRects = false;
 
@@ -497,29 +497,28 @@ namespace MacGame
                     }
 
                     pauseMenu.SetupTitle($"{CurrentLevel.Description}\n{hint}");
-
-                    // Player just went through a door, put him where he's supposed to be.
-                    if (!string.IsNullOrEmpty(_putPlayerAtDoor))
-                    {
-                        foreach (var door in CurrentLevel.Doors)
-                        {
-                            if (door.Name == _putPlayerAtDoor)
-                            {
-                                Player.WorldLocation = door.WorldLocation;
-                                break;
-                            }
-                        }
-                    }
-
-                    TransitionToState(GameState.Playing, TransitionType.FastFade);
-
-                    // Reset everyone.
-                    _putPlayerAtDoor = "";
-                    _goToMap = "";
-                    _hubDoorEntered = "";
-                    _hintIndex = null;
                 }
 
+                // Player just went through a door, put him where he's supposed to be.
+                if (!string.IsNullOrEmpty(_putPlayerAtDoor))
+                {
+                    foreach (var door in CurrentLevel.Doors)
+                    {
+                        if (door.Name == _putPlayerAtDoor)
+                        {
+                            Player.WorldLocation = door.WorldLocation;
+                            break;
+                        }
+                    }
+                }
+
+                TransitionToState(GameState.Playing, TransitionType.FastFade);
+
+                // Reset everyone.
+                _putPlayerAtDoor = "";
+                _goToMap = "";
+                _hubDoorEntered = "";
+                _hintIndex = null;
             }
             else if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
             {
@@ -610,7 +609,7 @@ namespace MacGame
                 case GameState.Conversation:
                 case GameState.PausedForAction:
 
-                    spriteBatch.Begin(SpriteSortMode.Deferred,
+                    spriteBatch.Begin(SpriteSortMode.BackToFront,
                         BlendState.AlphaBlend,
                         SamplerState.PointClamp,
                         null,

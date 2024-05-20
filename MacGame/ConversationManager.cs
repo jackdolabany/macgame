@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using TileEngine;
 
 namespace MacGame
 {
@@ -17,7 +18,7 @@ namespace MacGame
 
         static Rectangle advanceMessageArrowSourceRect;
 
-        const float textDepth = 0.1f;
+        const float textDepth = TileMap.OVERLAY_DRAW_DEPTH;
 
         static int bubbleHeight;
         static int bubbleWidth;
@@ -268,7 +269,6 @@ namespace MacGame
                 @float = Float.Top;
             }
 
-
             switch (@float)
             {
                 case Float.Top:
@@ -441,16 +441,6 @@ namespace MacGame
                     return;
                 }
             }
-        }
-
-
-        /// <summary>
-        /// Draw text at some location wrapped based on maxWidth.
-        /// </summary>
-        private static void DrawWrappedText(SpriteBatch spriteBatch, string text, int maxWidth, Vector2 position, float scale, float depth)
-        {
-            var strings = GetLineWrappedText(text, maxWidth, scale);
-            DrawTexts(spriteBatch, strings, position, scale, depth);
         }
 
         /// <summary>

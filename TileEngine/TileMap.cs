@@ -8,14 +8,14 @@ namespace TileEngine
     public class TileMap
     {
         public const float FRONTMOST_DRAW_DEPTH = 0f;
-        public const float MAP_DRAW_DEPTH = 0.2f;
-        public const float EFFECTS_DRAW_DEPTH = 0.23f;
-        public const float OVERLAY_DRAW_DEPTH = 0.3f;
+        public const float OVERLAY_DRAW_DEPTH = 0.1f;
+
+        public const float EFFECTS_DRAW_DEPTH = 0.2f;
         /// <summary>
-        /// The level and all enemies and effects are drawn between this and the overlay
+        /// The level and all enemies and game objects are drawn between this and the effects layer.
         /// </summary>
-        public const float LEVEL_DRAW_DEPTH = 0.8f;
-        public const float BACKGROUND_DRAW_DEPTH = 0.9f;
+        public const float LEVEL_DRAW_DEPTH = 0.3f;
+        public const float BACKGROUND_DRAW_DEPTH = 0.4f;
         public const float BACKMOST_DRAW_DEPTH = 1f;
 
         /// <summary>
@@ -99,8 +99,6 @@ namespace TileEngine
         {
             return GetLayerDrawDepth(MapDepth - 1);
         }
-
-        private const int defaultTile = 0;
 
         public MapSquare[][] MapCells = new MapSquare[100][];
 

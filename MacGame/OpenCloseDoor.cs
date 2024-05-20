@@ -80,6 +80,12 @@ namespace MacGame
             DoorAnimations.Play("Idle");
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            this.JailBarAnimations.DrawDepth = depth - Game1.MIN_DRAW_INCREMENT;
+        }
+
         /// <summary>
         /// Override this for inherited classes that have doors that look different. Like red/blue/green doors.
         /// </summary>

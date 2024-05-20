@@ -201,6 +201,13 @@ namespace MacGame.Items
             base.Update(gameTime, elapsed);
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            this.DisplayComponent.DrawDepth = depth;
+            OpenChestTop.DrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
+            OpenChestBottom.DrawDepth = depth - Game1.MIN_DRAW_INCREMENT;
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (IsInChest)

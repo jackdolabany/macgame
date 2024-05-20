@@ -58,7 +58,14 @@ namespace MacGame
             {
                 level.Description = map.Properties["Description"];
             }
-            
+
+            // we can stuff objects for a layer here and then properly calculate their depth after they are all placed.
+            var layerDepthObjects = new Dictionary<int, List<GameObject>>();
+            for (int i = 0; i < map.MapCells[0][0].LayerTiles.Length; i++)
+            {
+                layerDepthObjects.Add(i, new List<GameObject>());
+            }
+
             // Do y direction first and count backwards. This is important because we want to add game objects bottom
             // to top. This helps the drawdepth code so that items above are always in front so you can stack objects that
             // are slightly facing downwards like barrels
@@ -93,14 +100,18 @@ namespace MacGame
                         var loadClass = mapSquare.LayerTiles[z].LoadClass;
                         if (!string.IsNullOrEmpty(loadClass))
                         {
-                            if (loadClass.StartsWith("Enemy."))
+                            if (loadClass == "PlayerStart")
+                            {
+                                layerDepthObjects[z].Add(player);
+                            }
+                            else if (loadClass.StartsWith("Enemy."))
                             {
                                 // Use reflection to load the enemies from the code
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Enemy).Namespace + "." + classname);
                                 var enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Enemies.Add(enemy);
-
+                                layerDepthObjects[z].Add(enemy);
                             }
                             else if (loadClass.StartsWith("Platform."))
                             {
@@ -109,6 +120,8 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Platform).Namespace + "." + classname);
                                 var platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y });
                                 level.Platforms.Add(platform);
+                                
+                                layerDepthObjects[z].Add(platform);
 
                                 if (platform is StaticPlatform)
                                 {
@@ -126,6 +139,8 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Item).Namespace + "." + classname);
                                 var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Items.Add(item);
+                                
+                                layerDepthObjects[z].Add(item);
 
                                 // Coins are special. We expect each one to be wrapped in an object on the map that contains the number and hint.
                                 if (item is CricketCoin)
@@ -172,6 +187,7 @@ namespace MacGame
                                 }
 
                                 level.Doors.Add(door);
+                                layerDepthObjects[z].Add(door);
 
                                 // Doors need to know what level to go to. I expect an object on the map that contains the door and 
                                 // tells it where to go.
@@ -230,12 +246,16 @@ namespace MacGame
                             else if (loadClass == "RevealBlock")
                             {
                                 level.RevealBlockManager.AddRawBlock(new RevealBlock(x, y, z));
-                                mapSquare.Passable = true;
+                                if (!mapSquare.IsSand)
+                                {
+                                    mapSquare.Passable = true;
+                                }
                             }
                             else if (loadClass == "MineCart")
                             {
                                 var mineCart = new MineCart(contentManager, x, y, player);
                                 level.GameObjects.Add(mineCart);
+                                layerDepthObjects[z].Add(mineCart);
                             }
                             else if (loadClass.StartsWith("Npc."))
                             {
@@ -244,11 +264,13 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Npc).Namespace! + "." + classname)!;
                                 var npc = (Npc)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
                                 level.Npcs.Add(npc);
+                                layerDepthObjects[z].Add(npc);
                             }
                             else if (loadClass == "Cannon")
                             {
                                 var cannon = new Cannon(contentManager, x, y, player, camera);
                                 level.GameObjects.Add(cannon);
+                                layerDepthObjects[z].Add(cannon);
 
                                 // Cannon modifiers
                                 foreach (var obj in map.ObjectModifiers)
@@ -287,6 +309,33 @@ namespace MacGame
                 tacoCoin.InitializeAlreadyCollected(level);
                 level.TacoCoin = tacoCoin;
                 level.Items.Add(tacoCoin);
+            }
+
+
+            // Set the draw depths and initialize all 
+            var singleLayerDepth = map.GetLayerIncrement();
+
+            foreach (var layer in layerDepthObjects.Keys)
+            {
+                // Highest number things end up in the back.
+                var gameObjects = layerDepthObjects[layer].OrderBy(o => {
+                    if (o is Door) return 1;
+                    if (o is Npc) return 2;
+                    if (o is Player) return 3; // always in front of kiosks on the same layer.
+                    return 4; // enemies and items in front of the player.
+                }).ToList();
+
+                // +2 Add a fudge factor of a game object on either side
+                var singleItemDepthLimit = singleLayerDepth / (gameObjects.Count + 2);
+                float layerDepth = map.GetLayerDrawDepth(layer);
+
+                for (int i = 0; i < gameObjects.Count; i++)
+                {
+                    // The one is for the fudge factor
+                    var myDepth = (i + 1) * singleItemDepthLimit;
+                    var drawDepth = layerDepth - myDepth;
+                    gameObjects[i].SetDrawDepth(drawDepth);
+                }
             }
 
             level.RevealBlockManager.OrganizeRawBlocksIntoGroups();

@@ -58,7 +58,7 @@ namespace MacGame
         private bool isInJumpFromIce = false;
         private bool isInJumpFromGround = false;
         float jumpButtonHeldDownTimer = 0f;
-        const float maxJumpButtonHeldDownTime = 1.2f;
+        const float maxJumpButtonHeldDownTime = 0.5f;
         public Vector2 NormalGravity;
         public Vector2 JumpGravity;
 
@@ -234,8 +234,16 @@ namespace MacGame
 
             shovel = new MacShovel(this, textures);
 
-            NormalGravity = this.Gravity;
+            NormalGravity = Gravity;
             JumpGravity = NormalGravity * 0.5f;
+        }
+
+        public override void SetDrawDepth(float depth)
+        {
+            this.DisplayComponent.DrawDepth = depth;
+            this.shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -597,7 +605,7 @@ namespace MacGame
             }
 
             // Clear out weird state fields.
-            if ((OnGround && this.velocity.Y > 0) || IsClimbingLadder || IsClimbingVine)
+            if (OnGround || IsClimbingLadder || IsClimbingVine)
             {
                 PoisonPlatforms.Clear();
                 isInJumpFromSand = false;
@@ -607,8 +615,8 @@ namespace MacGame
                 IsJustShotOutOfCannon = false;
             }
 
-            // Stop the jump if they let go of the button.
-            if (!InputManager.CurrentAction.jump)
+            // Stop the jump if they let go of the button or hit a ceiling or something.
+            if (!InputManager.CurrentAction.jump || OnCeiling || this.velocity.Y >= 0)
             {
                 jumpButtonHeldDownTimer = 0;
             }
@@ -1020,7 +1028,7 @@ namespace MacGame
         private void HandleCannonInputs(float elapsed)
         {
             this.WorldLocation = CannonYouAreIn.WorldLocation;
-            if (this.CannonYouAreIn.PlayerCanShootOut && InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
+            if (this.CannonYouAreIn.PlayerCanShootOut && InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
             {
                 this.CannonYouAreIn.Shoot();
                 this.IsJustShotOutOfCannon = true;

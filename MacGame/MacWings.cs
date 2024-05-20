@@ -48,7 +48,7 @@ namespace MacGame
             
             // Left wing
             var leftWingEffect = areWingsFlappedDown ? SpriteEffects.FlipVertically | SpriteEffects.FlipHorizontally : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(wingImage, _player.WorldLocation.ToIntegerVector() + new Vector2(-32, -32) + flapAdjust, wingSourceRect, Color.White, 0, Vector2.Zero, 1f, leftWingEffect, this.DrawDepth);
+            spriteBatch.Draw(wingImage, _player.WorldLocation.ToIntegerVector() + new Vector2(-32, -32) + flapAdjust, wingSourceRect, Color.White, 0, Vector2.Zero, 1f, leftWingEffect, this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
 
         }
     }

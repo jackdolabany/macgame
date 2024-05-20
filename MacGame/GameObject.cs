@@ -84,17 +84,17 @@ namespace MacGame
         // Encapsulates common display logic and state
         public DisplayComponent DisplayComponent;
 
-        // So old stuff doesnt' break
         public float DrawDepth
         {
             get
             {
                 return DisplayComponent.DrawDepth;
             }
-            set
-            {
-                DisplayComponent.DrawDepth = value;
-            }
+        }
+
+        public virtual void SetDrawDepth(float depth)
+        {
+            DisplayComponent.DrawDepth = depth;
         }
 
         public float Rotation

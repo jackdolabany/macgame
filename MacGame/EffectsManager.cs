@@ -110,7 +110,7 @@ namespace MacGame
                 pop.Scale = 1f * Game1.TileScale;
                 pop.FinalScale = 1f * Game1.TileScale;
                 pop.SetStaticImage(Game1.TileTextures, WhiteSquareSourceRectangle);
-                // pop.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
+                pop.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
             }
         }
 
@@ -125,7 +125,7 @@ namespace MacGame
             particle.Rotation = gameObject.Rotation;
             particle.Scale = gameObject.Scale;
             particle.FinalScale = 0.5f;
-            //particle.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
+            particle.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
             particle.RotationAndDrawOrigin = gameObject.RotationAndDrawOrigin;
         }
 
@@ -157,7 +157,7 @@ namespace MacGame
                 spark.SetStaticImage(SparkTexture, WhiteSquareSourceRectangle);
                 spark.Scale = scale;
                 spark.Rotation = Game1.Randy.NextFloat() * MathHelper.TwoPi;
-                //spark.DrawDepth = Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
+                spark.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
             }
         }
 
@@ -253,7 +253,7 @@ namespace MacGame
             piece.IsRotationClockwise = Game1.Randy.GetBool();
             piece.SetStaticImage(image, imageSourceRect);
 
-            piece.DrawDepth = drawDepth;
+            piece.SetDrawDepth(drawDepth);
         }
 
         public static void RisingText(string text, Vector2 location)

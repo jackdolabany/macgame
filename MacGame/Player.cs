@@ -150,9 +150,16 @@ namespace MacGame
             }
         }
         /// <summary>
-        /// After being shot out of a cannon you are not effected by gravity for a period of time.
+        /// After being shot out of a cannon you are not effected by gravity for a period of time, 
+        /// you can't enter inputs, and you smash through sand.
         /// </summary>
         public bool IsJustShotOutOfCannon { get; set; } = false;
+
+        /// <summary>
+        ///  If this has a positive value then you are only in the 'shooting out of cannon' state until it runs out.
+        ///  Set to 0 to be shot out forever! Like for a SuperShot cannon.
+        /// </summary>
+        private float timeRemainingToBeShotOutOfCannon = 0.0f;
 
         public Cannon CannonYouAreIn { get; set; }
 
@@ -269,6 +276,10 @@ namespace MacGame
             else if (IsInCannon)
             {
                 HandleCannonInputs(elapsed);
+            }
+            else if (IsJustShotOutOfCannon)
+            {
+                HandleShotOutOfCannonInputs(elapsed);
             }
             else
             {
@@ -1019,10 +1030,48 @@ namespace MacGame
         public void EnterCannon(Cannon cannon)
         {
             this.WorldLocation = cannon.WorldLocation;
+            this.Velocity = Vector2.Zero;
             this.CannonYouAreIn = cannon;
             this.IsJustShotOutOfCannon = false;
             this.IsAffectedByGravity = false;
+            this._state = MacState.Idle;
+            this.animations.Play("Idle");
             // TODO: Play the sound of the player entering the cannon.
+        }
+
+        public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)
+        {
+
+            var test = this.CollisionRectangle;
+            var test2 = this.CollisionCenter;
+            var test3 = cannon.CollisionRectangle;
+            var test4 = cannon.CollisionCenter;
+
+            this.velocity = velocity;
+            this.IsJustShotOutOfCannon = true;
+            this.CannonYouAreIn = null;
+
+            this.IsJustShotOutOfCannon = true;
+
+            // A regular cannon fires Mac for half a second. A supershot leaves
+            // him in the air until he hits something.
+            if (cannon.IsSuperShot)
+            {
+                timeRemainingToBeShotOutOfCannon = 0;
+            }
+            else
+            { 
+                timeRemainingToBeShotOutOfCannon = 0.1f;
+            }
+
+            if (this.velocity.X > 0)
+            {
+                this.Flipped = false;
+            }
+            else if (this.velocity.X < 0)
+            {
+                this.Flipped = true;
+            }
         }
 
         private void HandleCannonInputs(float elapsed)
@@ -1037,10 +1086,65 @@ namespace MacGame
                 {
                     IsJustShotOutOfCannon = false;
                 });
-
             }
         }
 
+        /// <summary>
+        ///  When you are shot out of a cannon you will smash through sand and not be effected
+        ///  by gravity for a period of time. It stops if you hit a wall.
+        /// </summary>
+        private void HandleShotOutOfCannonInputs(float elapsed)
+        {
+            // Check the pixel in the direction Mac is being shot.
+            int pixelToCheckX = this.CollisionRectangle.Center.X;
+            if (this.velocity.X > 0)
+            {
+                pixelToCheckX = this.CollisionRectangle.Right + 12;
+            }
+            else if (this.velocity.X < 0)
+            {
+                pixelToCheckX = this.CollisionRectangle.Left - 12;
+            }
+            int pixelToCheckY = this.CollisionRectangle.Center.Y;
+            if (this.velocity.Y > 0)
+            {
+                pixelToCheckY = this.CollisionRectangle.Bottom + 12;
+            }
+            else if (this.velocity.Y < 0)
+            {
+                pixelToCheckY = this.CollisionRectangle.Top - 12;
+            }
+            var tile = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(pixelToCheckX, pixelToCheckY));
+            if (tile != null && tile.IsSand)
+            {
+                tile.DigSand();
+            }
+            else if (tile == null || !tile.Passable)
+            {
+                // If you hit a wall or something you stop being shot out of the cannon.
+                this.velocity = Vector2.Zero;
+                this.IsJustShotOutOfCannon = false;
+                timeRemainingToBeShotOutOfCannon = 0;
+            }
+
+            // Check if you are shot out for a limited time.
+            if (timeRemainingToBeShotOutOfCannon > 0)
+            {
+                timeRemainingToBeShotOutOfCannon -= elapsed;
+                if (timeRemainingToBeShotOutOfCannon <= 0)
+                {
+                    this.IsJustShotOutOfCannon = false;
+                }
+            }
+
+            // Not sure what happened here but if you aren't moving you can't 
+            // be shooting out of a cannon now can you?
+            if (this.velocity == Vector2.Zero)
+            {
+                this.IsJustShotOutOfCannon = false;
+                timeRemainingToBeShotOutOfCannon = 0;
+            }
+        }
         public void Kill()
         {
             Health = 0;

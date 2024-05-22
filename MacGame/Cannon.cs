@@ -23,10 +23,12 @@ namespace MacGame
     {
         protected Player _player;
 
-        bool canAcceptPlayer = false;
-        const float cooldownTimeLimit = 0.5f;
+        bool canAcceptPlayer = true;
         float cooldownTimer = 0.0f;
 
+        /// <summary>
+        /// True if the cannon rotates when the player is in it.
+        /// </summary>
         public bool IsRotating { get; set; }
 
         float rotationTime = 0.35f;
@@ -35,6 +37,15 @@ namespace MacGame
         RotationDirection RotationDirection = RotationDirection.Up;
 
         private RotationDirection? _autoShootDirection;
+
+        float delayShotTimer = 0f;
+
+        /// <summary>
+        /// Normally a cannon shoots you for a bit. If the cannon is a "Super Shot" it will shoot you until
+        /// you hit a wall or another cannon. This is used for getting around the map or something.
+        /// </summary>
+        public bool IsSuperShot { get; set; }
+
         /// <summary>
         /// Set this if you want the cannon to automatically shoot in a direction with no player control.
         /// </summary>
@@ -110,15 +121,22 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (canAcceptPlayer && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
+
+            if (delayShotTimer > 0)
             {
-                _player.EnterCannon(this);
+                delayShotTimer -= elapsed;
             }
 
-            if(!canAcceptPlayer)
+            if (_player.CannonYouAreIn == null && canAcceptPlayer && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
             {
-                cooldownTimer += elapsed;
-                if (cooldownTimer >= cooldownTimeLimit)
+                _player.EnterCannon(this);
+                PlayerEntered(_player);
+            }
+
+            if (cooldownTimer > 0)
+            {
+                cooldownTimer -= elapsed;
+                if (cooldownTimer <= 0)
                 {
                     canAcceptPlayer = true;
                     cooldownTimer = 0f;
@@ -135,7 +153,9 @@ namespace MacGame
                 rotateTarget = AutoShootDirection;
             }
 
-            if ((IsRotating && _player.CannonYouAreIn == this) || rotateTarget != null && rotateTarget != this.RotationDirection)
+            bool rotateWithPlayerInside = IsRotating && _player.CannonYouAreIn == this && !AutoShootDirection.HasValue;
+
+            if (rotateWithPlayerInside || (rotateTarget.HasValue && rotateTarget != this.RotationDirection))
             {
                 rotateTimer += elapsed;
                 if (rotateTimer >= rotationTime)
@@ -159,7 +179,6 @@ namespace MacGame
                         }
                     }
 
-
                     if (isRotationClockwise)
                     {
                         this.RotationDirection += 1;
@@ -169,6 +188,8 @@ namespace MacGame
                         this.RotationDirection -= 1;
                     }
 
+                    // In case we've rotate too far in either direction, reset it back to keep
+                    // the numbers 0 to 7
                     if((int)this.RotationDirection == 8)
                     {
                         this.RotationDirection = RotationDirection.Right;
@@ -178,12 +199,11 @@ namespace MacGame
                         this.RotationDirection = RotationDirection.UpRight;
                     }
                 }
+            }
 
-                if (AutoShootDirection == this.RotationDirection)
-                {
-                    Shoot();
-                }
-
+            if (_player.CannonYouAreIn == this && AutoShootDirection == this.RotationDirection && delayShotTimer <= 0f)
+            {
+                Shoot();
             }
 
             var image = (StaticImageDisplay)this.DisplayComponent;
@@ -241,18 +261,33 @@ namespace MacGame
 
         public void Shoot()
         {
-            _player.CannonYouAreIn = null;
+            // _player.CannonYouAreIn = null;
 
             var direction = ShootDirection;
             direction.Normalize();
 
-            _player.Velocity = direction * 600;
+            Vector2 velocity = direction * 600;
+
+            _player.ShootOutOfCannon(this, velocity);
 
             // Don't allow the player to enter for a bit. This is so you don't just go right back in.
-            cooldownTimer = 0f;
+            cooldownTimer = 0.5f;
             canAcceptPlayer = false;
 
             // TODO: Play Shooting sound
+
+        }
+
+        public void PlayerEntered(Player player)
+        {
+            if (AutoShootDirection == RotationDirection)
+            {
+                delayShotTimer = 0.3f;
+            }
+            else
+            {
+                delayShotTimer = 0.0f;
+            }
         }
 
     }

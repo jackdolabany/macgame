@@ -289,6 +289,10 @@ namespace MacGame
                                                 var direction = Enum.Parse<RotationDirection>(obj.Properties["AutoShoot"]);
                                                 cannon.AutoShootDirection = direction;
                                             }
+                                            if (obj.Properties.ContainsKey("SuperShot"))
+                                            {
+                                                cannon.IsSuperShot = true;
+                                            }
                                         }
                                     }
                                 }

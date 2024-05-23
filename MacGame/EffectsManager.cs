@@ -272,7 +272,7 @@ namespace MacGame
             textParticle.InitialScale = 0.4f;
             textParticle.FinalScale = 0.8f;
 
-            //textParticle.DrawDepth = TileMap.EFFECTS_DRAW_DEPTH;
+            textParticle.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
         }
     }
 }

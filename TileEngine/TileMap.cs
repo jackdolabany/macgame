@@ -10,11 +10,17 @@ namespace TileEngine
         public const float FRONTMOST_DRAW_DEPTH = 0f;
         public const float OVERLAY_DRAW_DEPTH = 0.1f;
 
+        /// <summary>
+        /// Effects like rising text that are alwasy in front of the level. Otherwise player and 
+        /// effects would be drawn at the level the player is in in the map. This way they are behind foreground elements.
+        /// </summary>
         public const float EFFECTS_DRAW_DEPTH = 0.2f;
+        
         /// <summary>
         /// The level and all enemies and game objects are drawn between this and the effects layer.
         /// </summary>
         public const float LEVEL_DRAW_DEPTH = 0.3f;
+
         public const float BACKGROUND_DRAW_DEPTH = 0.4f;
         public const float BACKMOST_DRAW_DEPTH = 1f;
 

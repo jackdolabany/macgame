@@ -346,6 +346,8 @@ namespace MacGame
             player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + 4, ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
             camera.Map = level.Map;
 
+            level.Map.PlayerDrawDepth = player.DrawDepth;
+
             return level;
         }
 

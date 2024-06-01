@@ -161,7 +161,7 @@ namespace MacGame
 
         public Vector2 Gravity = new Vector2(0, 1600);
 
-        public const float MaxFallSpeed = 16;
+        public const float MaxFallSpeed = 1000;
 
         protected Vector2 velocity;
         public Vector2 Velocity
@@ -537,6 +537,8 @@ namespace MacGame
             if (IsAffectedByGravity)
             {
                 velocity += Gravity * elapsed;
+
+                velocity.Y = Math.Min(velocity.Y, MaxFallSpeed);
             }
 
             Vector2 moveAmount = Velocity * elapsed;

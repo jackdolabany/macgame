@@ -242,7 +242,7 @@ namespace MacGame
             shovel = new MacShovel(this, textures);
 
             NormalGravity = Gravity;
-            JumpGravity = NormalGravity * 0.5f;
+            JumpGravity = NormalGravity * 0.333f;
         }
 
         public override void SetDrawDepth(float depth)
@@ -448,7 +448,7 @@ namespace MacGame
             var acceleration = maxAcceleration;
 
             friction = 1.5f;
-            jumpBoost = 500;
+            jumpBoost = 390;
 
             if (isSand)
             {

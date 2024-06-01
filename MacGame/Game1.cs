@@ -664,8 +664,8 @@ namespace MacGame
 
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
-                    spriteBatch.DrawString(Font, "Mac's\nAdventure", new Vector2(Game1.TileSize, Game1.TileSize), Color.DarkGray, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
-                    spriteBatch.DrawString(Font, "Mac's\nAdventure", new Vector2(Game1.TileSize + 4, Game1.TileSize - 4), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Font, "Mac's\nRidiculous\nAdventure", new Vector2(Game1.TileSize, Game1.TileSize), Color.DarkGray, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Font, "Mac's\nRidiculous\nAdventure", new Vector2(Game1.TileSize + 4, Game1.TileSize - 4), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
                     spriteBatch.End();
                     break;
                 default:

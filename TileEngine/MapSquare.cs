@@ -32,7 +32,7 @@ namespace TileEngine
                 Helpers.GetTileRect(6, 5)
             };
 
-    public MapSquare(int depth, bool passable)
+        public MapSquare(int depth, bool passable)
         {
             LayerTiles = new Tile[depth];
             Passable = passable;

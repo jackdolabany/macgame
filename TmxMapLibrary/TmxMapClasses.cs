@@ -681,7 +681,8 @@ namespace Squared.Tiled
             }
             tileMap.Layers = new List<TileEngine.Layer>();
 
-            for (int z = 0; z <= this.Layers.Count() - 1; z++)
+            // Need to work in reverse to travers the layers from front to back.
+            for (int z = this.Layers.Count() - 1; z >= 0; z--)
             {
                 var layer = this.Layers[z];
 
@@ -725,6 +726,15 @@ namespace Squared.Tiled
                         if (tileInfo.properties.ContainsKey("LoadClass"))
                         {
                             tileMap.MapCells[x][y].LayerTiles[z].LoadClass = tileInfo.properties["LoadClass"];
+
+                            // Reveal blocks might make formerlly impassble tiles passable. 
+                            // If they reveal a future non-passable tile, it'll set this to not 
+                            // passable again.
+                            if (tileInfo.properties["LoadClass"] == "RevealBlock")
+                            {
+                                tileMap.MapCells[x][y].Passable = true;
+                            }
+
                         }
                         else if (tileInfo.properties.ContainsKey("BlockPlayer"))
                         {

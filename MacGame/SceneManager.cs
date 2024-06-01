@@ -246,10 +246,6 @@ namespace MacGame
                             else if (loadClass == "RevealBlock")
                             {
                                 level.RevealBlockManager.AddRawBlock(new RevealBlock(x, y, z));
-                                if (!mapSquare.IsSand)
-                                {
-                                    mapSquare.Passable = true;
-                                }
                             }
                             else if (loadClass == "MineCart")
                             {

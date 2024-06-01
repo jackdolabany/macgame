@@ -59,7 +59,6 @@ namespace MacGame.Npcs
         public override void Update(GameTime gameTime, float elapsed)
         {
             // Randomly walk left and right. Randomly bark. Randomly go idle.
-
             actionTimer += elapsed;
             if (actionTimer >= actionTimeLimit)
             {

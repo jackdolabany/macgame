@@ -112,7 +112,7 @@ namespace MacGame
 
         public virtual string LockMessage()
         {
-            return $"You need {CoinsNeeded} coins to unlock this door. This is some bonus message. How is that character thing coming along?";
+            return $"You need {CoinsNeeded} coins to unlock this door.";
         }
 
         public override void Update(GameTime gameTime, float elapsed)

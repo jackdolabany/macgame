@@ -321,8 +321,9 @@ namespace MacGame
                 var gameObjects = layerDepthObjects[layer].OrderBy(o => {
                     if (o is Door) return 1;
                     if (o is Npc) return 2;
-                    if (o is Player) return 3; // always in front of kiosks on the same layer.
-                    return 4; // enemies and items in front of the player.
+                    if (o is Platform) return 3;
+                    if (o is Player) return 4; // always in front of kiosks on the same layer.
+                    return 5; // enemies and items in front of the player.
                 }).ToList();
 
                 // +2 Add a fudge factor of a game object on either side

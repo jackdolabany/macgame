@@ -71,6 +71,19 @@ namespace MacGame
 
         AlertBoxMenu gotACricketCoinMenu;
 
+        /// <summary>
+        /// If you aren't in a hub world, this is the name of the door you came from.
+        /// You'd return here if you quit or die.
+        /// </summary>
+        public static string HubDoorNameYouCameFrom = "";
+        
+        /// <summary>
+        /// Coin hints for the current level you are in. 
+        /// </summary>
+        public static Dictionary<int, string> CoinHints = new Dictionary<int, string>();
+
+        private static bool drawHappened = true;
+
         public enum TransitionType
         {
             /// <summary>
@@ -81,7 +94,7 @@ namespace MacGame
             /// <summary>
             /// Screen fades to black, then the state changes, then the screen fades to clear.
             /// </summary>
-            Fade,
+            SlowFade,
 
             /// <summary>
             /// Same as fade, but much faster for quick level transitions.
@@ -131,15 +144,20 @@ namespace MacGame
         private GameState transitionToState;
         private TransitionType transitionType;
         private float transitionTimer;
-        
+
         const float totalTransitionTime = 0.5f;
-        
+
+        // After loading assets MonoGame likes to skip  bunch of draw calls. So we'll
+        // wait a little bit of time after loading to transition to the Playing state. 
+        // Otherwise transitions will be janky.
+        static float waitAfterLoadingTimer;
+
+
         private bool IsFading;
 
         // Map to go to, but first we need to transition to the loading screen and stuff
         private string _goToMap;
         private string _putPlayerAtDoor;
-        private string _hubDoorEntered;
 
         InputManager inputManager;
 
@@ -188,13 +206,17 @@ namespace MacGame
             // that game state will actually load the level.
             _goToMap = args.TransitionToMap;
             _putPlayerAtDoor = args.PutPlayerAtDoor;
-            _hubDoorEntered = args.DoorNameEntered;
+
+            if (Game1.CurrentLevel.IsHubWorld && !string.IsNullOrEmpty(args.DoorNameEntered))
+            {
+                Game1.HubDoorNameYouCameFrom = args.DoorNameEntered;
+            }
 
             // Immediately pause
             TransitionToState(GameState.PausedForAction, TransitionType.Instant);
 
-            // Then transition to loading asap.
-            TimerManager.AddNewTimer(0.0001f, () => TransitionToState(GameState.LoadingLevel, TransitionType.FastFade), false);
+            // Then transition to loading.
+            TransitionToState(GameState.LoadingLevel, TransitionType.FastFade);
         }
 
         private void OnOneHundredTacosCollected(object? sender, EventArgs args)
@@ -235,6 +257,12 @@ namespace MacGame
         /// </summary>
         protected override void Initialize()
         {
+            // SynchronizeWithVerticalRetrace syncs the draw calls with the monitor refresh rate
+            graphics.SynchronizeWithVerticalRetrace = true;
+
+            // IsFixedTimeStep guarantees each frame is 1 60th of a call. Inserts an extra update call if needed.
+            this.IsFixedTimeStep = true;
+
             sceneManager = new SceneManager();
             base.Initialize();
         }
@@ -307,9 +335,9 @@ namespace MacGame
             Player.ResetStateForLevelTransition(true);
 
             string hubDoorPlayerCameFrom = "";
-            if (CurrentLevel != null && !string.IsNullOrEmpty(CurrentLevel.HubDoorNameYouCameFrom))
+            if (CurrentLevel != null && !string.IsNullOrEmpty(Game1.HubDoorNameYouCameFrom))
             {
-                hubDoorPlayerCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
+                hubDoorPlayerCameFrom = Game1.HubDoorNameYouCameFrom;
             }
 
             CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
@@ -322,9 +350,8 @@ namespace MacGame
                 {
                     if (door.Name == hubDoorPlayerCameFrom)
                     {
-                        if(isYeet)
+                        if (isYeet)
                         {
-                            //Player.SlideOutOfDoor(door.WorldLocation);
                             door.PlayerSlidingOut();
                         }
                         else
@@ -335,6 +362,8 @@ namespace MacGame
                     }
                 }
             }
+            HubDoorNameYouCameFrom = "";
+            CoinHints.Clear();
         }
 
         public void GoToTitleScreen()
@@ -355,9 +384,21 @@ namespace MacGame
             TransitionToState(GameState.Playing, TransitionType.Instant);
         }
 
-        public void TransitionToState(GameState transitionToState, TransitionType transitionType = TransitionType.Fade)
+        /// <summary>
+        /// This methods fades to black, transitions to the given state, and then fades back in.
+        /// </summary>
+        public void TransitionToState(GameState transitionToState, TransitionType transitionType = TransitionType.SlowFade)
         {
-            IsFading = transitionType == TransitionType.Fade || transitionType == TransitionType.FastFade;
+            if (transitionType == TransitionType.Instant)
+            {
+                this.transitionToState = transitionToState;
+                CurrentGameState = transitionToState;
+                transitionTimer = 0;
+                IsFading = false;
+                return;
+            }
+
+            IsFading = transitionType == TransitionType.SlowFade || transitionType == TransitionType.FastFade;
             if (this.transitionToState != transitionToState)
             {
                 this.transitionToState = transitionToState;
@@ -367,16 +408,6 @@ namespace MacGame
                     transitionTimer = totalTransitionTime;
                 }
             }
-        }
-
-        public bool IsTransitioningOut()
-        {
-            return transitionTimer > 0 && CurrentGameState != transitionToState;
-        }
-
-        public bool IsTransitioningOut(GameState expectedGameState)
-        {
-            return CurrentGameState != expectedGameState || IsTransitioningOut();
         }
 
         /// <summary>
@@ -402,6 +433,18 @@ namespace MacGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
+            // Loading a level at runtime takes a while and causes MonoGame to skip a bunch of Draw
+            // calls to catch up or something. We don't really want that.
+            if (!drawHappened && this.CurrentGameState == GameState.LoadingLevel)
+            {
+                return;
+            }
+            else
+            {
+                drawHappened = false;
+            }
+
             inputManager.ReadInputs();
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -463,28 +506,43 @@ namespace MacGame
             else if (_gameState == GameState.LoadingLevel)
             {
 
+                if (waitAfterLoadingTimer > 0)
+                {
+                    waitAfterLoadingTimer -= elapsed;
+                }
+
                 if (_goToMap != "" && CurrentLevel.Name != _goToMap)
                 {
-                    string hubDoorNameYouCameFrom = "";
+                    waitAfterLoadingTimer = 0.1f;
 
-                    // We're leaving the hub and going some place else. Keep track of which hub door you came from.
-                    if (CurrentLevel.Name == Game1.HubWorld)
-                    {
-                        hubDoorNameYouCameFrom = _hubDoorEntered;
-                    }
-                    else if (_goToMap != Game1.HubWorld)
-                    {
-                        // Carry the hub door name over, we're on the same level still.
-                        // This assumes you can't travel directly from level to level, only to the hub and then back to levels.
-                        hubDoorNameYouCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
-                    }
+                    // TODO: Temp delete test code!!! bad
+                    //System.Threading.Thread.Sleep(500);
+
+                    var wasInHubWorld = CurrentLevel.IsHubWorld;
 
                     // This state will just draw a black screen for a frame until we can play.
                     CurrentLevel = sceneManager.LoadLevel(_goToMap, Content, Player, Camera);
-                    CurrentLevel.HubDoorNameYouCameFrom = hubDoorNameYouCameFrom;
                     Camera.Map = CurrentLevel.Map;
 
-                    pauseMenu.SetupTitle($"{CurrentLevel.Description}");
+                    if (wasInHubWorld && !CurrentLevel.IsHubWorld)
+                    {
+                        // We just left the hub world, scan the current level for coin hints and build the dictionary for this level.
+                        // This is used by characters to give hints to the player. Note that only the first level the player goes to
+                        // Will have hints that can be given.
+                        CoinHints.Clear();
+                        foreach (var item in CurrentLevel.Items)
+                        {
+                            if (item is CricketCoin coin)
+                            {
+                                if (coin.Hint != "")
+                                {
+                                    CoinHints.Add(coin.Number, coin.Hint);
+                                }
+                            }
+                        }
+                        pauseMenu.SetupTitle($"{CurrentLevel.Description}");
+                    }
+                    _goToMap = "";
                 }
 
                 // Player just went through a door, put him where he's supposed to be.
@@ -498,14 +556,22 @@ namespace MacGame
                             break;
                         }
                     }
+                    _putPlayerAtDoor = "";
                 }
 
-                TransitionToState(GameState.Playing, TransitionType.FastFade);
-
-                // Reset everyone.
-                _putPlayerAtDoor = "";
-                _goToMap = "";
-                _hubDoorEntered = "";
+                // Wait a little bit of time after the level is loaded before transitioning. This is because MonoGame will
+                // skip a bunch of draw calls to catch up after loading a level. This will make the transition look janky.
+                if (waitAfterLoadingTimer <= 0)
+                {
+                    if (transitionToState != GameState.Playing)
+                    {
+                        // We must transition to playing but also immediately set the mode to Playing to 
+                        // trick the stupid thing into thinking we just transitioned to Playing and we need to fade in
+                        // from black.
+                        TransitionToState(GameState.Playing, TransitionType.FastFade);
+                        this.CurrentGameState = GameState.Playing;
+                    }
+                }
             }
             else if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
             {
@@ -578,6 +644,8 @@ namespace MacGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            drawHappened = true;
+
             Camera.UpdateTransformation();
             var cameraTransformation = Camera.Transform;
 
@@ -645,6 +713,7 @@ namespace MacGame
                         cameraTransformation);
 
                     spriteBatch.Draw(TileTextures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), WhiteSourceRect, Color.Black);
+
                     spriteBatch.End();
                     break;
                 case GameState.TitleScreen:
@@ -671,10 +740,13 @@ namespace MacGame
             {
                 float opacity = (transitionTimer / totalTransitionTime);
                 // fading in vs fading out.
+                // 0 is transparent, 1 is black.
                 if (CurrentGameState != transitionToState)
                 {
+                    // Fade towards black.
                     opacity = 1.0f - opacity;
                 }
+
                 DrawBlackOverScreen(spriteBatch, opacity);
             }
 
@@ -798,7 +870,7 @@ namespace MacGame
 
             _goToMap = "";
             _putPlayerAtDoor = "";
-            _hubDoorEntered = "";
+            HubDoorNameYouCameFrom = "";
 
             CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;

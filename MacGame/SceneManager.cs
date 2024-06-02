@@ -158,8 +158,7 @@ namespace MacGame
                                             var coin = (CricketCoin)item;
                                             coin.Number = int.Parse(obj.Properties["Number"]);
                                             coin.Hint = obj.Properties["Hint"];
-                                            level.CoinHints.Add(coin.Number, coin.Hint);
-                                            coin.InitializeAlreadyCollected(level);
+                                            coin.CheckIfAlreadyCollected(level.LevelNumber);
                                         }
                                     }
                                 }
@@ -299,14 +298,14 @@ namespace MacGame
             }
 
             // Add the special 100 taco coin, if the level has coins.
-            if (level.CoinHints.Any())
+            if (Game1.CoinHints.Any())
             {
                 var tacoCoin = new CricketCoin(contentManager, 0, 0, player, camera);
                 tacoCoin.Enabled = false; // will be enabled once you collect 100 tacos.
-                tacoCoin.Hint = "100 Tacos";
+                tacoCoin.Hint = "";
                 tacoCoin.IsTacoCoin = true;
-                tacoCoin.Number = level.CoinHints.Count + 1;
-                tacoCoin.InitializeAlreadyCollected(level);
+                tacoCoin.Number = Game1.CoinHints.Count + 1;
+                tacoCoin.CheckIfAlreadyCollected(level.LevelNumber);
                 level.TacoCoin = tacoCoin;
                 level.Items.Add(tacoCoin);
             }

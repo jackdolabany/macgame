@@ -252,5 +252,6 @@ namespace MacGame
             this.State = DoorState.ExitOpening;
             _player.IsInvisible = true;
             _player.PositionForSlideOutOfDoor(this.WorldLocation);
+        }
     }
 }

@@ -5,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TileEngine;
 using MacGame.RevealBlocks;
-using System.Runtime.CompilerServices;
 using MacGame.Enemies;
 using MacGame.Items;
 using MacGame.Npcs;
@@ -28,12 +26,6 @@ namespace MacGame
         /// </summary>
         public int LevelNumber = 0;
         public string Description = "";
-
-        /// <summary>
-        /// If you aren't in a hub world, this is the name of the door you came from.
-        /// You'd return here if you quit or die.
-        /// </summary>
-        public string HubDoorNameYouCameFrom = "";
 
         /// <summary>
         /// True if this map represents a room in the main hub world. As opposed to a level looking for a specific cricket coin.
@@ -81,12 +73,7 @@ namespace MacGame
             Npcs = new List<Npc>();
             Doors = new List<Door>();
             RevealBlockManager = new RevealBlockManager();
-            CoinHints = new Dictionary<int, string>();
         }
-
-        public int SelectedHintIndex;
-
-        public Dictionary<int, string> CoinHints;
 
         public static void AddEnemy(Enemy enemy)
         {

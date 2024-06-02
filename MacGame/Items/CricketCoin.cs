@@ -35,11 +35,11 @@ namespace MacGame.Items
 
             IsInChest = false;
         }
-        public void InitializeAlreadyCollected(Level level)
+        public void CheckIfAlreadyCollected(int levelNumber)
         {
-            if (Game1.State.LevelsToCoins.ContainsKey(level.LevelNumber))
+            if (Game1.State.LevelsToCoins.ContainsKey(levelNumber))
             {
-                var coins = Game1.State.LevelsToCoins[level.LevelNumber];
+                var coins = Game1.State.LevelsToCoins[levelNumber];
                 if (coins.Contains(Number))
                 {
                     AlreadyCollected = true;

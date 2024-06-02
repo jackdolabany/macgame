@@ -49,6 +49,7 @@ namespace MacGame
             {
                 MenuManager.AddMenu(confirmExitGame);
             });
+           
         }
 
         public void SetupTitle(string title)

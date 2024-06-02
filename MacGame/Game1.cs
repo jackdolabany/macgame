@@ -152,7 +152,6 @@ namespace MacGame
         // Otherwise transitions will be janky.
         static float waitAfterLoadingTimer;
 
-
         private bool IsFading;
 
         // Map to go to, but first we need to transition to the loading screen and stuff
@@ -380,7 +379,7 @@ namespace MacGame
 
         public void Unpause()
         {
-            MenuManager.ClearMenus();
+            MenuManager.ClearMenus();            
             TransitionToState(GameState.Playing, TransitionType.Instant);
         }
 
@@ -457,11 +456,14 @@ namespace MacGame
                 return;
             }
 
+            // Menu manager update might unpause the game, we don't want to re-pause it on the same update frame.
+            var isPaused = CurrentGameState == GameState.PausedWithMenu;
+
             MenuManager.Update(elapsed);
 
             if (_gameState == GameState.Playing)
             {
-                if (Player.Enabled && inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause)
+                if (Player.Enabled && inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause && !isPaused)
                 {
                     Pause();
                 }
@@ -596,6 +598,14 @@ namespace MacGame
                 TimerManager.Update(elapsed);
                 CurrentLevel.PausedUpdate(gameTime, elapsed);
             }
+            //else if (CurrentGameState == GameState.PausedWithMenu)
+            //{
+            //    // Check if they are trying to unpause.
+            //    if (inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause)
+            //    {
+            //        Unpause();
+            //    }
+            //}
 
             if (Game1.IS_DEBUG)
             {

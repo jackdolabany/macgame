@@ -657,7 +657,8 @@ namespace MacGame
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && InputManager.CurrentAction.down && OnPlatform)
             {
                 // Find every platform below the player and mark them all as poison.
-                var belowPlayerRect = new Rectangle(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom, this.CollisionRectangle.Width, 3);
+                // extend left and right a bit in case the player is moving.
+                var belowPlayerRect = new Rectangle(this.CollisionRectangle.Left - 32, this.CollisionRectangle.Bottom, this.CollisionRectangle.Width + 64, 3);
 
                 foreach (var platform in Game1.Platforms)
                 {

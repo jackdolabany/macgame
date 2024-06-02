@@ -317,8 +317,8 @@ namespace MacGame
 
             gotACricketCoinMenu = new AlertBoxMenu(this, "You got a Cricket Coin!", (a, b) =>
             {
-                TransitionToState(GameState.Playing);
-                GoToHub(false);
+                MenuManager.ClearMenus();
+                TransitionToState(GameState.Playing, TransitionType.Instant);
             });
         }
 

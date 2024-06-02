@@ -35,6 +35,7 @@ namespace MacGame.Items
 
             IsInChest = false;
         }
+
         public void CheckIfAlreadyCollected(int levelNumber)
         {
             if (Game1.State.LevelsToCoins.ContainsKey(levelNumber))
@@ -43,17 +44,16 @@ namespace MacGame.Items
                 if (coins.Contains(Number))
                 {
                     AlreadyCollected = true;
+                    CanBeCollected = false;
+                    this.DisplayComponent.TintColor = Color.White * 0.5f;
                 }
-            }
-
-            if (AlreadyCollected)
-            {
-                this.DisplayComponent.TintColor = Color.White * 0.5f;
             }
         }
 
         public override void WhenCollected(Player player)
         {
+            if (AlreadyCollected) return;
+
             // Set max tacos for this level.
             if (Game1.State.MaxTacosPerLevel.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {

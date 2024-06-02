@@ -257,10 +257,10 @@ namespace MacGame
         protected override void Initialize()
         {
             // SynchronizeWithVerticalRetrace syncs the draw calls with the monitor refresh rate
-            graphics.SynchronizeWithVerticalRetrace = true;
+            // graphics.SynchronizeWithVerticalRetrace = true;
 
             // IsFixedTimeStep guarantees each frame is 1 60th of a call. Inserts an extra update call if needed.
-            this.IsFixedTimeStep = true;
+            //this.IsFixedTimeStep = true;
 
             sceneManager = new SceneManager();
             base.Initialize();

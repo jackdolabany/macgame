@@ -334,6 +334,17 @@ namespace MacGame
                 }
             }
 
+            // When climbing a vine, to make it look more natural, offset the sprite from the CollisionRectangle a bit.
+            if (IsClimbingVine)
+            {
+                var climbingOffset = new Vector2(-4, 0);
+                if (this.Flipped)
+                {
+                    climbingOffset *= -1;
+                }
+                this.animations.WorldLocation += climbingOffset;
+            }
+
         }
 
         /// <summary>
@@ -1186,6 +1197,7 @@ namespace MacGame
                 }
             }
             base.Draw(spriteBatch);
+
         }
 
         public bool IsFacingRight()

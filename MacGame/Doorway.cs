@@ -19,5 +19,10 @@ namespace MacGame
             var sid = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\BigTextures"), Helpers.GetBigTileRect(3, 1));
             this.DisplayComponent = sid;
         }
+
+        public override void PlayerSlidingOut()
+        {
+            // Do nothing.
+        }
     }
 }

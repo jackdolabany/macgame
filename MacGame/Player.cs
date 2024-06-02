@@ -363,11 +363,17 @@ namespace MacGame
         /// </summary>
         public void SlideOutOfDoor(Vector2 doorLocation)
         {
-            this.worldLocation = doorLocation + new Vector2(0, -4);
-            this.Flipped = true;
+            PositionForSlideOutOfDoor(doorLocation);
             this.velocity = new Vector2(280, 0);
             this._state = MacState.IsKnockedDown;
+
             // TODO: Play sound
+        }
+
+        public void PositionForSlideOutOfDoor(Vector2 doorLocation)
+        {
+            this.worldLocation = doorLocation + new Vector2(0, -4);
+            this.Flipped = true;
         }
 
         public void CheckEnemyInteractions(Enemy enemy)

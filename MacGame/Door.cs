@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TileEngine;
 
 namespace MacGame
@@ -28,5 +29,7 @@ namespace MacGame
         {
             GlobalEvents.FireDoorEntered(this, this.GoToMap, this.GoToDoorName, this.Name);
         }
+
+        public abstract void PlayerSlidingOut();
     }
 }

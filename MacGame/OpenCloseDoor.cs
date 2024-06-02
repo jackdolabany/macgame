@@ -25,13 +25,31 @@ namespace MacGame
 
         public enum DoorState
         {
-            Idle, Opening, Closing
-        }
+            /// <summary>
+            /// Door is shut waiting to be opened.
+            /// </summary>
+            Idle, 
 
-        /// <summary>
-        /// If you selected a hint when entering the door, store it here.
-        /// </summary>
-        private int? hintIndex;
+            /// <summary>
+            /// Mac is entering the door and it's opening.
+            /// </summary>
+            EnterOpening, 
+
+            /// <summary>
+            /// Mac is entering the door and it's closing.
+            /// </summary>
+            EnterClosing, 
+
+            /// <summary>
+            /// The door is opening to kick Mac out.
+            /// </summary>
+            ExitOpening, 
+
+            /// <summary>
+            /// Mac has been kicked out and the door is closing.
+            /// </summary>
+            ExitClosing
+        }
 
         /// <summary>
         /// Set this to something to pause for a bit before transitioning to the next level after the door closes.
@@ -138,16 +156,16 @@ namespace MacGame
             {
                 DoorAnimations.Play("idle");
             }
-            else if (this.State == DoorState.Opening)
+            else if (this.State == DoorState.EnterOpening)
             {
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
                     pauseBeforeTransitionTimer = 0.5f;
-                    this.State = DoorState.Closing;
+                    this.State = DoorState.EnterClosing;
                     DoorAnimations.Play("close");
                 }
             }
-            else if (this.State == DoorState.Closing)
+            else if (this.State == DoorState.EnterClosing)
             {
                 if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 2 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
                 {
@@ -159,12 +177,30 @@ namespace MacGame
                     }
                     if (pauseBeforeTransitionTimer <= 0)
                     {
-                        GlobalEvents.FireDoorEntered(this, this.GoToMap, this.GoToDoorName, this.Name, hintIndex);
+                        GlobalEvents.FireDoorEntered(this, this.GoToMap, this.GoToDoorName, this.Name);
                         this.State = DoorState.Idle;
                     }
                 }
             }
-            
+            else if (this.State == DoorState.ExitOpening)
+            {
+                _player.IsInvisible = true;
+                if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
+                {
+                    _player.IsInvisible = false;
+                    _player.SlideOutOfDoor(this.WorldLocation);
+                    this.State = DoorState.ExitClosing;
+                    DoorAnimations.Play("close");
+                }
+            }
+            else if (this.State == DoorState.ExitClosing)
+            {
+                if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
+                {
+                    this.State = DoorState.Idle;
+                }
+            }
+
             base.Update(gameTime, elapsed);
 
             // Need to offset the position of the DrawObject because it gets all screwed up since the
@@ -177,11 +213,10 @@ namespace MacGame
         /// <summary>
         /// Call this to open the door then close it on Mac and transition to the next level.
         /// </summary>
-        public void OpenThenCloseThenTransition(int? hintIndex = null)
+        public void OpenThenCloseThenTransition()
         {
             DoorAnimations.Play("open");
-            this.State = DoorState.Opening;
-            this.hintIndex = hintIndex;
+            this.State = DoorState.EnterOpening;
             GlobalEvents.FireBeginDoorEnter(this, EventArgs.Empty);
         }
 
@@ -200,10 +235,6 @@ namespace MacGame
                 }
                 // TODO: Play a sound effect here.
             }
-            else if (IsToSubworld)
-            {
-                GlobalEvents.FireSubWorldDoorEntered(this, this.Name, this.GoToMap);
-            }
             else
             {
                 OpenThenCloseThenTransition();
@@ -214,5 +245,12 @@ namespace MacGame
         {
             base.Draw(spriteBatch);
         }
+
+        public override void PlayerSlidingOut()
+        {
+            DoorAnimations.Play("open");
+            this.State = DoorState.ExitOpening;
+            _player.IsInvisible = true;
+            _player.PositionForSlideOutOfDoor(this.WorldLocation);
     }
 }

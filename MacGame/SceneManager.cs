@@ -347,39 +347,5 @@ namespace MacGame
 
             return level;
         }
-
-        /// <summary>
-        ///  Sneak a peek at another level without actually calling LoadLevel which has tons of side effects.
-        ///  This can be used to see if you are going to a sub world and what the hints are and whatever you need.
-        /// </summary>
-        public NextLevelInfo GetNextLevelInfo(string mapName, ContentManager contentManager)
-        {
-            var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
-
-            var hintObjects = map.ObjectModifiers.Where(obj => obj.Properties.ContainsKey("Hint"))
-                .Select(x => new { Number = int.Parse(x.Properties["Number"]), Hint = x.Properties["Hint"] })
-                .OrderBy(x => x.Number);
-
-            var nextLevelInfo = new NextLevelInfo();
-            nextLevelInfo.MapName = mapName;
-            nextLevelInfo.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
-            if (map.Properties.ContainsKey("Description"))
-            {
-                nextLevelInfo.Description = map.Properties["Description"];
-            }
-            
-            foreach (var hintObject in hintObjects)
-            {
-                nextLevelInfo.CoinHints.Add(hintObject.Number, hintObject.Hint);
-            }
-
-            // If it has coin hints, it has a 100 taco hint.
-            if(nextLevelInfo.CoinHints.Any())
-            {
-                nextLevelInfo.CoinHints.Add(nextLevelInfo.CoinHints.Count + 1, "100 Tacos");
-            }   
-
-            return nextLevelInfo;
-        }
     }
 }

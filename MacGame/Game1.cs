@@ -66,7 +66,8 @@ namespace MacGame
         /// </summary>
         public const string SaveGameFolder = "MacsAdventure";
 
-        public const string StartingHubWorld = "TestHub";
+        public const string StartingWorld = "TestHub";
+        public const string HubWorld = "TestHub";
 
         AlertBoxMenu gotACricketCoinMenu;
 
@@ -139,7 +140,6 @@ namespace MacGame
         private string _goToMap;
         private string _putPlayerAtDoor;
         private string _hubDoorEntered;
-        private int? _hintIndex;
 
         InputManager inputManager;
 
@@ -165,7 +165,6 @@ namespace MacGame
 
             GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
-            GlobalEvents.BeginSubWorldDoorEnter += OnBeginSubWorldDoorEnter;
             GlobalEvents.OneHundredTacosCollected += OnOneHundredTacosCollected;
             GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
 
@@ -190,23 +189,12 @@ namespace MacGame
             _goToMap = args.TransitionToMap;
             _putPlayerAtDoor = args.PutPlayerAtDoor;
             _hubDoorEntered = args.DoorNameEntered;
-            _hintIndex = args.NewHintIndex;
 
             // Immediately pause
             TransitionToState(GameState.PausedForAction, TransitionType.Instant);
 
             // Then transition to loading asap.
             TimerManager.AddNewTimer(0.0001f, () => TransitionToState(GameState.LoadingLevel, TransitionType.FastFade), false);
-        }
-
-        private void OnBeginSubWorldDoorEnter(object? sender, SubWorldDoorEnteredEventArgs args)
-        {
-            var nextLevelInfo = sceneManager.GetNextLevelInfo(args.TransitionToMap, Content);
-
-            // Show the hint menu and they'll get a chance to choose which level to go to.
-            var hintMenu = new HintMenu(this, nextLevelInfo, args.DoorNameEntered); // Creating garbage, I know it's bad!
-            MenuManager.AddMenu(hintMenu);
-            TransitionToState(GameState.PausedWithMenu, TransitionType.Instant);
         }
 
         private void OnOneHundredTacosCollected(object? sender, EventArgs args)
@@ -324,7 +312,7 @@ namespace MacGame
                 hubDoorPlayerCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
             }
 
-            CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
 
             // Place the player at the door they came from.
@@ -336,7 +324,8 @@ namespace MacGame
                     {
                         if(isYeet)
                         {
-                            Player.SlideOutOfDoor(door.WorldLocation);
+                            //Player.SlideOutOfDoor(door.WorldLocation);
+                            door.PlayerSlidingOut();
                         }
                         else
                         {
@@ -476,27 +465,26 @@ namespace MacGame
 
                 if (_goToMap != "" && CurrentLevel.Name != _goToMap)
                 {
+                    string hubDoorNameYouCameFrom = "";
+
+                    // We're leaving the hub and going some place else. Keep track of which hub door you came from.
+                    if (CurrentLevel.Name == Game1.HubWorld)
+                    {
+                        hubDoorNameYouCameFrom = _hubDoorEntered;
+                    }
+                    else if (_goToMap != Game1.HubWorld)
+                    {
+                        // Carry the hub door name over, we're on the same level still.
+                        // This assumes you can't travel directly from level to level, only to the hub and then back to levels.
+                        hubDoorNameYouCameFrom = CurrentLevel.HubDoorNameYouCameFrom;
+                    }
 
                     // This state will just draw a black screen for a frame until we can play.
                     CurrentLevel = sceneManager.LoadLevel(_goToMap, Content, Player, Camera);
+                    CurrentLevel.HubDoorNameYouCameFrom = hubDoorNameYouCameFrom;
                     Camera.Map = CurrentLevel.Map;
 
-                    if (_hintIndex.HasValue)
-                    {
-                        CurrentLevel.SelectedHintIndex = _hintIndex.Value;
-
-                        // Only when a hint is selected do we care to also track the door you came from. This is so we can
-                        // boot you out the same door if you die.
-                        CurrentLevel.HubDoorNameYouCameFrom = _hubDoorEntered;
-                    }
-
-                    var hint = "";
-                    if (CurrentLevel.CoinHints.ContainsKey(CurrentLevel.SelectedHintIndex))
-                    {
-                        hint = "\"" + CurrentLevel.CoinHints[CurrentLevel.SelectedHintIndex] + "\"";
-                    }
-
-                    pauseMenu.SetupTitle($"{CurrentLevel.Description}\n{hint}");
+                    pauseMenu.SetupTitle($"{CurrentLevel.Description}");
                 }
 
                 // Player just went through a door, put him where he's supposed to be.
@@ -518,7 +506,6 @@ namespace MacGame
                 _putPlayerAtDoor = "";
                 _goToMap = "";
                 _hubDoorEntered = "";
-                _hintIndex = null;
             }
             else if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
             {
@@ -812,9 +799,8 @@ namespace MacGame
             _goToMap = "";
             _putPlayerAtDoor = "";
             _hubDoorEntered = "";
-            _hintIndex = null;
 
-            CurrentLevel = sceneManager.LoadLevel(StartingHubWorld, Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
 
             GoToHub(false);

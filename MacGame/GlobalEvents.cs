@@ -22,11 +22,6 @@ namespace MacGame
         /// You successfully entered a door and are transitioning to a new map.
         /// </summary>
         public static event EventHandler<DoorEnteredEventArgs>? DoorEntered;
-        
-        /// <summary>
-        /// You entered a sub world door from the main hub. We need to show you a special menu to choose where you want to go.
-        /// </summary>
-        public static event EventHandler<SubWorldDoorEnteredEventArgs>? BeginSubWorldDoorEnter;
 
         public static event EventHandler? OneHundredTacosCollected;
 
@@ -48,22 +43,12 @@ namespace MacGame
             }
         }
 
-        public static void FireDoorEntered(Object sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered, int? newHintIndex = null)
+        public static void FireDoorEntered(Object sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered)
         {
             var evt = DoorEntered;
             if (evt != null)
             {
-                var args = new DoorEnteredEventArgs(transitionToMap, putPlayerAtDoor, doorNameEntered, newHintIndex);
-                evt(sender, args);
-            }
-        }
-
-        public static void FireSubWorldDoorEntered(Object sender, string doorNameEntered, string transitionToMap)
-        {
-            var evt = BeginSubWorldDoorEnter;
-            if (evt != null)
-            {
-                var args = new SubWorldDoorEnteredEventArgs(doorNameEntered, transitionToMap);
+                var args = new DoorEnteredEventArgs(transitionToMap, putPlayerAtDoor, doorNameEntered);
                 evt(sender, args);
             }
         }
@@ -83,14 +68,12 @@ namespace MacGame
         public string TransitionToMap { get; set; }
         public string PutPlayerAtDoor { get; set; }
         public string DoorNameEntered { get; set; }
-        public int? NewHintIndex { get; set; }
 
-        public DoorEnteredEventArgs(string transitionToMap, string putPlayerAtDoor, string doorNameEntered, int? newHintIndex)
+        public DoorEnteredEventArgs(string transitionToMap, string putPlayerAtDoor, string doorNameEntered)
         {
             TransitionToMap = transitionToMap;
             PutPlayerAtDoor = putPlayerAtDoor;
             DoorNameEntered = doorNameEntered;
-            NewHintIndex = newHintIndex;
         }
     }
 

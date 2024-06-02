@@ -285,7 +285,7 @@ namespace MacGame
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 
-            Game1.State = new StorageState();
+            Game1.State = new StorageState(1);
             Player = new Player(Content, inputManager, deadMenu);
             
             // test
@@ -318,6 +318,8 @@ namespace MacGame
             gotACricketCoinMenu = new AlertBoxMenu(this, "You got a Cricket Coin!", (a, b) =>
             {
                 MenuManager.ClearMenus();
+
+                StorageManager.TrySaveGame();
                 TransitionToState(GameState.Playing, TransitionType.Instant);
             });
         }
@@ -870,8 +872,14 @@ namespace MacGame
             spriteBatch.Draw(Game1.TileTextures, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Game1.WhiteSourceRect, Color.Black * opacity);
         }
 
-        public void LoadSavedGame(StorageState? ss)
+        public void LoadSavedGame(StorageState? ss, int saveSlot)
         {
+
+            if (ss == null)
+            {
+                ss = new StorageState(saveSlot);
+            }
+
             SoundManager.StopSong();
             MenuManager.ClearMenus();
             Game1.State = (StorageState)ss.Clone();

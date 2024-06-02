@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MacGame
 {
@@ -9,9 +10,9 @@ namespace MacGame
     public class StorageState: ICloneable
     {
         /// <summary>
-        /// Which save slot this is.
+        /// Which save slot this is, 1 through 3.
         /// </summary>
-        public int Index { get; set; }
+        public int SaveSlot { get; set; }
 
         /// <summary>
         /// Each coin should have a unique index 1-x. Each level should have a number representing the sub world
@@ -28,10 +29,18 @@ namespace MacGame
         /// </summary>
         public bool HasBeatedGame { get; set; }
 
+        /// <param name="saveSlot">1 through 3</param>
+        public StorageState(int saveSlot)
+        {
+            if (saveSlot < 1) throw new Exception("There is no save slot 0. It starts at 1");
+
+            if (saveSlot > 3) throw new Exception("Only 3 save slots.");
+            this.SaveSlot = saveSlot;
+        }
+
         public object Clone()
         {
-            var clone = new StorageState();
-            clone.Index = this.Index;
+            var clone = new StorageState(this.SaveSlot);
             clone.LevelsToCoins = new Dictionary<int, HashSet<int>>(this.LevelsToCoins);
             clone.MaxTacosPerLevel = new Dictionary<int, int>(this.MaxTacosPerLevel);
             clone.UnlockedDoors = new Dictionary<int, HashSet<string>>(this.UnlockedDoors);

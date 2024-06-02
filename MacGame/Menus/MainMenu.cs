@@ -5,16 +5,20 @@ namespace MacGame
     public class MainMenu : Menu
     {
         Menu confirmMenu;
+        Menu loadMenu;
 
         public MainMenu(Game1 game)
             : base(game)
         {
             this.menuTitle = "";
 
-            AddOption("New Game", (sender, args) => game.GoToHub(false));
+            loadMenu = new LoadMenu(game);
+
+            AddOption("Play", (sender, args) => MenuManager.AddMenu(loadMenu));
 
             confirmMenu = new YesNoMenu(Game, "Are you sure you want\nto exit the game?", (sender, args) => this.Game.Exit());
             confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 30);
+
             AddOption("Quit", (sender, args) => {
                 confirmMenu.Scale = this.Scale;
                 MenuManager.AddMenu(confirmMenu);

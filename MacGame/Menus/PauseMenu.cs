@@ -21,9 +21,6 @@ namespace MacGame
             confirmExitGame.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 30);
             confirmExitGame.Scale = this.Scale;
 
-            var saveMenu = new SaveMenu(game);
-            var loadMenu = new LoadMenu(game);
-
             AddOption("Back", (a, b) => {
                 //SoundManager.PlaySound("rollover2");
                 game.Unpause();
@@ -33,16 +30,6 @@ namespace MacGame
             var option = AddOption("Back to Hub", (a, b) => {
                 //SoundManager.PlaySound("rollover2");
                 Game.GoToHub(true);
-            });
-
-            AddOption("Save", (a, b) => {
-                //SoundManager.PlaySound("rollover2");
-                MenuManager.AddMenu(saveMenu);
-            });
-
-            AddOption("Load", (a, b) => {
-                //SoundManager.PlaySound("rollover2");
-                MenuManager.AddMenu(loadMenu);
             });
 
             AddOption("Quit", (a, b) =>

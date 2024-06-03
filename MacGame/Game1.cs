@@ -236,9 +236,9 @@ namespace MacGame
             tacoCoin.CanBeCollected = false;
 
             // Coin should bounce up then down.
-            TimerManager.AddNewTimer(0.3f, () => tacoCoin.Velocity = new Vector2(0, -160f), false) // wait a sec and then move the coin up.
-                .Then(0.5f, () => tacoCoin.Velocity = -tacoCoin.Velocity, false) // then down
-                .Then(0.5f, () => tacoCoin.Velocity = Vector2.Zero, false); // then stop
+            TimerManager.AddNewTimer(0.3f, () => tacoCoin.Velocity = new Vector2(0, -160f)) // wait a sec and then move the coin up.
+                .Then(0.5f, () => tacoCoin.Velocity = -tacoCoin.Velocity) // then down
+                .Then(0.5f, () => tacoCoin.Velocity = Vector2.Zero); // then stop
 
             TransitionToState(GameState.RevealTacoCoin, TransitionType.Instant);
         }

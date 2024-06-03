@@ -53,7 +53,7 @@ namespace MacGame
             return AddTimer(nextTimer);
         }
 
-        public static Timer Then(this Timer timer, float time, System.Action onTimer, bool repeat)
+        public static Timer Then(this Timer timer, float time, System.Action onTimer, bool repeat = false)
         {
             var nextTimer = new Timer(time, time, onTimer, repeat ? int.MaxValue : 0);
             timer.AddEnableAfterTimer(nextTimer);
@@ -72,12 +72,12 @@ namespace MacGame
             return AddTimer(timer);
         }
 
-        public static Timer AddNewTimer(float time, System.Action action, bool repeat)
+        public static Timer AddNewTimer(float time, System.Action action, bool repeat = false)
         {
             return AddNewTimer(time, time, action, repeat ? int.MaxValue : 0);
         }
 
-        public static Timer AddNewTimer(float time, System.Action action, int cycles = int.MaxValue)
+        public static Timer AddNewTimer(float time, System.Action action, int cycles)
         {
             return AddNewTimer(time, time, action, cycles);
         }

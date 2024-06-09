@@ -18,7 +18,7 @@ namespace MacGame
             {
                 this.Game.GoToTitleScreen();
             });
-            confirmExitGame.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 30);
+            confirmExitGame.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 120);
             confirmExitGame.Scale = this.Scale;
 
             AddOption("Back", (a, b) => {

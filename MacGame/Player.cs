@@ -98,7 +98,7 @@ namespace MacGame
         private float yPositionWhenLastOnVine = 0;
 
         public bool IsInMineCart = false;
-        private bool HasInfiniteJump
+        private bool HasWings
         {
             get
             {
@@ -286,7 +286,7 @@ namespace MacGame
                 HandleInputs(elapsed);
             }
 
-            if (HasInfiniteJump)
+            if (HasWings)
             {
                 wings.Update(gameTime, elapsed);
             }
@@ -688,12 +688,13 @@ namespace MacGame
                 jumpButtonHeldDownTimer = maxJumpButtonHeldDownTime;
                 onGround = false;
             }
-            else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasInfiniteJump && this.Velocity.Y >= 0)
+            else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasWings && this.Velocity.Y >= 0)
             {
                 // Infinite Jump Jump.
-                this.velocity.Y = -jumpBoost;
+                this.velocity.Y = -jumpBoost * 1.5f;
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("jump");
+                isInJumpFromGround = true;
             }
             else if (InputManager.CurrentAction.jump
                 && !InputManager.PreviousAction.jump
@@ -859,7 +860,7 @@ namespace MacGame
             }
 
             // Limit the time the player has the infinite jump powerup. They'll only lose it after some time if they hit the ground.
-            if (HasInfiniteJump)
+            if (HasWings)
             {
                 InfiniteJumpTimer += elapsed;
                 if ((InfiniteJumpTimer >= 6f && OnGround) || IsClimbingLadder || IsClimbingVine)
@@ -1006,7 +1007,7 @@ namespace MacGame
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
             {
                 // Regular jump.
-                this.velocity.Y -= 450;
+                this.velocity.Y -= 550;
                 SoundManager.PlaySound("jump");
             }
 
@@ -1180,7 +1181,7 @@ namespace MacGame
 
             if (IsInCannon) return;
 
-            if(HasInfiniteJump)
+            if (HasWings)
             {
                 wings.Draw(spriteBatch);
             }

@@ -152,7 +152,7 @@ namespace MacGame
             if (!string.IsNullOrEmpty(menuTitle))
             {
                 position.Y += (int)Game1.Font.MeasureString(menuTitle).Y;
-                position.Y += 10; // Plus some padding.
+                position.Y += 40; // Plus some padding.
             }
 
             // update each menu entry's location in turn

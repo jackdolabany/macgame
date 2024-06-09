@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="2">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="3">
  <properties>
   <property name="LevelNumber" value="1"/>
  </properties>
@@ -24,6 +24,11 @@
    <properties>
     <property name="GoToDoor" value="World1YellowHouse"/>
     <property name="GoToMap" value="World1"/>
+   </properties>
+  </object>
+  <object id="2" x="13.0909" y="45.8182" width="14.2727" height="13.2727">
+   <properties>
+    <property name="Convo" value="Me:Do you just go into people's houses?;Mac:only super cool people;Me:awww;"/>
    </properties>
   </object>
  </objectgroup>

@@ -260,6 +260,26 @@ namespace MacGame
                                 var npc = (Npc)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
                                 level.Npcs.Add(npc);
                                 layerDepthObjects[z].Add(npc);
+
+                                // NPC modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
+                                            obj.Rectangle.Y * Game1.TileScale,
+                                            obj.Rectangle.Width * Game1.TileScale,
+                                            obj.Rectangle.Height * Game1.TileScale);
+
+                                    if (scaledRect.Contains(npc.CollisionRectangle))
+                                    {
+                                        foreach (var prop in obj.Properties)
+                                        {
+                                            if (obj.Properties.ContainsKey("Convo"))
+                                            {
+                                                npc.CreateConversationOverride(obj.Properties["Convo"]);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             else if (loadClass == "Cannon")
                             {

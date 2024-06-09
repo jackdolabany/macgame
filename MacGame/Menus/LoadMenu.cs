@@ -11,7 +11,7 @@ namespace MacGame
         {
             this.menuTitle = "Load Game";
             
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 3f)));
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 4f)));
 
         }
 

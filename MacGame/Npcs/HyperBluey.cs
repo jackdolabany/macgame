@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.ComponentModel.Design;
 using TileEngine;
 
 namespace MacGame.Npcs
@@ -39,20 +40,36 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            var rando = Game1.Randy.Next(0, 2);
+            var rando = Game1.Randy.Next(0, 4);
 
             if (rando == 0)
             {
-                ConversationManager.AddMessage("Wow you look like a bearded dragon like me!", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
-                ConversationManager.AddMessage("Are you blind? I'm a Crested Gecko.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                MacSays("Wow you look like a bearded dragon like me!");
+                ISay("Are you blind? I'm a Crested Gecko.");
             }
-            else
+            else if (rando == 1)
             {
-                ConversationManager.AddMessage("Hi I'm Mac", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
-                ConversationManager.AddMessage("My name is Hyper Bluey", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                ConversationManager.AddMessage("If you don't like it you can go chew on walnuts buddy", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                ConversationManager.AddMessage("I love it", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
+                MacSays("Hi I'm Mac");
+                ISay("My name is Hyper Bluey");
+                ISay("If you don't like it you can chew on walnuts buddy");
+                MacSays("I love it");
             }
+            else if (rando == 2)
+            {
+                ISay("Sometimes I wonder what it's all about");
+                MacSays("Life?");
+                ISay("No, this game");
+            }
+            else if (rando == 3)
+            {
+                ISay("Knock Knock");
+                MacSays("Who's there?");
+                ISay("Guy");
+                MacSays("Guy who?");
+                ISay("Guy who walks into my house without knocking");
+                MacSays("I don't get it");
+            }
+
         }
     }
 }

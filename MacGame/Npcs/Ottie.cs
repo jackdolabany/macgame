@@ -102,7 +102,7 @@ namespace MacGame.Npcs
         public override void InitiateConversation()
         {
             ConversationManager.AddMessage("Hi I'm Mac!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
-            ConversationManager.AddMessage("My name is Ottis. I am a good boy.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("My name is Ottis. I am a good boy. Go in this door and see if you can fetch all of the coins for me.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

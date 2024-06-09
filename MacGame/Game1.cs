@@ -302,9 +302,17 @@ namespace MacGame
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
 
-            GoToHub(false);
-
-            Camera.Map = CurrentLevel.Map;
+            bool startAtTitleScreen = true;
+            if (startAtTitleScreen)
+            {
+                TransitionToState(GameState.TitleScreen, TransitionType.Instant);
+            }
+            else
+            {
+                GoToHub(false);
+                Camera.Map = CurrentLevel.Map;
+                TransitionToState(GameState.Playing, TransitionType.Instant);
+            }
 
             // Basic Camera Setup
             Camera.Zoom = Camera.DEFAULT_ZOOM;
@@ -312,8 +320,6 @@ namespace MacGame
             Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
             ConversationManager.Initialize(Content);
-
-            CurrentGameState = GameState.Playing;
 
             gotACricketCoinMenu = new AlertBoxMenu(this, "You got a Cricket Coin!", (a, b) =>
             {

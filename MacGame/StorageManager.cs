@@ -98,7 +98,14 @@ namespace MacGame
 
         private static async void LoadGameWithStorageState(int saveSlot)
         {
-            var ss = await LoadStorageStateForSlot(saveSlot);
+            var loadTask = LoadStorageStateForSlot(saveSlot);
+
+            // No async just yet, would need to refactor Game1 to deal with laoding states and possibly update a 
+            // loading screen. But this should be pretty quick for now.
+            loadTask.Wait();
+
+            var ss = loadTask.Result;
+
             _game.LoadSavedGame(ss, saveSlot);
             DoneSavingOrLoading();
         }

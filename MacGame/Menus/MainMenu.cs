@@ -17,7 +17,7 @@ namespace MacGame
             AddOption("Play", (sender, args) => MenuManager.AddMenu(loadMenu));
 
             confirmMenu = new YesNoMenu(Game, "Are you sure you want\nto exit the game?", (sender, args) => this.Game.Exit());
-            confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 30);
+            confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 120);
 
             AddOption("Quit", (sender, args) => {
                 confirmMenu.Scale = this.Scale;

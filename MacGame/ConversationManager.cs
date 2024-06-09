@@ -81,8 +81,7 @@ namespace MacGame
 
             public void PlaySound()
             {
-                // TODO: Play sound
-                //SoundManager.PlaySound("message");
+                SoundManager.PlaySound("ConversationStart");
             }
         }
 
@@ -241,10 +240,9 @@ namespace MacGame
             if (letterTimer >= letterTimerGoal && currentLetterIndex < totalLetters)
             {
                 currentLetterIndex++;
-                if (currentLetterIndex % 3 == 0)
+                if (currentLetterIndex % 5 == 0)
                 {
-                    // TODO: Sound for this
-                    //SoundManager.PlaySound("menumove", 0.35f, 0.5f, 0.5f);
+                    SoundManager.PlaySound("TypeLetter", 0.35f, 0.5f);
                 }
                 letterTimer -= letterTimerGoal;
             }

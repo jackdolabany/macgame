@@ -442,7 +442,7 @@ namespace MacGame
             else
             {
                 invincibleTimeRemaining = 0.75f;
-                SoundManager.PlaySound("take_hit");
+                SoundManager.PlaySound("TakeHit");
                 var hitBackBoost = new Vector2(100, -200);
                 if (CollisionCenter.X < enemy.CollisionCenter.X)
                 {
@@ -667,7 +667,7 @@ namespace MacGame
                         this.PoisonPlatforms.Add(platform);
                     }
                 }
-                SoundManager.PlaySound("jump");
+                SoundManager.PlaySound("Jump");
 
             }
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
@@ -675,7 +675,7 @@ namespace MacGame
                 // Regular jump.
                 this.velocity.Y -= jumpBoost;
                 _state = MacState.Jumping;
-                SoundManager.PlaySound("jump");
+                SoundManager.PlaySound("Jump");
                 if (isSand)
                 {
                     isInJumpFromSand = true;
@@ -693,7 +693,7 @@ namespace MacGame
                 // Infinite Jump Jump.
                 this.velocity.Y = -jumpBoost * 1.5f;
                 _state = MacState.Jumping;
-                SoundManager.PlaySound("jump");
+                SoundManager.PlaySound("Jump");
                 isInJumpFromGround = true;
             }
             else if (InputManager.CurrentAction.jump
@@ -702,7 +702,7 @@ namespace MacGame
             {
                 // Jump off ladder
                 this.velocity.Y -= (jumpBoost / 2); // weaker jump
-                SoundManager.PlaySound("jump");
+                SoundManager.PlaySound("Jump");
 
                 // block their ability to climb ladders until they release up. This prevents you from
                 // insta-climbing the ladder above you.
@@ -726,7 +726,7 @@ namespace MacGame
                     this.velocity.X *= -1;
                 }
 
-                SoundManager.PlaySound("jump");
+                SoundManager.PlaySound("Jump");
             }
 
             // Unset canclimb ladders if they release up.
@@ -850,7 +850,7 @@ namespace MacGame
                 playClimbSoundTimer -= elapsed;
                 if (playClimbSoundTimer <= 0f)
                 {
-                    SoundManager.PlaySound("climb", 0.7f, 0.3f);
+                    SoundManager.PlaySound("Climb", 0.7f, 0.3f);
                     playClimbSoundTimer += 0.15f;
                 }
             }
@@ -1008,7 +1008,7 @@ namespace MacGame
             {
                 // Regular jump.
                 this.velocity.Y -= 550;
-                SoundManager.PlaySound("jump");
+                SoundManager.PlaySound("Jump");
             }
 
             // If the tile to the right is colliding, flip the player
@@ -1055,7 +1055,6 @@ namespace MacGame
             this.IsAffectedByGravity = false;
             this._state = MacState.Idle;
             this.animations.Play("Idle");
-            // TODO: Play the sound of the player entering the cannon.
         }
 
         public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)
@@ -1170,7 +1169,7 @@ namespace MacGame
             Enabled = false;
             this.CurrentItem = null;
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
-            SoundManager.PlaySound("mac_death");
+            SoundManager.PlaySound("MacDeath");
             MenuManager.AddMenu(_deadMenu);
         }
 

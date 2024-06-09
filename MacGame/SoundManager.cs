@@ -124,13 +124,27 @@ namespace MacGame
             Songs = new Dictionary<string, Song>();
 
             // Sound Effects
-            LoadSound("harsh_hit");
-            LoadSound("hit_enemy");
-            LoadSound("jump");
-            LoadSound("mac_death");
-            LoadSound("take_hit");
-            LoadSound("health");
-            LoadSound("climb");
+            LoadSound("AlertBox");
+            LoadSound("Bark");
+            LoadSound("Climb");
+            LoadSound("CoinCollected");
+            LoadSound("ConversationStart");
+            LoadSound("DoorOpen");
+            LoadSound("DoorShut");
+            LoadSound("EnterCannon");
+            LoadSound("HarshHit");
+            LoadSound("Health");
+            LoadSound("HitEnemy");
+            LoadSound("Jump");
+            LoadSound("KickedOutOfDoor");
+            LoadSound("MacDeath");
+            LoadSound("MenuChoice");
+            LoadSound("OpenLockedDoor");
+            LoadSound("Reveal");
+            LoadSound("ShootFromCannon");
+            LoadSound("TacoCollected");
+            LoadSound("TakeHit");
+            LoadSound("TypeLetter");
 
             // Music.
             LoadSong("Stage1");

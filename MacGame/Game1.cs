@@ -194,8 +194,7 @@ namespace MacGame
         private void OnCricketCoinCollected(object? sender, EventArgs e)
         {
             pauseForCoinTimer = 2f;
-            // TODO: play some kind of jingle.
-            SoundManager.PlaySound("health");
+            SoundManager.PlaySound("CoinCollected");
             TransitionToState(GameState.GotCoin, TransitionType.Instant);
         }
 
@@ -220,8 +219,8 @@ namespace MacGame
 
         private void OnOneHundredTacosCollected(object? sender, EventArgs args)
         {
-            // TODO: Some kind of reveal jingle
-            SoundManager.PlaySound("health");
+            // TODO: ditch this if an NPC gives you the taco coin.
+            SoundManager.PlaySound("CoinCollected");
 
             var taco = (Taco)sender!;
             var tacoCoin = CurrentLevel.TacoCoin;

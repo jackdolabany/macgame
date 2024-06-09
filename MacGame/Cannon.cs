@@ -130,7 +130,17 @@ namespace MacGame
             if (_player.CannonYouAreIn == null && canAcceptPlayer && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
             {
                 _player.EnterCannon(this);
-                PlayerEntered(_player);
+
+                SoundManager.PlaySound("EnterCannon");
+
+                if (AutoShootDirection == RotationDirection)
+                {
+                    delayShotTimer = 0.3f;
+                }
+                else
+                {
+                    delayShotTimer = 0.0f;
+                }
             }
 
             if (cooldownTimer > 0)
@@ -274,20 +284,8 @@ namespace MacGame
             cooldownTimer = 0.5f;
             canAcceptPlayer = false;
 
-            // TODO: Play Shooting sound
+            SoundManager.PlaySound("ShootFromCannon");
 
-        }
-
-        public void PlayerEntered(Player player)
-        {
-            if (AutoShootDirection == RotationDirection)
-            {
-                delayShotTimer = 0.3f;
-            }
-            else
-            {
-                delayShotTimer = 0.0f;
-            }
         }
 
     }

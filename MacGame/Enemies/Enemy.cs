@@ -173,12 +173,12 @@ namespace MacGame.Enemies
 
         public virtual void PlayTakeHitSound()
         {
-            SoundManager.PlaySound("harsh_hit");
+            SoundManager.PlaySound("HarshHit");
         }
 
         public virtual void PlayDeathSound()
         {
-            SoundManager.PlaySound("hit_enemy");
+            SoundManager.PlaySound("HitEnemy");
         }
 
         public virtual void Kill()

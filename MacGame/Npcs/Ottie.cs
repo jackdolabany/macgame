@@ -85,7 +85,7 @@ namespace MacGame.Npcs
                 else if (action == 2)
                 {
                     animations.Play("bark").FollowedBy("idle");
-                    // TODO: Play a bark sound.
+                    SoundManager.PlaySound("Bark");
 
                 }
                 else if (action == 3)

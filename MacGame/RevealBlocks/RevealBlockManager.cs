@@ -120,8 +120,7 @@ namespace MacGame.RevealBlocks
 
             if (someGroupHadACollision && !wasGroupCollision)
             {
-                // TODO 
-                // SoundManager.PlaySound("appear", -0.5f);
+                SoundManager.PlaySound("Reveal", -0.5f);
             }
             wasGroupCollision = someGroupHadACollision;
 

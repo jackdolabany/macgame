@@ -28,8 +28,7 @@ namespace MacGame.Items
                 GlobalEvents.FireOneHundredTacosCollected(this, EventArgs.Empty);
             }
             
-            // TODO: Play sound
-            //SoundManager.PlaySound("CollectItem");
+            SoundManager.PlaySound("TacoCollected");
         }
     }
 }

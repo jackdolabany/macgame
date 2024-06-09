@@ -47,8 +47,6 @@ namespace MacGame
 
         public virtual void HandleInputs(InputManager input, float elapsed)
         {
-            //input.ReadInputs();
-            
             int originalEntry = this.selectedEntryIndex;
 
             HandleNavigationInputs(ref input.CurrentAction, ref input.PreviousAction, elapsed);
@@ -56,7 +54,7 @@ namespace MacGame
 
             if (originalEntry != this.selectedEntryIndex)
             {
-                //SoundManager.PlaySound("rollover1");
+                SoundManager.PlaySound("MenuChoice");
             }
         }
 

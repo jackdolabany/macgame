@@ -82,9 +82,6 @@ namespace MacGame.Items
 
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
             GlobalEvents.FireCricketCoinCollected(this, EventArgs.Empty);
-
-            // TODO: Play sound
-            //SoundManager.PlaySound("CricketCoinCollected");
         }
     }
 }

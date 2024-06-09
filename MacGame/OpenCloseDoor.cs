@@ -170,7 +170,12 @@ namespace MacGame
                 if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 2 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
                 {
                     // hide Mac because he just got shut in the door.
-                    _player.IsInvisible = true;
+                    if (!_player.IsInvisible)
+                    {
+                        SoundManager.PlaySound("DoorShut");
+                        _player.IsInvisible = true;
+                    }
+
                     if (pauseBeforeTransitionTimer > 0)
                     {
                         pauseBeforeTransitionTimer -= elapsed;
@@ -198,6 +203,7 @@ namespace MacGame
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
                     this.State = DoorState.Idle;
+                    SoundManager.PlaySound("DoorShut");
                 }
             }
 
@@ -216,6 +222,7 @@ namespace MacGame
         public void OpenThenCloseThenTransition()
         {
             DoorAnimations.Play("open");
+            SoundManager.PlaySound("DoorOpen");
             this.State = DoorState.EnterOpening;
             GlobalEvents.FireBeginDoorEnter(this, EventArgs.Empty);
         }
@@ -232,8 +239,8 @@ namespace MacGame
                 if (JailBarAnimations.CurrentAnimationName != "open")
                 {
                     JailBarAnimations.Play("open");
+                    SoundManager.PlaySound("OpenLockedDoor");
                 }
-                // TODO: Play a sound effect here.
             }
             else
             {
@@ -249,6 +256,7 @@ namespace MacGame
         public override void PlayerSlidingOut()
         {
             DoorAnimations.Play("open");
+            SoundManager.PlaySound("DoorOpen");
             this.State = DoorState.ExitOpening;
             _player.IsInvisible = true;
             _player.PositionForSlideOutOfDoor(this.WorldLocation);

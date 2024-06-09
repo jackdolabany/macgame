@@ -18,14 +18,12 @@ namespace MacGame
 
             this.menuOptions.Add(ok);
             this.IsOverlay = true;
-
-            //SoundManager.PlaySound("chop");
         }
 
         public override void AddedToMenuManager()
         {
             base.AddedToMenuManager();
-            //SoundManager.PlaySound("chop");
+            SoundManager.PlaySound("AlertBox");
         }
     }
 }

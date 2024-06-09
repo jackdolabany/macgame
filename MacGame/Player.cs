@@ -215,7 +215,7 @@ namespace MacGame
 
             Enabled = true;
 
-            // TODO: Whatever
+            // This gets set later when the level loads.
             DisplayComponent.DrawDepth = 0.5f;
 
             this.IsAbleToMoveOutsideOfWorld = true;

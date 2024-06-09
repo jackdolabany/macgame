@@ -28,7 +28,7 @@ namespace MacGame.DisplayComponents
         {
             TintColor = Color.White;
             RotationAndDrawOrigin = Vector2.Zero;
-            DrawDepth = 0f;// TODO: Figure this out based on layer or whatever.
+            DrawDepth = 0f;
             Scale = 1f;
         }
 

@@ -850,7 +850,7 @@ namespace MacGame
                 playClimbSoundTimer -= elapsed;
                 if (playClimbSoundTimer <= 0f)
                 {
-                    SoundManager.PlaySound("Climb", 0.7f, 0.3f);
+                    SoundManager.PlaySound("Climb", 0.3f, 0.3f);
                     playClimbSoundTimer += 0.15f;
                 }
             }

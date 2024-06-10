@@ -240,7 +240,7 @@ namespace MacGame
                 if (JailBarAnimations.CurrentAnimationName != "open")
                 {
                     JailBarAnimations.Play("open");
-                    SoundManager.PlaySound("OpenLockedDoor");
+                    SoundManager.PlaySound("OpenLockedDoor", 0.5f);
                 }
             }
             else

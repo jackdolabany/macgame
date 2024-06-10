@@ -196,6 +196,7 @@ namespace MacGame
                     _player.SlideOutOfDoor(this.WorldLocation);
                     this.State = DoorState.ExitClosing;
                     DoorAnimations.Play("close");
+                    SoundManager.PlaySound("KickedOutOfDoor");
                 }
             }
             else if (this.State == DoorState.ExitClosing)

@@ -54,7 +54,7 @@ namespace MacGame
 
             if (originalEntry != this.selectedEntryIndex)
             {
-                SoundManager.PlaySound("MenuChoice");
+                PlayOptionChangedSound();
             }
         }
 
@@ -139,6 +139,22 @@ namespace MacGame
         protected void Cancel(object sender, EventArgs args)
         {
             OnCancel();
+            PlayOptionSelectedSound();
+        }
+
+        protected void PlayOptionChangedSound()
+        {
+            SoundManager.PlaySound("MenuChoice", 0.2f, 0.3f);
+        }
+
+        protected void PlayOptionSelectedSound()
+        {
+            SoundManager.PlaySound("MenuChoice", 0.35f, -0.3f);
+        }
+
+        protected void PlayConfirmMenuPoppedUpSound()
+        {
+            SoundManager.PlaySound("MenuChoice", 0.5f, 0f);
         }
 
         protected virtual void SetMenuPositions()

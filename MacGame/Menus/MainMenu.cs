@@ -14,7 +14,10 @@ namespace MacGame
 
             loadMenu = new LoadMenu(game);
 
-            AddOption("Play", (sender, args) => MenuManager.AddMenu(loadMenu));
+            AddOption("Play", (sender, args) => {
+                MenuManager.AddMenu(loadMenu);
+                PlayOptionSelectedSound();
+            });
 
             confirmMenu = new YesNoMenu(Game, "Are you sure you want\nto exit the game?", (sender, args) => this.Game.Exit());
             confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 120);

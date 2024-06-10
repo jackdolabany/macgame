@@ -22,13 +22,13 @@ namespace MacGame
             confirmExitGame.Scale = this.Scale;
 
             AddOption("Back", (a, b) => {
-                SoundManager.PlaySound("MenuChoice");
+                PlayOptionSelectedSound();
                 game.Unpause();
             });
 
             // TODO: Dont' show this if you're in the hub
             var option = AddOption("Back to Hub", (a, b) => {
-                SoundManager.PlaySound("MenuChoice");
+                PlayOptionSelectedSound();
                 Game.GoToHub(true);
             });
 
@@ -46,7 +46,7 @@ namespace MacGame
 
         protected override void OnCancel()
         {
-            SoundManager.PlaySound("MenuChoice");
+            PlayOptionSelectedSound();
             Game.Unpause();
         }
     }

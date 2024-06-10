@@ -193,8 +193,8 @@ namespace MacGame
 
         private void OnCricketCoinCollected(object? sender, EventArgs e)
         {
-            pauseForCoinTimer = 2f;
-            SoundManager.PlaySound("CoinCollected");
+            pauseForCoinTimer = 3f;
+            SoundManager.PlaySound("CoinCollected", 0.4f);
             TransitionToState(GameState.GotCoin, TransitionType.Instant);
         }
 
@@ -220,7 +220,7 @@ namespace MacGame
         private void OnOneHundredTacosCollected(object? sender, EventArgs args)
         {
             // TODO: ditch this if an NPC gives you the taco coin.
-            SoundManager.PlaySound("CoinCollected");
+            SoundManager.PlaySound("CoinCollected", 0.4f);
 
             var taco = (Taco)sender!;
             var tacoCoin = CurrentLevel.TacoCoin;

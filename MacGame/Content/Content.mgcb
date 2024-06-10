@@ -162,6 +162,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/ConversationStart.wav
 
+#begin SoundEffects/Dig.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Dig.wav
+
 #begin SoundEffects/DoorOpen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -173,12 +179,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/DoorShut.wav
-
-#begin SoundEffects/EnterCannon.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SoundEffects/EnterCannon.wav
 
 #begin SoundEffects/HarshHit.wav
 /importer:WavImporter

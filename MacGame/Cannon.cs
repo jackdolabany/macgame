@@ -1,5 +1,6 @@
 ﻿using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
@@ -131,7 +132,8 @@ namespace MacGame
             {
                 _player.EnterCannon(this);
 
-                SoundManager.PlaySound("EnterCannon");
+                // Sounds weird, not sound for now.
+                // SoundManager.PlaySound("EnterCannon", 0.3f);
 
                 if (AutoShootDirection == RotationDirection)
                 {
@@ -284,7 +286,7 @@ namespace MacGame
             cooldownTimer = 0.5f;
             canAcceptPlayer = false;
 
-            SoundManager.PlaySound("ShootFromCannon");
+            SoundManager.PlaySound("ShootFromCannon", 0.5f);
 
         }
 

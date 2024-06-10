@@ -139,6 +139,8 @@ namespace MacGame
 
             var tileToDig = Game1.CurrentMap.GetMapSquareAtPixel(_player.WorldCenter + tileToCheck);
             tileToDig.DigSand();
+
+            SoundManager.PlaySound("Dig", 0.15f);
         }
     }
 

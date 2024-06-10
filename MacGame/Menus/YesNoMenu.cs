@@ -26,7 +26,7 @@ namespace MacGame
         public override void AddedToMenuManager()
         {
             base.AddedToMenuManager();
-            SoundManager.PlaySound("MenuChoice");
+            PlayConfirmMenuPoppedUpSound();
         }
     }
 }

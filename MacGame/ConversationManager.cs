@@ -81,7 +81,7 @@ namespace MacGame
 
             public void PlaySound()
             {
-                SoundManager.PlaySound("ConversationStart");
+                // SoundManager.PlaySound("ConversationStart", 0.3f);
             }
         }
 
@@ -130,6 +130,7 @@ namespace MacGame
             if (isFirstMessage)
             {
                 SetupNewMessage();
+                Messages[0].PlaySound();
             }
         }
 
@@ -141,7 +142,6 @@ namespace MacGame
 
             if (Messages.Count > 0)
             {
-                Messages[0].PlaySound();
                 foreach (var text in Messages[0].Texts)
                 {
                     totalLetters += text.Length;

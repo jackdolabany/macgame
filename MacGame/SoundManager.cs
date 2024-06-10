@@ -131,7 +131,7 @@ namespace MacGame
             LoadSound("ConversationStart");
             LoadSound("DoorOpen");
             LoadSound("DoorShut");
-            LoadSound("EnterCannon");
+            LoadSound("Dig");
             LoadSound("HarshHit");
             LoadSound("Health");
             LoadSound("HitEnemy");

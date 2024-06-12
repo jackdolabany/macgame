@@ -143,6 +143,18 @@ namespace MacGame
             });
         }
 
+        public static void TryDeleteGame(int saveSlot)
+        {
+            var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var fileName = string.Format(SavedGameFileName, saveSlot);
+            var filePath = appFolderPath + $@"\{Game1.SaveGameFolder}\" + fileName;
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+
         public static void Initialize(Texture2D textures, Game1 game)
         {
             spinnerTexture = textures;

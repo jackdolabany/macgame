@@ -1,10 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Security.Cryptography.X509Certificates;
+using System.ComponentModel.Design;
+using System.Threading.Tasks;
 
 namespace MacGame
 {
     public class LoadMenu : Menu
     {
+
+        DeleteMenu deleteMenu;
 
         public LoadMenu(Game1 game)
             : base(game)
@@ -12,6 +15,8 @@ namespace MacGame
             this.menuTitle = "Load Game";
             
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 4f)));
+
+            deleteMenu = new DeleteMenu(Game, this);
 
         }
 
@@ -34,8 +39,6 @@ namespace MacGame
         /// </summary>
         public override void AddedToMenuManager()
         {
-            this.menuOptions.Clear();
-
             var task1 = StorageManager.LoadStorageStateForSlot(1);
             var task2 = StorageManager.LoadStorageStateForSlot(2);
             var task3 = StorageManager.LoadStorageStateForSlot(3);
@@ -44,15 +47,29 @@ namespace MacGame
             task2.Wait();
             task3.Wait();
 
-            SetupMenuForStorageState(task1.Result, 1);
-            SetupMenuForStorageState(task2.Result, 2);
-            SetupMenuForStorageState(task3.Result, 3);
+            Initialize(task1.Result, task2.Result, task3.Result);
 
+            base.AddedToMenuManager();
+        }
+
+        public void Initialize(StorageState? file1, StorageState? file2, StorageState? file3)
+        {
+            this.menuOptions.Clear();
+
+            SetupMenuForStorageState(file1, 1);
+            SetupMenuForStorageState(file2, 2);
+            SetupMenuForStorageState(file3, 3);
+
+            if (file1 != null || file2 != null || file3 != null)
+            {
+                AddOption("Delete", (a, b) => {
+                    deleteMenu.Initialize(file1, file2, file3);
+                    MenuManager.AddMenu(deleteMenu);
+                });
+            }
             AddOption("Back", Cancel);
 
             isPositioned = false;
-
-            base.AddedToMenuManager();
         }
 
         public void LoadGame(int slot)

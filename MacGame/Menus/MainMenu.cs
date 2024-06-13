@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
 {
@@ -29,6 +30,25 @@ namespace MacGame
 
             this.IsOverlay = false;
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * 0.75f));
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            // Draw a black dialog box to the right for stats
+            var tileWidth = 6;
+            var tileHeight = 4;
+
+            int x = (Game1.GAME_X_RESOLUTION - (tileWidth * Game1.TileSize)) / 2;
+
+            //var height = (tileHeight * Game1.TileSize);
+            int y = (int)this.Position.Y - 44;
+
+            // Put it behind this menu a bit
+            var drawDepth = this.DrawDepth + Game1.MIN_DRAW_INCREMENT * 100;
+
+            ConversationManager.DrawDialogBox(spriteBatch, new Vector2(x, y), tileWidth, tileHeight, drawDepth);
+
+            base.Draw(spriteBatch);
         }
 
     }

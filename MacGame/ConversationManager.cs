@@ -299,66 +299,11 @@ namespace MacGame
                 }
             }
 
-
-            Color borderColor = Color.White;
-
             // Draw the dialog box
             var tileWidth = bubbleWidth / Game1.TileSize;
             var tileHeight = bubbleHeight / Game1.TileSize;
 
-            for (int i = 0; i < tileWidth; i++)
-            {
-                for (int j = 0; j < tileHeight; j++)
-                {
-                    var dialogBoxSpriteEffect = SpriteEffects.None;
-                    var sourceRect = dialogBoxBackgroundSourceRect;
-                    if (i == 0 && j == 0)
-                    {
-                        // top left corner
-                        sourceRect = borderCornerSourceRect;
-                    }
-                    else if (i == 0 && j == tileHeight - 1)
-                    {
-                        // bottom left corner
-                        sourceRect = borderCornerSourceRect;
-                        dialogBoxSpriteEffect = SpriteEffects.FlipVertically;
-                    }
-                    else if (i == tileWidth - 1 && j == 0)
-                    {
-                        // top right corner
-                        sourceRect = borderCornerSourceRect;
-                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally;
-                    }
-                    else if (i == tileWidth - 1 && j == tileHeight - 1)
-                    {
-                        // bottom right corner
-                        sourceRect = borderCornerSourceRect;
-                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically;
-                    }
-                    else if (i == tileWidth - 1)
-                    {
-                        // Right edge
-                        sourceRect = borderLeftEdgeSourceRect;
-                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally;
-                    }
-                    else if (j == tileHeight - 1)
-                    {
-                        // bottom edge
-                        sourceRect = borderTopEdgeSourceRect;
-                        dialogBoxSpriteEffect = SpriteEffects.FlipVertically;
-                    }
-                    else if (i == 0)
-                    {
-                        sourceRect = borderLeftEdgeSourceRect;
-                    }
-                    else if (j == 0)
-                    {
-                        sourceRect = borderTopEdgeSourceRect;
-                    }
-
-                    spriteBatch.Draw(Game1.TileTextures, new Rectangle(leftMargin + i * Game1.TileSize, topMargin + (j * Game1.TileSize) + 2, Game1.TileSize, Game1.TileSize), sourceRect, borderColor, 0f, Vector2.Zero, dialogBoxSpriteEffect, 0f);
-                }
-            }
+            DrawDialogBox(spriteBatch, new Vector2(leftMargin, topMargin), tileWidth, tileHeight, 0f);
 
             int arrowX = leftMargin + bubbleWidth - advanceMessageArrowSourceRect.Width - 8;
 
@@ -409,6 +354,63 @@ namespace MacGame
             if (currentMessage.ImageSourceRectangle != null)
             {
                 spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, topMargin + Game1.TileSize + 16), currentMessage.ImageSourceRectangle.Value, Color.White, 0f, Vector2.Zero, 1f, personSpriteEffect, textDepth);
+            }
+        }
+
+        public static void DrawDialogBox(SpriteBatch spriteBatch, Vector2 location, int tileWidth, int tileHeight, float drawDepth)
+        {
+            for (int i = 0; i < tileWidth; i++)
+            {
+                for (int j = 0; j < tileHeight; j++)
+                {
+                    var dialogBoxSpriteEffect = SpriteEffects.None;
+                    var sourceRect = dialogBoxBackgroundSourceRect;
+                    if (i == 0 && j == 0)
+                    {
+                        // top left corner
+                        sourceRect = borderCornerSourceRect;
+                    }
+                    else if (i == 0 && j == tileHeight - 1)
+                    {
+                        // bottom left corner
+                        sourceRect = borderCornerSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipVertically;
+                    }
+                    else if (i == tileWidth - 1 && j == 0)
+                    {
+                        // top right corner
+                        sourceRect = borderCornerSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally;
+                    }
+                    else if (i == tileWidth - 1 && j == tileHeight - 1)
+                    {
+                        // bottom right corner
+                        sourceRect = borderCornerSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically;
+                    }
+                    else if (i == tileWidth - 1)
+                    {
+                        // Right edge
+                        sourceRect = borderLeftEdgeSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipHorizontally;
+                    }
+                    else if (j == tileHeight - 1)
+                    {
+                        // bottom edge
+                        sourceRect = borderTopEdgeSourceRect;
+                        dialogBoxSpriteEffect = SpriteEffects.FlipVertically;
+                    }
+                    else if (i == 0)
+                    {
+                        sourceRect = borderLeftEdgeSourceRect;
+                    }
+                    else if (j == 0)
+                    {
+                        sourceRect = borderTopEdgeSourceRect;
+                    }
+
+                    spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)location.X + i * Game1.TileSize, (int)location.Y + (j * Game1.TileSize) + 2, Game1.TileSize, Game1.TileSize), sourceRect, Color.White, 0f, Vector2.Zero, dialogBoxSpriteEffect, drawDepth);
+                }
             }
         }
 

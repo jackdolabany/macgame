@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System.ComponentModel.Design;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
 {
@@ -13,10 +12,15 @@ namespace MacGame
             : base(game)
         {
             this.menuTitle = "Load Game";
-            
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 4f)));
+
+            // 7 tiles of border to the right
+            var statsAreaWidth = Game1.TileSize * 7;
+            var menuXPosition = (Game1.GAME_X_RESOLUTION - statsAreaWidth) / 2;
+
+            this.Position = new Vector2(menuXPosition, 100);
 
             deleteMenu = new DeleteMenu(Game, this);
+            deleteMenu.Position = this.Position;
 
         }
 
@@ -76,6 +80,37 @@ namespace MacGame
         {
             StorageManager.TryLoadGame(slot);
             Game.Unpause();
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            // Draw over the background.
+            var screenRect = new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION);
+            spriteBatch.Draw(Game1.TileTextures, screenRect, Game1.WhiteSourceRect, Color.Gray, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+
+            // Draw a black dialog box to the right for stats
+            DrawLoadMenuDialogBox(spriteBatch, this.DrawDepth);
+
+            // Write some stats for the selected file.
+
+            base.Draw(spriteBatch);
+        }
+
+        public static void DrawLoadMenuDialogBox(SpriteBatch spriteBatch, float menuDrawDepth)
+        {
+            // Draw a black dialog box to the right for stats
+            var tileWidth = 7;
+            var tileHeight = 10;
+
+            int x = Game1.GAME_X_RESOLUTION - (tileWidth * Game1.TileSize) - 16;
+
+            var height = (tileHeight * Game1.TileSize);
+            int y = (Game1.GAME_Y_RESOLUTION - height) / 2;
+
+            // Put it behind this menu a bit
+            var drawDepth = menuDrawDepth + Game1.MIN_DRAW_INCREMENT * 100;
+
+            ConversationManager.DrawDialogBox(spriteBatch, new Vector2(x, y), tileWidth, tileHeight, drawDepth);
         }
     }
 }

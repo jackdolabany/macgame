@@ -49,7 +49,7 @@
   <object id="9" name="TreeCoin" x="1796.25" y="493.5" width="38.75" height="34.5">
    <properties>
     <property name="Hint" value="Looking for adventure? Try to climb all the way up the tree."/>
-    <property name="Number" value="1"/>
+    <property name="Number" value="3"/>
    </properties>
   </object>
   <object id="10" name="World1YellowHouse" x="891.091" y="1074.18" width="17.2727" height="30.7273">
@@ -157,19 +157,19 @@
   <object id="30" name="CannonCoin" x="392.75" y="760.5" width="31" height="29.75">
    <properties>
     <property name="Hint" value="Up, left, up, up, left, up, up, boom!"/>
-    <property name="Number" value="2"/>
+    <property name="Number" value="4"/>
    </properties>
   </object>
   <object id="31" name="SandCoin" x="938.5" y="1426" width="22" height="23">
    <properties>
     <property name="Hint" value="There's a legend about a lonely traffic cone."/>
-    <property name="Number" value="3"/>
+    <property name="Number" value="5"/>
    </properties>
   </object>
   <object id="32" name="IceCoin" x="1548.88" y="148.438" width="21.5" height="21.0625">
    <properties>
     <property name="Hint" value="There's something special if you can trek through icy mountains."/>
-    <property name="Number" value="4"/>
+    <property name="Number" value="6"/>
    </properties>
   </object>
   <object id="33" name="IceExitDoor" x="1492.09" y="172.818" width="15.9091" height="23.1818">
@@ -185,7 +185,7 @@
   <object id="35" name="RoofCoin" x="948.667" y="1037.67" width="21.6667" height="19">
    <properties>
     <property name="Hint" value="There's a coin stuck on my buddy's roof."/>
-    <property name="Number" value="5"/>
+    <property name="Number" value="1"/>
    </properties>
   </object>
   <object id="36" x="1371.64" y="1021.09" width="16.9091" height="13.2727">
@@ -196,7 +196,7 @@
   <object id="37" name="TreeCannonCoin" x="1371.82" y="939.636" width="24.1818" height="22.7273">
    <properties>
     <property name="Hint" value="There's a stronger than normal cannon between the trees."/>
-    <property name="Number" value="6"/>
+    <property name="Number" value="2"/>
    </properties>
   </object>
   <object id="38" x="919.5" y="1086.88" width="9.5" height="12.25">

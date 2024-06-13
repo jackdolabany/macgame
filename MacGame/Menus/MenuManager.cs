@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
@@ -32,6 +33,12 @@ namespace MacGame
         public static void RemoveTopMenu()
         {
             Menus.RemoveAt(Menus.Count - 1);
+        }
+
+        public static bool IsTopMenu(Menu menu)
+        {
+            if (!Menus.Any()) return false;
+            return Menus[Menus.Count - 1] == menu;
         }
 
         public static void Update(float elapsed)

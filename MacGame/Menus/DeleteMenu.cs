@@ -16,10 +16,11 @@ namespace MacGame
 
         public DeleteMenu(Game1 game, LoadMenu loadMenu) : base(game)
         {
-            this.menuTitle = "Delete Saved Game";
+            this.menuTitle = "Delete";
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 4f)));
 
             alertDeletedMenu = new AlertBoxMenu(this.Game, "The game has\nbeen deleted", (a, b) => AfterDelete());
+            alertDeletedMenu.IsOverlay = true;
             this.loadMenu = loadMenu;
         }
 
@@ -47,14 +48,15 @@ namespace MacGame
         {
             if (state == null)
             {
-                var alertBox = new AlertBoxMenu(this.Game, "File is already empty", Cancel);
-
-                return AddOption($"Empty Game {slotNumber}", (a, b) => MenuManager.AddMenu(alertBox));
+                var alertBox = new AlertBoxMenu(this.Game, "    File is\nalready empty", Cancel);
+                alertBox.IsOverlay = true;
+                return AddOption($"Empty {slotNumber}", (a, b) => MenuManager.AddMenu(alertBox));
             }
             else
             {
                 var ConfirmDelete = new YesNoMenu(this.Game, $"   Are you sure\n    you want to\ndelete this game?", (a, b) => DeleteGame(slotNumber));
-                return AddOption($"Delete Game {slotNumber}", (a, b) => MenuManager.AddMenu(ConfirmDelete));
+                ConfirmDelete.IsOverlay = true;
+                return AddOption($"Delete {slotNumber}", (a, b) => MenuManager.AddMenu(ConfirmDelete));
             }
         }
 
@@ -94,6 +96,19 @@ namespace MacGame
         {
             loadMenu.Initialize(File1, File2, File3);
             MenuManager.RemoveTopMenu();
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+
+            // Draw over the background.
+            var screenRect = new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION);
+            spriteBatch.Draw(Game1.TileTextures, screenRect, Game1.WhiteSourceRect, Color.Gray, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+
+            // Draw a black dialog box to the right for stats
+            LoadMenu.DrawLoadMenuDialogBox(spriteBatch, this.DrawDepth);
+
+            base.Draw(spriteBatch);
         }
     }
 }

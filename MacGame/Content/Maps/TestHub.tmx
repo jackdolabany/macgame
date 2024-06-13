@@ -44,7 +44,7 @@
   </object>
   <object id="2" name="SecondWorld" x="147.273" y="17.4545" width="17.75" height="30">
    <properties>
-    <property name="CoinsNeeded" value="2"/>
+    <property name="CoinsNeeded" value="4"/>
     <property name="GoToMap" value="TestWorld2"/>
     <property name="IsToSubworld" value="1"/>
     <property name="Name" value="SecondWorld"/>

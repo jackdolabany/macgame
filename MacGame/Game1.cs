@@ -292,7 +292,11 @@ namespace MacGame
 
             gameRenderTarget = new RenderTarget2D(GraphicsDevice, GAME_X_RESOLUTION, GAME_Y_RESOLUTION, false, SurfaceFormat.Color, DepthFormat.None);
 
+            // Basic Camera Setup
             Camera = new Camera();
+            Camera.Zoom = Camera.DEFAULT_ZOOM;
+            Camera.ViewPortWidth = Game1.GAME_X_RESOLUTION;
+            Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
             SoundManager.Initialize(Content);
             StorageManager.Initialize(TileTextures, this);
@@ -312,11 +316,6 @@ namespace MacGame
                 Camera.Map = CurrentLevel.Map;
                 TransitionToState(GameState.Playing, TransitionType.Instant);
             }
-
-            // Basic Camera Setup
-            Camera.Zoom = Camera.DEFAULT_ZOOM;
-            Camera.ViewPortWidth = Game1.GAME_X_RESOLUTION;
-            Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
             ConversationManager.Initialize(Content);
 

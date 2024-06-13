@@ -19,7 +19,7 @@ namespace MacGame
             this.menuTitle = "Delete Saved Game";
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 4f)));
 
-            alertDeletedMenu = new AlertBoxMenu(this.Game, "The game has been deleted", (a, b) => AfterDelete());
+            alertDeletedMenu = new AlertBoxMenu(this.Game, "The game has\nbeen deleted", (a, b) => AfterDelete());
             this.loadMenu = loadMenu;
         }
 
@@ -53,7 +53,7 @@ namespace MacGame
             }
             else
             {
-                var ConfirmDelete = new YesNoMenu(this.Game, $"Are you sure you want to delete this game?", (a, b) => DeleteGame(slotNumber));
+                var ConfirmDelete = new YesNoMenu(this.Game, $"   Are you sure\n    you want to\ndelete this game?", (a, b) => DeleteGame(slotNumber));
                 return AddOption($"Delete Game {slotNumber}", (a, b) => MenuManager.AddMenu(ConfirmDelete));
             }
         }

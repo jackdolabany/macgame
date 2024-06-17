@@ -6,10 +6,6 @@ namespace MacGame
     public class DeleteMenu : Menu
     {
 
-        private StorageState? File1 { get; set; }
-        private StorageState? File2 { get; set; }
-        private StorageState? File3 { get; set; }
-
         private AlertBoxMenu alertDeletedMenu;
 
         private LoadMenu loadMenu;
@@ -26,15 +22,19 @@ namespace MacGame
 
         public void Initialize(StorageState? file1, StorageState? file2, StorageState? file3)
         {
-            this.File1 = file1;
-            this.File2 = file2;
-            this.File3 = file3;
+            loadMenu.File1 = file1;
+            loadMenu.File2 = file2;
+            loadMenu.File3 = file3;
+
+            loadMenu.SlotToState[1] = file1;
+            loadMenu.SlotToState[2] = file2;
+            loadMenu.SlotToState[3] = file3;
 
             this.menuOptions.Clear();
 
-            SetupMenuForStorageState(File1, 1);
-            SetupMenuForStorageState(File2, 2);
-            SetupMenuForStorageState(File3, 3);
+            SetupMenuForStorageState(loadMenu.File1, 1);
+            SetupMenuForStorageState(loadMenu.File2, 2);
+            SetupMenuForStorageState(loadMenu.File3, 3);
 
             AddOption("Back", (a, b) => BackToLoadMenu());
 
@@ -63,16 +63,18 @@ namespace MacGame
         public void DeleteGame(int slot)
         {
             StorageManager.TryDeleteGame(slot);
+            loadMenu.SlotToState[slot] = null;
+
             switch (slot)
             {
                 case 1:
-                    File1 = null;
+                    loadMenu.File1 = null;
                     break;
                 case 2:
-                    File2 = null;
+                    loadMenu.File2 = null;
                     break;
                 case 3:
-                    File3 = null;
+                    loadMenu.File3 = null;
                     break;
             }
 
@@ -83,18 +85,20 @@ namespace MacGame
         public void AfterDelete()
         {
             // Re-initialize with the now deleted file.
-            Initialize(this.File1, this.File2, this.File3);
+            Initialize(loadMenu.File1, loadMenu.File2, loadMenu.File3);
             
             // Remove this alert saying the file was deleted.
             MenuManager.RemoveTopMenu();
 
             // Remove the confirmation choice menu.
             MenuManager.RemoveTopMenu();
+
+            BackToLoadMenu();
         }
 
         public void BackToLoadMenu()
         {
-            loadMenu.Initialize(File1, File2, File3);
+            loadMenu.Initialize(loadMenu.File1, loadMenu.File2, loadMenu.File3);
             MenuManager.RemoveTopMenu();
         }
 
@@ -103,11 +107,17 @@ namespace MacGame
 
             // Draw over the background.
             var screenRect = new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION);
-            spriteBatch.Draw(Game1.TileTextures, screenRect, Game1.WhiteSourceRect, Color.Gray, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Game1.TileTextures, screenRect, Game1.WhiteSourceRect, Color.DarkRed, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+
+            StorageState? selectedState = null;
+            if (loadMenu.SlotToState.ContainsKey(this.selectedEntryIndex + 1))
+            {
+                selectedState = loadMenu.SlotToState[this.selectedEntryIndex + 1];
+            }
 
             // Draw a black dialog box to the right for stats
-            LoadMenu.DrawLoadMenuDialogBox(spriteBatch, this.DrawDepth);
-
+            LoadMenu.DrawLoadMenuDialogBox(spriteBatch, this.DrawDepth, selectedState);
+            
             base.Draw(spriteBatch);
         }
     }

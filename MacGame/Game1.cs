@@ -69,6 +69,9 @@ namespace MacGame
         public const string StartingWorld = "TestHub";
         public const string HubWorld = "TestHub";
 
+        // TODO: Can I get this from metadata on startup or something? 
+        public const int TotalCoins = 120;
+
         AlertBoxMenu gotACricketCoinMenu;
 
         /// <summary>
@@ -469,6 +472,8 @@ namespace MacGame
 
             if (_gameState == GameState.Playing)
             {
+                State.TotalElapsedTime += elapsed;
+
                 if (Player.Enabled && inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause && !isPaused)
                 {
                     Pause();

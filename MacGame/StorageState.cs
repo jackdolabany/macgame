@@ -20,14 +20,14 @@ namespace MacGame
         /// </summary>
         public Dictionary<int, HashSet<int>> LevelsToCoins = new Dictionary<int, HashSet<int>>();
 
-        public Dictionary<int, int> MaxTacosPerLevel = new Dictionary<int, int>();
-
         public Dictionary<int, HashSet<string>> UnlockedDoors = new Dictionary<int, HashSet<string>>();
 
         /// <summary>
         ///  Set to true if you beat the game. Maybe we'll display a star or something on your save file.
         /// </summary>
         public bool HasBeatedGame { get; set; }
+
+        public float TotalElapsedTime { get; set; }
 
         /// <param name="saveSlot">1 through 3</param>
         public StorageState(int saveSlot)
@@ -42,9 +42,9 @@ namespace MacGame
         {
             var clone = new StorageState(this.SaveSlot);
             clone.LevelsToCoins = new Dictionary<int, HashSet<int>>(this.LevelsToCoins);
-            clone.MaxTacosPerLevel = new Dictionary<int, int>(this.MaxTacosPerLevel);
             clone.UnlockedDoors = new Dictionary<int, HashSet<string>>(this.UnlockedDoors);
             clone.HasBeatedGame = this.HasBeatedGame;
+            clone.TotalElapsedTime = this.TotalElapsedTime;
             return clone;
         }
     }

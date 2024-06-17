@@ -54,16 +54,6 @@ namespace MacGame.Items
         {
             if (AlreadyCollected) return;
 
-            // Set max tacos for this level.
-            if (Game1.State.MaxTacosPerLevel.ContainsKey(Game1.CurrentLevel.LevelNumber))
-            {
-                Game1.State.MaxTacosPerLevel[Game1.CurrentLevel.LevelNumber] = Math.Max(Game1.State.MaxTacosPerLevel[Game1.CurrentLevel.LevelNumber], player.Tacos);
-            }
-            else
-            {
-                Game1.State.MaxTacosPerLevel.Add(Game1.CurrentLevel.LevelNumber, player.Tacos);
-            }
-
             // Add this cricket coin if they don't already have it.
             if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TileEngine;
 using MacGame.Items;
 using System.Linq;
+using System.Diagnostics;
 
 namespace MacGame
 {
@@ -69,8 +70,8 @@ namespace MacGame
         public const string StartingWorld = "TestHub";
         public const string HubWorld = "TestHub";
 
-        // TODO: Can I get this from metadata on startup or something? 
-        public const int TotalCoins = 120;
+        // Set in the ctor
+        public static int TotalCoins { get; private set; }
 
         AlertBoxMenu gotACricketCoinMenu;
 
@@ -79,11 +80,6 @@ namespace MacGame
         /// You'd return here if you quit or die.
         /// </summary>
         public static string HubDoorNameYouCameFrom = "";
-        
-        /// <summary>
-        /// Coin hints for the current level you are in. 
-        /// </summary>
-        public static Dictionary<int, string> CoinHints = new Dictionary<int, string>();
 
         private static bool drawHappened = true;
 
@@ -192,6 +188,27 @@ namespace MacGame
 
             // Grab a 2 x 2 rectangle from the middle of this tile rect.
             WhiteSourceRect = new Rectangle(whiteTileRect.X + 4, whiteTileRect.Y + 4, 2, 2);
+
+            TotalCoins = CoinIndex.LevelNumberToCoins.Values.SelectMany(c => c).Count();
+
+            // Validate the CoinIndex
+            foreach (var key in CoinIndex.LevelNumberToCoins.Keys)
+            {
+                var coins = CoinIndex.LevelNumberToCoins[key];
+                var names = coins.Select(c => c.Name);
+
+                // Make sure the names are unique.
+                if (names.Distinct().Count() != names.Count())
+                {
+                    throw new Exception($"Coin names in world {key} are not unique.");
+                }
+
+                // Make sure there's at least one taco coin.
+                if (!coins.Any(c => c.Name == "TacoCoin"))
+                {
+                    throw new Exception($"World {key} is missing a Taco Coin.");
+                }
+            }
         }
 
         private void OnCricketCoinCollected(object? sender, EventArgs e)
@@ -371,7 +388,6 @@ namespace MacGame
                 }
             }
             HubDoorNameYouCameFrom = "";
-            CoinHints.Clear();
         }
 
         public void GoToTitleScreen()
@@ -539,20 +555,6 @@ namespace MacGame
 
                     if (wasInHubWorld && !CurrentLevel.IsHubWorld)
                     {
-                        // We just left the hub world, scan the current level for coin hints and build the dictionary for this level.
-                        // This is used by characters to give hints to the player. Note that only the first level the player goes to
-                        // Will have hints that can be given.
-                        CoinHints.Clear();
-                        foreach (var item in CurrentLevel.Items)
-                        {
-                            if (item is CricketCoin coin)
-                            {
-                                if (coin.Hint != "")
-                                {
-                                    CoinHints.Add(coin.Number, coin.Hint);
-                                }
-                            }
-                        }
                         pauseMenu.SetupTitle($"{CurrentLevel.Description}");
                     }
                     _goToMap = "";

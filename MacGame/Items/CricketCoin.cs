@@ -10,8 +10,8 @@ namespace MacGame.Items
     public class CricketCoin : Item
     {
 
-        public int Number { get; set; }
-        public string Hint { get; set; } = "";
+        public string Name { get; set; }
+
         public bool AlreadyCollected { get; set; } = false;
 
         public bool IsTacoCoin { get; set; } = false;
@@ -41,7 +41,7 @@ namespace MacGame.Items
             if (Game1.State.LevelsToCoins.ContainsKey(levelNumber))
             {
                 var coins = Game1.State.LevelsToCoins[levelNumber];
-                if (coins.Contains(Number))
+                if (coins.Contains(Name))
                 {
                     AlreadyCollected = true;
                     CanBeCollected = false;
@@ -58,15 +58,15 @@ namespace MacGame.Items
             if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
                 var coins = Game1.State.LevelsToCoins[Game1.CurrentLevel.LevelNumber];
-                if (!coins.Contains(Number))
+                if (!coins.Contains(Name))
                 {
-                    coins.Add(Number);
+                    coins.Add(Name);
                     player.CricketCoinCount++;
                 }
             }
             else
             {
-                Game1.State.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new HashSet<int> { Number });
+                Game1.State.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new HashSet<string> { Name });
                 player.CricketCoinCount++;
             }
 

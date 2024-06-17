@@ -18,7 +18,7 @@ namespace MacGame
         /// Each coin should have a unique index 1-x. Each level should have a number representing the sub world
         /// you entered from the hub world. If there are coins in the hub world they can be 0.
         /// </summary>
-        public Dictionary<int, HashSet<int>> LevelsToCoins = new Dictionary<int, HashSet<int>>();
+        public Dictionary<int, HashSet<string>> LevelsToCoins = new Dictionary<int, HashSet<string>>();
 
         public Dictionary<int, HashSet<string>> UnlockedDoors = new Dictionary<int, HashSet<string>>();
 
@@ -41,7 +41,7 @@ namespace MacGame
         public object Clone()
         {
             var clone = new StorageState(this.SaveSlot);
-            clone.LevelsToCoins = new Dictionary<int, HashSet<int>>(this.LevelsToCoins);
+            clone.LevelsToCoins = new Dictionary<int, HashSet<string>>(this.LevelsToCoins);
             clone.UnlockedDoors = new Dictionary<int, HashSet<string>>(this.UnlockedDoors);
             clone.HasBeatedGame = this.HasBeatedGame;
             clone.TotalElapsedTime = this.TotalElapsedTime;

@@ -36,9 +36,12 @@ namespace MacGame.Npcs
         /// </summary>
         public override void InitiateConversation()
         {
-            var hints = Game1.CoinHints;
 
-            HashSet<int>? collectedCoins = null;
+            var levelNumber = Game1.CurrentLevel.LevelNumber;
+
+            var coinInfos = CoinIndex.LevelNumberToCoins[levelNumber];
+
+            HashSet<string>? collectedCoins = null;
 
             if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {
@@ -46,12 +49,11 @@ namespace MacGame.Npcs
             }
 
             // He'll say the hint for first coin with a hint that you don't have.
-            foreach (var hint in hints.OrderBy(h => h.Key))
+            foreach (var coinInfo in coinInfos)
             {
-                var coinNumber = hint.Key;
-                var hintText = hint.Value;
+                var hintText = coinInfo.Hint;
                 
-                if (collectedCoins == null || !collectedCoins.Contains(coinNumber))
+                if (collectedCoins == null || !collectedCoins.Contains(coinInfo.Name))
                 {
                     ConversationManager.AddMessage(hintText, ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     return;

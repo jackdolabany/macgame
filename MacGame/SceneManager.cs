@@ -156,8 +156,14 @@ namespace MacGame
                                         {
                                             // Coins are special items.
                                             var coin = (CricketCoin)item;
-                                            coin.Number = int.Parse(obj.Properties["Number"]);
-                                            coin.Hint = obj.Properties["Hint"];
+                                            coin.Name = obj.Name;
+
+                                            // Validate the name in the master set of coins and hints
+                                            if (!CoinIndex.LevelNumberToCoins[level.LevelNumber].Any(c => c.Name == coin.Name))
+                                            {
+                                                throw new Exception($"Coin '{coin.Name}' not found in world {level.LevelNumber}.");
+                                            }
+
                                             coin.CheckIfAlreadyCollected(level.LevelNumber);
                                         }
                                     }
@@ -316,20 +322,6 @@ namespace MacGame
                     }
                 }
             }
-
-            // Add the special 100 taco coin, if the level has coins.
-            if (Game1.CoinHints.Any())
-            {
-                var tacoCoin = new CricketCoin(contentManager, 0, 0, player, camera);
-                tacoCoin.Enabled = false; // will be enabled once you collect 100 tacos.
-                tacoCoin.Hint = "";
-                tacoCoin.IsTacoCoin = true;
-                tacoCoin.Number = Game1.CoinHints.Count + 1;
-                tacoCoin.CheckIfAlreadyCollected(level.LevelNumber);
-                level.TacoCoin = tacoCoin;
-                level.Items.Add(tacoCoin);
-            }
-
 
             // Set the draw depths and initialize all 
             var singleLayerDepth = map.GetLayerIncrement();

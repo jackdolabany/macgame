@@ -212,7 +212,7 @@ namespace MacGame
             var currentMessage = Messages[0];
             if (currentMessage.Choices != null)
             {
-                if (ca.left && !pa.left)
+                if (ca.up && !pa.up)
                 {
                     currentMessage.selectedChoice--;
                     if (currentMessage.selectedChoice < 0)
@@ -220,7 +220,7 @@ namespace MacGame
                         currentMessage.selectedChoice = currentMessage.Choices.Count - 1;
                     }
                 }
-                else if (ca.right && !pa.right)
+                else if (ca.down && !pa.down)
                 {
                     currentMessage.selectedChoice++;
                     if (currentMessage.selectedChoice >= currentMessage.Choices.Count)
@@ -256,7 +256,6 @@ namespace MacGame
 
             int leftMargin = (Game1.GAME_X_RESOLUTION - bubbleWidth) / 2;
             int topMargin;
-
 
             // float to top or bottom depending on Mac's position.
             Float @float = Float.Bottom;
@@ -316,19 +315,10 @@ namespace MacGame
             // draw the text
             DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, currentLetterIndex);
 
-            // Draw the choices. Start in the bottom right corner
-            var location = new Vector2(textLeftMargin + bubbleWidth, topMargin + bubbleHeight);
+            // Draw the choices.
+            var location = new Vector2(textLeftMargin + 4, topMargin + TileMap.TileSize);
             if (currentMessage.Choices != null)
             {
-
-                // Move the location back the width of all choices.
-                var totalWidth = 0f;
-                foreach (var choice in currentMessage.Choices)
-                {
-                    totalWidth += choice.Width;
-                    totalWidth += ChoicePointerWidth;
-                }
-                location.X -= totalWidth;
 
                 for (int i = 0; i < currentMessage.Choices.Count; i++)
                 {
@@ -338,9 +328,9 @@ namespace MacGame
                     {
                         spriteBatch.DrawString(Game1.Font, ChoicePointerString, location, Color.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
                     }
-                    location.X += ChoicePointerWidth;
-                    spriteBatch.DrawString(Game1.Font, choice.Text, location, Color.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
-                    location.X += choice.Width;
+                    
+                    spriteBatch.DrawString(Game1.Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Color.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
+                    location.Y += Game1.TileSize + 8;
                 }
             }
 

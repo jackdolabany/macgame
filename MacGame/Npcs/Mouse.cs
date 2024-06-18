@@ -38,7 +38,7 @@ namespace MacGame.Npcs
 
             choices = new List<ConversationChoice>();
             choices.Add(new ConversationChoice("take my tacos", () => {
-                if (Game1.Player.Tacos >= 5)
+                if (Game1.Player.Tacos >= 100)
                 {
                     Game1.Player.Tacos = 0;
                     GiveCoin = true;

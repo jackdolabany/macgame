@@ -53,6 +53,8 @@ namespace MacGame.Items
         {
             if (!Enabled || AlreadyCollected) return;
 
+            this.Enabled = false;
+
             // Add this cricket coin if they don't already have it.
             if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
             {

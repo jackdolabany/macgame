@@ -53,14 +53,6 @@ namespace MacGame
             }
         }
 
-        public static void FireOneHundredTacosCollected(Object sender, EventArgs args)
-        {
-            var evt = OneHundredTacosCollected;
-            if (evt != null)
-            {
-                evt(sender, args);
-            }
-        }
     }
 
     public class  DoorEnteredEventArgs : EventArgs

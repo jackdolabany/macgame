@@ -27,6 +27,7 @@ namespace MacGame.Items
         public override void WhenCollected(Player player)
         {
             player.HasRedKey = true;
+            this.Enabled = false;
         }
     }
 }

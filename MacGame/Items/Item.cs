@@ -2,11 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TileEngine;
 
 namespace MacGame.Items
@@ -30,31 +25,6 @@ namespace MacGame.Items
         StaticImageDisplay ClosedChest;
         StaticImageDisplay OpenChestBottom;
         StaticImageDisplay OpenChestTop;
-
-        /// <summary>
-        /// Set this to some value to make the item flash and 
-        /// prevent it from being collected for some time.
-        /// </summary>
-        public float CanNotBeCollectedForTimer = 0;
-
-        // Set this to hard block the item from being collected.
-        private bool canBeCollected = true;
-
-        public bool CanBeCollected
-        {
-            get
-            {
-                return canBeCollected && CanNotBeCollectedForTimer <= 0;
-            }
-            set
-            {
-                canBeCollected = value;
-                if (canBeCollected)
-                {
-                    CanNotBeCollectedForTimer = 0;
-                }
-            }
-        }
 
         private bool isOpen = false;
         
@@ -93,7 +63,6 @@ namespace MacGame.Items
         private void Collect(Player player)
         {
             WhenCollected(player);
-            Enabled = false;
         }
 
         public abstract void WhenCollected(Player player);
@@ -108,35 +77,6 @@ namespace MacGame.Items
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (CanNotBeCollectedForTimer > 0)
-            {
-                CanNotBeCollectedForTimer -= elapsed;
-
-                flashTimer += elapsed;
-                if (flashTimer >= flashDuration)
-                {
-                    flashTimer -= flashDuration;
-                    if (isFlashingInvisible)
-                    {
-                        this.DisplayComponent.TintColor = originalTint;
-                    }
-                    else
-                    {
-                        this.DisplayComponent.TintColor = originalTint * 0.3f;
-                    }
-                    isFlashingInvisible = !isFlashingInvisible;
-                }
-
-                // Don't let it get stuck invisible.
-                if (CanNotBeCollectedForTimer <= 0)
-                {
-                    this.DisplayComponent.TintColor = originalTint;
-                }
-            }
-            else
-            {
-                originalTint = this.DisplayComponent.TintColor;
-            }
 
             if (!isInitialized && IsInChest)
             {
@@ -169,7 +109,7 @@ namespace MacGame.Items
             else if (Enabled)
             {
                 // Check for player/item collision.
-                if (_player.CollisionRectangle.Intersects(this.CollisionRectangle) && CanBeCollected)
+                if (_player.CollisionRectangle.Intersects(this.CollisionRectangle))
                 {
                     this.Collect(_player);
                 }

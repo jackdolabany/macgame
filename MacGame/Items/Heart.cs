@@ -18,6 +18,7 @@ namespace MacGame.Items
 
         public override void WhenCollected(Player player)
         {
+            this.Enabled = false;
             player.Health += 1;
             if (player.Health > Player.MaxHealth)
             {

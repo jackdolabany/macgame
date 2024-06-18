@@ -44,7 +44,6 @@ namespace MacGame.Items
                 if (coins.Contains(Name))
                 {
                     AlreadyCollected = true;
-                    CanBeCollected = false;
                     this.DisplayComponent.TintColor = Color.White * 0.5f;
                 }
             }
@@ -52,7 +51,7 @@ namespace MacGame.Items
 
         public override void WhenCollected(Player player)
         {
-            if (AlreadyCollected) return;
+            if (!Enabled || AlreadyCollected) return;
 
             // Add this cricket coin if they don't already have it.
             if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
@@ -72,6 +71,18 @@ namespace MacGame.Items
 
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
             GlobalEvents.FireCricketCoinCollected(this, EventArgs.Empty);
+        }
+
+        public override void Update(GameTime gameTime, float elapsed)
+        {
+
+            if (AlreadyCollected)
+            {
+                // They're enabled but not collectible if they are already collected. They're kind of of in a ghos tmode.
+                Enabled = true;
+            }
+
+            base.Update(gameTime, elapsed);
         }
     }
 }

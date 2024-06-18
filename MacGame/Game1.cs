@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using TileEngine;
 using MacGame.Items;
 using System.Linq;
-using System.Diagnostics;
 
 namespace MacGame
 {
@@ -139,6 +138,16 @@ namespace MacGame
             }
         }
 
+        // For the given level/world, track which tacos were picked up. 
+        // we need this so that a collected taco stays collected if you go
+        // into a door and back.
+        // Taco locations are stored in the Vector corresponding to the initial tile location on the map.
+        private static Dictionary<string, List<Vector2>> MapNameToCollectedTacos = new Dictionary<string, List<Vector2>>();
+
+        // We need to track if the Taco coin was revealed in case the player paid for the
+        // coin but didn't collect it yet. Go get it!
+        public static bool IsTacoCoinRevealed = false;
+
         // State to go to on the next update cycle
         private GameState transitionToState;
         private TransitionType transitionType;
@@ -181,7 +190,6 @@ namespace MacGame
 
             GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
-            GlobalEvents.OneHundredTacosCollected += OnOneHundredTacosCollected;
             GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
 
             var whiteTileRect = Helpers.GetTileRect(1, 3);
@@ -237,30 +245,7 @@ namespace MacGame
             TransitionToState(GameState.LoadingLevel, TransitionType.FastFade);
         }
 
-        private void OnOneHundredTacosCollected(object? sender, EventArgs args)
-        {
-            // TODO: ditch this if an NPC gives you the taco coin.
-            SoundManager.PlaySound("CoinCollected", 0.4f);
 
-            var taco = (Taco)sender!;
-            var tacoCoin = CurrentLevel.TacoCoin;
-
-            // Shift it slightly because coins are larger than tacos.
-            tacoCoin.WorldLocation = taco.WorldLocation;
-            tacoCoin.Enabled = true;
-
-            tacoCoinRevealTimer = 2f;
-
-            // Block immmediate collection. The RevealTacoCoin state change will enable it again.
-            tacoCoin.CanBeCollected = false;
-
-            // Coin should bounce up then down.
-            TimerManager.AddNewTimer(0.3f, () => tacoCoin.Velocity = new Vector2(0, -160f)) // wait a sec and then move the coin up.
-                .Then(0.5f, () => tacoCoin.Velocity = -tacoCoin.Velocity) // then down
-                .Then(0.5f, () => tacoCoin.Velocity = Vector2.Zero); // then stop
-
-            TransitionToState(GameState.RevealTacoCoin, TransitionType.Instant);
-        }
 
         private void OnBeginDoorEnter(object? sender, EventArgs args)
         {
@@ -358,6 +343,8 @@ namespace MacGame
             pauseMenu.SetupTitle("Paused");
 
             Player.ResetStateForLevelTransition(true);
+            MapNameToCollectedTacos.Clear();
+            IsTacoCoinRevealed = false;
 
             string hubDoorPlayerCameFrom = "";
             if (CurrentLevel != null && !string.IsNullOrEmpty(Game1.HubDoorNameYouCameFrom))
@@ -505,21 +492,6 @@ namespace MacGame
                     EffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
                 }
-            }
-            else if (_gameState == GameState.RevealTacoCoin)
-            {
-                // Pause for a bit while we play a jingle and just update the taco coin.
-                TimerManager.Update(elapsed);
-                CurrentLevel.TacoCoin.Update(gameTime, elapsed);
-                tacoCoinRevealTimer -= elapsed;
-                if(tacoCoinRevealTimer <= 0)
-                {
-                    // Replace the hard block on collection with a timer that will 
-                    // make it flash for a bit.
-                    CurrentLevel.TacoCoin.CanBeCollected = true;
-                    CurrentLevel.TacoCoin.CanNotBeCollectedForTimer = 3f;
-                    TransitionToState(GameState.Playing, TransitionType.Instant);
-                }   
             }
             else if(_gameState == GameState.GotCoin)
             {
@@ -683,7 +655,7 @@ namespace MacGame
                 case GameState.Playing:
                 case GameState.PausedWithMenu:
                 case GameState.GotCoin:
-                case GameState.RevealTacoCoin:
+                //case GameState.RevealTacoCoin:
                 case GameState.Conversation:
                 case GameState.PausedForAction:
 
@@ -907,6 +879,26 @@ namespace MacGame
             GoToHub(false);
         }
 
+        public static void TacoCollected(string levelName, int x, int y)
+        {
+            if (!MapNameToCollectedTacos.ContainsKey(levelName))
+            {
+                MapNameToCollectedTacos[levelName] = new List<Vector2>();
+            }
+
+            MapNameToCollectedTacos[levelName].Add(new Vector2(x, y));
+        }
+
+        public static bool WasTacoCollected(string levelName, int x, int y)
+        {
+            if (MapNameToCollectedTacos.ContainsKey(levelName))
+            {
+                var list = MapNameToCollectedTacos[levelName];
+                return list.Contains(new Vector2(x, y));
+            }
+            return false;
+        }
+
         public enum GameState
         {
             TitleScreen,
@@ -923,10 +915,10 @@ namespace MacGame
             /// </summary>
             PausedWithMenu,
             
-            /// <summary>
-            /// Once you get 100 tacos the game will sort of pause while we reveal the 100 taco coin.
-            /// </summary>
-            RevealTacoCoin,
+            ///// <summary>
+            ///// Once you get 100 tacos the game will sort of pause while we reveal the 100 taco coin.
+            ///// </summary>
+            //RevealTacoCoin,
             
             /// <summary>
             /// Talking to an NPC or text coming up because of some action (trying to open a locked door, etc.)

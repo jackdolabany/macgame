@@ -11,6 +11,7 @@ using MacGame.RevealBlocks;
 using MacGame.Enemies;
 using MacGame.Items;
 using MacGame.Npcs;
+using System.Data;
 
 namespace MacGame
 {
@@ -165,7 +166,28 @@ namespace MacGame
                                             }
 
                                             coin.CheckIfAlreadyCollected(level.LevelNumber);
+
+                                            if (obj.Properties.ContainsKey("IsTacoCoin"))
+                                            {
+                                                coin.IsTacoCoin = obj.Properties["IsTacoCoin"] == "1";
+                                                if (coin.IsTacoCoin)
+                                                {
+                                                    if (!coin.AlreadyCollected && !Game1.IsTacoCoinRevealed)
+                                                    {
+                                                        coin.Enabled = false;
+                                                    }
+                                                    level.TacoCoin = coin;
+                                                }
+                                            }
                                         }
+                                    }
+                                }
+                                else if (item is Taco)
+                                {
+                                    // Disable the taco if it was already collected
+                                    if (Game1.WasTacoCollected(level.Name, x, y))
+                                    {
+                                        item.Enabled = false;
                                     }
                                 }
                             }

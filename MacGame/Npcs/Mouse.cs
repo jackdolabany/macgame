@@ -1,13 +1,16 @@
 ﻿using MacGame.Behaviors;
 using MacGame.DisplayComponents;
+using MacGame.Items;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using TileEngine;
 using static MacGame.ConversationManager;
+using static MacGame.Game1;
 
 namespace MacGame.Npcs
 {
@@ -35,11 +38,21 @@ namespace MacGame.Npcs
 
             choices = new List<ConversationChoice>();
             choices.Add(new ConversationChoice("take my tacos", () => {
-                if (Game1.Player.Tacos >= 100)
+                if (Game1.Player.Tacos >= 5)
                 {
                     Game1.Player.Tacos = 0;
                     GiveCoin = true;
+
+                    SoundManager.PlaySound("CoinCollected", 0.4f);
+
+                    var tacoCoin = CurrentLevel.TacoCoin;
+
+                    tacoCoin.Enabled = true;
+
+                    Game1.IsTacoCoinRevealed = true;
+
                     ConversationManager.AddMessage("Wow! Those tacos were absolutely delicious! Take this", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+
                 }
                 else
                 {
@@ -47,7 +60,7 @@ namespace MacGame.Npcs
                 }
             }));
             choices.Add(new ConversationChoice("sounds rough", () => {
-                ConversationManager.AddMessage("I could live without tacos, but is that really living?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("I could live without tacos, but what's the point?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }));
         }
 
@@ -61,10 +74,37 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            ConversationManager.AddMessage("I'm sick of cheese. I need tacos!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-            if (Game1.Player.Tacos > 0)
+            if (Game1.IsTacoCoinRevealed || CurrentLevel.TacoCoin.AlreadyCollected)
             {
-                ConversationManager.AddMessage("", PlayerConversationRectangle, ConversationManager.ImagePosition.Left, choices);
+
+                var rando = Game1.Randy.Next(0, 4);
+
+                switch (rando)
+                {
+                    case 0:
+                        ConversationManager.AddMessage("Thanks for the tacos hombre", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        break;
+                    case 1:
+                        ConversationManager.AddMessage("I live for taco Tuesday. I'd die for taco tuesday", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        break;
+                    case 2:
+                        ConversationManager.AddMessage("People like to say salsa", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        break;
+                    case 3:
+                        ConversationManager.AddMessage("I used to love tacos. I still do, but I used to love them too.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        break;
+                    default: 
+                        ConversationManager.AddMessage("So long and thanks for all the tacos", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        break;
+                }
+            }
+            else
+            {
+                ConversationManager.AddMessage("I'm sick of cheese. I need tacos!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                if (Game1.Player.Tacos > 0)
+                {
+                    ConversationManager.AddMessage("", PlayerConversationRectangle, ConversationManager.ImagePosition.Left, choices);
+                }
             }
         }
     }

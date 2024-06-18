@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using TileEngine;
 using MacGame.RevealBlocks;
 using MacGame.Enemies;
@@ -159,7 +157,6 @@ namespace MacGame
                     }
                 }
                 
-
                 // if there's a door to go through and an NPC to talk to, prefer the one closer to Mac
                 if (doorToEnter != null && npcToTalkTo != null)
                 {

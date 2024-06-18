@@ -22,6 +22,7 @@ namespace MacGame.Items
 
         public override void WhenCollected(Player player)
         {
+            this.Enabled = false;
             EffectsManager.EnemyPop(WorldCenter, 7, Color.White, 80);
             player.CurrentItem = this;
         }

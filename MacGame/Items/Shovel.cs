@@ -27,6 +27,7 @@ namespace MacGame.Items
         {
             EffectsManager.EnemyPop(WorldCenter, 7, Color.White, 80);
             player.CurrentItem = this;
+            this.Enabled = false;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

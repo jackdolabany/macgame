@@ -52,7 +52,7 @@
   </object>
   <object id="4" name="BossDoor" x="313.768" y="126.828" width="17.75" height="30">
    <properties>
-    <property name="CoinsNeeded" value="5"/>
+    <property name="CoinsNeeded" value="11"/>
     <property name="GoToMap" value="TestFinalBoss"/>
     <property name="Name" value="BossDoor"/>
    </properties>

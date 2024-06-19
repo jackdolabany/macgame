@@ -286,15 +286,6 @@ namespace MacGame
                 HandleInputs(elapsed);
             }
 
-            if (HasWings)
-            {
-                wings.Update(gameTime, elapsed);
-            }
-            if (HasShovel)
-            {
-                shovel.Update(gameTime, elapsed);
-            }
-
             if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
             {
                 // player fell down a bottomless pit
@@ -325,7 +316,16 @@ namespace MacGame
             }
 
             base.Update(gameTime, elapsed);
-            
+
+            if (HasWings)
+            {
+                wings.Update(gameTime, elapsed);
+            }
+            if (HasShovel)
+            {
+                shovel.Update(gameTime, elapsed);
+            }
+
             foreach (var apple in Apples.RawList)
             {
                 if (apple.Enabled)
@@ -480,7 +480,7 @@ namespace MacGame
             }
 
             // If they aren't running max walk speed is cut in half.
-            if (!InputManager.CurrentAction.attack && (onGround || IsClimbingLadder))
+            if (!InputManager.CurrentAction.action && (onGround || IsClimbingLadder))
             {
                 environmentMaxWalkSpeed /= 3;
             }
@@ -813,7 +813,9 @@ namespace MacGame
             }
 
             // Level.cs will check door collisions if this is true.
-            this.InteractButtonPressedThisFrame = InputManager.CurrentAction.up && !InputManager.PreviousAction.up;
+            this.InteractButtonPressedThisFrame = 
+                (InputManager.CurrentAction.up && !InputManager.PreviousAction.up) || 
+                (InputManager.CurrentAction.action && !InputManager.PreviousAction.action);
 
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 80 && velocity.X > -80 && IsSliding)
@@ -886,7 +888,7 @@ namespace MacGame
                 appleCooldownTimer += elapsed;
             }
 
-            if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack && HasApples && appleCooldownTimer >= appleCooldownTime)
+            if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && HasApples && appleCooldownTimer >= appleCooldownTime)
             {
                 var apple = Apples.TryGetObject();
                 if (apple != null)
@@ -904,7 +906,7 @@ namespace MacGame
 
             if (HasShovel)
             {
-                if (InputManager.CurrentAction.attack && !InputManager.PreviousAction.attack)
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
                 {
                     var digDirection = Flipped ? DigDirection.Left : DigDirection.Right;
                     if(InputManager.CurrentAction.up)

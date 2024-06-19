@@ -71,6 +71,8 @@ namespace MacGame.Items
                 player.CricketCoinCount++;
             }
 
+            player.Health = Player.MaxHealth;
+
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
             GlobalEvents.FireCricketCoinCollected(this, EventArgs.Empty);
         }

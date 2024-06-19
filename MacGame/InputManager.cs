@@ -55,10 +55,11 @@ namespace MacGame
                 CurrentAction.jump = true;
             }
 
-            if (keyState.IsKeyDown(Keys.A)
+            if (keyState.IsKeyDown(Keys.Z)
+                || keyState.IsKeyDown(Keys.LeftShift)
                 || gamePad.IsButtonDown(Buttons.X))
             {
-                CurrentAction.attack = true;
+                CurrentAction.action = true;
             }
 
             if (keyState.IsKeyDown(Keys.Escape)
@@ -96,7 +97,7 @@ namespace MacGame
         public bool left;
         public bool right;
         public bool jump;
-        public bool attack;
+        public bool action;
         public bool pause;
         public bool acceptMenu;
         public bool declineMenu;

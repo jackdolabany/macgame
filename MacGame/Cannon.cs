@@ -39,13 +39,22 @@ namespace MacGame
 
         private RotationDirection? _autoShootDirection;
 
-        float delayShotTimer = 0f;
+        /// <summary>
+        /// If a cannon shoots you automatically this will delay it a bit. especially if it's going to auto shoot you in the 
+        /// same direction it's facing.
+        /// </summary>
+        float delayAutoShotTimer = 0f;
 
         /// <summary>
         /// Normally a cannon shoots you for a bit. If the cannon is a "Super Shot" it will shoot you until
         /// you hit a wall or another cannon. This is used for getting around the map or something.
         /// </summary>
         public bool IsSuperShot { get; set; }
+
+        /// <summary>
+        /// Once Mac enters a cannon delay his inputs so he can't insta shoot right out.
+        /// </summary>
+        float inputDelayTimer = 0.0f;
 
         /// <summary>
         /// Set this if you want the cannon to automatically shoot in a direction with no player control.
@@ -71,7 +80,7 @@ namespace MacGame
         {
             get
             {
-                return AutoShootDirection == null;
+                return AutoShootDirection == null && inputDelayTimer <= 0f;
             }
         }
 
@@ -123,9 +132,14 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (delayShotTimer > 0)
+            if (inputDelayTimer > 0)
             {
-                delayShotTimer -= elapsed;
+                inputDelayTimer -= elapsed;
+            }
+
+            if (delayAutoShotTimer > 0)
+            {
+                delayAutoShotTimer -= elapsed;
             }
 
             if (_player.CannonYouAreIn == null && canAcceptPlayer && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
@@ -135,13 +149,15 @@ namespace MacGame
                 // Sounds weird, not sound for now.
                 // SoundManager.PlaySound("EnterCannon", 0.3f);
 
+                inputDelayTimer = 0.4f;
+
                 if (AutoShootDirection == RotationDirection)
                 {
-                    delayShotTimer = 0.3f;
+                    delayAutoShotTimer = 0.3f;
                 }
                 else
                 {
-                    delayShotTimer = 0.0f;
+                    delayAutoShotTimer = 0.0f;
                 }
             }
 
@@ -213,7 +229,7 @@ namespace MacGame
                 }
             }
 
-            if (_player.CannonYouAreIn == this && AutoShootDirection == this.RotationDirection && delayShotTimer <= 0f)
+            if (_player.CannonYouAreIn == this && AutoShootDirection == this.RotationDirection && delayAutoShotTimer <= 0f)
             {
                 Shoot();
             }

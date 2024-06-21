@@ -159,9 +159,46 @@ namespace MacGame
         public bool IsAffectedByGravity { get; set; }
         public bool IsAffectedByPlatforms { get; set; }
 
-        public Vector2 Gravity = new Vector2(0, 1600);
+        public virtual Vector2 Gravity
+        {
+            get
+            {
+                if (IsInWater)
+                {
+                    return new Vector2(0, 400);
+                }
+                else
+                {
+                    return new Vector2(0, 1600);
+                }
+            }
+        }
 
-        public const float MaxFallSpeed = 1000;
+        public virtual bool IsInWater
+        {
+            get
+            {
+                if (Game1.CurrentMap == null) return false;
+                var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldCenter);
+                if (mapSquare == null) return false;
+                return mapSquare.IsWater;
+            }
+        }
+
+        public float MaxFallSpeed
+        {
+            get
+            {
+                if (IsInWater)
+                {
+                    return 150;
+                }
+                else
+                {
+                    return 1000;
+                }
+            }
+        }
 
         protected Vector2 velocity;
         public Vector2 Velocity

@@ -763,6 +763,10 @@ namespace Squared.Tiled
                         {
                             tileMap.MapCells[x][y].IsIce = true;
                         }
+                        else if (tileInfo.properties.ContainsKey("Water"))
+                        {
+                            tileMap.MapCells[x][y].IsWater = true;
+                        }
                         else if (tileInfo.properties.ContainsKey("MinecartTrack"))
                         {
                             tileMap.MapCells[x][y].IsMinecartTrack = true;

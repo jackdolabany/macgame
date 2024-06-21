@@ -33,14 +33,6 @@ namespace TileEngine
         public float PlayerDrawDepth = 0f;
         public float Zoom = 1f;
 
-        public TileMap()
-        {
-            this.Backgrounds = new List<String>();
-            this.Layers = new List<Layer>();
-            this.Properties = new Dictionary<string, string>();
-            this.ObjectModifiers = new List<ObjectModifier>();
-        }
-
         public List<ObjectModifier> ObjectModifiers;
 
         public Dictionary<string, string> Properties;
@@ -48,6 +40,16 @@ namespace TileEngine
         public const int TileSize = 32;
 
         public List<Layer> Layers;
+
+        public MapSquare[][] MapCells = new MapSquare[100][];
+
+        public TileMap()
+        {
+            this.Backgrounds = new List<String>();
+            this.Layers = new List<Layer>();
+            this.Properties = new Dictionary<string, string>();
+            this.ObjectModifiers = new List<ObjectModifier>();
+        }
 
         public int MapWidth
         {
@@ -105,8 +107,6 @@ namespace TileEngine
         {
             return GetLayerDrawDepth(MapDepth - 1);
         }
-
-        public MapSquare[][] MapCells = new MapSquare[100][];
 
         /// <summary>
         /// Gets the draw depth of some things relative to the player

@@ -10,9 +10,9 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TileEngine.dll
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TmxMapLibrary.dll
-/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
 
 #---------------------------------- Content ---------------------------------#
 

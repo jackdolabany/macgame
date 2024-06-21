@@ -129,7 +129,7 @@ namespace MacGame
                 return this.CurrentItem is Shovel;
             }
         }
-        private MacShovel shovel;
+        private MacShovel _shovel;
 
         /// <summary>
         /// if Mac is using the wing, it'll render behind him.
@@ -141,6 +141,21 @@ namespace MacGame
         public bool HasBlueKey { get; set; } = false;
 
         public bool IsInvisible { get; set; } = false;
+
+        public override Vector2 Gravity
+        {
+            get
+            {
+                if (isInJumpFromGround && jumpButtonHeldDownTimer > 0)
+                {
+                    return JumpGravity;
+                }
+                else
+                {
+                    return base.Gravity;
+                }
+            }
+        }
 
         public bool IsInCannon 
         {
@@ -213,6 +228,11 @@ namespace MacGame
             knockedDown.FrameLength = 0.1f;
             animations.Add(knockedDown);
 
+            var swim = new AnimationStrip(textures, Helpers.GetTileRect(6, 4), 2, "swim");
+            swim.LoopAnimation = true;
+            swim.FrameLength = 0.14f;
+            animations.Add(swim);
+
             Enabled = true;
 
             // This gets set later when the level loads.
@@ -239,7 +259,7 @@ namespace MacGame
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
 
-            shovel = new MacShovel(this, textures);
+            _shovel = new MacShovel(this, textures);
 
             NormalGravity = Gravity;
             JumpGravity = NormalGravity * 0.333f;
@@ -248,7 +268,7 @@ namespace MacGame
         public override void SetDrawDepth(float depth)
         {
             this.DisplayComponent.DrawDepth = depth;
-            this.shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
         }
@@ -280,6 +300,10 @@ namespace MacGame
             else if (IsJustShotOutOfCannon)
             {
                 HandleShotOutOfCannonInputs(elapsed);
+            }
+            else if (IsInWater)
+            {
+                HandleWaterInputs(elapsed);
             }
             else
             {
@@ -323,7 +347,7 @@ namespace MacGame
             }
             if (HasShovel)
             {
-                shovel.Update(gameTime, elapsed);
+                _shovel.Update(gameTime, elapsed);
             }
 
             foreach (var apple in Apples.RawList)
@@ -597,15 +621,6 @@ namespace MacGame
                 this.velocity.X = 0;
             }
             this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsJustShotOutOfCannon && !IsInCannon;
-
-            if (isInJumpFromGround && jumpButtonHeldDownTimer > 0)
-            {
-                this.Gravity = JumpGravity;
-            }
-            else
-            {
-                this.Gravity = NormalGravity;
-            }
 
             // Stop moving while climbing if you aren't pressing up or down.
             if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
@@ -925,7 +940,7 @@ namespace MacGame
                     {
                         digDirection = DigDirection.Right;
                     }
-                    shovel.TryDig(digDirection);
+                    _shovel.TryDig(digDirection);
                 }
             }
 
@@ -1165,6 +1180,69 @@ namespace MacGame
                 timeRemainingToBeShotOutOfCannon = 0;
             }
         }
+
+        private void HandleWaterInputs(float elapsed)
+        {
+            if (animations.CurrentAnimationName != "swim")
+            {
+                animations.Play("swim");
+            }
+
+            // If you are in water you can't jump very high.
+            if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
+            {
+                // Regular jump.
+                this.velocity.Y -= 250;
+                //SoundManager.PlaySound("Jump");
+            }
+
+            // If you are in water you can't move very fast.
+            if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
+            {
+                this.velocity.X += 50 * elapsed;
+                if (this.velocity.X > 100)
+                {
+                    this.velocity.X = 100;
+                }
+                Flipped = false;
+            }
+            else if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+            {
+                this.velocity.X -= 50 * elapsed;
+                if (this.velocity.X < -100)
+                {
+                    this.velocity.X = -100;
+                }
+                Flipped = true;
+            }
+            else
+            {
+                this.velocity.X -= (this.velocity.X * 2.5f * elapsed);
+            }
+
+            // If you are in water you can't move very fast.
+            if (InputManager.CurrentAction.down && !InputManager.CurrentAction.up)
+            {
+                this.velocity.Y += 100 * elapsed;
+                if (this.velocity.Y > 100)
+                {
+                    this.velocity.Y = 100;
+                }
+            }
+            else if (InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
+            {
+                this.velocity.Y -= 100 * elapsed;
+                if (this.velocity.Y < -100)
+                {
+                    this.velocity.Y = -100;
+                }
+            }
+            else
+            {
+                this.velocity.Y -= (this.velocity.Y * 2.5f * elapsed);
+            }
+        }
+
         public void Kill()
         {
             Health = 0;
@@ -1189,7 +1267,7 @@ namespace MacGame
 
             if (HasShovel)
             {
-                shovel.Draw(spriteBatch);
+                _shovel.Draw(spriteBatch);
             }
 
             foreach (var apple in Apples.RawList)

@@ -189,6 +189,16 @@
    <property name="LoadClass" value="Cannon"/>
   </properties>
  </tile>
+ <tile id="98">
+  <properties>
+   <property name="Water" value="1"/>
+  </properties>
+ </tile>
+ <tile id="99">
+  <properties>
+   <property name="Water" value="1"/>
+  </properties>
+ </tile>
  <tile id="100">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -210,6 +220,11 @@
  <tile id="107">
   <properties>
    <property name="LoadClass" value="OpenCloseDoor"/>
+  </properties>
+ </tile>
+ <tile id="114">
+  <properties>
+   <property name="Water" value="2"/>
   </properties>
  </tile>
  <tile id="115">

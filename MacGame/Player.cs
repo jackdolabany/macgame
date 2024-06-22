@@ -230,7 +230,7 @@ namespace MacGame
 
             var swim = new AnimationStrip(textures, Helpers.GetTileRect(6, 4), 2, "swim");
             swim.LoopAnimation = true;
-            swim.FrameLength = 0.14f;
+            swim.FrameLength = 0.25f;
             animations.Add(swim);
 
             Enabled = true;
@@ -285,6 +285,8 @@ namespace MacGame
                 cameraTrackingTimer -= elapsed;
             }
 
+            var isInWater = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter)?.IsWater ?? false;
+
             if (IsInMineCart)
             {
                 HandleMineCartInputs(elapsed);
@@ -301,7 +303,7 @@ namespace MacGame
             {
                 HandleShotOutOfCannonInputs(elapsed);
             }
-            else if (IsInWater)
+            else if (isInWater)
             {
                 HandleWaterInputs(elapsed);
             }
@@ -1183,36 +1185,51 @@ namespace MacGame
 
         private void HandleWaterInputs(float elapsed)
         {
+
+            IsAffectedByGravity = false;
+
             if (animations.CurrentAnimationName != "swim")
             {
                 animations.Play("swim");
             }
 
+            Vector2 headLocation = new Vector2(this.CollisionRectangle.Center.X, this.CollisionRectangle.Top);
+            bool isHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation)?.IsWater ?? false;
+            bool justBelowHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation + new Vector2(0, 8))?.IsWater ?? false;
+            bool isJumpingOutOfWater = false;
+
             // If you are in water you can't jump very high.
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
             {
-                // Regular jump.
-                this.velocity.Y -= 250;
-                //SoundManager.PlaySound("Jump");
+                if (isHeadUnderWater)
+                {
+                    // weak water 'jump'
+                    this.velocity.Y -= 60;
+
+                    // TODO: Swim sound
+                    //SoundManager.PlaySound("Jump");
+                }
+                else
+                {
+                    isJumpingOutOfWater = true;
+                    SoundManager.PlaySound("Jump");
+                    // TODO: Too much!
+                    this.velocity.Y -= 500;
+                }
+                
             }
 
-            // If you are in water you can't move very fast.
+            const float swimSpeed = 200f;
+            const float maxSpeed = 100f;
+
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
             {
-                this.velocity.X += 50 * elapsed;
-                if (this.velocity.X > 100)
-                {
-                    this.velocity.X = 100;
-                }
+                this.velocity.X += swimSpeed * elapsed;
                 Flipped = false;
             }
             else if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
             {
-                this.velocity.X -= 50 * elapsed;
-                if (this.velocity.X < -100)
-                {
-                    this.velocity.X = -100;
-                }
+                this.velocity.X -= 100 * elapsed;
                 Flipped = true;
             }
             else
@@ -1220,26 +1237,31 @@ namespace MacGame
                 this.velocity.X -= (this.velocity.X * 2.5f * elapsed);
             }
 
-            // If you are in water you can't move very fast.
             if (InputManager.CurrentAction.down && !InputManager.CurrentAction.up)
             {
-                this.velocity.Y += 100 * elapsed;
-                if (this.velocity.Y > 100)
-                {
-                    this.velocity.Y = 100;
-                }
+                this.velocity.Y += swimSpeed * elapsed;
             }
             else if (InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
             {
-                this.velocity.Y -= 100 * elapsed;
-                if (this.velocity.Y < -100)
-                {
-                    this.velocity.Y = -100;
-                }
+                this.velocity.Y -= swimSpeed * elapsed;
             }
             else
             {
-                this.velocity.Y -= (this.velocity.Y * 2.5f * elapsed);
+                // They slowly float down if you don't press anything.
+                this.velocity.Y += 50 * elapsed;
+            }
+
+            if (isHeadUnderWater)
+            {
+                this.velocity.Y = MathHelper.Clamp(this.velocity.Y, -maxSpeed, maxSpeed);
+                this.velocity.X = MathHelper.Clamp(this.velocity.X, -maxSpeed, maxSpeed);
+            }
+
+            // If they are near the top, stop their movement so that they have a head above water but they don't pop out
+            // this makes it easier to jump out of the water.
+            if (!isJumpingOutOfWater && !justBelowHeadUnderWater)
+            {
+                this.velocity.Y = MathHelper.Clamp(this.velocity.Y, 0, this.velocity.Y);
             }
         }
 

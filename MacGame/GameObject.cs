@@ -163,25 +163,7 @@ namespace MacGame
         {
             get
             {
-                if (IsInWater)
-                {
-                    return new Vector2(0, 400);
-                }
-                else
-                {
-                    return new Vector2(0, 1600);
-                }
-            }
-        }
-
-        public virtual bool IsInWater
-        {
-            get
-            {
-                if (Game1.CurrentMap == null) return false;
-                var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldCenter);
-                if (mapSquare == null) return false;
-                return mapSquare.IsWater;
+                return new Vector2(0, 1600);
             }
         }
 
@@ -189,14 +171,7 @@ namespace MacGame
         {
             get
             {
-                if (IsInWater)
-                {
-                    return 150;
-                }
-                else
-                {
-                    return 1000;
-                }
+                return 1000;
             }
         }
 

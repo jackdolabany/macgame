@@ -310,7 +310,7 @@ namespace MacGame
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
 
-            bool startAtTitleScreen = true;
+            bool startAtTitleScreen = false;
             if (startAtTitleScreen)
             {
                 TransitionToState(GameState.TitleScreen, TransitionType.Instant);

@@ -161,6 +161,40 @@ namespace MacGame
             }
         }
 
+        public static void AddSplash(Vector2 location, Vector2 impactVelocity, Color? color = null, float scale = 2f)
+        {
+
+            if (!color.HasValue)
+            {
+                color = Color.White;
+            }
+
+            int particleCount = 5;
+            for (int x = 0; x < particleCount; x++)
+            {
+                var splash = (Particle)Particles.GetNextObject();
+
+                float xVelocity = Game1.Randy.Next(0, 100) - 50;
+
+                float yVelocity = Game1.Randy.Next(70, 150);
+                yVelocity *= -1f;
+
+                splash.Initialize(
+                    location,
+                    new Vector2(xVelocity, yVelocity),
+                    new Vector2(0, 3),
+                    200f,
+                    105,
+                    color.Value,
+                    Color.Transparent);
+
+                splash.SetStaticImage(SparkTexture, WhiteSquareSourceRectangle);
+                splash.Rotation = 0f;
+                splash.Scale = scale;
+                splash.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
+            }
+        }
+
         public static void AddBricks(Vector2 location, int pieceCount, Texture2D image, bool forceUp = false, float scale = 1f, Color color = default(Color))
         {
             AddBricks(location, pieceCount, image, image.BoundingRectangle(), forceUp, scale, color);

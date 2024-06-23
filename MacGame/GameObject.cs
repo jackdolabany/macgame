@@ -84,7 +84,7 @@ namespace MacGame
         // Encapsulates common display logic and state
         public DisplayComponent DisplayComponent;
 
-        public float DrawDepth
+        public virtual float DrawDepth
         {
             get
             {

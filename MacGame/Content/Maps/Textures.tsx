@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="Textures" tilewidth="8" tileheight="8" tilecount="256" columns="16">
+<tileset version="1.2" tiledversion="1.2.2" name="Textures" tilewidth="8" tileheight="8" tilecount="256" columns="16">
  <image source="../Textures/Textures.png" width="128" height="128"/>
  <tile id="1">
   <properties>
@@ -179,6 +179,16 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="92">
+  <properties>
+   <property name="LoadClass" value="Enemy.GreenFish"/>
+  </properties>
+ </tile>
+ <tile id="94">
+  <properties>
+   <property name="LoadClass" value="Enemy.Squid"/>
+  </properties>
+ </tile>
  <tile id="96">
   <properties>
    <property name="LoadClass" value="Enemy.Frog"/>
@@ -187,16 +197,6 @@
  <tile id="97">
   <properties>
    <property name="LoadClass" value="Cannon"/>
-  </properties>
- </tile>
- <tile id="98">
-  <properties>
-   <property name="Water" value="1"/>
-  </properties>
- </tile>
- <tile id="99">
-  <properties>
-   <property name="Water" value="1"/>
   </properties>
  </tile>
  <tile id="100">
@@ -217,14 +217,39 @@
    <property name="Ice" value="1"/>
   </properties>
  </tile>
+ <tile id="103">
+  <properties>
+   <property name="Water" value="1"/>
+  </properties>
+ </tile>
+ <tile id="104">
+  <properties>
+   <property name="Water" value="1"/>
+  </properties>
+ </tile>
+ <tile id="105">
+  <properties>
+   <property name="Water" value="1"/>
+  </properties>
+ </tile>
+ <tile id="106">
+  <properties>
+   <property name="Water" value="1"/>
+  </properties>
+ </tile>
  <tile id="107">
   <properties>
    <property name="LoadClass" value="OpenCloseDoor"/>
   </properties>
  </tile>
- <tile id="114">
+ <tile id="108">
   <properties>
-   <property name="Water" value="2"/>
+   <property name="LoadClass" value="Enemy.BlueFish"/>
+  </properties>
+ </tile>
+ <tile id="110">
+  <properties>
+   <property name="LoadClass" value="Enemy.Urchin"/>
   </properties>
  </tile>
  <tile id="115">
@@ -237,9 +262,19 @@
    <property name="LoadClass" value="Platform.StaticPlatform"/>
   </properties>
  </tile>
+ <tile id="121">
+  <properties>
+   <property name="Water" value="2"/>
+  </properties>
+ </tile>
  <tile id="123">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="124">
+  <properties>
+   <property name="LoadClass" value="Enemy.Manta"/>
   </properties>
  </tile>
  <tile id="128">
@@ -272,6 +307,11 @@
  <tile id="139">
   <properties>
    <property name="LoadClass" value="RedDoor"/>
+  </properties>
+ </tile>
+ <tile id="140">
+  <properties>
+   <property name="LoadClass" value="Enemy.Clam"/>
   </properties>
  </tile>
  <tile id="144">

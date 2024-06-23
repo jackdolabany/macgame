@@ -93,6 +93,19 @@ namespace MacGame
 
                     for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
                     {
+
+                        if (mapSquare.IsWater)
+                        {
+                            if (mapSquare.LayerTiles[z].LoadClass == "WaterWave")
+                            {
+                                // The top of water is a special animating flyweight tile thing.
+                                mapSquare.LayerTiles[z].ShouldDraw = false;
+                                var drawDepth = map.GetLayerDrawDepth(z);
+                                var waterWave = new WaterWave(x, y, drawDepth);
+                                level.GameObjects.Add(waterWave);
+                            }
+                        }
+
                         // Load the textures so the map can draw.
                         if (mapSquare.LayerTiles[z].TileIndex > 0) // by convention 0 is a null texture on all tile sets
                         {

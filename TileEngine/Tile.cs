@@ -31,11 +31,6 @@ namespace TileEngine
 
         public bool ShouldDraw { get; set; } = true;
 
-        /// <summary>
-        /// Some custom properties to apply to the LoadClass
-        /// </summary>
-        public Dictionary<string, string> Properties = new Dictionary<string, string>();
-
         public Rectangle TextureRectangle
         {
             get

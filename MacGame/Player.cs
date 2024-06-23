@@ -62,6 +62,8 @@ namespace MacGame
         public Vector2 NormalGravity;
         public Vector2 JumpGravity;
 
+        public bool IsInWater = false;
+
         // Add time here to make the camera track Mac slowly for a period of time. This will help 
         // move the camera more naturally for a period when he does "snapping" actions like snapping to the
         // other side of a vine, or snapping to other objects.
@@ -285,7 +287,19 @@ namespace MacGame
                 cameraTrackingTimer -= elapsed;
             }
 
-            var isInWater = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter)?.IsWater ?? false;
+            var wasInWater = IsInWater;
+            IsInWater = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter)?.IsWater ?? false;
+
+            if (!wasInWater && IsInWater)
+            {
+                if (velocity.Y > 200)
+                {
+                    EffectsManager.AddSplash(new Vector2(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom), new Vector2(0, this.velocity.Y));
+                    EffectsManager.AddSplash(new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Bottom), new Vector2(0, this.velocity.Y));
+                }
+                // TODO: Play water splash or swim sound
+                //SoundManager.PlaySound("Splash");
+            }
 
             if (IsInMineCart)
             {
@@ -303,7 +317,7 @@ namespace MacGame
             {
                 HandleShotOutOfCannonInputs(elapsed);
             }
-            else if (isInWater)
+            else if (IsInWater)
             {
                 HandleWaterInputs(elapsed);
             }
@@ -425,7 +439,7 @@ namespace MacGame
                     // Pad 1 pixel to make it a little easier
                     var wasAboveEnemy = _previousCollisionRectangle.Bottom - 8 <= enemy.CollisionRectangle.Top;
 
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine && !IsInWater)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
@@ -1204,7 +1218,7 @@ namespace MacGame
                 if (isHeadUnderWater)
                 {
                     // weak water 'jump'
-                    this.velocity.Y -= 60;
+                    this.velocity.Y -= 100;
 
                     // TODO: Swim sound
                     //SoundManager.PlaySound("Jump");
@@ -1248,7 +1262,7 @@ namespace MacGame
             else
             {
                 // They slowly float down if you don't press anything.
-                this.velocity.Y += 50 * elapsed;
+                this.velocity.Y += 30 * elapsed;
             }
 
             if (isHeadUnderWater)

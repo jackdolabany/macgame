@@ -231,5 +231,63 @@ namespace MacGame
             return new Vector2(rect.Width / 2, rect.Height / 2);
         }
 
+        /// <summary>
+        /// This method returns the unit vector of the direction from the source to the target,
+        /// but only in 8 directions. Up, UpRight, Right, DownRight, Down, DownLeft, Left, or UpLeft.
+        /// </summary>
+        public static Vector2 GetEightWayDirectionTowardsTarget(Vector2 source, Vector2 target)
+        {
+            var direction = target - source;
+            direction.Normalize();
+            if (direction.X > 0.5f)
+            {
+                if (direction.Y > 0.5f)
+                {
+                    direction = new Vector2(1, 1);
+                }
+                else if (direction.Y < -0.5f)
+                {
+                    direction = new Vector2(1, -1);
+                }
+                else
+                {
+                    direction = new Vector2(1, 0);
+                }
+            }
+            else if (direction.X < -0.5f)
+            {
+                if (direction.Y > 0.5f)
+                {
+                    direction = new Vector2(-1, 1);
+                }
+                else if (direction.Y < -0.5f)
+                {
+                    direction = new Vector2(-1, -1);
+                }
+                else
+                {
+                    direction = new Vector2(-1, 0);
+                }
+            }
+            else
+            {
+                if (direction.Y > 0.5f)
+                {
+                    direction = new Vector2(0, 1);
+                }
+                else if (direction.Y < -0.5f)
+                {
+                    direction = new Vector2(0, -1);
+                }
+                else
+                {
+                    direction = new Vector2(0, 0);
+                }
+            }
+
+            direction.Normalize();
+            return direction;
+        }
+
     }
 }

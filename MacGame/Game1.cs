@@ -66,7 +66,7 @@ namespace MacGame
         /// </summary>
         public const string SaveGameFolder = "MacsAdventure";
 
-        public const string StartingWorld = "TestHub";
+        public const string StartingWorld = "TestWorld2";
         public const string HubWorld = "TestHub";
 
         // Set in the ctor
@@ -81,6 +81,11 @@ namespace MacGame
         public static string HubDoorNameYouCameFrom = "";
 
         private static bool drawHappened = true;
+
+        /// <summary>
+        /// This represents the wave at the top of water. There's only one because we're using the flyweight pattern.
+        /// </summary>
+        public static WaterWaveFlyweight WaterWaveFlyweight;
 
         public enum TransitionType
         {
@@ -245,8 +250,6 @@ namespace MacGame
             TransitionToState(GameState.LoadingLevel, TransitionType.FastFade);
         }
 
-
-
         private void OnBeginDoorEnter(object? sender, EventArgs args)
         {
             TransitionToState(GameState.PausedForAction, TransitionType.Instant);
@@ -288,6 +291,9 @@ namespace MacGame
             //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
+
+            // Flyweights
+            WaterWaveFlyweight = new WaterWaveFlyweight();
 
             Game1.State = new StorageState(1);
             Player = new Player(Content, inputManager, deadMenu);
@@ -475,6 +481,9 @@ namespace MacGame
 
             if (_gameState == GameState.Playing)
             {
+
+                WaterWaveFlyweight.Update(gameTime, elapsed);
+
                 State.TotalElapsedTime += elapsed;
 
                 if (Player.Enabled && inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause && !isPaused)

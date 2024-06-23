@@ -766,6 +766,17 @@ namespace Squared.Tiled
                         else if (tileInfo.properties.ContainsKey("Water"))
                         {
                             tileMap.MapCells[x][y].IsWater = true;
+
+                            // Setting "Water" to anything will make it water. Setting it to 1 is for the tiles
+                            // that are animated waves at the top.
+                            if (tileInfo.properties["Water"] == "1")
+                            {
+                                tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "WaterWave";
+                            }
+                            else
+                            {
+                                tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "Water";
+                            }
                         }
                         else if (tileInfo.properties.ContainsKey("MinecartTrack"))
                         {

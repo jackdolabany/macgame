@@ -15,6 +15,10 @@ namespace MacGame
     /// </summary>
     public class Game1 : Game
     {
+
+        public const string StartingWorld = "World1MineCart";
+        private const bool startAtTitleScreen = false;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -66,7 +70,6 @@ namespace MacGame
         /// </summary>
         public const string SaveGameFolder = "MacsAdventure";
 
-        public const string StartingWorld = "TestWorld2";
         public const string HubWorld = "TestHub";
 
         // Set in the ctor
@@ -316,14 +319,21 @@ namespace MacGame
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
 
-            bool startAtTitleScreen = false;
             if (startAtTitleScreen)
             {
                 TransitionToState(GameState.TitleScreen, TransitionType.Instant);
             }
             else
             {
-                GoToHub(false);
+                if (StartingWorld == HubWorld)
+                {
+                    GoToHub(false);
+                }
+                else
+                {
+                    CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
+                }
+
                 Camera.Map = CurrentLevel.Map;
                 TransitionToState(GameState.Playing, TransitionType.Instant);
             }
@@ -358,7 +368,7 @@ namespace MacGame
                 hubDoorPlayerCameFrom = Game1.HubDoorNameYouCameFrom;
             }
 
-            CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel(HubWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
 
             // Place the player at the door they came from.
@@ -882,7 +892,7 @@ namespace MacGame
             _putPlayerAtDoor = "";
             HubDoorNameYouCameFrom = "";
 
-            CurrentLevel = sceneManager.LoadLevel(StartingWorld, Content, Player, Camera);
+            CurrentLevel = sceneManager.LoadLevel(HubWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
 
             GoToHub(false);

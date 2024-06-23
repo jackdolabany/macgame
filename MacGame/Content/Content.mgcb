@@ -105,6 +105,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World1FirstRedHouse.tmx
 
+#begin Maps/World1MineCart.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1MineCart.tmx
+
 #begin Maps/World1PurpleHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

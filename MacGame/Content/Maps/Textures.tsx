@@ -324,6 +324,16 @@
    <property name="LoadClass" value="MineCart"/>
   </properties>
  </tile>
+ <tile id="147">
+  <properties>
+   <property name="LoadClass" value="Enemy.BeeMinecart"/>
+  </properties>
+ </tile>
+ <tile id="148">
+  <properties>
+   <property name="LoadClass" value="Enemy.CricketMinecart"/>
+  </properties>
+ </tile>
  <tile id="150">
   <properties>
    <property name="LoadClass" value="Platform.StaticPlatform"/>

@@ -24,7 +24,7 @@ namespace TileEngine
         /// <summary>
         /// Not the best way to identify these. But works for now.
         /// </summary>
-        private Rectangle[] SandTextures = new Rectangle[]
+        private static Rectangle[] SandTextures = new Rectangle[]
             {
                 Helpers.GetTileRect(4, 5),
                 Helpers.GetTileRect(5, 5),

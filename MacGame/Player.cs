@@ -439,7 +439,7 @@ namespace MacGame
                     // Pad 1 pixel to make it a little easier
                     var wasAboveEnemy = _previousCollisionRectangle.Bottom - 8 <= enemy.CollisionRectangle.Top;
 
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine && !IsInWater)
+                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine && !IsInWater && !IsInMineCart)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);

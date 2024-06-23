@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MacGame.Enemies
 {
@@ -49,7 +50,6 @@ namespace MacGame.Enemies
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            base.Update(gameTime, elapsed);
 
             // Do nothing if off screen
             if (!Game1.Camera.IsObjectVisible(this.CollisionRectangle)) return;
@@ -90,6 +90,15 @@ namespace MacGame.Enemies
                     
                 }
             }
+
+            // If they start to get out of the water force their direction of movement downward.
+            var tileAbove = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionCenter.X, this.CollisionRectangle.Top));
+            if (tileAbove != null && !tileAbove.IsWater)
+            {
+                this.Velocity = new Vector2(this.Velocity.X, Math.Abs(this.Velocity.Y));
+            }
+
+            base.Update(gameTime, elapsed);
 
         }
     }

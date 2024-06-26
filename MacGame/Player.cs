@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 namespace MacGame
 {
-
     public enum MacState
     {
         Idle,

@@ -739,6 +739,27 @@ namespace Squared.Tiled
                         else if (tileInfo.properties.ContainsKey("BlockPlayer"))
                         {
                             tileMap.MapCells[x][y].Passable = false;
+
+                            // Tiles are 8x8 but scaled x 4 to 32x32.
+                            // we'll do that tranlsation here so the math works for collisions later.
+                            const int tileScale = 4;
+
+                            if (tileInfo.properties["BlockPlayer"] == "SlopeUp")
+                            {
+                                tileMap.MapCells[x][y].LeftHeight = 0 * tileScale;
+                                tileMap.MapCells[x][y].RightHeight = 8 * tileScale;
+                            }
+                            else if (tileInfo.properties["BlockPlayer"] == "SlopeDown")
+                            {
+                                tileMap.MapCells[x][y].LeftHeight = 8 * tileScale;
+                                tileMap.MapCells[x][y].RightHeight = 0 * tileScale;
+                            }
+                            else
+                            {
+                                // Totally blocking
+                                tileMap.MapCells[x][y].LeftHeight = 8 * tileScale;
+                                tileMap.MapCells[x][y].RightHeight = 8 * tileScale;
+                            }
                         }
                         else if (tileInfo.properties.ContainsKey("PlayerStart"))
                         {

@@ -386,7 +386,7 @@ namespace MacGame
             }
 
             level.RevealBlockManager.OrganizeRawBlocksIntoGroups();
-            player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + 4, ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
+            player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + (Game1.TileSize / 2), ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
             camera.Map = level.Map;
 
             level.Map.PlayerDrawDepth = player.DrawDepth;

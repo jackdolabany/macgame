@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TileEngine;
 using MacGame.DisplayComponents;
+using Microsoft.Xna.Framework.Content;
 
 namespace MacGame
 {
@@ -295,70 +296,97 @@ namespace MacGame
 
         private Vector2 horizontalCollisionTest(Vector2 moveAmount)
         {
-            if (moveAmount.X == 0)
-            {
-                return moveAmount;
-            }
+            if (moveAmount.X == 0) return moveAmount;
 
             onRightWall = false;
             onLeftWall = false;
+
+            Rectangle currentPositionRect = this.CollisionRectangle;
 
             Vector2 newPosition = worldLocation;
             newPosition.X += moveAmount.X;
             Rectangle afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
 
-            bool isMovingRight = moveAmount.X > 0;
+            // Collisions are based on Type #2: Tile Based (Smooth) described
+            // here: http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/
+            // Scan the tiles along x the pre-move rectangle of the player.
+            // Scan as many tiles across as needed by the movement amount. 
+            // find the closest obstacle and move the GameObject the min distance between 
+            // the closest obstacle and how far they want to move.
 
-            int moveRectX;
-            if (isMovingRight)
+            // Loop as many cells as we need top to bottom.
+            var topCell = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top);
+            var bottomCell = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 1);
+
+            // How many should we check left or right?
+            int startCellX;
+            int endCellX;
+            if (moveAmount.X > 0)
             {
-                moveRectX = afterMoveRect.Right - 1;
+                // moving to the right.
+                startCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Right);
+                endCellX = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Right + 1); // Add one since they may have moved a fraction of a pixel
             }
             else
             {
-                moveRectX = afterMoveRect.Left;
+                // Moving left
+                startCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Left + 1); // Subtract one since they may have moved a fraction of a pixel
+                endCellX = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Left); 
             }
 
-            //always test the corners
-            int pixelCount = 2;
-            pixelsToTest[0] = new Point(moveRectX, afterMoveRect.Top); //top corner
-            pixelsToTest[1] = new Point(moveRectX, afterMoveRect.Bottom - 1); //bottom corner
-
-            //Check some intermediate pixels if necessary.
-            if (collisionRectangle.Height > TileMap.TileSize)
+            for (int y = topCell; y <= bottomCell; y++)
             {
-                int testY = afterMoveRect.Top + TileMap.TileSize;
-                while (testY < afterMoveRect.Bottom)
-                {
-                    var pixel = new Point(moveRectX, testY);
-                    pixelsToTest[pixelCount] = pixel;
-                    pixelCount++;
-                    testY += TileMap.TileSize;
-                }
-            }
 
-            for (int i = 0; i <= pixelCount - 1; i++)
-            {
-                var pixel = pixelsToTest[i];
-                var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(pixel.X, pixel.Y);
+                // Determine the step direction based on the comparison
+                int step = startCellX <= endCellX ? 1 : -1;
 
-                if (mapSquare != null && (!mapSquare.Passable || (isEnemyTileColliding && !mapSquare.EnemyPassable)))
+                // Loop through the cells in the x direction, incrementing or decrementing
+                for (int x = startCellX; (step == 1) ? x <= endCellX : x >= endCellX; x += step)
                 {
-                    // There was a collision, place the object to the edge of the tile.
-                    if (isMovingRight)
+
+                    // if we're on a slope, we need to ignore a solid tile next to the slope as we're moving uphill so that 
+                    // it doesn't prevent horizontal movement until we are on top of it
+                    //         /      |
+                    //      __/_______|_
+                    // --> / |        |
+                    //    /  | ignore |
+                    int adjacentX = x - 1;
+                    if (velocity.X < 0)
                     {
-                        int mapCellLeft = Game1.CurrentMap.GetCellByPixelX(pixel.X) * TileMap.TileSize;
-                        moveAmount.X = Math.Min(moveAmount.X, mapCellLeft - CollisionRectangle.Right);
-                        onRightWall = true;
+                        adjacentX = x + 1;
                     }
-                    else
+                    var adjacentCell = Game1.CurrentMap.GetMapSquareAtCell(adjacentX, y);
+                    if (adjacentCell != null && adjacentCell.IsOnASlope())
                     {
-                        // Moving left
-                        int mapCellRight = ((Game1.CurrentMap.GetCellByPixelX(pixel.X) + 1) * TileMap.TileSize) - 1;
-                        moveAmount.X = Math.Max(moveAmount.X, mapCellRight - CollisionRectangle.Left + 1);
-                        onLeftWall = true;
+                        continue;
                     }
-                    velocity.X = 0;
+
+                    var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
+                    if (cell != null)
+                    {
+                        if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
+                        {
+                            // There was a collision, place the object to the edge of the tile.
+                            if (moveAmount.X > 0)
+                            {
+                                // Moving right
+                                var distanceToTile = (TileMap.TileSize * x) - currentPositionRect.Right;
+                                moveAmount.X = Math.Min(moveAmount.X, distanceToTile);
+                                onRightWall = true;
+                            }
+                            else if (moveAmount.X < 0)
+                            {
+                                // Moving left
+                                var distanceToTile = currentPositionRect.Left - ((x + 1) * TileMap.TileSize);
+                                moveAmount.X = Math.Max(moveAmount.X, -distanceToTile);
+                                onLeftWall = true;
+                            }
+                            velocity.X = 0;
+
+                            // We scan closest tiles first so no reason to continue with the for loop.
+                            continue;
+                        }
+                    }
                 }
             }
 
@@ -367,156 +395,206 @@ namespace MacGame
 
         private Vector2 verticalCollisionTest(Vector2 moveAmount)
         {
-            if (moveAmount.Y == 0)
-                return moveAmount;
-
-            Vector2 newPosition = worldLocation + moveAmount;
-            Rectangle afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
-            Rectangle cachedCollisionRectangle = this.CollisionRectangle;
-
-            bool isFalling = moveAmount.Y >= 0;
-
-            int moveRectY = 0;
-            if (isFalling)
-            {
-                // special case, if we are falling we want to check a pixels below so that we 
-                // can set onground = true if they are 1 pixel above the ground.
-                moveRectY = afterMoveRect.Bottom;
-            }
-            else
-            {
-                moveRectY = afterMoveRect.Top;
-            }
-
-            //always test the corners
-            int pixelCount = 2;
-            pixelsToTest[0] = new Point(afterMoveRect.Left, moveRectY);
-            pixelsToTest[1] = new Point(afterMoveRect.Right - 1, moveRectY);
-
-            //Check some intermediate pixels if necessary.
-            if (collisionRectangle.Width > TileMap.TileSize)
-            {
-                int testX = afterMoveRect.Left + TileMap.TileSize;
-                while (testX < afterMoveRect.Right - 1)
-                {
-                    var pixel = new Point(testX, moveRectY);
-                    pixelsToTest[pixelCount] = pixel;
-                    pixelCount++;
-                    testX += TileMap.TileSize;
-                }
-            }
-
-            Platform newPlatform = null;
+            if (moveAmount.Y == 0) return moveAmount;
 
             bool previouslyOnGround = onGround;
             onGround = false;
             Landed = false;
             LandingVelocity = 0f;
+            Platform newPlatform;
 
-            for (int i = 0; i <= pixelCount - 1; i++)
+            Rectangle currentPositionRect = this.CollisionRectangle;
+            Vector2 newPosition = worldLocation + moveAmount;
+            Rectangle afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
+
+            bool isFalling = moveAmount.Y > 0;
+
+            // Slopes are special. If we're moving to a slope, ignore everything and just check the bottom center.
+            bool isOnSlope = false;
+            if (isFalling)
             {
-                var pixel = pixelsToTest[i];
-
-                // Test non passable blocks
-                var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(pixel.X, pixel.Y);
-                if (mapSquare != null && (!mapSquare.Passable || (isEnemyTileColliding && !mapSquare.EnemyPassable)))
+                var bottomCenterCell = Game1.CurrentMap.GetMapSquareAtPixel(currentPositionRect.Center.X, currentPositionRect.Bottom - 1);
+                isOnSlope = bottomCenterCell != null && bottomCenterCell.IsOnASlope();
+                
+                if (isOnSlope)
                 {
-                    //there was a collision, place the object to the edge of the tile.
-                    if (isFalling)
-                    {
-                        if (!previouslyOnGround)
-                        {
-                            Landed = true;
-                            LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
-                        }
-                        int mapCellTop = Game1.CurrentMap.GetCellByPixelY(pixel.Y) * TileMap.TileSize;
-                        moveAmount.Y = Math.Min(moveAmount.Y, mapCellTop - cachedCollisionRectangle.Bottom);
-                        onGround = true;
-                    }
-                    else
-                    {
-                        //moving up!
-                        int mapCellBottom = (((Game1.CurrentMap.GetCellByPixelY(pixel.Y) + 1) * TileMap.TileSize) - 1);
-                        moveAmount.Y = Math.Max(moveAmount.Y, mapCellBottom - cachedCollisionRectangle.Top + 1);
-                        onCeiling = true;
-                    }
+                    var slopeCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Center.X);
+                    var slopeCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 1);
+
+                    // Moving down
+                    int distanceToBottomOfTile = (TileMap.TileSize * (slopeCellY + 1)) - currentPositionRect.Bottom;
+                    
+                    float xRelativeToTile = currentPositionRect.Center.X - (TileMap.TileSize * slopeCellX);
+                    
+                    float percent = xRelativeToTile / TileMap.TileSize;
+                    float distanceToSlope = (1 - percent) * bottomCenterCell!.LeftHeight + percent * bottomCenterCell.RightHeight;
+                    
+                    moveAmount.Y = Math.Min(moveAmount.Y, distanceToBottomOfTile - distanceToSlope);
+                    onGround = true;
+
                     velocity.Y = 0;
+
+                    if (!previouslyOnGround)
+                    {
+                        Landed = true;
+                        LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
+                    }
+                }
+            }
+
+            if (!isOnSlope)
+            {
+                // Regular tile collision
+                // Loop as many x cells as we need left to right.
+                var leftCell = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Left);
+                var rightCell = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Right - 1);
+
+                // How many should we check top or bottom?
+                int startCellY;
+                int endCellY;
+                if (isFalling)
+                {
+                    // moving down
+                    startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom);
+                    endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Bottom + 1);
                 }
                 else
                 {
+                    // Moving up
+                    startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top + 1);
+                    endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Top);
+                }
 
-                    // Test platforms!
-                    if (IsAffectedByGravity && IsAffectedByPlatforms && isFalling)
+                for (int x = leftCell; x <= rightCell; x++)
+                {
+                    // Determine the step direction based on the comparison
+                    int step = startCellY <= endCellY ? 1 : -1;
+
+                    // Loop through the cells in the y direction, incrementing or decrementing
+                    for (int y = startCellY; (step == 1) ? y <= endCellY : y >= endCellY; y += step)
                     {
-                        foreach (var platform in Game1.Platforms)
+                        var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
+                        if (cell != null)
                         {
-
-                            if (platform.IsAffectedByGravity)
+                            if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
                             {
-                                continue;
-                            }
-
-                            if (!platform.Enabled || PoisonPlatforms.Contains(platform))
-                            {
-                                continue;
-                            }
-
-                            var samePlatformAsBefore = (platform == PlatformThatThisIsOn);
-
-                            if (!samePlatformAsBefore)
-                            {
-                                var wasAbove = cachedCollisionRectangle.Bottom <= platform.PreviousLocation.Y;
-                                if (!wasAbove)
+                                // There was a collision, place the object to the edge of the tile.
+                                if (moveAmount.Y > 0)
                                 {
-                                    continue;
-                                }
-                            }
-
-                            var isPlatformBelowMe = platform.CollisionRectangle.Contains(new Point(pixel.X, pixel.Y + 1));
-
-                            // Special case for vertical moving platforms moving down, it may move faster than the GameObject
-                            // so we need to lock the GameObject to the platform. We consider you on the platform if your X
-                            // coordinates fall in range and if you didn't jump
-                            bool isLockedOnVerticalMovingPlatform = false;
-                            if (samePlatformAsBefore && platform.velocity.Y > 0)
-                            {
-                                isLockedOnVerticalMovingPlatform = pixel.X >= platform.CollisionRectangle.Left && pixel.X <= platform.CollisionRectangle.Right;
-                            }
-
-                            if (isPlatformBelowMe || isLockedOnVerticalMovingPlatform)
-                            {
-                                // They are on a platform.
-                                newPlatform = platform;
-                                onGround = true;
-                                OnPlatform = true;
-                                velocity.Y = 0;
-                                if (samePlatformAsBefore)
-                                {
-                                    // Previous platform. The GameObject will be moved along with the platform outside of this function.
-                                    moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - cachedCollisionRectangle.Bottom);
-                                }
-                                else
-                                {
-                                    // If a new platform was hit, adjust the position.
-                                    moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - cachedCollisionRectangle.Bottom);
+                                    // Moving down
+                                    int distanceToTile = (TileMap.TileSize * y) - currentPositionRect.Bottom;
+                                    moveAmount.Y = Math.Min(moveAmount.Y, distanceToTile);
+                                    onGround = true;
 
                                     if (!previouslyOnGround)
                                     {
                                         Landed = true;
                                         LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
                                     }
-
                                 }
-                                break;
+                                else if (moveAmount.Y < 0)
+                                {
+                                    // Moving up.
+                                    int distanceToTile = currentPositionRect.Top - ((y + 1) * TileMap.TileSize);
+                                    moveAmount.Y = Math.Max(moveAmount.Y, -distanceToTile);
+                                    onCeiling = true;
+                                }
+                                velocity.Y = 0;
+
+                                // We scan closest tiles first so no reason to continue with the for loop.
+                                continue;
                             }
                         }
                     }
                 }
             }
+            
 
-            Landed = Landed && ((afterMoveRect.Y - cachedCollisionRectangle.Y) > 5);
 
-            PlatformThatThisIsOn = newPlatform;
+
+            // Test platforms!
+            if (IsAffectedByGravity && IsAffectedByPlatforms && isFalling)
+            {
+
+                // Reassign these to test platforms.
+                newPosition = worldLocation + moveAmount;
+                afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
+
+                foreach (var platform in Game1.Platforms)
+                {
+
+                    if (platform.IsAffectedByGravity)
+                    {
+                        continue;
+                    }
+
+                    if (!platform.Enabled || PoisonPlatforms.Contains(platform))
+                    {
+                        continue;
+                    }
+
+                    var samePlatformAsBefore = (platform == PlatformThatThisIsOn);
+
+                    if (!samePlatformAsBefore)
+                    {
+                        var wasAbove = currentPositionRect.Bottom <= platform.PreviousLocation.Y;
+                        if (!wasAbove)
+                        {
+                            continue;
+                        }
+                    }
+
+                    var pixelBelowMe = this.WorldLocation + new Vector2(0, 1);
+
+                    var isPlatformBelowMe = platform.CollisionRectangle.X < currentPositionRect.Right
+                        && platform.CollisionRectangle.Right > currentPositionRect.Left
+                        && platform.CollisionRectangle.Top < pixelBelowMe.Y
+                        && platform.CollisionRectangle.Bottom > pixelBelowMe.Y;
+                    
+                    // Special case for vertical moving platforms moving down, it may move faster than the GameObject
+                    // so we need to lock the GameObject to the platform. We consider you on the platform if your X
+                    // coordinates fall in range and if you didn't jump
+                    bool isLockedOnVerticalMovingPlatform = false;
+                    if (samePlatformAsBefore && platform.velocity.Y > 0)
+                    {
+                        isLockedOnVerticalMovingPlatform = afterMoveRect.X >= platform.CollisionRectangle.Left && afterMoveRect.X <= platform.CollisionRectangle.Right;
+                    }
+
+                    if (isPlatformBelowMe || isLockedOnVerticalMovingPlatform)
+                    {
+                        // They are on a platform.
+                        newPlatform = platform;
+                        onGround = true;
+                        OnPlatform = true;
+                        velocity.Y = 0;
+                        if (samePlatformAsBefore)
+                        {
+                            // Previous platform. The GameObject will be moved along with the platform outside of this function.
+                            moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - currentPositionRect.Bottom);
+                        }
+                        else
+                        {
+                            // If a new platform was hit, adjust the position.
+                            moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - currentPositionRect.Bottom);
+
+                            if (!previouslyOnGround)
+                            {
+                                Landed = true;
+                                LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
+                            }
+
+                        }
+                        break;
+                    }
+                }
+            }
+
+
+
+            Landed = Landed && ((afterMoveRect.Y - currentPositionRect.Y) > 5);
+
+            // TODO:
+            //PlatformThatThisIsOn = newPlatform;
             return moveAmount;
         }
 
@@ -628,16 +706,17 @@ namespace MacGame
             // Draw a square at the GameObjects location
             if (DrawLocation || Game1.DrawAllCollisisonRects)
             {
-                var rectSize = 4;
+                var squareSize = 4;
+                var offset = squareSize / 2;
                 var location = WorldLocation;
 
                 // Draw location in green
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle(-(int)(rectSize / 2f + location.X), -(int)(rectSize / 2f + location.Y), rectSize, rectSize), Game1.WhiteSourceRect, Color.Green);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)(location.X - offset), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Green);
 
                 location = WorldCenter;
 
                 // Draw world center in Yellow
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle(-(int)(rectSize / 2f + location.X), -(int)(rectSize / 2 + location.Y), rectSize, rectSize), Game1.WhiteSourceRect, Color.Yellow);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)(location.X - offset), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Yellow);
             }
         }
 

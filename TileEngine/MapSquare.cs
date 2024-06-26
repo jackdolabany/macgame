@@ -17,7 +17,21 @@ namespace TileEngine
         public bool IsWater { get; set; } = false;
         public bool IsLadder { get; set; } = false;
         public bool IsVine { get; set; } = false;
-        
+
+        /// <summary>
+        /// The left of the blocking tile in pixels. 8 is fully blocking
+        /// and 1 would be the minimum. Left height to right height
+        /// creates a slope of collision points.
+        /// </summary>
+        public int LeftHeight { get; set; } = 0;
+
+        /// <summary>
+        /// The right height of the blocking tile in pixels. 8 is fully blocking
+        /// and 1 would be the minimum. Left height to right height
+        /// creates a slope of collision points.
+        /// </summary>
+        public int RightHeight { get; set; } = 0;
+
         // Keep track of sand that was dug up so we can put it back later.
         private bool wasSand = false;
 
@@ -79,5 +93,11 @@ namespace TileEngine
                 }
             }
         }
+
+        public bool IsOnASlope()
+        {
+            return !Passable && (LeftHeight < TileMap.TileSize || RightHeight < TileMap.TileSize);
+        }
+
     }
 }

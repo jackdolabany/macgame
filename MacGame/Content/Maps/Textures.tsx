@@ -289,13 +289,13 @@
  </tile>
  <tile id="132">
   <properties>
-   <property name="BlockPlayer" value="slopeup"/>
+   <property name="BlockPlayer" value="SlopeUp"/>
    <property name="MinecartTrack" value="1"/>
   </properties>
  </tile>
  <tile id="133">
   <properties>
-   <property name="BlockPlayer" value="slopedown"/>
+   <property name="BlockPlayer" value="SlopeDown"/>
    <property name="MinecartTrack" value="1"/>
   </properties>
  </tile>

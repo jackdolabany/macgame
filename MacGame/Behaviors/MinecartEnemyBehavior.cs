@@ -11,6 +11,7 @@ namespace MacGame.Behaviors
 
         private bool wasVisible = false;
 
+        Rectangle startCollisionRect;
         Vector2 startLocation;
 
         const float speed = 200f;
@@ -26,17 +27,18 @@ namespace MacGame.Behaviors
 
             var enemy = (Enemy)gameObject;
 
-            if (startLocation == Vector2.Zero)
+            if (startCollisionRect == Rectangle.Empty)
             {
+                startCollisionRect = enemy.CollisionRectangle;
                 startLocation = enemy.WorldLocation;
             }
 
-            var isVisible = Game1.Camera.IsPointVisible(this.startLocation);
-            if (isVisible)
+            var startLocationVisible = Game1.Camera.IsObjectVisible(startCollisionRect);
+            if (startLocationVisible)
             {
-                if (isVisible && !wasVisible && enemy.WorldLocation == startLocation && !enemy.Enabled)
+                if (startLocationVisible && !wasVisible && enemy.WorldLocation == startLocation && !enemy.Enabled)
                 {
-                    // First time on the screen, set velocity moving towards the player.
+                    // First time on the screen, spawn the enemy and set velocity moving towards the player.
                     enemy.Enabled = true;
                     enemy.Alive = true;
                     var direction = _player.WorldCenter - enemy.WorldCenter;
@@ -70,17 +72,15 @@ namespace MacGame.Behaviors
                     }
                 }
             }
-            else
+             
+            // if off screen, reset to start location.
+            if (!Game1.Camera.IsObjectVisible(enemy.CollisionRectangle) && enemy.Enabled)
             {
-                // if off screen, reset to start location.
-                if (enemy.Enabled)
-                {
-                    enemy.Enabled = false;
-                    enemy.WorldLocation = startLocation;
-                }
+                enemy.Enabled = false;
+                enemy.WorldLocation = startLocation;
             }
 
-            wasVisible = isVisible;
+            wasVisible = startLocationVisible;
         }
     }
 }

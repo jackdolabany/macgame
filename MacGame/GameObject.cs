@@ -324,14 +324,14 @@ namespace MacGame
             if (moveAmount.X > 0)
             {
                 // moving to the right.
-                startCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Right);
+                startCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Right - 1);
                 endCellX = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Right + 1); // Add one since they may have moved a fraction of a pixel
             }
             else
             {
                 // Moving left
                 startCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Left + 1); // Subtract one since they may have moved a fraction of a pixel
-                endCellX = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Left); 
+                endCellX = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Left - 1); 
             }
 
             for (int y = topCell; y <= bottomCell; y++)
@@ -409,27 +409,42 @@ namespace MacGame
 
             bool isFalling = moveAmount.Y > 0;
 
+
+            var test = Game1.CurrentMap.MapCells.SelectMany(x => x).Where(x => x.IsOnASlope());
+
             // Slopes are special. If we're moving to a slope, ignore everything and just check the bottom center.
             bool isOnSlope = false;
             if (isFalling)
             {
-                var bottomCenterCell = Game1.CurrentMap.GetMapSquareAtPixel(currentPositionRect.Center.X, currentPositionRect.Bottom - 1);
-                isOnSlope = bottomCenterCell != null && bottomCenterCell.IsOnASlope();
-                
+                // it's a slope if the pixel above the start is a slow, or below where you end up.
+                // This helps you walk up on to a slope from a flat surface.
+                var slopeCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Center.X);
+                var slopeCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 1);
+                var slopeCell = Game1.CurrentMap.GetMapSquareAtCell(slopeCellX, slopeCellY);
+                isOnSlope = slopeCell != null && slopeCell.IsOnASlope();
+
+                if (!isOnSlope)
+                {
+                    // this helps you find a slope when you are half on an adjacent flat surface.
+                    slopeCellX = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Center.X);
+                    slopeCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Bottom + 1);
+                    slopeCell = Game1.CurrentMap.GetMapSquareAtCell(slopeCellX, slopeCellY);
+                    isOnSlope = slopeCell != null && slopeCell.IsOnASlope();
+                }
+
                 if (isOnSlope)
                 {
-                    var slopeCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Center.X);
-                    var slopeCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 1);
-
                     // Moving down
                     int distanceToBottomOfTile = (TileMap.TileSize * (slopeCellY + 1)) - currentPositionRect.Bottom;
                     
                     float xRelativeToTile = currentPositionRect.Center.X - (TileMap.TileSize * slopeCellX);
                     
                     float percent = xRelativeToTile / TileMap.TileSize;
-                    float distanceToSlope = (1 - percent) * bottomCenterCell!.LeftHeight + percent * bottomCenterCell.RightHeight;
-                    
-                    moveAmount.Y = Math.Min(moveAmount.Y, distanceToBottomOfTile - distanceToSlope);
+                    float distanceToSlope = (1 - percent) * slopeCell!.LeftHeight + percent * slopeCell.RightHeight;
+
+                    // Lock them to the slope
+                    moveAmount.Y = distanceToBottomOfTile - distanceToSlope;
+
                     onGround = true;
 
                     velocity.Y = 0;
@@ -455,14 +470,14 @@ namespace MacGame
                 if (isFalling)
                 {
                     // moving down
-                    startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom);
+                    startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 1);
                     endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Bottom + 1);
                 }
                 else
                 {
                     // Moving up
                     startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top + 1);
-                    endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Top);
+                    endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Top - 1);
                 }
 
                 for (int x = leftCell; x <= rightCell; x++)
@@ -476,6 +491,7 @@ namespace MacGame
                         var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
                         if (cell != null)
                         {
+
                             if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
                             {
                                 // There was a collision, place the object to the edge of the tile.

@@ -8,7 +8,26 @@ namespace TileEngine
     public class MapSquare
     {
         public Tile[] LayerTiles { get; set; }
-        public bool Passable { get; set; } = true;
+        
+        private bool _passable = true;
+        public bool Passable
+        {
+            get
+            {
+                return _passable;
+            }
+            set
+            {
+                if (value == false && RightHeight == 0 && LeftHeight == 0)
+                {
+                    // it wasn't a slope, they're trying to make it fully blocking.
+                    RightHeight = TileMap.TileSize;
+                    LeftHeight = TileMap.TileSize;
+                }
+                _passable = value;
+            }
+        }
+
         public bool EnemyPassable { get; set; } = true;
         public bool PlatformPassable { get; set; } = true;
         public bool IsSand { get; set; } = false;

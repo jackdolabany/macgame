@@ -104,6 +104,9 @@ namespace MacGame.Items
                 if (topOfPlayer.Intersects(bottomOfChest))
                 {
                     isOpen = true;
+
+                    // Move it just above the player so he doesn't instantly collect it.
+                    this.worldLocation.Y = _player.CollisionRectangle.Top - 5;
                 }
             }
             else if (Enabled)

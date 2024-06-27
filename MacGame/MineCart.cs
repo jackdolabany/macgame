@@ -20,7 +20,7 @@ namespace MacGame
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures, Helpers.GetTileRect(2, 9));
             this.DisplayComponent = image;
-            this.CollisionRectangle = new Rectangle(-4, -8, Game1.TileSize, Game1.TileSize);
+            SetCenteredCollisionRectangle(8, 8);
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
             _player = player;

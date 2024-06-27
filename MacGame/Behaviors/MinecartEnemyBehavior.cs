@@ -45,10 +45,12 @@ namespace MacGame.Behaviors
                     if (direction.X > 0)
                     {
                         enemy.Velocity = new Vector2(speed, 0);
+                        enemy.Flipped = false;
                     }
                     else
                     {
                         enemy.Velocity = new Vector2(-speed, 0);
+                        enemy.Flipped = true;
                     }
                 }
                 else

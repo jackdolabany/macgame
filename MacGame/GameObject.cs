@@ -560,9 +560,13 @@ namespace MacGame
 
             moveAmount.Y = yToMove;
 
-            // Test platforms!
+            // Test platforms. We'll reassign PlatformThatThisIsOn here. Moving platforms should be updated before GameObjects
+            // and are responsible for moving the GameObjects that are on them. Jumping down through platforms is handled by 
+            // the player using PoisonPlatforms.
             if (IsAffectedByGravity && IsAffectedByPlatforms && isFalling)
             {
+
+                PlatformThatThisIsOn = null;
 
                 // Reassign these to test platforms.
                 newPosition = worldLocation + moveAmount;
@@ -581,65 +585,46 @@ namespace MacGame
                         continue;
                     }
 
-                    var samePlatformAsBefore = (platform == PlatformThatThisIsOn);
+                    // fudge some numbers to account for rounding errors since we intermix floats and 
+                    // rectangles that round down to ints.
+                    const int fudgePixels = 2;
 
-                    if (!samePlatformAsBefore)
+                    // Was the platform below the player before movement?
+                    var wasPlatformBelowMe = platform.CollisionRectangle.X <= currentPositionRect.Right
+                        && platform.CollisionRectangle.Right >= currentPositionRect.Left
+                        && platform.CollisionRectangle.Top > (currentPositionRect.Bottom - fudgePixels);
+
+                    if (wasPlatformBelowMe)
                     {
-                        var wasAbove = currentPositionRect.Bottom <= platform.PreviousLocation.Y;
-                        if (!wasAbove)
-                        {
-                            continue;
-                        }
-                    }
+                        var distanceToPlatform = platform.CollisionRectangle.Top - currentPositionRect.Bottom;
 
-                    var pixelBelowMe = this.WorldLocation + new Vector2(0, 1);
-
-                    var isPlatformBelowMe = platform.CollisionRectangle.X < currentPositionRect.Right
-                        && platform.CollisionRectangle.Right > currentPositionRect.Left
-                        && platform.CollisionRectangle.Top < pixelBelowMe.Y
-                        && platform.CollisionRectangle.Bottom > pixelBelowMe.Y;
-                    
-                    // Special case for vertical moving platforms moving down, it may move faster than the GameObject
-                    // so we need to lock the GameObject to the platform. We consider you on the platform if your X
-                    // coordinates fall in range and if you didn't jump
-                    bool isLockedOnVerticalMovingPlatform = false;
-                    if (samePlatformAsBefore && platform.velocity.Y > 0)
-                    {
-                        isLockedOnVerticalMovingPlatform = afterMoveRect.X >= platform.CollisionRectangle.Left && afterMoveRect.X <= platform.CollisionRectangle.Right;
-                    }
-
-                    if (isPlatformBelowMe || isLockedOnVerticalMovingPlatform)
-                    {
-                        // They are on a platform.
-                        newPlatform = platform;
-                        onGround = true;
-                        OnPlatform = true;
-                        velocity.Y = 0;
-                        if (samePlatformAsBefore)
-                        {
-                            // Previous platform. The GameObject will be moved along with the platform outside of this function.
-                            moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - currentPositionRect.Bottom);
-                        }
-                        else
+                        // You're considered on the platform if you are within movement distance a pixel of it.
+                        if (distanceToPlatform <= moveAmount.Y || distanceToPlatform <= fudgePixels)
                         {
                             // If a new platform was hit, adjust the position.
                             moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - currentPositionRect.Bottom);
-
+                            
+                            PlatformThatThisIsOn = platform;
+                            onGround = true;
+                            OnPlatform = true;
+                            velocity.Y = 0;
+                            
                             if (!previouslyOnGround)
                             {
                                 Landed = true;
                                 LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
                             }
 
+                            // Of course they could be on multiple platforms, but we'll just consider the first one they interact with.
+                            break;
                         }
-                        break;
                     }
+
                 }
             }
 
             Landed = Landed && ((afterMoveRect.Y - currentPositionRect.Y) > 5);
 
-            PlatformThatThisIsOn = newPlatform;
             return moveAmount;
         }
 

@@ -404,6 +404,11 @@
    <property name="LoadClass" value="Npc.HyperBluey"/>
   </properties>
  </tile>
+ <tile id="218">
+  <properties>
+   <property name="LoadClass" value="Platform.BreakingPlatform"/>
+  </properties>
+ </tile>
  <tile id="225">
   <properties>
    <property name="LoadClass" value="Npc.Ottie"/>
@@ -427,6 +432,31 @@
  <tile id="233">
   <properties>
    <property name="LoadClass" value="Npc.Dog"/>
+  </properties>
+ </tile>
+ <tile id="234">
+  <properties>
+   <property name="LoadClass" value="Platform.StaticPlatform2"/>
+  </properties>
+ </tile>
+ <tile id="235">
+  <properties>
+   <property name="LoadClass" value="Platform.VerticalMovingPlatform"/>
+  </properties>
+ </tile>
+ <tile id="236">
+  <properties>
+   <property name="LoadClass" value="Platform.HorizontalMovingPlatform"/>
+  </properties>
+ </tile>
+ <tile id="237">
+  <properties>
+   <property name="LoadClass" value="Platform.DiagonalMovingPlatform1"/>
+  </properties>
+ </tile>
+ <tile id="238">
+  <properties>
+   <property name="LoadClass" value="Platform.DiagonalMovingPlatform2"/>
   </properties>
  </tile>
 </tileset>

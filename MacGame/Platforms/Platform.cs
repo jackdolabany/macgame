@@ -34,7 +34,14 @@ namespace MacGame.Platforms
         public override void Update(GameTime gameTime, float elapsed)
         {
             PreviousLocation = this.WorldLocation;
+
             base.Update(gameTime, elapsed);
+
+            // Move the player if he was on this platform
+            if (Game1.Player.PlatformThatThisIsOn == this)
+            {
+                Game1.Player.WorldLocation += this.WorldLocation - PreviousLocation;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

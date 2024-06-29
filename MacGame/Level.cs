@@ -82,6 +82,7 @@ namespace MacGame
         {
             RevealBlockManager.Update(elapsed);
 
+            // Important that platforms update before player and enemies.
             foreach (var p in Platforms)
             {
                 p.Update(gameTime, elapsed);

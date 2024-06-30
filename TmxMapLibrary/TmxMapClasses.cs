@@ -736,6 +736,10 @@ namespace Squared.Tiled
                             }
 
                         }
+                        else if (tileInfo.properties.ContainsKey("DestroyMinecart"))
+                        {
+                            tileMap.MapCells[x][y].IsDestroyMinecart = true;
+                        }
                         else if (tileInfo.properties.ContainsKey("BlockPlayer"))
                         {
                             tileMap.MapCells[x][y].Passable = false;
@@ -825,7 +829,8 @@ namespace Squared.Tiled
                         var shouldDrawTile = layer.Name.ToLower() != "collisions"
                             && !tileInfo.properties.ContainsKey("LoadClass")
                             && !tileInfo.properties.ContainsKey("PlayerStart")
-                            && !tileInfo.properties.ContainsKey("Hidden");
+                            && !tileInfo.properties.ContainsKey("Hidden")
+                            && !tileInfo.properties.ContainsKey("DestroyMinecart");
                         tile.ShouldDraw = shouldDrawTile;
 
                     } // end for y

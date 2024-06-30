@@ -38,6 +38,11 @@ namespace TileEngine
         public bool IsVine { get; set; } = false;
 
         /// <summary>
+        /// Special tiles that get the player out of the Minecart if they are in it.
+        /// </summary>
+        public bool IsDestroyMinecart { get; set; } = false;
+
+        /// <summary>
         /// The left of the blocking tile in pixels. 8 is fully blocking
         /// and 1 would be the minimum. Left height to right height
         /// creates a slope of collision points.

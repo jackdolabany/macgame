@@ -1015,16 +1015,9 @@ namespace MacGame
                 animations.Play("mineCart");
             }
 
-            // If you land on a tile that isn't track, then exit the minecart.
-            var bottomLeft = new Vector2(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom - 1);
-            var bottomLeftTile = Game1.CurrentMap.GetMapSquareAtPixel(bottomLeft);
-            var bottomLeftIsTrack = bottomLeftTile != null && bottomLeftTile.IsMinecartTrack;
-            
-            var bottomRight = new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Bottom - 1);
-            var bottomRightTile = Game1.CurrentMap.GetMapSquareAtPixel(bottomRight);
-            var bottomRightIsTrack = bottomRightTile != null && bottomRightTile.IsMinecartTrack;
-
-            if (OnGround && !bottomLeftIsTrack && !bottomRightIsTrack)
+            // Cert
+            var centerTile = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldCenter);
+            if (centerTile != null && centerTile.IsDestroyMinecart)
             {
                 _state = MacState.Idle;
                 IsInMineCart = false;

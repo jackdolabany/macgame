@@ -319,6 +319,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="145">
+  <properties>
+   <property name="DestroyMinecart" value="1"/>
+  </properties>
+ </tile>
  <tile id="146">
   <properties>
    <property name="LoadClass" value="MineCart"/>

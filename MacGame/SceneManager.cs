@@ -12,6 +12,7 @@ using MacGame.Enemies;
 using MacGame.Items;
 using MacGame.Npcs;
 using System.Data;
+using System.Net.Http;
 
 namespace MacGame
 {

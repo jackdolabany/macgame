@@ -16,8 +16,9 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "TestHub";
+        public const string StartingWorld = "World1Minecart";
         private const bool startAtTitleScreen = false;
+        public static bool IS_DEBUG = true;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -123,8 +124,6 @@ namespace MacGame
                 return CurrentLevel?.Map;
             }
         }
-
-        public static bool IS_DEBUG = true;
 
         public static Camera Camera;
         private static KeyboardState previousKeyState;
@@ -391,6 +390,14 @@ namespace MacGame
                 }
             }
             HubDoorNameYouCameFrom = "";
+        }
+
+        public void RestartLevel()
+        {
+            MenuManager.ClearMenus();
+            TransitionToState(GameState.Playing);
+            CurrentLevel = sceneManager.LoadLevel(CurrentLevel.Name, Content, Player, Camera);
+            Camera.Map = CurrentLevel.Map;
         }
 
         public void GoToTitleScreen()

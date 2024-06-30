@@ -14,7 +14,7 @@ namespace MacGame
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION * 0.333f);
             this.Scale = 1f;
 
-            var confirmExitGame = new YesNoMenu(Game, "Are you sure you \n want to exit to\nthe title screen?", (a,b) =>
+            var confirmExitGame = new YesNoMenu(Game, "Are you sure you \n want to exit to\nthe title screen?", (a, b) =>
             {
                 this.Game.GoToTitleScreen();
             });
@@ -25,6 +25,14 @@ namespace MacGame
                 PlayOptionSelectedSound();
                 game.Unpause();
             });
+
+            if (Game1.IS_DEBUG)
+            {
+                var restart = AddOption("Restart", (a, b) => {
+                    PlayOptionSelectedSound();
+                    Game.RestartLevel();
+                });
+            }
 
             // TODO: Dont' show this if you're in the hub
             var option = AddOption("Back to Hub", (a, b) => {

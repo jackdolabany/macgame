@@ -394,6 +394,7 @@ namespace MacGame
 
         public void RestartLevel()
         {
+            Player.Health = Player.MaxHealth;
             MenuManager.ClearMenus();
             TransitionToState(GameState.Playing);
             CurrentLevel = sceneManager.LoadLevel(CurrentLevel.Name, Content, Player, Camera);

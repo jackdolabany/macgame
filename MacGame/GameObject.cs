@@ -438,127 +438,146 @@ namespace MacGame
                 startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top + 4);
                 endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Top - 4);
             }
+
+            // Slope collision
+            // We may need to check slopes even if you aren't falling. A fast movement in the x direction could
+            // cause a slope collision even if you are not moving down or moving slightly up.
+            var shouldCheckSlopes = moveAmount.Y > 0 || moveAmount.X != 0f;
             
-            // Determine the step direction based on the comparison
-            int step = startCellY <= endCellY ? 1 : -1;
-
-            // Store the original amount they would like to move and adjust as necessary.
-            var yToMove = moveAmount.Y;
-
-            // Loop through the cells in the y direction, incrementing or decrementing
-            for (int y = startCellY; (step == 1) ? y <= endCellY : y >= endCellY; y += step)
+            if (shouldCheckSlopes)
             {
 
-                // If we find a slope collision, no other collisions matter and we need to exit 
-                // out of the loop.
-                if (onSlope) break;
+                var startY = Math.Min(startCellY, endCellY);
+                var endY = Math.Max(startCellY, endCellY);
 
-                // Scan each x direction cell
-                for (int x = leftCell; x <= rightCell; x++)
+                for (int y = startY; y <= endY; y++)
                 {
+                    int x = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Center.X);
                     var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
-                    if (cell != null)
+                    if (cell != null && !cell.Passable && cell.IsOnASlope())
                     {
 
-                        if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
+                        // A slope collision was found! If there's a slope tile on the GameObject's center
+                        // pixel it takes precedence over all other y axis collisions.
+
+                        // reset stuff
+                        onGround = false;
+                        Landed = false;
+                        LandingVelocity = 0f;
+
+                        int distanceToBottomOfTile = (TileMap.TileSize * (y + 1)) - afterMoveRect.Bottom;
+
+                        float xRelativeToTile = afterMoveRect.Center.X - (TileMap.TileSize * x);
+
+                        float percent = xRelativeToTile / TileMap.TileSize;
+                        float relativeDistanceToSlope = (1 - percent) * cell.LeftHeight + percent * cell.RightHeight;
+                        var distanceToSlope = distanceToBottomOfTile - relativeDistanceToSlope;
+
+                        // Lock them to the slope if they are running down so they don't just fall as they move forward.
+                        if (previouslyOnGround)
                         {
-                            // There was a collision, place the object to the edge of the tile.
-                            if (yToMove > 0)
-                            {
-                                // Moving down
-                                int distanceToTile = (TileMap.TileSize * y) - currentPositionRect.Bottom;
-                                yToMove = Math.Min(yToMove, distanceToTile);
-
-
-                                if (previouslyOnSlope && distanceToTile <= 12)
-                                {
-                                    // They were on a slope and now they are within a few pixels of a flat
-                                    // tile. Treat it as if they were on a slope still and lock them to the
-                                    // flat tile. This prevents them from being airborne for a bit if they are moving 
-                                    // quickly down a steep slope.
-                                    yToMove = distanceToTile;
-                                }
-
-                                if (yToMove == distanceToTile)
-                                {
-                                    onGround = true;
-                                    velocity.Y = 0;
-                                    if (!previouslyOnGround)
-                                    {
-                                        Landed = true;
-                                        LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
-                                    }
-                                }
-
-                            }
-                            else if (yToMove < 0)
-                            {
-                                // Moving up.
-                                int distanceToTile = currentPositionRect.Top - ((y + 1) * TileMap.TileSize);
-                                yToMove = Math.Max(yToMove, -distanceToTile);
-
-                                if (yToMove == -distanceToTile)
-                                {
-                                    onCeiling = true;
-                                    velocity.Y = 0;
-                                }
-                            }
-                            
+                            // Ignore any other tiles and lock them to the slope.
+                            moveAmount.Y = distanceToSlope;
                         }
-                        else if (isFalling && !cell.Passable && cell.IsOnASlope() && afterMoveRect.Center.X >= x * Game1.TileSize && afterMoveRect.Center.X <= (x + 1) * Game1.TileSize)
+                        else
                         {
-
-                            // A slope collision was found! If there's a slope tile on the GameObject's center
-                            // pixel it takes precedence over all other y axis collisions.
-
-                            // reset stuff
-                            onGround = false;
-                            Landed = false;
-                            LandingVelocity = 0f;
-
-                            int distanceToBottomOfTile = (TileMap.TileSize * (y + 1)) - currentPositionRect.Bottom;
-
-                            float xRelativeToTile = afterMoveRect.Center.X - (TileMap.TileSize * x);
-
-                            float percent = xRelativeToTile / TileMap.TileSize;
-                            float relativeDistanceToSlope = (1 - percent) * cell.LeftHeight + percent * cell.RightHeight;
-                            var distanceToSlope = distanceToBottomOfTile - relativeDistanceToSlope;
-
-                            // Lock them to the slope if they are running down so they don't just fall as they move forward.
-                            if (previouslyOnGround)
-                            {
-                                // Ignore any other tiles and lock them to the slope.
-                                yToMove = distanceToSlope;
-                            }
-                            else
-                            {
-                                // Don't lock them to the slope if they are falling to it, but if we encourter
-                                // a slope in the middle x coordinate we don't care about any other blocking tiles.
-                                yToMove = Math.Min(moveAmount.Y, distanceToSlope);
-                            }
-
-                            if (yToMove == distanceToSlope)
-                            {
-                                velocity.Y = 0;
-                                onGround = true;
-                                if (!previouslyOnGround)
-                                {
-                                    Landed = true;
-                                    LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
-                                }
-                            }
-
-                            // We scan closest tiles first so no reason to continue with the for loop.
-                            // the slope is the only thing that matters.
-                            onSlope = true;
-                            break;
-
+                            // Don't lock them to the slope if they are falling to it, but if we encourter
+                            // a slope in the middle x coordinate we don't care about any other blocking tiles.
+                            moveAmount.Y = Math.Min(moveAmount.Y, distanceToSlope);
                         }
+
+                        if (moveAmount.Y == distanceToSlope)
+                        {
+                            velocity.Y = 0;
+                            onGround = true;
+                            if (!previouslyOnGround)
+                            {
+                                Landed = true;
+                                LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
+                            }
+                        }
+
+                        // We scan closest tiles first so no reason to continue with the for loop.
+                        // the slope is the only thing that matters.
+                        onSlope = true;
+                        break;
+
                     }
                 }
             }
 
-            moveAmount.Y = yToMove;
+            // Regular tile collision
+            if (!onSlope)
+            {
+                // Determine the step direction based on the comparison
+                int step = startCellY <= endCellY ? 1 : -1;
+
+                // Store the original amount they would like to move and adjust as necessary.
+                var yToMove = moveAmount.Y;
+
+                // Loop through the cells in the y direction, incrementing or decrementing
+                for (int y = startCellY; (step == 1) ? y <= endCellY : y >= endCellY; y += step)
+                {
+
+                    // Scan each x direction cell
+                    for (int x = leftCell; x <= rightCell; x++)
+                    {
+                        var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
+                        if (cell != null)
+                        {
+
+                            if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
+                            {
+                                // There was a collision with a non-slope tile, place the object to the edge of the tile.
+                                if (yToMove > 0)
+                                {
+                                    // Moving down
+                                    int distanceToTile = (TileMap.TileSize * y) - currentPositionRect.Bottom;
+                                    yToMove = Math.Min(yToMove, distanceToTile);
+
+
+                                    if (previouslyOnSlope && distanceToTile <= 12)
+                                    {
+                                        // They were on a slope and now they are within a few pixels of a flat
+                                        // tile. Treat it as if they were on a slope still and lock them to the
+                                        // flat tile. This prevents them from being airborne for a bit if they are moving 
+                                        // quickly down a steep slope.
+                                        yToMove = distanceToTile;
+                                    }
+
+                                    if (yToMove == distanceToTile)
+                                    {
+                                        onGround = true;
+                                        velocity.Y = 0;
+                                        if (!previouslyOnGround)
+                                        {
+                                            Landed = true;
+                                            LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
+                                        }
+                                    }
+
+                                }
+                                else if (yToMove < 0)
+                                {
+                                    // Moving up.
+                                    int distanceToTile = currentPositionRect.Top - ((y + 1) * TileMap.TileSize);
+                                    yToMove = Math.Max(yToMove, -distanceToTile);
+
+                                    if (yToMove == -distanceToTile)
+                                    {
+                                        onCeiling = true;
+                                        velocity.Y = 0;
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+                moveAmount.Y = yToMove;
+            }
 
             // Test platforms. We'll reassign PlatformThatThisIsOn here. Moving platforms should be updated before GameObjects
             // and are responsible for moving the GameObjects that are on them. Jumping down through platforms is handled by 

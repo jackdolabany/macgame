@@ -135,7 +135,7 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Platform).Namespace + "." + classname);
                                 var platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y });
                                 level.Platforms.Add(platform);
-                                
+
                                 layerDepthObjects[z].Add(platform);
 
                                 if (platform is StaticPlatform)
@@ -146,6 +146,20 @@ namespace MacGame
                                     var textureRect = mapSquare.LayerTiles[z].TextureRectangle;
                                     staticPlatform.SetTextureRectangle(texture!, textureRect);
                                 }
+
+                                if (platform is MovingPlatform)
+                                {
+                                    foreach (var obj in map.ObjectModifiers)
+                                    {
+                                        if (obj.GetScaledRectangle().Contains(platform.CollisionRectangle))
+                                        {
+                                            if (obj.Properties.ContainsKey("Reverse"))
+                                            {
+                                                ((MovingPlatform)platform).Reverse();
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             else if (loadClass.StartsWith("Item."))
                             {
@@ -154,7 +168,7 @@ namespace MacGame
                                 Type t = Type.GetType(typeof(Item).Namespace + "." + classname);
                                 var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Items.Add(item);
-                                
+
                                 layerDepthObjects[z].Add(item);
 
                                 // Coins are special. We expect each one to be wrapped in an object on the map that contains the number and hint.
@@ -162,12 +176,7 @@ namespace MacGame
                                 {
                                     foreach (var obj in map.ObjectModifiers)
                                     {
-                                        var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
-                                            obj.Rectangle.Y * Game1.TileScale,
-                                            obj.Rectangle.Width * Game1.TileScale,
-                                            obj.Rectangle.Height * Game1.TileScale);
-
-                                        if (scaledRect.Contains(item.CollisionRectangle))
+                                        if (obj.GetScaledRectangle().Contains(item.CollisionRectangle))
                                         {
                                             // Coins are special items.
                                             var coin = (CricketCoin)item;
@@ -234,12 +243,7 @@ namespace MacGame
                                 // tells it where to go.
                                 foreach (var obj in map.ObjectModifiers)
                                 {
-                                    var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
-                                            obj.Rectangle.Y * Game1.TileScale,
-                                            obj.Rectangle.Width * Game1.TileScale,
-                                            obj.Rectangle.Height * Game1.TileScale);
-
-                                    if (scaledRect.Contains(door.CollisionRectangle))
+                                    if (obj.GetScaledRectangle().Contains(door.CollisionRectangle))
                                     {
                                         foreach (var prop in obj.Properties)
                                         {
@@ -306,12 +310,7 @@ namespace MacGame
                                 // NPC modifiers
                                 foreach (var obj in map.ObjectModifiers)
                                 {
-                                    var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
-                                            obj.Rectangle.Y * Game1.TileScale,
-                                            obj.Rectangle.Width * Game1.TileScale,
-                                            obj.Rectangle.Height * Game1.TileScale);
-
-                                    if (scaledRect.Contains(npc.CollisionRectangle))
+                                    if (obj.GetScaledRectangle().Contains(npc.CollisionRectangle))
                                     {
                                         foreach (var prop in obj.Properties)
                                         {
@@ -332,12 +331,7 @@ namespace MacGame
                                 // Cannon modifiers
                                 foreach (var obj in map.ObjectModifiers)
                                 {
-                                    var scaledRect = new Rectangle(obj.Rectangle.X * Game1.TileScale,
-                                            obj.Rectangle.Y * Game1.TileScale,
-                                            obj.Rectangle.Width * Game1.TileScale,
-                                            obj.Rectangle.Height * Game1.TileScale);
-
-                                    if (scaledRect.Contains(cannon.CollisionRectangle))
+                                    if (obj.GetScaledRectangle().Contains(cannon.CollisionRectangle))
                                     {
                                         foreach (var prop in obj.Properties)
                                         {

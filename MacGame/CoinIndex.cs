@@ -24,6 +24,7 @@ namespace MacGame
                     new CoinInfo { Name = "CannonCoin", Hint = "Up, left, up, up, left, up, up, boom" },
                     new CoinInfo { Name = "SandCoin", Hint = "There's a legend about a lonely traffic cone" },
                     new CoinInfo { Name = "IceCoin", Hint = "There's something special if you can trek through icy mountains." },
+                    new CoinInfo { Name = "SandTopCoin", Hint = "Deep in the caves is a room with so much sand, it'll make you puke." },
                     new CoinInfo { Name = "MinecartCoin", Hint = "I heard there's still something shiny down in the old mine." },
                     new CoinInfo { Name = "TacoCoin", Hint = "The hungry mouse." },
                 }

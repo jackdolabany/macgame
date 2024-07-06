@@ -40,27 +40,28 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            var rando = Game1.Randy.Next(0, 4);
+            const int totalSayings = 5;
+            var randomSaying = Game1.Randy.Next(1, totalSayings + 1);
 
-            if (rando == 0)
+            if (randomSaying == 1)
             {
                 MacSays("Wow you look like a bearded dragon like me!");
                 ISay("Are you blind? I'm a Crested Gecko.");
             }
-            else if (rando == 1)
+            else if (randomSaying == 2)
             {
                 MacSays("Hi I'm Mac");
                 ISay("My name is Hyper Bluey");
                 ISay("If you don't like it you can chew on walnuts buddy");
                 MacSays("I love it");
             }
-            else if (rando == 2)
+            else if (randomSaying == 3)
             {
                 ISay("Sometimes I wonder what it's all about");
                 MacSays("Life?");
                 ISay("No, this game");
             }
-            else if (rando == 3)
+            else if (randomSaying == 4)
             {
                 ISay("Knock Knock");
                 MacSays("Who's there?");
@@ -68,6 +69,12 @@ namespace MacGame.Npcs
                 MacSays("Guy who?");
                 ISay("Guy who walks into my house without knocking");
                 MacSays("I don't get it");
+            }
+            else if (randomSaying == 5)
+            {
+                ISay("What did the foot say to the hand?");
+                MacSays("What?");
+                ISay("You're handsome.");
             }
 
         }

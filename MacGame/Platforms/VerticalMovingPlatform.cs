@@ -14,6 +14,7 @@ namespace MacGame.Platforms
             : base(content, cellX, cellY)
         {
             MoveDirection = new Vector2(0, 1);
+            Initialize();
         }
     }
 }

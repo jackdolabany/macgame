@@ -13,7 +13,8 @@ namespace MacGame.Platforms
         public DiagonalMovingPlatform1(ContentManager content, int cellX, int cellY)
             : base(content, cellX, cellY)
         {
-            MoveDirection = new Vector2(1, 1);
+            MoveDirection = new Vector2(-1, 1);
+            Initialize();
         }
     }
 }

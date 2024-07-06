@@ -31,7 +31,7 @@ namespace MacGame.Platforms
         /// <summary>
         /// The distance to move in blocks.
         /// </summary>
-        public int MoveBlocks { get; set; } = 4;
+        public int MoveBlocks { get; set; } = 6;
 
         Vector2 startPosition;
 
@@ -50,6 +50,11 @@ namespace MacGame.Platforms
             startPosition = WorldLocation;
         }
 
+        protected void Initialize()
+        {
+            velocity = MoveSpeed * MoveDirection;
+        }
+
         /// <summary>
         /// Static Platforms have this helper because multiple tiles on the map are static platforms. This allows us to replace
         /// the image with whatever is coming from the map tile as we load this.
@@ -62,12 +67,6 @@ namespace MacGame.Platforms
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            // Get moving. 
-            if (velocity == Vector2.Zero && MoveDirection != Vector2.Zero)
-            {
-                velocity = MoveSpeed * MoveDirection;
-            }
-
             // If moving away from start location
             bool isMovingAwayFromStart = Vector2.Dot(MoveDirection, WorldLocation - startPosition) > 0;
 
@@ -76,12 +75,17 @@ namespace MacGame.Platforms
 
             if (isMovingAwayFromStart && Vector2.Distance(startPosition, WorldLocation) > maxMoveDistance)
             {
-                MoveDirection *= -1;
-                Velocity = MoveSpeed * MoveDirection;
+                Reverse();
             }
 
             base.Update(gameTime, elapsed);
 
+        }
+
+        public void Reverse()
+        {
+            MoveDirection *= -1;
+            Velocity = MoveSpeed * MoveDirection;
         }
     }
 }

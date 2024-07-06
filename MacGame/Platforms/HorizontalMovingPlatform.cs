@@ -15,6 +15,7 @@ namespace MacGame.Platforms
         {
             MoveDirection = new Vector2(1, 0);
             MoveSpeed /= 2;
+            Initialize();
         }
     }
 }

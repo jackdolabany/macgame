@@ -179,6 +179,28 @@ namespace MacGame
 
         public Cannon CannonYouAreIn { get; set; }
 
+        /// <summary>
+        /// A special rectangle so that when you talk to NPCs you don't have to be right on top of them.
+        /// </summary>
+        public Rectangle NpcRectangle
+        {
+            get
+            {
+                var collisionRect = this.CollisionRectangle;
+
+                if (Flipped)
+                {
+                    // extend the rectangle to the left
+                    return new Rectangle(collisionRect.X - collisionRect.Width, collisionRect.Y, collisionRect.Width * 2, collisionRect.Height);
+                }
+                else
+                {
+                    // Extend the rectangle to the right
+                    return new Rectangle(collisionRect.X, collisionRect.Y, collisionRect.Width * 2, collisionRect.Height);
+                }
+            }
+        }
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();

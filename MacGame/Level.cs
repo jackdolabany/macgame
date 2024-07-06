@@ -143,7 +143,7 @@ namespace MacGame
 
                 foreach (var door in Doors)
                 {
-                    if (door.Enabled && door.CollisionRectangle.Contains(Player.CollisionCenter))
+                    if (door.Enabled && door.CollisionRectangle.Contains(Player.WorldCenter))
                     {
                         doorToEnter = door;
                         break;
@@ -151,7 +151,7 @@ namespace MacGame
                 }
                 foreach (var npc in Npcs)
                 {
-                    if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.CollisionRectangle))
+                    if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.NpcRectangle))
                     {
                         npcToTalkTo = npc;
                         break;

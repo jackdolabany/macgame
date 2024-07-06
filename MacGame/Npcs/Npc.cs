@@ -40,8 +40,8 @@ namespace MacGame.Npcs
 
         public void CheckPlayerInteractions(Player player)
         {
-            // Handle the player going through a door.
-            if (player.InteractButtonPressedThisFrame && this.CollisionRectangle.Intersects(player.CollisionRectangle))
+            // Handle the player talking to the NPC.
+            if (player.InteractButtonPressedThisFrame && this.CollisionRectangle.Intersects(player.NpcRectangle))
             {
                 if (!ConversationOverrides.Any())
                 {

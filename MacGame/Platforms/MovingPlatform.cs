@@ -61,7 +61,6 @@ namespace MacGame.Platforms
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            base.Update(gameTime, elapsed);
 
             // Get moving. 
             if (velocity == Vector2.Zero && MoveDirection != Vector2.Zero)
@@ -71,7 +70,7 @@ namespace MacGame.Platforms
 
             // If moving away from start location
             bool isMovingAwayFromStart = Vector2.Dot(MoveDirection, WorldLocation - startPosition) > 0;
-            
+
             // Max move distance is half of blocks times tile size because they move half the distance in either direction.
             var maxMoveDistance = (MoveBlocks / 2 * Game1.TileSize);
 
@@ -80,6 +79,9 @@ namespace MacGame.Platforms
                 MoveDirection *= -1;
                 Velocity = MoveSpeed * MoveDirection;
             }
+
+            base.Update(gameTime, elapsed);
+
         }
     }
 }

@@ -35,6 +35,11 @@
 /processor:PassThroughProcessor
 /build:Maps/BlueRoom.tmx
 
+#begin Maps/CollisionWorld.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/CollisionWorld.tmx
+
 #begin Maps/GreenRoom.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

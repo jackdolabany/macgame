@@ -270,7 +270,7 @@ namespace MacGame
 
             this.IsAffectedByPlatforms = true;
 
-            SetCenteredCollisionRectangle(6, 7);
+            SetCenteredCollisionRectangle(5, 7);
 
             InputManager = inputManager;
             _deadMenu = deadMenu;
@@ -1108,12 +1108,6 @@ namespace MacGame
 
         public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)
         {
-
-            var test = this.CollisionRectangle;
-            var test2 = this.CollisionCenter;
-            var test3 = cannon.CollisionRectangle;
-            var test4 = cannon.CollisionCenter;
-
             this.velocity = velocity;
             this.IsJustShotOutOfCannon = true;
             this.CannonYouAreIn = null;

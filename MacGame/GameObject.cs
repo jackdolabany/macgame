@@ -373,14 +373,16 @@ namespace MacGame
                             if (moveAmount.X > 0)
                             {
                                 // Moving right
-                                var distanceToTile = (TileMap.TileSize * x) - currentPositionRect.Right;
+                                float rightMostPoint = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
+                                float distanceToTile = (float)(TileMap.TileSize * x) - rightMostPoint;
                                 moveAmount.X = Math.Min(moveAmount.X, distanceToTile);
                                 onRightWall = true;
                             }
                             else if (moveAmount.X < 0)
                             {
                                 // Moving left
-                                var distanceToTile = currentPositionRect.Left - ((x + 1) * TileMap.TileSize);
+                                float leftMostPoint = this.WorldLocation.X + collisionRectangle.X;
+                                float distanceToTile = leftMostPoint - ((x + 1) * TileMap.TileSize);
                                 moveAmount.X = Math.Max(moveAmount.X, -distanceToTile);
                                 onLeftWall = true;
                             }
@@ -452,7 +454,8 @@ namespace MacGame
 
                 for (int y = startY; y <= endY; y++)
                 {
-                    int x = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Center.X);
+                    float centerPoint = this.worldLocation.X + moveAmount.X;
+                    int x = Game1.CurrentMap.GetCellByPixelX((int)Math.Round(centerPoint));
                     var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
                     if (cell != null && !cell.Passable && cell.IsOnASlope())
                     {
@@ -465,9 +468,11 @@ namespace MacGame
                         Landed = false;
                         LandingVelocity = 0f;
 
-                        int distanceToBottomOfTile = (TileMap.TileSize * (y + 1)) - afterMoveRect.Bottom;
+                        var afterMoveBottom = this.worldLocation.Y + collisionRectangle.Y + collisionRectangle.Height + moveAmount.Y;
 
-                        float xRelativeToTile = afterMoveRect.Center.X - (TileMap.TileSize * x);
+                        float distanceToBottomOfTile = (TileMap.TileSize * (y + 1)) - afterMoveBottom;
+
+                        float xRelativeToTile = centerPoint - (TileMap.TileSize * x);
 
                         float percent = xRelativeToTile / TileMap.TileSize;
                         float relativeDistanceToSlope = (1 - percent) * cell.LeftHeight + percent * cell.RightHeight;
@@ -532,11 +537,11 @@ namespace MacGame
                                 if (yToMove > 0)
                                 {
                                     // Moving down
-                                    int distanceToTile = (TileMap.TileSize * y) - currentPositionRect.Bottom;
+                                    var bottomY = this.worldLocation.Y + collisionRectangle.Y + collisionRectangle.Height;
+                                    float distanceToTile = (TileMap.TileSize * y) - bottomY;
                                     yToMove = Math.Min(yToMove, distanceToTile);
 
-
-                                    if (previouslyOnSlope && distanceToTile <= 12)
+                                    if (previouslyOnSlope && distanceToTile <= 12f)
                                     {
                                         // They were on a slope and now they are within a few pixels of a flat
                                         // tile. Treat it as if they were on a slope still and lock them to the
@@ -560,7 +565,8 @@ namespace MacGame
                                 else if (yToMove < 0)
                                 {
                                     // Moving up.
-                                    int distanceToTile = currentPositionRect.Top - ((y + 1) * TileMap.TileSize);
+                                    float collisionTop = this.WorldLocation.Y + this.collisionRectangle.Y;
+                                    float distanceToTile = collisionTop - ((y + 1) * TileMap.TileSize);
                                     yToMove = Math.Max(yToMove, -distanceToTile);
 
                                     if (yToMove == -distanceToTile)
@@ -606,7 +612,7 @@ namespace MacGame
 
                     // fudge some numbers to account for rounding errors since we intermix floats and 
                     // rectangles that round down to ints.
-                    const int fudgePixels = 2;
+                    const float fudgePixels = 2f;
 
                     // Was the platform below the player before movement?
                     var wasPlatformBelowMe = platform.CollisionRectangle.X <= currentPositionRect.Right
@@ -615,13 +621,15 @@ namespace MacGame
 
                     if (wasPlatformBelowMe)
                     {
-                        var distanceToPlatform = platform.CollisionRectangle.Top - currentPositionRect.Bottom;
+                        float topOfPlatform = platform.WorldLocation.Y + platform.collisionRectangle.Y;
+                        float bottomY = this.worldLocation.Y + collisionRectangle.Y + collisionRectangle.Height;
+                        float distanceToPlatform = topOfPlatform - bottomY;
 
                         // You're considered on the platform if you are within movement distance a pixel of it.
                         if (distanceToPlatform <= moveAmount.Y || distanceToPlatform <= fudgePixels)
                         {
                             // If a new platform was hit, adjust the position.
-                            moveAmount.Y = Math.Min(moveAmount.Y, platform.CollisionRectangle.Top - currentPositionRect.Bottom);
+                            moveAmount.Y = Math.Min(moveAmount.Y, distanceToPlatform);
                             
                             PlatformThatThisIsOn = platform;
                             onGround = true;

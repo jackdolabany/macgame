@@ -143,7 +143,10 @@ namespace MacGame.Npcs
                 var onLadder = (tileAtHead != null && tileAtHead.IsLadder) || (tileAtFeet != null && tileAtFeet.IsLadder);
                 if (onLadder)
                 {
-                    animations.Play("climb");
+                    if (animations.CurrentAnimationName != "climb")
+                    {
+                        animations.Play("climb");
+                    }
                     this.IsAffectedByGravity = false;
 
                     // Move towards the center of the ladder

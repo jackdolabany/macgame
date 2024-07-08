@@ -45,6 +45,7 @@ namespace MacGame
         public List<GameObject> GameObjects;
         public List<Platform> Platforms;
         public List<Door> Doors;
+        public List<Waypoint> Waypoints;
 
         /// <summary>
         /// The coin you get when you get 100 tacos.
@@ -71,6 +72,7 @@ namespace MacGame
             Npcs = new List<Npc>();
             Doors = new List<Door>();
             RevealBlockManager = new RevealBlockManager();
+            Waypoints = new List<Waypoint>();
         }
 
         public static void AddEnemy(Enemy enemy)

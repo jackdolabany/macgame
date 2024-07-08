@@ -7,11 +7,11 @@ using TileEngine;
 
 namespace MacGame.Npcs
 {
-    public class Cat : Npc
+    public class Molly : Npc
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        public Cat(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
+        public Molly(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
 

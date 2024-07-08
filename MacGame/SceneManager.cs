@@ -292,6 +292,10 @@ namespace MacGame
                             {
                                 level.RevealBlockManager.AddRawBlock(new RevealBlock(x, y, z));
                             }
+                            else if (loadClass == "Waypoint")
+                            {
+                                level.Waypoints.Add(new Waypoint(x, y));
+                            }
                             else if (loadClass == "MineCart")
                             {
                                 var mineCart = new MineCart(contentManager, x, y, player);

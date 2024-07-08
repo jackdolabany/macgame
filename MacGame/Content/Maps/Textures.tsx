@@ -51,6 +51,11 @@
    <property name="LoadClass" value="Item.Shovel"/>
   </properties>
  </tile>
+ <tile id="32">
+  <properties>
+   <property name="LoadClass" value="Waypoint"/>
+  </properties>
+ </tile>
  <tile id="33">
   <properties>
    <property name="LoadClass" value="Item.Heart"/>
@@ -354,6 +359,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="156">
+  <properties>
+   <property name="LoadClass" value="Npc.Froggy"/>
+  </properties>
+ </tile>
  <tile id="160">
   <properties>
    <property name="LoadClass" value="Doorway"/>
@@ -421,7 +431,7 @@
  </tile>
  <tile id="226">
   <properties>
-   <property name="LoadClass" value="Npc.Cat"/>
+   <property name="LoadClass" value="Npc.Molly"/>
   </properties>
  </tile>
  <tile id="228">

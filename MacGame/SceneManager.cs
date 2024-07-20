@@ -37,10 +37,19 @@ namespace MacGame
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 
             var level = new Level(player, map, camera);
-            
+
             level.Name = mapName;
 
             level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
+
+            if (level.LevelNumber == 4)
+            {
+                Game1.Gravity = Game1.MoonGravity;
+            }
+            else
+            {
+                Game1.Gravity = Game1.EarthGravity;
+            }
 
             var priorLevelNumber = -1;
             if (Game1.CurrentLevel != null)
@@ -97,14 +106,24 @@ namespace MacGame
 
                         if (mapSquare.IsWater)
                         {
-                            if (mapSquare.LayerTiles[z].LoadClass == "WaterWave")
+                            if (mapSquare.LayerTiles[z].LoadClass == "WaterWave" || mapSquare.LayerTiles[z].LoadClass == "WaterWaveAlt")
                             {
                                 // The top of water is a special animating flyweight tile thing.
                                 mapSquare.LayerTiles[z].ShouldDraw = false;
                                 var drawDepth = map.GetLayerDrawDepth(z);
-                                var waterWave = new WaterWave(x, y, drawDepth);
+                                var isAlt = mapSquare.LayerTiles[z].LoadClass == "WaterWaveAlt";
+                                GameObject waterWave;
+                                if (isAlt)
+                                {
+                                    waterWave = new WaterWaveAlt(x, y, drawDepth);
+                                }
+                                else
+                                {
+                                    waterWave = new WaterWave(x, y, drawDepth);
+                                }
                                 level.GameObjects.Add(waterWave);
                             }
+
                         }
 
                         // Load the textures so the map can draw.

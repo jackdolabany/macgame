@@ -16,9 +16,13 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World1";
+        public const string StartingWorld = "TestWorld3";
         private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
+
+        public readonly static Vector2 EarthGravity = new Vector2(0, 1600);
+        public readonly static Vector2 MoonGravity = new Vector2(0, 700);
+        public static Vector2 Gravity = new Vector2(0, 1600);
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -90,6 +94,7 @@ namespace MacGame
         /// This represents the wave at the top of water. There's only one because we're using the flyweight pattern.
         /// </summary>
         public static WaterWaveFlyweight WaterWaveFlyweight;
+        public static WaterWaveFlyweight WaterWaveFlyweightAlt;
 
         public enum TransitionType
         {
@@ -295,7 +300,8 @@ namespace MacGame
             var deadMenu = new DeadMenu(this);
 
             // Flyweights
-            WaterWaveFlyweight = new WaterWaveFlyweight();
+            WaterWaveFlyweight = new WaterWaveFlyweight(false);
+            WaterWaveFlyweightAlt = new WaterWaveFlyweight(true);
 
             Game1.State = new StorageState(1);
             Player = new Player(Content, inputManager, deadMenu);
@@ -501,6 +507,7 @@ namespace MacGame
             {
 
                 WaterWaveFlyweight.Update(gameTime, elapsed);
+                WaterWaveFlyweightAlt.Update(gameTime, elapsed);
 
                 State.TotalElapsedTime += elapsed;
 

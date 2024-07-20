@@ -90,15 +90,25 @@
 /processor:PassThroughProcessor
 /build:Maps/TestWingLevel.tmx
 
-#begin Maps/TestWorld1.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/TestWorld1.tmx
-
 #begin Maps/TestWorld2.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/TestWorld2.tmx
+
+#begin Maps/TestWorld3.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWorld3.tmx
+
+#begin Maps/TestWorld3GhostHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWorld3GhostHouse.tmx
+
+#begin Maps/TestWorld4.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestWorld4.tmx
 
 #begin Maps/World1.tmx
 /importer:TMXMapImporter

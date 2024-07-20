@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using TileEngine;
 
 namespace MacGame
@@ -12,12 +13,23 @@ namespace MacGame
     /// </summary>
     public class WaterWaveFlyweight : GameObject
     {
-        public WaterWaveFlyweight()
+        public WaterWaveFlyweight(bool altColor)
         {
             var ad = new AnimationDisplay();
             this.DisplayComponent = ad;
 
-            var wave = new AnimationStrip(Game1.TileTextures, Helpers.GetTileRect(7, 6), 4, "wave");
+            AnimationStrip wave;
+            if (altColor)
+            {
+                // For darker backgrounds
+                wave = new AnimationStrip(Game1.TileTextures, Helpers.GetTileRect(8, 16), 4, "wave");
+            }
+            else
+            {
+                // For lighter backgrounds
+                wave = new AnimationStrip(Game1.TileTextures, Helpers.GetTileRect(7, 6), 4, "wave");
+            }
+            
             wave.LoopAnimation = true;
             wave.Oscillate = true;
             wave.FrameLength = 0.2f;
@@ -45,7 +57,7 @@ namespace MacGame
 
     public class WaterWave : GameObject
     {
-        private float _drawDepth;
+        protected float _drawDepth;
 
         public WaterWave(int cellX, int cellY, float drawDepth)
         {
@@ -76,6 +88,25 @@ namespace MacGame
         {
             // hijack the flyweight's display component, that's what it's there for.
             var ad = (AnimationDisplay)Game1.WaterWaveFlyweight.DisplayComponent;
+            ad.WorldLocation = this.WorldLocation;
+            ad.DrawDepth = _drawDepth;
+            ad.Draw(spriteBatch);
+        }
+    }
+
+    /// <summary>
+    /// Save as Waterwave but an alt color for maps with a darker background.
+    /// </summary>
+    public class WaterWaveAlt : WaterWave
+    {
+        public WaterWaveAlt(int cellX, int cellY, float drawDepth) : base(cellX, cellY, drawDepth)
+        {
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            // hijack the flyweight's display component, that's what it's there for.
+            var ad = (AnimationDisplay)Game1.WaterWaveFlyweightAlt.DisplayComponent;
             ad.WorldLocation = this.WorldLocation;
             ad.DrawDepth = _drawDepth;
             ad.Draw(spriteBatch);

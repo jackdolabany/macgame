@@ -167,7 +167,7 @@ namespace MacGame
         {
             get
             {
-                return new Vector2(0, 1600);
+                return Game1.Gravity;
             }
         }
 

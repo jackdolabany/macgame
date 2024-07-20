@@ -798,6 +798,10 @@ namespace Squared.Tiled
                             {
                                 tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "WaterWave";
                             }
+                            else if (tileInfo.properties["Water"] == "2")
+                            {
+                                tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "WaterWaveAlt";
+                            }
                             else
                             {
                                 tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "Water";
@@ -831,6 +835,14 @@ namespace Squared.Tiled
                             && !tileInfo.properties.ContainsKey("PlayerStart")
                             && !tileInfo.properties.ContainsKey("Hidden")
                             && !tileInfo.properties.ContainsKey("DestroyMinecart");
+
+                        // Some tiles like Doorways might apply to whatever tile they are on the tileset. They can
+                        // set this show prop which will overwrite the above logic for hiding.
+                        if (tileInfo.properties.ContainsKey("Show"))
+                        {
+                            shouldDrawTile = true;
+                        }
+
                         tile.ShouldDraw = shouldDrawTile;
 
                     } // end for y

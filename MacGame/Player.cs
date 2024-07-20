@@ -149,7 +149,7 @@ namespace MacGame
             {
                 if (isInJumpFromGround && jumpButtonHeldDownTimer > 0)
                 {
-                    return JumpGravity;
+                    return base.Gravity * 0.333f;
                 }
                 else
                 {
@@ -283,9 +283,6 @@ namespace MacGame
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
 
             _shovel = new MacShovel(this, textures);
-
-            NormalGravity = Gravity;
-            JumpGravity = NormalGravity * 0.333f;
         }
 
         public override void SetDrawDepth(float depth)

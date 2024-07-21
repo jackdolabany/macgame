@@ -676,9 +676,19 @@ namespace MacGame
             // If you are on a ladder platform you can press down to climb down through it.
             if (canClimbLadders && !InputManager.CurrentAction.jump && InputManager.CurrentAction.down && OnPlatform && PlatformThatThisIsOn is LadderPlatform)
             {
-                _state = MacState.ClimbingLadder;
-                this.velocity.Y = climbingSpeed;
-                this.PoisonPlatforms.Add(PlatformThatThisIsOn);
+                // Also make sure Mac's collision rect isn't blocked from going down by other solid tiles.
+                // Otherwise he may do a weird vibrating thing trying to climb down to ladder with a solid wall next to the top tile.
+                var tileAtBottomLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, (int)this.WorldLocation.Y);
+                var tileAtBottomRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, (int)this.WorldLocation.Y);
+
+                var canGoDown = ((tileAtBottomLeft == null || tileAtBottomLeft.Passable) && (tileAtBottomRight == null || tileAtBottomRight.Passable));
+                if (canGoDown)
+                {
+                    _state = MacState.ClimbingLadder;
+                    this.velocity.Y = climbingSpeed;
+                    this.PoisonPlatforms.Add(PlatformThatThisIsOn);
+                    this.PlatformThatThisIsOn = null;
+                }
             }
 
             // Clear out weird state fields.

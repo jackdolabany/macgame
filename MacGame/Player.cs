@@ -1061,7 +1061,7 @@ namespace MacGame
             if (!Flipped)
             {
                 var tileToTheRight = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Right + 1, this.CollisionRectangle.Center.Y));
-                if (tileToTheRight != null && !tileToTheRight.Passable && !tileToTheRight.IsOnASlope())
+                if (tileToTheRight != null && !tileToTheRight.Passable && !tileToTheRight.IsSlope())
                 {
                     this.Flipped = true;
                 }
@@ -1069,7 +1069,7 @@ namespace MacGame
             else
             {
                 var tileToTheLeft = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Left - 1, this.CollisionRectangle.Center.Y));
-                if (tileToTheLeft != null && !tileToTheLeft.Passable && !tileToTheLeft.IsOnASlope())
+                if (tileToTheLeft != null && !tileToTheLeft.Passable && !tileToTheLeft.IsSlope())
                 {
                     this.Flipped = false;
                 }

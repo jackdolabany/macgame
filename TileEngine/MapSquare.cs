@@ -118,7 +118,7 @@ namespace TileEngine
             }
         }
 
-        public bool IsOnASlope()
+        public bool IsSlope()
         {
             return !Passable && (LeftHeight < TileMap.TileSize || RightHeight < TileMap.TileSize);
         }

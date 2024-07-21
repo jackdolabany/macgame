@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TileEngine;
 using MacGame.DisplayComponents;
-using Microsoft.Xna.Framework.Content;
 
 namespace MacGame
 {
@@ -359,7 +358,7 @@ namespace MacGame
                         adjacentX = x + 1;
                     }
                     var adjacentCell = Game1.CurrentMap.GetMapSquareAtCell(adjacentX, y);
-                    if (adjacentCell != null && adjacentCell.IsOnASlope())
+                    if (adjacentCell != null && adjacentCell.IsSlope())
                     {
                         continue;
                     }
@@ -367,7 +366,7 @@ namespace MacGame
                     var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
                     if (cell != null)
                     {
-                        if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
+                        if (!cell.Passable && !cell.IsSlope() || (isEnemyTileColliding && !cell.EnemyPassable))
                         {
                             // There was a collision, place the object to the edge of the tile.
                             if (moveAmount.X > 0)
@@ -410,36 +409,12 @@ namespace MacGame
 
             Landed = false;
             LandingVelocity = 0f;
-            Platform? newPlatform = null;
 
             Rectangle currentPositionRect = this.CollisionRectangle;
             Vector2 newPosition = worldLocation + moveAmount;
             Rectangle afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
 
             bool isFalling = moveAmount.Y > 0;
-
-            // Regular tile collision
-            // Loop as many x cells as we need left to right.
-            var leftCell = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Left);
-            var rightCell = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Right - 1);
-
-            // How many should we check top or bottom?
-            int startCellY;
-            int endCellY;
-            if (isFalling)
-            {
-                // moving down. Add an extra buffer to the squares when falling as padding
-                // for some padding for tricky scenarios where you are running across steep
-                // slopes. We don't want to miss the slope tiles.
-                startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 8);
-                endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Bottom + 8);
-            }
-            else
-            {
-                // Moving up
-                startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top + 4);
-                endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Top - 4);
-            }
 
             // Slope collision
             // We may need to check slopes even if you aren't falling. A fast movement in the x direction could
@@ -448,7 +423,9 @@ namespace MacGame
             
             if (shouldCheckSlopes)
             {
-
+                var startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 8);
+                var endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Bottom + 8);
+                
                 var startY = Math.Min(startCellY, endCellY);
                 var endY = Math.Max(startCellY, endCellY);
 
@@ -457,7 +434,7 @@ namespace MacGame
                     float centerPoint = this.worldLocation.X + moveAmount.X;
                     int x = Game1.CurrentMap.GetCellByPixelX((int)Math.Round(centerPoint));
                     var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
-                    if (cell != null && !cell.Passable && cell.IsOnASlope())
+                    if (cell != null && !cell.Passable && cell.IsSlope())
                     {
 
                         // A slope collision was found! If there's a slope tile on the GameObject's center
@@ -479,7 +456,7 @@ namespace MacGame
                         var distanceToSlope = distanceToBottomOfTile - relativeDistanceToSlope;
 
                         // Lock them to the slope if they are running down so they don't just fall as they move forward.
-                        if (previouslyOnGround)
+                        if (previouslyOnGround && isFalling)
                         {
                             // Ignore any other tiles and lock them to the slope.
                             moveAmount.Y = distanceToSlope;
@@ -514,6 +491,29 @@ namespace MacGame
             // Regular tile collision
             if (!onSlope)
             {
+                // Regular tile collision
+                // Loop as many x cells as we need left to right.
+                var leftCell = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Left);
+                var rightCell = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Right - 1);
+
+                // How many should we check top or bottom?
+                int startCellY;
+                int endCellY;
+                if (isFalling)
+                {
+                    // moving down. Add an extra buffer to the squares when falling as padding
+                    // for some padding for tricky scenarios where you are running across steep
+                    // slopes. We don't want to miss the slope tiles.
+                    startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 8);
+                    endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Bottom + 8);
+                }
+                else
+                {
+                    // Moving up
+                    startCellY = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top + 4);
+                    endCellY = Game1.CurrentMap.GetCellByPixelY(afterMoveRect.Top - 4);
+                }
+
                 // Determine the step direction based on the comparison
                 int step = startCellY <= endCellY ? 1 : -1;
 
@@ -531,7 +531,31 @@ namespace MacGame
                         if (cell != null)
                         {
 
-                            if (!cell.Passable && !cell.IsOnASlope() || (isEnemyTileColliding && !cell.EnemyPassable))
+                            // Only check slope tiles if you are moving up. When moving up, they count as
+                            // full blocking tiles since the slope is never on the bottom.
+                            // but only if you were previously below the tile, otherwise characters shorter than
+                            // 1 tile will get stuck in them.
+                            bool slopeCheck;
+                            if (!cell.IsSlope())
+                            {
+                                // not a slope, check the tile normally.
+                                slopeCheck = true;
+                            }
+                            else if (isFalling)
+                            {
+                                // Always ignore slopes when falling, the slope logic above will handle it.
+                                slopeCheck = false;
+                            }
+                            else
+                            {
+                                // You're moving up and the tile is a slope. We'll consider it as a fully blocking
+                                // tile if you were previously completely below it.
+                                var collisionTop = this.WorldLocation.Y + this.collisionRectangle.Y;
+                                var tileBottom = (y + 1) * TileMap.TileSize;
+                                slopeCheck = collisionTop >= tileBottom;
+                            }
+
+                            if (!cell.Passable && slopeCheck || (isEnemyTileColliding && !cell.EnemyPassable))
                             {
                                 // There was a collision with a non-slope tile, place the object to the edge of the tile.
                                 if (yToMove > 0)
@@ -690,19 +714,10 @@ namespace MacGame
 
             Vector2 moveAmount = Velocity * elapsed;
 
-            var previousUpdatePlatForm = PlatformThatThisIsOn;
-
             if (isTileColliding)
             {
                 moveAmount = horizontalCollisionTest(moveAmount);
                 moveAmount = verticalCollisionTest(moveAmount);
-
-                //// They are on a platform that they were already on, move them with the platform
-                //if (PlatformThatThisIsOn != null && PlatformThatThisIsOn == previousUpdatePlatForm)
-                //{
-                //    moveAmount += PlatformThatThisIsOn.Delta;
-                //    moveAmount = horizontalCollisionTest(moveAmount);
-                //}
             }
 
             Vector2 newPosition = worldLocation + moveAmount;

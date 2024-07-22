@@ -140,6 +140,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World1YellowHouse.tmx
 
+#begin Maps/World2.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2.tmx
+
 #begin Music/BossFight.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

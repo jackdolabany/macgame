@@ -31,6 +31,9 @@ namespace TileEngine
 
         public bool ShouldDraw { get; set; } = true;
 
+
+        public WaterType WaterType { get; set; } = WaterType.NotWater;
+
         public Rectangle TextureRectangle
         {
             get

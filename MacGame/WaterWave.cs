@@ -59,9 +59,14 @@ namespace MacGame
     {
         protected float _drawDepth;
 
+        public int CellX { get; private set; }
+        public int CellY { get; private set; }
+
         public WaterWave(int cellX, int cellY, float drawDepth)
         {
             WorldLocation = new Vector2(cellX * TileMap.TileSize, cellY * TileMap.TileSize);
+            CellX = cellX;
+            CellY = cellY;
             Enabled = true;
             IsAffectedByForces = false;
             IsAffectedByGravity = false;
@@ -84,8 +89,15 @@ namespace MacGame
             // Do nothing
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            _drawDepth = depth;
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (!Enabled) return;
+
             // hijack the flyweight's display component, that's what it's there for.
             var ad = (AnimationDisplay)Game1.WaterWaveFlyweight.DisplayComponent;
             ad.WorldLocation = this.WorldLocation;

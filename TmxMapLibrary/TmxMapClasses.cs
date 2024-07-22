@@ -796,15 +796,15 @@ namespace Squared.Tiled
                             // that are animated waves at the top.
                             if (tileInfo.properties["Water"] == "1")
                             {
-                                tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "WaterWave";
+                                tileMap.MapCells[x][y].LayerTiles[z].WaterType = WaterType.AnimatingTopOfWater;
                             }
                             else if (tileInfo.properties["Water"] == "2")
                             {
-                                tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "WaterWaveAlt";
+                                tileMap.MapCells[x][y].LayerTiles[z].WaterType = WaterType.AltAnimatingTopOfWater;
                             }
                             else
                             {
-                                tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "Water";
+                                tileMap.MapCells[x][y].LayerTiles[z].WaterType = WaterType.RegularWaterTile;
                             }
                         }
                         else if (tileInfo.properties.ContainsKey("MinecartTrack"))

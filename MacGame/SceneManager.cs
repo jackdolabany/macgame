@@ -106,12 +106,13 @@ namespace MacGame
 
                         if (mapSquare.IsWater)
                         {
-                            if (mapSquare.LayerTiles[z].LoadClass == "WaterWave" || mapSquare.LayerTiles[z].LoadClass == "WaterWaveAlt")
+                            if (mapSquare.LayerTiles[z].WaterType == WaterType.AnimatingTopOfWater 
+                                || mapSquare.LayerTiles[z].WaterType == WaterType.AltAnimatingTopOfWater)
                             {
                                 // The top of water is a special animating flyweight tile thing.
                                 mapSquare.LayerTiles[z].ShouldDraw = false;
                                 var drawDepth = map.GetLayerDrawDepth(z);
-                                var isAlt = mapSquare.LayerTiles[z].LoadClass == "WaterWaveAlt";
+                                var isAlt = mapSquare.LayerTiles[z].WaterType == WaterType.AltAnimatingTopOfWater;
                                 GameObject waterWave;
                                 if (isAlt)
                                 {
@@ -366,6 +367,37 @@ namespace MacGame
                                             if (obj.Properties.ContainsKey("SuperShot"))
                                             {
                                                 cannon.IsSuperShot = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (loadClass == "ButtonUp" || loadClass == "ButtonDown")
+                            {
+                                var button = new Button(contentManager, x, y, player, loadClass == "ButtonUp");
+                                level.GameObjects.Add(button);
+                                layerDepthObjects[z].Add(button);
+
+                                // Cannon modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(button.CollisionRectangle))
+                                    {
+                                        button.Name = obj.Name;
+                                        foreach (var prop in obj.Properties)
+                                        {
+                                            if (prop.Key == "UpAction")
+                                            {
+                                                // Actions are scripts to run. They are level methods.
+                                                button.UpAction = prop.Value;
+                                            }
+                                            else if (prop.Key == "DownAction")
+                                            {
+                                                button.DownAction = prop.Value;
+                                            }
+                                            else if (prop.Key == "ButtonGroup")
+                                            {
+                                                button.ButtonGroup = prop.Value;
                                             }
                                         }
                                     }

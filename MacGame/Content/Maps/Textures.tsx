@@ -81,6 +81,16 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="45">
+  <properties>
+   <property name="LoadClass" value="ButtonUp"/>
+  </properties>
+ </tile>
+ <tile id="46">
+  <properties>
+   <property name="LoadClass" value="ButtonDown"/>
+  </properties>
+ </tile>
  <tile id="56">
   <properties>
    <property name="LoadClass" value="Enemy.Bird"/>
@@ -525,9 +535,74 @@
    <property name="LoadClass" value="Enemy.Ghost1"/>
   </properties>
  </tile>
+ <tile id="296">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="298">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="299">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="300">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="301">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="302">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="303">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="308">
   <properties>
    <property name="LoadClass" value="Enemy.Ghost2"/>
+  </properties>
+ </tile>
+ <tile id="314">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="315">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="316">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="317">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="318">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="319">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="320">
@@ -545,10 +620,105 @@
    <property name="LoadClass" value="Enemy.Spider"/>
   </properties>
  </tile>
+ <tile id="329">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="330">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="331">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="332">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="333">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="338">
   <properties>
    <property name="LoadClass" value="Doorway"/>
    <property name="Show" value="1"/>
+  </properties>
+ </tile>
+ <tile id="345">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="346">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="347">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="348">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="349">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="361">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="362">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="363">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="364">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="365">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="366">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="380">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="381">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="382">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="384">
@@ -579,6 +749,21 @@
  <tile id="392">
   <properties>
    <property name="LoadClass" value="Enemy.AlienBug"/>
+  </properties>
+ </tile>
+ <tile id="396">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="397">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="398">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="400">

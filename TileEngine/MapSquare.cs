@@ -59,6 +59,9 @@ namespace TileEngine
         // Keep track of sand that was dug up so we can put it back later.
         private bool wasSand = false;
 
+        // Keep track of tiles that were water for when we adjust the water level.
+        private bool wasWater = false;
+
         /// <summary>
         /// Not the best way to identify these. But works for now.
         /// </summary>
@@ -67,6 +70,23 @@ namespace TileEngine
                 Helpers.GetTileRect(4, 5),
                 Helpers.GetTileRect(5, 5),
                 Helpers.GetTileRect(6, 5)
+            };
+
+        /// <summary>
+        /// Not the best way to identify these. But works for now.
+        /// </summary>
+        private static Rectangle[] WaterTextures = new Rectangle[]
+            {
+                Helpers.GetTileRect(7, 6),
+                Helpers.GetTileRect(8, 6),
+                Helpers.GetTileRect(9, 6),
+                Helpers.GetTileRect(10, 6),
+                Helpers.GetTileRect(9, 7),
+                Helpers.GetTileRect(8, 16),
+                Helpers.GetTileRect(9, 16),
+                Helpers.GetTileRect(10, 16),
+                Helpers.GetTileRect(11, 16),
+                Helpers.GetTileRect(10, 17)
             };
 
         public MapSquare(int depth, bool passable)
@@ -112,6 +132,41 @@ namespace TileEngine
                     if (LayerTiles[i].Texture != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))
                     {
                         // Only reset the sand textures.
+                        LayerTiles[i].Color = Color.White;
+                    }
+                }
+            }
+        }
+
+        public void DisableWater()
+        {
+            if (IsWater)
+            {
+                IsWater = false;
+                wasWater = true;
+
+                for (int i = 0; i < LayerTiles.Length; i++)
+                {
+                    if (LayerTiles[i].Texture != null && WaterTextures.Contains(LayerTiles[i].TextureRectangle))
+                    {
+                        // Only clear the water texture.
+                        LayerTiles[i].Color = Color.Transparent;
+                    }
+                }
+            }
+        }
+        public void ResetWater()
+        {
+            if (wasWater)
+            {
+                IsWater = true;
+                wasWater = false;
+
+                for (int i = 0; i < LayerTiles.Length; i++)
+                {
+                    if (LayerTiles[i].Texture != null && WaterTextures.Contains(LayerTiles[i].TextureRectangle))
+                    {
+                        // Only reset the water textures.
                         LayerTiles[i].Color = Color.White;
                     }
                 }

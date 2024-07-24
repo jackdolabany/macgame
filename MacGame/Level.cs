@@ -53,6 +53,8 @@ namespace MacGame
         public List<Door> Doors;
         public List<Waypoint> Waypoints;
 
+        public List<MovingBlockGroup> MovingBlockGroups { get; set; } = new List<MovingBlockGroup>();
+
         /// <summary>
         /// The coin you get when you get 100 tacos.
         /// </summary>
@@ -298,11 +300,12 @@ namespace MacGame
                 }
             }
 
-
-
-
-
             // Now move any floating blocks.
+
+            // first find a group.
+
+
+
         }
 
         public void HighWater()

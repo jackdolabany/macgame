@@ -150,16 +150,6 @@ namespace MacGame
             }
         }
 
-        // For the given level/world, track which tacos were picked up. 
-        // we need this so that a collected taco stays collected if you go
-        // into a door and back.
-        // Taco locations are stored in the Vector corresponding to the initial tile location on the map.
-        private static Dictionary<string, List<Vector2>> MapNameToCollectedTacos = new Dictionary<string, List<Vector2>>();
-
-        // We need to track if the Taco coin was revealed in case the player paid for the
-        // coin but didn't collect it yet. Go get it!
-        public static bool IsTacoCoinRevealed = false;
-
         // State to go to on the next update cycle
         private GameState transitionToState;
         private TransitionType transitionType;
@@ -183,10 +173,18 @@ namespace MacGame
         // Some number strings so that we don't need to create garbage by boxing and unboxing numbers.
         public static string[] Numbers = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-        // The current game state that can be saved or loaded.
+        /// <summary>
+        /// The current game state that can be saved or loaded.
+        /// </summary>
         public static StorageState State { get; set; }
 
-        public Game1()
+        /// <summary>
+        /// State about the current level that will reset if you go to the hub or a new level from the hub.
+        /// </summary>
+        public static LevelState LevelState { get; set; }
+
+
+    public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
 
@@ -210,6 +208,8 @@ namespace MacGame
             WhiteSourceRect = new Rectangle(whiteTileRect.X + 4, whiteTileRect.Y + 4, 2, 2);
 
             TotalCoins = CoinIndex.LevelNumberToCoins.Values.SelectMany(c => c).Count();
+
+            LevelState = new LevelState();
 
             // Validate the CoinIndex
             foreach (var key in CoinIndex.LevelNumberToCoins.Keys)
@@ -363,15 +363,14 @@ namespace MacGame
 
             pauseMenu.SetupTitle("Paused");
 
-            Player.ResetStateForLevelTransition(true);
-            MapNameToCollectedTacos.Clear();
-            IsTacoCoinRevealed = false;
-
             string hubDoorPlayerCameFrom = "";
             if (CurrentLevel != null && !string.IsNullOrEmpty(Game1.HubDoorNameYouCameFrom))
             {
                 hubDoorPlayerCameFrom = Game1.HubDoorNameYouCameFrom;
             }
+
+            Player.ResetStateForLevelTransition(true);
+            LevelState.Reset();
 
             CurrentLevel = sceneManager.LoadLevel(HubWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
@@ -395,7 +394,6 @@ namespace MacGame
                     }
                 }
             }
-            HubDoorNameYouCameFrom = "";
         }
 
         public void RestartLevel()
@@ -905,7 +903,7 @@ namespace MacGame
 
             _goToMap = "";
             _putPlayerAtDoor = "";
-            HubDoorNameYouCameFrom = "";
+            LevelState.Reset();
 
             CurrentLevel = sceneManager.LoadLevel(HubWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
@@ -915,19 +913,19 @@ namespace MacGame
 
         public static void TacoCollected(string levelName, int x, int y)
         {
-            if (!MapNameToCollectedTacos.ContainsKey(levelName))
+            if (!LevelState.MapNameToCollectedTacos.ContainsKey(levelName))
             {
-                MapNameToCollectedTacos[levelName] = new List<Vector2>();
+                LevelState.MapNameToCollectedTacos[levelName] = new List<Vector2>();
             }
 
-            MapNameToCollectedTacos[levelName].Add(new Vector2(x, y));
+            LevelState.MapNameToCollectedTacos[levelName].Add(new Vector2(x, y));
         }
 
         public static bool WasTacoCollected(string levelName, int x, int y)
         {
-            if (MapNameToCollectedTacos.ContainsKey(levelName))
+            if (LevelState.MapNameToCollectedTacos.ContainsKey(levelName))
             {
-                var list = MapNameToCollectedTacos[levelName];
+                var list = LevelState.MapNameToCollectedTacos[levelName];
                 return list.Contains(new Vector2(x, y));
             }
             return false;

@@ -49,7 +49,7 @@ namespace MacGame.Npcs
 
                     tacoCoin.Enabled = true;
 
-                    Game1.IsTacoCoinRevealed = true;
+                    Game1.LevelState.IsTacoCoinRevealed = true;
 
                     ConversationManager.AddMessage("Wow! Those tacos were absolutely delicious! Take this", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
 
@@ -74,7 +74,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            if (Game1.IsTacoCoinRevealed || CurrentLevel.TacoCoin.AlreadyCollected)
+            if (Game1.LevelState.IsTacoCoinRevealed || CurrentLevel.TacoCoin.AlreadyCollected)
             {
 
                 var rando = Game1.Randy.Next(0, 4);

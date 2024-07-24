@@ -215,7 +215,7 @@ namespace MacGame
                                                 coin.IsTacoCoin = obj.Properties["IsTacoCoin"] == "1";
                                                 if (coin.IsTacoCoin)
                                                 {
-                                                    if (!coin.AlreadyCollected && !Game1.IsTacoCoinRevealed)
+                                                    if (!coin.AlreadyCollected && !Game1.LevelState.IsTacoCoinRevealed)
                                                     {
                                                         coin.Enabled = false;
                                                     }
@@ -405,6 +405,73 @@ namespace MacGame
                             }
                         }
                     }
+                }
+            }
+
+            // Scan for groups of moving blocks.
+            foreach (var obj in map.ObjectModifiers)
+            {
+                if (obj.Properties.ContainsKey("MoveGroup"))
+                {
+                    var group = new MovingBlockGroup();
+                    group.Name = obj.Properties["MoveGroup"];
+                    group.MediumWaterOffset = int.Parse(obj.Properties["MediumWater"]);
+                    group.LowWaterOffset = int.Parse(obj.Properties["LowWater"]);
+                    
+                    // The object fully encases the tiles to move, not partially. #MATH
+                    group.Rectangle = new Rectangle(
+                        (int)Math.Ceiling((float)obj.Rectangle.X / 8f), 
+                        (int)Math.Ceiling((float)obj.Rectangle.Y / 8f), 
+                        obj.Rectangle.Width / 8, 
+                        obj.Rectangle.Height / 8);
+
+                    level.MovingBlockGroups.Add(group);
+                }
+            }
+
+            // TODO: This is just test code that shifts the blocks up 5 times. That's stupid
+            // we want to shift the blocks based on water level when the level starts or when you change the water levels.
+            // So do that next.
+            // Move
+            foreach (var group in level.MovingBlockGroups)
+            {
+                // Just shift them up 5 blocks for now.
+
+                for (int i = 0; i < 5; i++)
+                {
+
+                    for (int x = group.Rectangle.X; x < group.Rectangle.Right; x++)
+                    {
+                        for (int y = group.Rectangle.Y; y < group.Rectangle.Bottom; y++)
+                        {
+                            var mapSquare = map.GetMapSquareAtCell(x, y);
+                            var mapSquareAbove = map.GetMapSquareAtCell(x, y - 1);
+
+                            var mapSquareIsWater = mapSquare.IsWater;
+                            var mapSquareAboveIsWater = mapSquareAbove.IsWater;
+
+                            level.Map.MapCells[x][y] = mapSquareAbove;
+                            level.Map.MapCells[x][y - 1] = mapSquare;
+
+                            // objects float out of the water but the water doesn't change
+                            level.Map.MapCells[x][y].IsWater = mapSquareIsWater;
+                            level.Map.MapCells[x][y - 1].IsWater = mapSquareAboveIsWater;
+
+                            // Swap water layer tiles back so the graphics don't change.
+                            for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
+                            {
+                                if (mapSquare.LayerTiles[z].WaterType != WaterType.NotWater)
+                                {
+                                    var temp = mapSquare.LayerTiles[z];
+                                    mapSquare.LayerTiles[z] = mapSquareAbove.LayerTiles[z];
+                                    mapSquareAbove.LayerTiles[z] = temp;
+                                }
+                            }
+                        }
+                    }
+
+                    group.Rectangle = new Rectangle(group.Rectangle.X, group.Rectangle.Y - 1, group.Rectangle.Width, group.Rectangle.Height);
+
                 }
             }
 

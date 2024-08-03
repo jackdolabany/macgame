@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace MacGame
 {
@@ -20,5 +21,20 @@ namespace MacGame
 
         public int LowWaterOffset { get; set; }
         public int MediumWaterOffset { get; set; }
+
+        public int GetTileShiftForWaterHeight(WaterHeight waterHeight)
+        {
+            switch (waterHeight)
+            {
+                case WaterHeight.Low:
+                    return LowWaterOffset;
+                case WaterHeight.Medium:
+                    return MediumWaterOffset;
+                case WaterHeight.High:
+                    return 0;
+                default:
+                    throw new NotImplementedException($"Invalid water height: {waterHeight}");
+            }
+        }
     }
 }

@@ -173,6 +173,35 @@ namespace TileEngine
             }
         }
 
+        /// <summary>
+        /// Swap all graphics and state except water stuff so that we can make solid blocks move up and 
+        /// down as the water changes, or for whatever other reason you want to swap tiles around.
+        /// </summary>
+        public void SwapEverythingButWater(MapSquare mapSquareSwapped)
+        {
+            var mapSquareIsWater = this.IsWater;
+            var mapSquareWasWater = this.wasWater;
+            var mapSquareSwappedIsWater = mapSquareSwapped.IsWater;
+            var mapSquareSwappedWasWater = mapSquareSwapped.wasWater;
+
+            // objects float out of the water but the water doesn't change
+            mapSquareSwapped.IsWater = mapSquareIsWater;
+            mapSquareSwapped.wasWater = mapSquareWasWater;
+            this.IsWater = mapSquareSwappedIsWater;
+            this.wasWater = mapSquareSwappedWasWater;
+
+            // Swap water layer tiles back so the graphics don't change.
+            for (int z = 0; z < this.LayerTiles.Length; z++)
+            {
+                if (this.LayerTiles[z].WaterType != WaterType.NotWater)
+                {
+                    var temp = this.LayerTiles[z];
+                    this.LayerTiles[z] = mapSquareSwapped.LayerTiles[z];
+                    mapSquareSwapped.LayerTiles[z] = temp;
+                }
+            }
+        }
+
         public bool IsSlope()
         {
             return !Passable && (LeftHeight < TileMap.TileSize || RightHeight < TileMap.TileSize);

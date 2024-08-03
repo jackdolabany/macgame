@@ -8,6 +8,7 @@ using MacGame.RevealBlocks;
 using MacGame.Enemies;
 using MacGame.Items;
 using MacGame.Npcs;
+using System.Linq;
 
 namespace MacGame
 {
@@ -24,12 +25,6 @@ namespace MacGame
         /// </summary>
         public int LevelNumber = 0;
         public string Description = "";
-
-        /// <summary>
-        /// Default show all water. You can adjust as necessary.
-        /// </summary>
-        private int waterHeight = 0;
-        private int desiredWaterHeight = 0;
 
         /// <summary>
         /// True if this map represents a room in the main hub world. As opposed to a level looking for a specific cricket coin.
@@ -117,7 +112,7 @@ namespace MacGame
                 item.Update(gameTime, elapsed);
             }
 
-            foreach (var gameObject in GameObjects)
+            foreach (var gameObject in GameObjects.ToList())
             {
                 gameObject.Update(gameTime, elapsed);
             }
@@ -195,18 +190,24 @@ namespace MacGame
                 Enemies.Add(EnemiesToAdd.Dequeue());
             }
 
-            if (desiredWaterHeight != this.waterHeight)
-            {
-                SetWaterHeight(desiredWaterHeight);
-            }
-
         }
 
         Dictionary<Vector2, WaterWave> waterWaves;
 
-        public void SetWaterHeight(int height)
+        public void SetWaterHeight(WaterHeight height)
         {
-            this.waterHeight = height;
+
+            if (Game1.LevelState.WaterHeight == height)
+            {
+                return;
+            }
+
+            var oldHeight = Game1.LevelState.WaterHeight;
+            Game1.LevelState.WaterHeight = height;
+
+            int oldWaterTileHeight = GetTileHightForWaterHeight(oldHeight);
+            int waterTileHeight = GetTileHightForWaterHeight(height);
+
 
             // Track waves because they are special objects that animate waves at the
             // top of water. we'll need to futz around with them.
@@ -223,10 +224,59 @@ namespace MacGame
                 }
             }
 
+            // Shift the moving blocks according to their MovingBlockGroups
+            foreach (var group in this.MovingBlockGroups)
+            {
+                var from = group.GetTileShiftForWaterHeight(oldHeight);
+                var to = group.GetTileShiftForWaterHeight(height);
+
+                var totalShifts = Math.Abs(from - to);
+
+                var isMovingUp = from < to;
+
+                for (int i = 0; i < totalShifts; i++)
+                {
+                    for (int x = group.Rectangle.X; x < group.Rectangle.Right; x++)
+                    {
+                        for (int y = group.Rectangle.Y; y < group.Rectangle.Bottom; y++)
+                        {
+                            var thisTileY = y;
+                            var swapTileY = y - 1;
+
+                            // For the sake of not duplicating code we're going to loop top to bottom. But if we are actually shifting the 
+                            // Tiles down, we want to start with the bottom tiles and work upwards. So that's what this is about.
+                            if (!isMovingUp)
+                            {
+                                thisTileY = (group.Rectangle.Top - y + group.Rectangle.Bottom - 1);
+                                swapTileY = thisTileY + 1;
+                            }
+
+                            var mapSquare = Map.GetMapSquareAtCell(x, thisTileY)!;
+                            var mapSquareSwapped = Map.GetMapSquareAtCell(x, swapTileY)!;
+
+                            Map.MapCells[x][thisTileY] = mapSquareSwapped;
+                            Map.MapCells[x][swapTileY] = mapSquare;
+
+                            mapSquare.SwapEverythingButWater(mapSquareSwapped);
+                        }
+                    }
+
+                    // Finally adjust the group's rectangle.
+                    var newY = group.Rectangle.Y + 1;
+                    if (isMovingUp)
+                    {
+                        newY = group.Rectangle.Y - 1;
+                    }
+
+                    group.Rectangle = new Rectangle(group.Rectangle.X, newY, group.Rectangle.Width, group.Rectangle.Height);
+
+                }
+            }
+
             // Now go through and remove water tiles above the height.
             for (int x = 0; x < Map.MapWidth; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < waterTileHeight; y++)
                 {
                     var cell = Map.GetMapSquareAtCell(x, y);
                     if (cell != null)
@@ -243,7 +293,7 @@ namespace MacGame
             // Now add back any water that used to be below the height.
             for (int x = 0; x < Map.MapWidth; x++)
             {
-                for (int y = height; y < Map.MapHeight; y++)
+                for (int y = waterTileHeight; y < Map.MapHeight; y++)
                 {
                     var cell = Map.GetMapSquareAtCell(x, y);
                     if (cell != null)
@@ -300,27 +350,38 @@ namespace MacGame
                 }
             }
 
-            // Now move any floating blocks.
-
-            // first find a group.
-
-
+            
 
         }
 
         public void HighWater()
         {
-            desiredWaterHeight = 130;
+            SetWaterHeight(WaterHeight.High);
         }
 
         public void MediumWater()
         {
-            desiredWaterHeight = 141;
+            SetWaterHeight(WaterHeight.Medium);
         }
 
         public void LowWater()
         {
-            desiredWaterHeight = 155;
+            SetWaterHeight(WaterHeight.Low);
+        }
+
+        public int GetTileHightForWaterHeight(WaterHeight height)
+        {
+            switch (height)
+            {
+                case WaterHeight.High:
+                    return 130;
+                case WaterHeight.Medium:
+                    return 141;
+                case WaterHeight.Low:
+                    return 155;
+                default:
+                    throw new NotImplementedException($"Invalid height value: {height}");
+            }
         }
 
         /// <summary>

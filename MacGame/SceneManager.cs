@@ -13,6 +13,7 @@ using MacGame.Items;
 using MacGame.Npcs;
 using System.Data;
 using System.Net.Http;
+using System.Reflection.Emit;
 
 namespace MacGame
 {
@@ -443,52 +444,6 @@ namespace MacGame
                 }
             }
 
-            // TODO: This is just test code that shifts the blocks up 5 times. That's stupid
-            // we want to shift the blocks based on water level when the level starts or when you change the water levels.
-            // So do that next.
-            // Move
-            foreach (var group in level.MovingBlockGroups)
-            {
-                // Just shift them up 5 blocks for now.
-
-                for (int i = 0; i < 5; i++)
-                {
-
-                    for (int x = group.Rectangle.X; x < group.Rectangle.Right; x++)
-                    {
-                        for (int y = group.Rectangle.Y; y < group.Rectangle.Bottom; y++)
-                        {
-                            var mapSquare = map.GetMapSquareAtCell(x, y);
-                            var mapSquareAbove = map.GetMapSquareAtCell(x, y - 1);
-
-                            var mapSquareIsWater = mapSquare.IsWater;
-                            var mapSquareAboveIsWater = mapSquareAbove.IsWater;
-
-                            level.Map.MapCells[x][y] = mapSquareAbove;
-                            level.Map.MapCells[x][y - 1] = mapSquare;
-
-                            // objects float out of the water but the water doesn't change
-                            level.Map.MapCells[x][y].IsWater = mapSquareIsWater;
-                            level.Map.MapCells[x][y - 1].IsWater = mapSquareAboveIsWater;
-
-                            // Swap water layer tiles back so the graphics don't change.
-                            for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
-                            {
-                                if (mapSquare.LayerTiles[z].WaterType != WaterType.NotWater)
-                                {
-                                    var temp = mapSquare.LayerTiles[z];
-                                    mapSquare.LayerTiles[z] = mapSquareAbove.LayerTiles[z];
-                                    mapSquareAbove.LayerTiles[z] = temp;
-                                }
-                            }
-                        }
-                    }
-
-                    group.Rectangle = new Rectangle(group.Rectangle.X, group.Rectangle.Y - 1, group.Rectangle.Width, group.Rectangle.Height);
-
-                }
-            }
-
             // Set the draw depths and initialize all 
             var singleLayerDepth = map.GetLayerIncrement();
 
@@ -524,5 +479,54 @@ namespace MacGame
 
             return level;
         }
+
+        //public void ShiftBlocks()
+        //{
+        //    // TODO: This is just test code that shifts the blocks up 5 times. That's stupid
+        //    // we want to shift the blocks based on water level when the level starts or when you change the water levels.
+        //    // So do that next.
+        //    // Move
+        //    foreach (var group in level.MovingBlockGroups)
+        //    {
+        //        // Just shift them up 5 blocks for now.
+
+        //        for (int i = 0; i < 5; i++)
+        //        {
+
+        //            for (int x = group.Rectangle.X; x < group.Rectangle.Right; x++)
+        //            {
+        //                for (int y = group.Rectangle.Y; y < group.Rectangle.Bottom; y++)
+        //                {
+        //                    var mapSquare = map.GetMapSquareAtCell(x, y);
+        //                    var mapSquareAbove = map.GetMapSquareAtCell(x, y - 1);
+
+        //                    var mapSquareIsWater = mapSquare.IsWater;
+        //                    var mapSquareAboveIsWater = mapSquareAbove.IsWater;
+
+        //                    level.Map.MapCells[x][y] = mapSquareAbove;
+        //                    level.Map.MapCells[x][y - 1] = mapSquare;
+
+        //                    // objects float out of the water but the water doesn't change
+        //                    level.Map.MapCells[x][y].IsWater = mapSquareIsWater;
+        //                    level.Map.MapCells[x][y - 1].IsWater = mapSquareAboveIsWater;
+
+        //                    // Swap water layer tiles back so the graphics don't change.
+        //                    for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
+        //                    {
+        //                        if (mapSquare.LayerTiles[z].WaterType != WaterType.NotWater)
+        //                        {
+        //                            var temp = mapSquare.LayerTiles[z];
+        //                            mapSquare.LayerTiles[z] = mapSquareAbove.LayerTiles[z];
+        //                            mapSquareAbove.LayerTiles[z] = temp;
+        //                        }
+        //                    }
+        //                }
+        //            }
+
+        //            group.Rectangle = new Rectangle(group.Rectangle.X, group.Rectangle.Y - 1, group.Rectangle.Width, group.Rectangle.Height);
+
+        //        }
+        //    }
+        //}
     }
 }

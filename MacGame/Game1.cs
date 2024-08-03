@@ -687,7 +687,6 @@ namespace MacGame
                 case GameState.Playing:
                 case GameState.PausedWithMenu:
                 case GameState.GotCoin:
-                //case GameState.RevealTacoCoin:
                 case GameState.Conversation:
                 case GameState.PausedForAction:
 
@@ -837,19 +836,20 @@ namespace MacGame
 
             // Draw red/green/blue keys on the right below the tacos
             Vector2 keyLocation = new Vector2(GAME_X_RESOLUTION - 40, hudYPos + 48);
-            if (Player.HasRedKey)
+            var level = Game1.State.Levels[Game1.CurrentLevel.LevelNumber];
+            if (level.Keys.HasRedKey)
             {
                 var redKeySourceRect = Helpers.GetTileRect(13, 4);
                 spriteBatch.Draw(TileTextures, keyLocation, redKeySourceRect, Color.White);
                 keyLocation.Y += 24;
             }
-            if (Player.HasGreenKey)
+            if (level.Keys.HasGreenKey)
             {
                 var greenKeySourceRect = Helpers.GetTileRect(14, 4);
                 spriteBatch.Draw(TileTextures, keyLocation, greenKeySourceRect, Color.White);
                 keyLocation.Y += 24;
             }
-            if (Player.HasBlueKey)
+            if (level.Keys.HasBlueKey)
             {
                 var blueKeySourceRect = Helpers.GetTileRect(15, 4);
                 spriteBatch.Draw(TileTextures, keyLocation, blueKeySourceRect, Color.White);
@@ -899,7 +899,7 @@ namespace MacGame
             MenuManager.ClearMenus();
             Game1.State = (StorageState)ss.Clone();
 
-            Player.CricketCoinCount = Game1.State.LevelsToCoins.Sum(l => l.Value.Count);
+            Player.CricketCoinCount = Game1.State.Levels.Select(l => l.Value).Sum(l => l.CollectedCoins.Count);
 
             _goToMap = "";
             _putPlayerAtDoor = "";

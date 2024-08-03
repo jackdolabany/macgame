@@ -41,12 +41,7 @@ namespace MacGame.Npcs
 
             var coinInfos = CoinIndex.LevelNumberToCoins[levelNumber];
 
-            HashSet<string>? collectedCoins = null;
-
-            if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
-            {
-                collectedCoins = Game1.State.LevelsToCoins[Game1.CurrentLevel.LevelNumber];
-            }
+            var collectedCoins = Game1.State.Levels[levelNumber].CollectedCoins;
 
             // He'll say the hint for first coin with a hint that you don't have.
             foreach (var coinInfo in coinInfos)

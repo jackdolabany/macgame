@@ -31,7 +31,7 @@ namespace MacGame
 
         public override bool CanPlayerUnlock(Player player)
         {
-            return player.HasBlueKey;
+            return Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasBlueKey;
         }
 
         public override string LockMessage()

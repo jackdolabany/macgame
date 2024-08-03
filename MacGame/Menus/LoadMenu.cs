@@ -148,7 +148,7 @@ namespace MacGame
             }
             else
             {
-                var coinCount = state.LevelsToCoins.Values.Sum(x => x.Count);
+                var coinCount = state.Levels.Select(l => l.Value.CollectedCoins.Count).Sum();
 
                 var percentageComplete = (int)System.Math.Round((float)coinCount / (float)Game1.TotalCoins * 100f);
 

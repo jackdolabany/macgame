@@ -38,14 +38,10 @@ namespace MacGame.Items
 
         public void CheckIfAlreadyCollected(int levelNumber)
         {
-            if (Game1.State.LevelsToCoins.ContainsKey(levelNumber))
+            if (Game1.State.Levels[levelNumber].CollectedCoins.Contains(Name))
             {
-                var coins = Game1.State.LevelsToCoins[levelNumber];
-                if (coins.Contains(Name))
-                {
-                    AlreadyCollected = true;
-                    this.DisplayComponent.TintColor = Color.White * 0.5f;
-                }
+                AlreadyCollected = true;
+                this.DisplayComponent.TintColor = Color.White * 0.5f;
             }
         }
 
@@ -56,18 +52,10 @@ namespace MacGame.Items
             this.Enabled = false;
 
             // Add this cricket coin if they don't already have it.
-            if (Game1.State.LevelsToCoins.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            var levelState = Game1.State.Levels[Game1.CurrentLevel.LevelNumber];
+            if (!levelState.CollectedCoins.Contains(Name))
             {
-                var coins = Game1.State.LevelsToCoins[Game1.CurrentLevel.LevelNumber];
-                if (!coins.Contains(Name))
-                {
-                    coins.Add(Name);
-                    player.CricketCoinCount++;
-                }
-            }
-            else
-            {
-                Game1.State.LevelsToCoins.Add(Game1.CurrentLevel.LevelNumber, new HashSet<string> { Name });
+                levelState.CollectedCoins.Add(Name);
                 player.CricketCoinCount++;
             }
 

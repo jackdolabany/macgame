@@ -60,9 +60,9 @@ namespace MacGame
             player.ResetStateForLevelTransition(isNewLevel);
 
             // Make sure this exists for each level.
-            if (!Game1.State.UnlockedDoors.ContainsKey(level.LevelNumber))
+            if (!Game1.State.Levels.ContainsKey(level.LevelNumber))
             {
-                Game1.State.UnlockedDoors.Add(level.LevelNumber, new HashSet<string>());
+                Game1.State.Levels.Add(level.LevelNumber, new LevelStorageState());
             }
 
             if(map.Properties.ContainsKey("Description"))
@@ -233,6 +233,18 @@ namespace MacGame
                                         item.Enabled = false;
                                     }
                                 }
+                                else if (item is RedKey)
+                                {
+                                    item.Enabled = !Game1.State.Levels[level.LevelNumber].Keys.HasRedKey;
+                                }
+                                else if (item is GreenKey)
+                                {
+                                    item.Enabled = !Game1.State.Levels[level.LevelNumber].Keys.HasGreenKey;
+                                }
+                                else if (item is BlueKey)
+                                {
+                                    item.Enabled = !Game1.State.Levels[level.LevelNumber].Keys.HasBlueKey;
+                                }
                             }
                             else if (DoorClasses.Contains(loadClass))
                             {
@@ -290,7 +302,9 @@ namespace MacGame
                                             {
                                                 var openClosedDoor = (OpenCloseDoor)door;
 
-                                                if (!openClosedDoor.IsInitiallyLocked || (Game1.State.UnlockedDoors[level.LevelNumber].Contains(door.Name) && openClosedDoor.CanPlayerUnlock(player)))
+                                                var unlockedDoors = Game1.State.Levels[level.LevelNumber].UnlockedDoors;
+
+                                                if (!openClosedDoor.IsInitiallyLocked || (unlockedDoors.Contains(door.Name) && openClosedDoor.CanPlayerUnlock(player)))
                                                 {
                                                     openClosedDoor.IsLocked = false;
                                                 }

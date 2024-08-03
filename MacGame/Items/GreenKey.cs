@@ -21,13 +21,13 @@ namespace MacGame.Items
             SetCenteredCollisionRectangle(8, 8);
             _player = player;
             IsInChest = false;
-            this.Enabled = !player.HasGreenKey;
         }
 
         public override void WhenCollected(Player player)
         {
-            player.HasGreenKey = true;
             this.Enabled = false;
+            Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasGreenKey = true;
+            StorageManager.TrySaveGame();
         }
     }
 }

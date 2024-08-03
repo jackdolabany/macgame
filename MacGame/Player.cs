@@ -137,10 +137,6 @@ namespace MacGame
         /// </summary>
         MacWings wings;
 
-        public bool HasRedKey { get; set; } = false;
-        public bool HasGreenKey { get; set; } = false;
-        public bool HasBlueKey { get; set; } = false;
-
         public bool IsInvisible { get; set; } = false;
 
         public override Vector2 Gravity
@@ -416,9 +412,6 @@ namespace MacGame
                 Health = Player.MaxHealth;
                 CurrentItem = null;
                 Tacos = 0;
-                HasRedKey = false;
-                HasGreenKey = false;
-                HasBlueKey = false;
             }
 
             Enabled = true;
@@ -1360,16 +1353,10 @@ namespace MacGame
 
         public void AddUnlockedDoor(string doorName)
         {
-            if (Game1.State.UnlockedDoors.ContainsKey(Game1.CurrentLevel.LevelNumber))
+            var doors = Game1.State.Levels[Game1.CurrentLevel.LevelNumber].UnlockedDoors;
+            if (!doors.Contains(doorName))
             {
-                if (!Game1.State.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Contains(doorName))
-                {
-                    Game1.State.UnlockedDoors[Game1.CurrentLevel.LevelNumber].Add(doorName);
-                }
-            }
-            else
-            {
-                Game1.State.UnlockedDoors.Add(Game1.CurrentLevel.LevelNumber, new HashSet<string> { doorName });
+                doors.Add(doorName);
             }
         }
     }

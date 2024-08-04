@@ -193,7 +193,7 @@ namespace TileEngine
             // Swap water layer tiles back so the graphics don't change.
             for (int z = 0; z < this.LayerTiles.Length; z++)
             {
-                if (this.LayerTiles[z].WaterType != WaterType.NotWater)
+                if (this.LayerTiles[z].WaterType != WaterType.NotWater || mapSquareSwapped.LayerTiles[z].WaterType != WaterType.NotWater)
                 {
                     var temp = this.LayerTiles[z];
                     this.LayerTiles[z] = mapSquareSwapped.LayerTiles[z];

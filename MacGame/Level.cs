@@ -205,10 +205,6 @@ namespace MacGame
             var oldHeight = Game1.LevelState.WaterHeight;
             Game1.LevelState.WaterHeight = height;
 
-            int oldWaterTileHeight = GetTileHightForWaterHeight(oldHeight);
-            int waterTileHeight = GetTileHightForWaterHeight(height);
-
-
             // Track waves because they are special objects that animate waves at the
             // top of water. we'll need to futz around with them.
             if (waterWaves == null)
@@ -274,6 +270,8 @@ namespace MacGame
             }
 
             // Now go through and remove water tiles above the height.
+            int waterTileHeight = GetTileHightForWaterHeight(height);
+
             for (int x = 0; x < Map.MapWidth; x++)
             {
                 for (int y = 0; y < waterTileHeight; y++)
@@ -304,19 +302,24 @@ namespace MacGame
                         if (cell.IsWater && cellAbove != null && !cellAbove.IsWater && cellAbove.Passable)
                         {
                             WaterWave wave;
+
                             // Water with no water or blocking tile above should be a wave.
                             if (waterWaves.ContainsKey(new Vector2(x, y)))
                             {
+                                // Re-enable if it existed.
                                 wave = waterWaves[new Vector2(x, y)];
                                 wave.Enabled = true;
                             }
                             else
                             {
+                                // Add a new wave if not.
                                 wave = new WaterWave(x, y, 0.1f);
                                 waterWaves.Add(new Vector2(x, y), wave);
                                 GameObjects.Add(wave);
                             }
                             
+                            // For this wave cell, set the draw depth of the wave object
+                            // and don't draw the water graphics.
                             for (int z = 0; z < Map.MapDepth; z++)
                             {
                                 if (cell.LayerTiles[z].WaterType != WaterType.NotWater)

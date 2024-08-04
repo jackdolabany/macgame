@@ -638,12 +638,12 @@ namespace Squared.Tiled
             return result;
         }
 
-        public TileEngine.TileMap PopulateFromTMXMap()
+        public TileMap PopulateFromTMXMap()
         {
             var regularColor = Color.White;
             var backgroundColor = Color.Lerp(Color.White, Color.Black, 0.5f);
 
-            var tileMap = new TileEngine.TileMap();
+            var tileMap = new TileMap();
 
             tileMap.Properties = this.Properties.ToDictionary(p => p.Key, p => p.Value);
 
@@ -670,12 +670,12 @@ namespace Squared.Tiled
             {
                 for (int y = 0; y < height; y++)
                 {
-                    tileMap.MapCells[x][y] = new TileEngine.MapSquare(depth, true);
+                    tileMap.MapCells[x][y] = new MapSquare(depth, true);
                     for (int z = 0; z < depth; z++)
                     {
-                        tileMap.MapCells[x][y].LayerTiles[z] = new TileEngine.Tile();
-                        tileMap.MapCells[x][y].LayerTiles[z].TileHeight = TileEngine.TileMap.TileSize;
-                        tileMap.MapCells[x][y].LayerTiles[z].TileWidth = TileEngine.TileMap.TileSize;
+                        tileMap.MapCells[x][y].LayerTiles[z] = new Tile();
+                        tileMap.MapCells[x][y].LayerTiles[z].TileHeight = TileMap.TileSize;
+                        tileMap.MapCells[x][y].LayerTiles[z].TileWidth = TileMap.TileSize;
                     }
                 }
             }

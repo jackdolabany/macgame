@@ -241,14 +241,14 @@ namespace MacGame
                         for (int y = group.Rectangle.Y; y < group.Rectangle.Bottom; y++)
                         {
                             var thisTileY = y;
-                            var swapTileY = y - 1;
+                            var swapTileY = y - 1; // Tile below
 
                             // For the sake of not duplicating code we're going to loop top to bottom. But if we are actually shifting the 
                             // Tiles down, we want to start with the bottom tiles and work upwards. So that's what this is about.
                             if (!isMovingUp)
                             {
                                 thisTileY = (group.Rectangle.Top - y + group.Rectangle.Bottom - 1);
-                                swapTileY = thisTileY + 1;
+                                swapTileY = thisTileY + 1; // Tile above
                             }
 
                             var mapSquare = Map.GetMapSquareAtCell(x, thisTileY)!;

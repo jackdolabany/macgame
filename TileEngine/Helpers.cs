@@ -40,5 +40,14 @@ namespace TileEngine
         {
             return new Rectangle(x * TileMap.TileSize * 3 + (2 * x) + 1, y * TileMap.TileSize * 3 + (2 * y) + 1, TileMap.TileSize * 3, TileMap.TileSize * 3);
         }
+
+        /// <summary>
+        /// Not sure what's better.
+        /// </summary>
+        public static int ToInt(this float number)
+        {
+            return (int)Math.Round(number);
+            //return (int)number;
+        }
     }
 }

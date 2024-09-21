@@ -147,7 +147,7 @@ namespace MacGame
 
                 spark.Initialize(
                     location - (impactVelocity / 100),
-                    RandomDirection((float)Game1.Randy.Next(10, 10 + (int)(10 * scale))),
+                    RandomDirection((float)Game1.Randy.Next(10, 10 + (10 * scale).ToInt())),
                     Vector2.Zero,
                     100f,
                     70,

@@ -138,7 +138,7 @@ namespace MacGame.Npcs
                 }
 
                 // Ladder climbing.
-                var tileAtHead = Game1.CurrentMap?.GetMapSquareAtPixel((int)this.WorldCenter.X, this.CollisionRectangle.Top);
+                var tileAtHead = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter.X.ToInt(), this.CollisionRectangle.Top);
                 var tileAtFeet = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldLocation);
                 var onLadder = (tileAtHead != null && tileAtHead.IsLadder) || (tileAtFeet != null && tileAtFeet.IsLadder);
                 if (onLadder)
@@ -150,7 +150,7 @@ namespace MacGame.Npcs
                     this.IsAffectedByGravity = false;
 
                     // Move towards the center of the ladder
-                    var targetX = ((int)(this.WorldLocation.X / Game1.TileSize)) * Game1.TileSize + Game1.TileSize / 2;
+                    var targetX = (this.WorldLocation.X / Game1.TileSize) * Game1.TileSize + Game1.TileSize / 2;
 
                     if (targetX > this.WorldLocation.X)
                     {

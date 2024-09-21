@@ -14,7 +14,7 @@ namespace MacGame
 
             ok.Chosen += acceptEvent;
 
-            this.Position = new Vector2(Game1.Camera.ViewPortWidth / 2, (int)(Game1.Camera.ViewPortHeight * 0.333f));
+            this.Position = new Vector2(Game1.Camera.ViewPortWidth / 2, (Game1.Camera.ViewPortHeight * 0.333f).ToInt());
 
             this.menuOptions.Add(ok);
             this.IsOverlay = true;

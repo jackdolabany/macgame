@@ -139,7 +139,7 @@ namespace MacGame
         {
             get
             {
-                return (int)(viewPortSize.X / Zoom);
+                return (viewPortSize.X / Zoom).ToInt();
             }
         }
 
@@ -147,19 +147,19 @@ namespace MacGame
         {
             get
             {
-                return (int)(viewPortSize.Y / Zoom);
+                return (viewPortSize.Y / Zoom).ToInt();
             }
         }
 
         public int ViewPortWidth
         {
-            get { return (int)viewPortSize.X; }
+            get { return viewPortSize.X.ToInt(); }
             set { viewPortSize.X = value; }
         }
 
         public int ViewPortHeight
         {
-            get { return (int)viewPortSize.Y; }
+            get { return viewPortSize.Y.ToInt(); }
             set { viewPortSize.Y = value; }
         }
 
@@ -170,7 +170,7 @@ namespace MacGame
                 int width = ViewWidth;
                 int height = ViewHeight;
                 return new Rectangle(
-                    (int)(Position.X - width / 2f), (int)(Position.Y - height / 2f),
+                    (Position.X - width / 2f).ToInt(), (Position.Y - height / 2f).ToInt(),
                     width, height);
             }
         }
@@ -181,10 +181,10 @@ namespace MacGame
             {
                 var svp = viewPortSize / Zoom / ParallaxScale;
                 return new Rectangle(
-                    (int)(Position.X - svp.X / 2f),
-                    (int)(Position.Y - svp.Y / 2),
-                    (int)svp.X,
-                    (int)svp.Y);
+                    (Position.X - svp.X / 2f).ToInt(),
+                    (Position.Y - svp.Y / 2).ToInt(),
+                    svp.X.ToInt(),
+                    svp.Y.ToInt());
             }
         }
 
@@ -197,10 +197,10 @@ namespace MacGame
             var heightPadding = bounds.Height * paddingPercent;
 
             var paddedBounds = new Rectangle(
-                (int)(bounds.X - widthPadding),
-                (int)(bounds.Y - heightPadding), 
-                (int)(bounds.Width + widthPadding * 2), 
-                (int)(bounds.Height + heightPadding * 2));
+                (bounds.X - widthPadding).ToInt(),
+                (bounds.Y - heightPadding).ToInt(), 
+                (bounds.Width + widthPadding * 2).ToInt(), 
+                (bounds.Height + heightPadding * 2).ToInt());
 
             return ViewPort.Intersects(paddedBounds);
         }
@@ -212,7 +212,7 @@ namespace MacGame
 
         public bool IsPointVisible(Vector2 point)
         {
-            return ViewPort.Contains((int)point.X, (int)point.Y);
+            return ViewPort.Contains(point.X.ToInt(), point.Y.ToInt());
         }
 
     }

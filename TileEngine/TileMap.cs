@@ -140,8 +140,8 @@ namespace TileEngine
         public Vector2 GetCellByPixel(Vector2 pixelLocation)
         {
             return new Vector2(
-                GetCellByPixelX((int)pixelLocation.X),
-                GetCellByPixelY((int)pixelLocation.Y));
+                GetCellByPixelX(pixelLocation.X.ToInt()),
+                GetCellByPixelY(pixelLocation.Y.ToInt()));
         }
 
         public Vector2 GetCellCenter(int cellX, int cellY)
@@ -154,8 +154,8 @@ namespace TileEngine
         public Vector2 GetCellCenter(Vector2 cell)
         {
             return GetCellCenter(
-                (int)cell.X,
-                (int)cell.Y);
+                cell.X.ToInt(),
+                cell.Y.ToInt());
         }
 
         public Rectangle CellWorldRectangle(int cellX, int cellY)
@@ -170,8 +170,8 @@ namespace TileEngine
         public Rectangle CellWorldRectangle(Vector2 cell)
         {
             return CellWorldRectangle(
-                (int)cell.X,
-                (int)cell.Y);
+                cell.X.ToInt(),
+                cell.Y.ToInt());
         }
 
         public bool CellIsPassable(int cellX, int cellY)
@@ -186,14 +186,14 @@ namespace TileEngine
 
         public bool CellIsPassable(Vector2 cell)
         {
-            return CellIsPassable((int)cell.X, (int)cell.Y);
+            return CellIsPassable(cell.X.ToInt(), (int)cell.Y.ToInt());
         }
 
         public bool CellIsPassableByPixel(Vector2 pixelLocation)
         {
             return CellIsPassable(
-                GetCellByPixelX((int)pixelLocation.X),
-                GetCellByPixelY((int)pixelLocation.Y));
+                GetCellByPixelX(pixelLocation.X.ToInt()),
+                GetCellByPixelY(pixelLocation.Y.ToInt()));
         }
 
         public MapSquare? GetMapSquareAtCell(int tileX, int tileY)
@@ -231,8 +231,8 @@ namespace TileEngine
         public MapSquare? GetMapSquareAtPixel(Vector2 pixelLocation)
         {
             return GetMapSquareAtPixel(
-                (int)pixelLocation.X,
-                (int)pixelLocation.Y);
+                pixelLocation.X.ToInt(),
+                pixelLocation.Y.ToInt());
         }
 
         public void Initialize(int height, int width)

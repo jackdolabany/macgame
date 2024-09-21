@@ -59,7 +59,7 @@ namespace MacGame.Enemies
                 }
             }
 
-            var travelDistance = (int)WorldCenter.X - startLocationX;
+            var travelDistance = WorldCenter.X.ToInt() - startLocationX;
 
             if (velocity.X > 0 && travelDistance >= maxTravelDistance)
             {

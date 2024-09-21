@@ -353,8 +353,6 @@ namespace MacGame
                 }
             }
 
-            
-
         }
 
         public void HighWater()

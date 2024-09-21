@@ -9,7 +9,7 @@ namespace MacGame
         {
             this.menuTitle = "Game Over";
             
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * (1f / 3f)));
+            this.Position = new Vector2((Game1.GAME_X_RESOLUTION / 2f).ToInt(), (Game1.GAME_Y_RESOLUTION * (1f / 3f)).ToInt());
 
             if (Game1.IS_DEBUG)
             {

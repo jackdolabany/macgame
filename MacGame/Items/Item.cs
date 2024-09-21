@@ -100,7 +100,7 @@ namespace MacGame.Items
             {
                 // Check if the pixel above the player is hitting the bottom of the chest.
                 var topOfPlayer = new Rectangle(_player.CollisionRectangle.X, _player.CollisionRectangle.Top, _player.CollisionRectangle.Width, 4);
-                var bottomOfChest = new Rectangle((int)ChestPosition.X - 16, (int)ChestPosition.Y, 32, 4);
+                var bottomOfChest = new Rectangle(ChestPosition.X.ToInt() - 16, ChestPosition.Y.ToInt(), 32, 4);
                 if (topOfPlayer.Intersects(bottomOfChest))
                 {
                     isOpen = true;

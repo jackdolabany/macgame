@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using System.Threading;
 using System.Reflection;
 using TileEngine;
+using System.Runtime.InteropServices;
 
 namespace MacGame
 {
@@ -49,16 +50,16 @@ namespace MacGame
         /// </summary>
         public static Rectangle Scale(this Rectangle input, float scale)
         {
-            int newWidth = (int)(input.Width * scale);
-            int newHeight = (int)(input.Height * scale);
+            int newWidth = (input.Width * scale).ToInt();
+            int newHeight = (input.Height * scale).ToInt();
             return new Rectangle(input.X + ((input.Width - newWidth) / 2), input.Y + ((input.Height - newHeight) / 2), newWidth, newHeight);
         }
 
         public static Rectangle Rotate(this Rectangle input, Vector2 point, RectangleRotation rotation)
         {
             // TODO this may need some tweaking to support points other than 0, 0 (whoops!)
-            int x = (int)point.X;
-            int y = (int)point.Y;
+            int x = point.X.ToInt();
+            int y = point.Y.ToInt();
             if (rotation == RectangleRotation.ThreeSixty) return input;
 
             if (rotation == RectangleRotation.OneEighty)
@@ -208,7 +209,7 @@ namespace MacGame
 
         public static Point ToPoint(this Vector2 vector)
         {
-            return new Point((int)vector.X, (int)vector.Y);
+            return new Point(vector.X.ToInt(), vector.Y.ToInt());
         }
 
         public static Vector2 ToGridLocation(this Vector2 worldLocation)
@@ -218,17 +219,17 @@ namespace MacGame
         
         public static Vector2 ToIntegerVector(this Vector2 vector)
         {
-            return new Vector2((int)vector.X, (int)vector.Y);
+            return new Vector2(vector.X.ToInt(), vector.Y.ToInt());
         }
 
         public static Vector2 RelativeCenterVector(this Texture2D texture)
         {
-            return new Vector2(texture.Width / 2, texture.Height / 2);
+            return new Vector2(texture.Width / 2f, texture.Height / 2f);
         }
 
         public static Vector2 RelativeCenterVector(this Rectangle rect)
         {
-            return new Vector2(rect.Width / 2, rect.Height / 2);
+            return new Vector2(rect.Width / 2f, rect.Height / 2f);
         }
 
         /// <summary>
@@ -295,6 +296,11 @@ namespace MacGame
                 om.Rectangle.Y * Game1.TileScale,
                 om.Rectangle.Width * Game1.TileScale,
                 om.Rectangle.Height * Game1.TileScale);
+        }
+
+        public static int ToInt(this float number)
+        {
+            return TileEngine.Helpers.ToInt(number);
         }
     }
 }

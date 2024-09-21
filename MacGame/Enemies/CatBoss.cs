@@ -54,7 +54,7 @@ namespace MacGame.Enemies
                 yarnBalls[i].Enabled = false;
                 Level.AddEnemy(yarnBalls[i]);
             }
-            startLocationX = (int)WorldLocation.X;
+            startLocationX = WorldLocation.X.ToInt();
         }
 
         public override void TakeHit(int damage, Vector2 force)
@@ -116,7 +116,7 @@ namespace MacGame.Enemies
                     velocity.X *= -1;
                 }
 
-                var travelDistance = (int)WorldCenter.X - startLocationX;
+                var travelDistance = WorldCenter.X.ToInt() - startLocationX;
 
                 if (velocity.X > 0 && travelDistance >= maxTravelDistance)
                 {

@@ -262,16 +262,16 @@ namespace MacGame
             if (DisplayComponent == null)
             {
                 return new Rectangle(
-                  (int)(position.X) + collisionRectangle.X,
-                  (int)(position.Y) + collisionRectangle.Y,
+                  position.X.ToInt() + collisionRectangle.X,
+                  position.Y.ToInt() + collisionRectangle.Y,
                   collisionRectangle.Width,
                   collisionRectangle.Height);
             }
             else
             {
                 return new Rectangle(
-                  (int)(position.X - DisplayComponent.RotationAndDrawOrigin.X) + collisionRectangle.X,
-                  (int)(position.Y - DisplayComponent.RotationAndDrawOrigin.Y) + collisionRectangle.Y,
+                  (position.X - DisplayComponent.RotationAndDrawOrigin.X).ToInt() + collisionRectangle.X,
+                  (position.Y - DisplayComponent.RotationAndDrawOrigin.Y).ToInt() + collisionRectangle.Y,
                   collisionRectangle.Width,
                   collisionRectangle.Height);
             }
@@ -783,12 +783,12 @@ namespace MacGame
                 var location = WorldLocation;
 
                 // Draw location in green
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)(location.X - offset), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Green);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle((location.X - offset).ToInt(), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Green);
 
                 location = WorldCenter;
 
                 // Draw world center in Yellow
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)(location.X - offset), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Yellow);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle((location.X - offset).ToInt(), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Yellow);
             }
         }
 

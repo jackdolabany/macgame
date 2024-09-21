@@ -671,8 +671,8 @@ namespace MacGame
             {
                 // Also make sure Mac's collision rect isn't blocked from going down by other solid tiles.
                 // Otherwise he may do a weird vibrating thing trying to climb down to ladder with a solid wall next to the top tile.
-                var tileAtBottomLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, (int)this.WorldLocation.Y);
-                var tileAtBottomRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, (int)this.WorldLocation.Y);
+                var tileAtBottomLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.WorldLocation.Y.ToInt());
+                var tileAtBottomRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, this.WorldLocation.Y.ToInt());
 
                 var canGoDown = ((tileAtBottomLeft == null || tileAtBottomLeft.Passable) && (tileAtBottomRight == null || tileAtBottomRight.Passable));
                 if (canGoDown)

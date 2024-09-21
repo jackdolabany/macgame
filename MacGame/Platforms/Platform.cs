@@ -47,7 +47,7 @@ namespace MacGame.Platforms
         public override void Draw(SpriteBatch spriteBatch)
         {
             // Account for WorldLocation being the bottom center of the platform, and then pad a bit.
-            if (Game1.Camera.IsObjectVisible(new Rectangle((int)this.WorldLocation.X - (Game1.TileSize / 2) - 8, (int)this.WorldLocation.Y - Game1.TileSize - 8, Game1.TileSize + 16, Game1.TileSize + 16)))
+            if (Game1.Camera.IsObjectVisible(new Rectangle(this.WorldLocation.X.ToInt() - (Game1.TileSize / 2f).ToInt() - 8, this.WorldLocation.Y.ToInt() - Game1.TileSize - 8, Game1.TileSize + 16, Game1.TileSize + 16)))
             {
                 base.Draw(spriteBatch);
             }

@@ -1,16 +1,8 @@
-﻿using MacGame.Behaviors;
-using MacGame.DisplayComponents;
-using MacGame.Items;
-using Microsoft.VisualBasic;
+﻿using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using TileEngine;
-using static MacGame.ConversationManager;
-using static MacGame.Game1;
 
 namespace MacGame.Npcs
 {
@@ -45,7 +37,7 @@ namespace MacGame.Npcs
 
                     SoundManager.PlaySound("CoinCollected", 0.4f);
 
-                    var tacoCoin = CurrentLevel.TacoCoin;
+                    var tacoCoin = Game1.CurrentLevel.TacoCoin;
 
                     tacoCoin.Enabled = true;
 
@@ -74,7 +66,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            if (Game1.LevelState.IsTacoCoinRevealed || CurrentLevel.TacoCoin.AlreadyCollected)
+            if (Game1.LevelState.IsTacoCoinRevealed || Game1.CurrentLevel.TacoCoin.AlreadyCollected)
             {
 
                 var rando = Game1.Randy.Next(0, 4);

@@ -10,6 +10,17 @@ namespace MacGame
     public static class ConversationManager
     {
 
+        public enum ImagePosition
+        {
+            Left, Right
+        }
+
+        public enum Float
+        {
+            Top,
+            Bottom
+        }
+
         // Dialog box background and border components
         static Rectangle borderCornerSourceRect;
         static Rectangle borderLeftEdgeSourceRect;
@@ -25,7 +36,7 @@ namespace MacGame
         static int textWidth;
         static int textHeight;
 
-        static float textScale = 1f;
+        public static float textScale = 1f;
 
         private static float letterTimer = 0f;
         private const float letterTimerGoal = 0.04f;
@@ -41,49 +52,6 @@ namespace MacGame
         /// Represents the face of the person that is talking.
         /// </summary>
         static Texture2D conversationTexture;
-        
-        public enum ImagePosition
-        {
-            Left, Right
-        }
-
-        public enum Float
-        {
-            Top,
-            Bottom
-        }
-
-        public class ConversationChoice
-        {
-            public ConversationChoice(string text, System.Action action)
-            {
-                this.Text = text;
-                this.Event = action;
-
-                Width = Game1.Font.MeasureString(text).X * textScale;
-
-            }
-            public float Width { get; private set; }
-            public string Text { get; private set; }
-            public System.Action Event { get; set; }
-        }
-
-        public class ConversationMessage
-        {
-            public List<string> Texts;
-            public ImagePosition ImagePosition;
-            public Rectangle? ImageSourceRectangle;
-
-            public int selectedChoice = 0;
-
-            // An array of strings to show as choices after the last message.
-            public List<ConversationChoice> Choices;
-
-            public void PlaySound()
-            {
-                // SoundManager.PlaySound("ConversationStart", 0.3f);
-            }
-        }
 
         private static List<ConversationMessage> Messages = new List<ConversationMessage>();
 
@@ -312,11 +280,15 @@ namespace MacGame
                 textLeftMargin += currentMessage.ImageSourceRectangle.Value.Width;
             }
 
+            // We could use the font height but instead this game will only work with TileSize height fonts.
+            var wordHeight = Game1.TileSize + 4;
+
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, wordHeight, currentLetterIndex);
 
             // Draw the choices.
-            var location = new Vector2(textLeftMargin + 4, topMargin + TileMap.TileSize);
+            var location = new Vector2(textLeftMargin + 8, topMargin + wordHeight + wordHeight);
+
             if (currentMessage.Choices != null)
             {
 
@@ -330,7 +302,7 @@ namespace MacGame
                     }
                     
                     spriteBatch.DrawString(Game1.Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Color.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
-                    location.Y += Game1.TileSize + 8;
+                    location.Y += wordHeight;
                 }
             }
 
@@ -407,11 +379,8 @@ namespace MacGame
         /// <summary>
         /// Draw a list of strings one of top of each other.
         /// </summary>
-        private static void DrawTexts(SpriteBatch spriteBatch, List<string> strings, Vector2 position, float scale, float depth, int maxLetters = int.MaxValue)
+        private static void DrawTexts(SpriteBatch spriteBatch, List<string> strings, Vector2 position, float scale, float depth, int wordHeight, int maxLetters = int.MaxValue)
         {
-            // We could use the font height but instead this game will only work with TileSize height fonts.
-            var wordHeight = Game1.TileSize + 4;
-
             Vector2 drawLocation = position;
 
             int previousLinesLetterCount = 0;
@@ -472,6 +441,38 @@ namespace MacGame
                 currentLine = "";
             }
             return strings;
+        }
+    }
+
+    public class ConversationChoice
+    {
+        public ConversationChoice(string text, System.Action action)
+        {
+            this.Text = text;
+            this.Event = action;
+
+            Width = Game1.Font.MeasureString(text).X * ConversationManager.textScale;
+
+        }
+        public float Width { get; private set; }
+        public string Text { get; private set; }
+        public System.Action Event { get; set; }
+    }
+
+    public class ConversationMessage
+    {
+        public List<string> Texts;
+        public ConversationManager.ImagePosition ImagePosition;
+        public Rectangle? ImageSourceRectangle;
+
+        public int selectedChoice = 0;
+
+        // An array of strings to show as choices after the last message.
+        public List<ConversationChoice> Choices;
+
+        public void PlaySound()
+        {
+            // SoundManager.PlaySound("ConversationStart", 0.3f);
         }
     }
 }

@@ -75,6 +75,9 @@ namespace MacGame
                 layerDepthObjects.Add(i, new List<GameObject>());
             }
 
+            // We'll need him later to fully set up his race.
+            Froggy? froggy = null;
+
             // Do y direction first and count backwards. This is important because we want to add game objects bottom
             // to top. This helps the drawdepth code so that items above are always in front so you can stack objects that
             // are slightly facing downwards like barrels
@@ -340,6 +343,12 @@ namespace MacGame
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Npc).Namespace! + "." + classname)!;
                                 var npc = (Npc)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
+
+                                if (npc is Froggy)
+                                {
+                                    froggy = (Froggy)npc;
+                                }
+
                                 level.Npcs.Add(npc);
                                 layerDepthObjects[z].Add(npc);
 
@@ -438,6 +447,16 @@ namespace MacGame
                         obj.Rectangle.Height / 8);
 
                     level.MovingBlockGroups.Add(group);
+                }
+                else if (obj.Name == "RaceVictoryZone")
+                {
+                    // This is a special rectangle for when you race Froggy.
+                    // Just add a rectangle with this name to the map so he knows where to finish.
+                    if (froggy == null)
+                    {
+                        throw new Exception("You have a race victory zone but not Froggy was found.");
+                    }
+                    froggy.SetVictoryZone(obj.GetScaledRectangle());
                 }
             }
 

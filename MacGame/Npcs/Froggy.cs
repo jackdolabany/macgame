@@ -1,9 +1,15 @@
 ﻿using MacGame.DisplayComponents;
+using MacGame.Enemies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Diagnostics;
 using System.Linq;
+using System.IO;
 
 namespace MacGame.Npcs
 {
@@ -11,28 +17,56 @@ namespace MacGame.Npcs
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        public Waypath RacePath { get; set; }
+        public Waypath? RacePath { get; set; }
 
         private enum State
         {
-            Idle,
-            Racing
+            IdleStart,
+            Racing,
+            IdleEnd
         }
 
-        private State _state = State.Idle;
+        private enum Speed
+        {
+            Slow,
+            Medium,
+            Fast
+        }
+        private enum LastRaceResult
+        {
+            DidNotRaceYet,
+            FroggyWon,
+            MacWon
+        }
+
+        private State _state = State.IdleStart;
+        private Speed _speed = Speed.Slow;
+        private LastRaceResult _result = LastRaceResult.DidNotRaceYet;
 
         private List<ConversationChoice> raceChoices;
+
+        private Rectangle _raceVictoryZone { get; set; }
 
         /// <summary>
         /// Tracks whether or not you already spoke to Froggy so you can get a shorter message next time.
         /// </summary>
         private bool _hasSpoken;
 
+        List<string> boasts;
+
+        float moveSpeed = 200f;
+
+        private Vector2 _startLocation;
+        private Rectangle _startCollisionRect;
+
         public Froggy(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
 
             Enabled = true;
+
+            _startLocation = this.WorldLocation;
+            _startCollisionRect = this.CollisionRectangle;
 
             DisplayComponent = new AnimationDisplay();
 
@@ -71,10 +105,31 @@ namespace MacGame.Npcs
             {
                 // Do nothing;
             }));
+
+            boasts = new List<string>()
+            {
+                "Too slow buddy. They should call you Molasses Mac.",
+                "I've seen dead slugs move faster than that.",
+                "I'm as fast as the wind, you're as slow as a fart.",
+                "You're not frog enough to race me.",
+                "Handsome frogs never lose a race.",
+                "I'd say slow oooooooooooiorooodddpoke but you're more of a slow joke.",
+                "You're as slow as a sloth stuck in quicksand.",
+                "Man, you really need to work on your speed.",
+                "You can't teach speed.",
+                "Practice running fast and come back.",
+                "You're like a snail and I'm like a racing snail"
+            };
+        }
+
+        public void SetVictoryZone(Rectangle rectangle)
+        {
+            this._raceVictoryZone = rectangle;
         }
 
         public void InitializeRacePath()
         {
+
             RacePath = new Waypath();
 
             var waypoints = Game1.CurrentLevel.Waypoints.ToList();
@@ -89,33 +144,37 @@ namespace MacGame.Npcs
                 waypoints.Remove(closestWaypoint);
                 pointToStartFrom = closestWaypoint.Location;
             }
+
+            if (_raceVictoryZone == Rectangle.Empty)
+            {
+                // You need to add a rectangle GameObject to the map with the
+                // name "RaceVictoryZone". Forggy's final waypoint should be inside it.
+                throw new Exception("Race victory zone wasn't set.");
+            }
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (_state == State.Idle)
-            {
-
-            }
-            else if (_state == State.Racing)
+            if (_state == State.Racing)
             {
                 if (RacePath == null)
                 {
                     InitializeRacePath();
                 }
 
-                if (RacePath.Waypoints.Any())
+                if (RacePath!.Waypoints.Any())
                 {
                     var nextWaypoint = RacePath.Waypoints.First();
 
+                    // As you hit waypoints look for the next one. Until the last one, we'll go to that until we stop moving.
                     if (Vector2.Distance(this.WorldCenter, nextWaypoint.Location) <= Game1.TileSize && RacePath.Waypoints.Count > 1)
                     {
+                        // Remove the waypoints as we hit them.
                         RacePath.Waypoints.Remove(nextWaypoint);
                         nextWaypoint = RacePath.Waypoints.First();
                     }
 
                     // Go to the next waypoint.
-
                     Vector2 inFrontOfCenter = new Vector2(Game1.TileSize, 0);
                     Vector2 inFrontBelow = new Vector2(0, collisionRectangle.Height / 2 + 2);
                     if (Flipped)
@@ -129,7 +188,7 @@ namespace MacGame.Npcs
 
                     if (nextWaypoint.Location.X >= this.CollisionRectangle.Right)
                     {
-                        this.velocity.X = 100f;
+                        this.velocity.X = moveSpeed;
 
                         if (onGround && animations.CurrentAnimationName != "walk")
                         {
@@ -139,7 +198,7 @@ namespace MacGame.Npcs
                     }
                     else if (nextWaypoint.Location.X <= this.CollisionRectangle.Left)
                     {
-                        this.velocity.X = -100f;
+                        this.velocity.X = -moveSpeed;
                         if (onGround && animations.CurrentAnimationName != "walk")
                         {
                             animations.Play("walk");
@@ -178,7 +237,7 @@ namespace MacGame.Npcs
                         this.IsAffectedByGravity = false;
 
                         // Move towards the center of the ladder
-                        var targetX = (this.WorldLocation.X / Game1.TileSize) * Game1.TileSize + Game1.TileSize / 2;
+                        var targetX = ((int)this.WorldLocation.X / Game1.TileSize * Game1.TileSize) + (Game1.TileSize / 2);
 
                         if (targetX > this.WorldLocation.X)
                         {
@@ -192,23 +251,60 @@ namespace MacGame.Npcs
                         // Climb up or down.
                         if (nextWaypoint.Location.Y > this.CollisionCenter.Y)
                         {
-                            this.velocity.Y = 100f;
+                            this.velocity.Y = moveSpeed;
                         }
                         else if (nextWaypoint.Location.Y < this.CollisionCenter.Y)
                         {
-                            this.velocity.Y = -100f;
+                            this.velocity.Y = -moveSpeed;
                         }
                     }
                     else
                     {
                         this.IsAffectedByGravity = true;
                     }
-
+                }
+                else
+                {
+                    // No more waypoints
+                    _state = State.IdleEnd;
                 }
 
-                if (OnGround && this.Velocity == Vector2.Zero)
+                // Check if someone won.
+                if (_result == LastRaceResult.DidNotRaceYet)
                 {
+                    if (_raceVictoryZone.Contains(this.WorldLocation))
+                    {
+                        _result = LastRaceResult.FroggyWon;
+                        _hasSpoken = false;
+                    }
+                    else if (_raceVictoryZone.Contains(Game1.Player.WorldLocation))
+                    {
+                        _result = LastRaceResult.MacWon;
+                        _hasSpoken = false;
+                    }
+                }
+
+                if (OnGround && this.Velocity == Vector2.Zero && RacePath.Waypoints.Count == 1)
+                {
+                    // we hit the last waypoint
                     animations.Play("idle");
+                    _state = State.IdleEnd;
+                    _hasSpoken = false;
+                }
+            }
+            else if (_state == State.IdleEnd)
+            {
+                animations.Play("idle");
+                this.velocity = Vector2.Zero;
+                IsAffectedByGravity = true;
+
+                if (_hasSpoken && Game1.Camera.IsWayOffscreen(this.CollisionRectangle) && Game1.Camera.IsWayOffscreen(this._startCollisionRect))
+                {
+                    // If both the start location and the current frog are off camera, put the frog back.
+                    this.WorldLocation = _startLocation;
+                    _state = State.IdleStart;
+                    _result = LastRaceResult.DidNotRaceYet;
+                    RacePath = null;
                 }
             }
 
@@ -219,7 +315,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            if (_state == State.Idle)
+            if (_state == State.IdleStart)
             {
                 if (!_hasSpoken)
                 {
@@ -230,6 +326,36 @@ namespace MacGame.Npcs
                 }
                 ConversationManager.AddMessage("Want to race?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, raceChoices);
             }
+            else if (_state == State.IdleEnd)
+            {
+                _hasSpoken = true;
+                if (_result == LastRaceResult.FroggyWon)
+                {
+                    // Pick a random boast.
+                    var boastIndex = Game1.Randy.Next(0, boasts.Count);
+                    ConversationManager.AddMessage(boasts[boastIndex], ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                }
+                else
+                {
+                    // Mac won!
+                    ConversationManager.AddMessage("No fair! I wasn't going my fastest. Come try that again and see what happens buddy.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                }
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+           
+            if (Game1.DrawAllCollisisonRects)
+            {
+                // Draw the waypoints for debugging
+                foreach (var waypoint in Game1.CurrentLevel.Waypoints)
+                {
+                    spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)waypoint.Location.X - 2, (int)waypoint.Location.Y - 2, 4, 4), Game1.WhiteSourceRect, Color.Red);
+                }
+            }
+
+            base.Draw(spriteBatch);
         }
     }
 }

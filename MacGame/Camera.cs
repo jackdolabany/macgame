@@ -205,6 +205,20 @@ namespace MacGame
             return ViewPort.Intersects(paddedBounds);
         }
 
+        /// <summary>
+        /// Makes sure hte object isn't just off screen, but off by like 100 pixels.
+        /// </summary>
+        public bool IsWayOffscreen(Rectangle bounds)
+        {
+            var paddedBounds = new Rectangle(
+                (bounds.X - 50),
+                (bounds.Y - 50),
+                (bounds.Width + 100),
+                (bounds.Height + 100));
+
+            return !ViewPort.Intersects(paddedBounds);
+        }
+
         public Vector2 GetRelativeScreenPosition(Vector2 worldPosition)
         {
             return Vector2.Transform(worldPosition, Transform);

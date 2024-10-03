@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="256" height="220" tilewidth="8" tileheight="8" infinite="0" nextlayerid="18" nextobjectid="44">
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="256" height="220" tilewidth="8" tileheight="8" infinite="0" nextlayerid="18" nextobjectid="45">
  <properties>
   <property name="Description" value="The Yard"/>
   <property name="LevelNumber" value="1"/>
@@ -221,5 +221,6 @@
    </properties>
   </object>
   <object id="43" name="SandTopCoin" x="943.333" y="1498.33" width="42.6667" height="32.6667"/>
+  <object id="44" name="RaceVictoryZone" x="785.182" y="1267.91" width="21.8182" height="12.4545"/>
  </objectgroup>
 </map>

@@ -30,25 +30,17 @@ namespace MacGame.Npcs
 
             choices = new List<ConversationChoice>();
             choices.Add(new ConversationChoice("take my tacos", () => {
-                if (Game1.Player.Tacos >= 100)
+                if (Game1.Player.Tacos >= Game1.TacosNeeded)
                 {
                     Game1.Player.Tacos = 0;
                     GiveCoin = true;
-
-                    SoundManager.PlaySound("CoinCollected", 0.4f);
-
-                    var tacoCoin = Game1.CurrentLevel.TacoCoin;
-
-                    tacoCoin.Enabled = true;
-
-                    Game1.LevelState.IsTacoCoinRevealed = true;
-
-                    ConversationManager.AddMessage("Wow! Those tacos were absolutely delicious! Take this", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-
+                    ConversationManager.AddMessage("Wow! Those tacos were absolutely delicious! I'll unlock the door, go grab a reward for being so sweet!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey = true;
+                    StorageManager.TrySaveGame();
                 }
                 else
                 {
-                    ConversationManager.AddMessage("Are you kidding me? My hunger is insatiable! I could eat 100 tacos! If you have less than 100 tacos don't even talk to me.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    ConversationManager.AddMessage($"Are you kidding me? My hunger is insatiable! I could eat {Game1.TacosNeeded} tacos! If you have less than {Game1.TacosNeeded} tacos don't even talk to me.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                 }
             }));
             choices.Add(new ConversationChoice("sounds rough", () => {
@@ -66,7 +58,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            if (Game1.LevelState.IsTacoCoinRevealed || Game1.CurrentLevel.TacoCoin.AlreadyCollected)
+            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey)
             {
 
                 var rando = Game1.Randy.Next(0, 4);
@@ -77,7 +69,7 @@ namespace MacGame.Npcs
                         ConversationManager.AddMessage("Thanks for the tacos hombre", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                         break;
                     case 1:
-                        ConversationManager.AddMessage("I live for taco Tuesday. I'd die for taco tuesday", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        ConversationManager.AddMessage("I live for Taco Tuesday. I'd die for Taco Tuesday", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                         break;
                     case 2:
                         ConversationManager.AddMessage("People like to say salsa", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);

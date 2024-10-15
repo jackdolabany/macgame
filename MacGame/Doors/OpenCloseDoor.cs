@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace MacGame
+namespace MacGame.Doors
 {
 
     /// <summary>
@@ -28,22 +28,22 @@ namespace MacGame
             /// <summary>
             /// Door is shut waiting to be opened.
             /// </summary>
-            Idle, 
+            Idle,
 
             /// <summary>
             /// Mac is entering the door and it's opening.
             /// </summary>
-            EnterOpening, 
+            EnterOpening,
 
             /// <summary>
             /// Mac is entering the door and it's closing.
             /// </summary>
-            EnterClosing, 
+            EnterClosing,
 
             /// <summary>
             /// The door is opening to kick Mac out.
             /// </summary>
-            ExitOpening, 
+            ExitOpening,
 
             /// <summary>
             /// Mac has been kicked out and the door is closing.
@@ -59,16 +59,16 @@ namespace MacGame
         private AnimationDisplay DoorAnimations;
         private AnimationDisplay JailBarAnimations;
 
-        public OpenCloseDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
+        public OpenCloseDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             DoorAnimations = new AnimationDisplay();
             JailBarAnimations = new AnimationDisplay();
             var aggDisplay = new AggregateDisplay(new DisplayComponent[] { DoorAnimations, JailBarAnimations });
-            this.DisplayComponent = aggDisplay;
+            DisplayComponent = aggDisplay;
 
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
-            
+
             var idle = new AnimationStrip(textures, DoorImageTextureSourceRectangle, 1, "idle");
             idle.LoopAnimation = false;
             idle.FrameLength = 0.15f;
@@ -101,7 +101,7 @@ namespace MacGame
         public override void SetDrawDepth(float depth)
         {
             base.SetDrawDepth(depth);
-            this.JailBarAnimations.DrawDepth = depth - Game1.MIN_DRAW_INCREMENT;
+            JailBarAnimations.DrawDepth = depth - Game1.MIN_DRAW_INCREMENT;
         }
 
         /// <summary>
@@ -136,10 +136,10 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
             if (IsLocked && JailBarAnimations.CurrentAnimation == null)
-            {                 
+            {
                 JailBarAnimations.Play("closed");
             }
-            
+
             // Hide the jail bars if the door is unlocked.
             if (!IsLocked)
             {
@@ -152,20 +152,20 @@ namespace MacGame
                 _player.AddUnlockedDoor(Name);
             }
 
-            if (this.State == DoorState.Idle)
+            if (State == DoorState.Idle)
             {
                 DoorAnimations.Play("idle");
             }
-            else if (this.State == DoorState.EnterOpening)
+            else if (State == DoorState.EnterOpening)
             {
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
                     pauseBeforeTransitionTimer = 0.5f;
-                    this.State = DoorState.EnterClosing;
+                    State = DoorState.EnterClosing;
                     DoorAnimations.Play("close");
                 }
             }
-            else if (this.State == DoorState.EnterClosing)
+            else if (State == DoorState.EnterClosing)
             {
                 if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 2 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
                 {
@@ -182,28 +182,28 @@ namespace MacGame
                     }
                     if (pauseBeforeTransitionTimer <= 0)
                     {
-                        GlobalEvents.FireDoorEntered(this, this.GoToMap, this.GoToDoorName, this.Name);
-                        this.State = DoorState.Idle;
+                        GlobalEvents.FireDoorEntered(this, GoToMap, GoToDoorName, Name);
+                        State = DoorState.Idle;
                     }
                 }
             }
-            else if (this.State == DoorState.ExitOpening)
+            else if (State == DoorState.ExitOpening)
             {
                 _player.IsInvisible = true;
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
                     _player.IsInvisible = false;
-                    _player.SlideOutOfDoor(this.WorldLocation);
-                    this.State = DoorState.ExitClosing;
+                    _player.SlideOutOfDoor(WorldLocation);
+                    State = DoorState.ExitClosing;
                     DoorAnimations.Play("close");
                     SoundManager.PlaySound("KickedOutOfDoor");
                 }
             }
-            else if (this.State == DoorState.ExitClosing)
+            else if (State == DoorState.ExitClosing)
             {
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
-                    this.State = DoorState.Idle;
+                    State = DoorState.Idle;
                     SoundManager.PlaySound("DoorShut");
                 }
             }
@@ -224,7 +224,7 @@ namespace MacGame
         {
             DoorAnimations.Play("open");
             SoundManager.PlaySound("DoorOpen");
-            this.State = DoorState.EnterOpening;
+            State = DoorState.EnterOpening;
             GlobalEvents.FireBeginDoorEnter(this, EventArgs.Empty);
         }
 
@@ -258,9 +258,9 @@ namespace MacGame
         {
             DoorAnimations.Play("open");
             SoundManager.PlaySound("DoorOpen");
-            this.State = DoorState.ExitOpening;
+            State = DoorState.ExitOpening;
             _player.IsInvisible = true;
-            _player.PositionForSlideOutOfDoor(this.WorldLocation);
+            _player.PositionForSlideOutOfDoor(WorldLocation);
         }
     }
 }

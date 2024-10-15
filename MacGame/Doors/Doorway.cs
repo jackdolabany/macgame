@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Doors
 {
 
     /// <summary>
@@ -17,7 +17,7 @@ namespace MacGame
             : base(content, cellX, cellY, player, camera)
         {
             //var sid = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\BigTextures"), Helpers.GetBigTileRect(3, 1));
-            this.DisplayComponent = new NoDisplay();
+            DisplayComponent = new NoDisplay();
         }
 
         public override void PlayerSlidingOut()

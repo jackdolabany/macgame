@@ -415,9 +415,29 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="188">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="189">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="203">
   <properties>
    <property name="LoadClass" value="BlueDoor"/>
+  </properties>
+ </tile>
+ <tile id="204">
+  <properties>
+   <property name="LoadClass" value="TacoDoor"/>
+  </properties>
+ </tile>
+ <tile id="205">
+  <properties>
+   <property name="LoadClass" value="FrogDoor"/>
   </properties>
  </tile>
  <tile id="214">

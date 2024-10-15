@@ -1,15 +1,10 @@
 ﻿using MacGame.DisplayComponents;
-using MacGame.Enemies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Diagnostics;
 using System.Linq;
-using System.IO;
 
 namespace MacGame.Npcs
 {
@@ -43,6 +38,11 @@ namespace MacGame.Npcs
         private Speed _speed = Speed.Slow;
         private LastRaceResult _result = LastRaceResult.DidNotRaceYet;
 
+        // TODO: Save/load this per level
+        private bool hasBeatenSlow = false;
+        private bool hasBeatenMedium = false;
+        private bool hasBeatenFast = false;
+
         private List<ConversationChoice> raceChoices;
 
         private Rectangle _raceVictoryZone { get; set; }
@@ -56,12 +56,24 @@ namespace MacGame.Npcs
 
         float moveSpeed = 200f;
 
+        float slowSpeed = 100f;
+        float medSpeed = 150f;
+        float fastSpeed = 200f;
+
         private Vector2 _startLocation;
         private Rectangle _startCollisionRect;
-
+        private bool _isInitialized = false;
         public Froggy(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
+
+            // TODO: Delete THIS
+            //this.hasBeatenMedium = true;
+            //this.hasBeatenSlow = true;
+            //this._speed = Speed.Fast;
+            //slowSpeed = 100f;
+            //medSpeed = 100f;
+            //fastSpeed = 100f;
 
             Enabled = true;
 
@@ -100,6 +112,18 @@ namespace MacGame.Npcs
             {
                 _state = State.Racing;
                 animations.Play("walk");
+                if (_speed == Speed.Slow)
+                {
+                    moveSpeed = slowSpeed;
+                }
+                else if (_speed == Speed.Medium)
+                {
+                    moveSpeed = medSpeed;
+                }
+                else
+                {
+                    moveSpeed = fastSpeed;
+                }
             }));
             raceChoices.Add(new ConversationChoice("No", () =>
             {
@@ -109,22 +133,44 @@ namespace MacGame.Npcs
             boasts = new List<string>()
             {
                 "Too slow buddy. They should call you Molasses Mac.",
-                "I've seen dead slugs move faster than that.",
+                "I've seen sleepy slugs move faster than that.",
                 "I'm as fast as the wind, you're as slow as a fart.",
                 "You're not frog enough to race me.",
                 "Handsome frogs never lose a race.",
-                "I'd say slow oooooooooooiorooodddpoke but you're more of a slow joke.",
-                "You're as slow as a sloth stuck in quicksand.",
+                "I'd say slow poke but you're more of a slow joke.",
+                "You're as slow as a sloth in the mud.",
                 "Man, you really need to work on your speed.",
                 "You can't teach speed.",
                 "Practice running fast and come back.",
-                "You're like a snail and I'm like a racing snail"
+                "You're like a snail and I'm like a racing snail.",
+                "I'm the fastest frog in the world.",
             };
         }
 
         public void SetVictoryZone(Rectangle rectangle)
         {
             this._raceVictoryZone = rectangle;
+        }
+
+        public void Initialize()
+        {
+            // Set the approprate speed.
+            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow)
+            {
+                this.hasBeatenSlow = true;
+                _speed = Speed.Medium;
+            }
+
+            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium)
+            {
+                this.hasBeatenMedium = true;
+                _speed = Speed.Fast;
+            }
+
+            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
+            {
+                this.hasBeatenFast = true;
+            }
         }
 
         public void InitializeRacePath()
@@ -155,6 +201,15 @@ namespace MacGame.Npcs
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            // Call an Initialize method to set properties that you need more set up world than 
+            // what you get in the ctor.
+            if (!_isInitialized)
+            {
+                Initialize();
+                _isInitialized = true;
+            }
+
             if (_state == State.Racing)
             {
                 if (RacePath == null)
@@ -281,6 +336,21 @@ namespace MacGame.Npcs
                     {
                         _result = LastRaceResult.MacWon;
                         _hasSpoken = false;
+                        if (_speed == Speed.Slow)
+                        {
+                            hasBeatenSlow = true;
+                            _speed = Speed.Medium;
+                        }
+                        else if (_speed == Speed.Medium)
+                        {
+                            hasBeatenMedium = true;
+                            _speed = Speed.Fast;
+                        }
+                        else
+                        {
+                            // You win! Show the special race coin.
+                            hasBeatenFast = true;
+                        }
                     }
                 }
 
@@ -305,6 +375,7 @@ namespace MacGame.Npcs
                     _state = State.IdleStart;
                     _result = LastRaceResult.DidNotRaceYet;
                     RacePath = null;
+                    _hasSpoken = false;
                 }
             }
 
@@ -320,9 +391,27 @@ namespace MacGame.Npcs
                 if (!_hasSpoken)
                 {
                     _hasSpoken = true;
-                    ConversationManager.AddMessage("I'm fast.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                    ConversationManager.AddMessage("Hi Fast, I'm Mac.", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
-                    ConversationManager.AddMessage("What? My name is Froggy, and I'm the fastest Frog in America. Honestly, you look ridiculous and slow.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    if (_speed == Speed.Slow)
+                    {
+                        ConversationManager.AddMessage("I'm fast.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        ConversationManager.AddMessage("Hi Fast, I'm Mac.", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
+                        ConversationManager.AddMessage("What? My name is Froggy, and I'm the fastest Frog in America. Honestly, you look ridiculous and slow.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    }
+                    else if (_speed == Speed.Medium)
+                    {
+                        ConversationManager.AddMessage("I'm not joking around this time Bucko.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    }
+                    else if (_speed == Speed.Fast)
+                    {
+                        if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
+                        {
+                            ConversationManager.AddMessage("I know you're frog fast, but we could race for fun.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        }
+                        else
+                        {
+                            ConversationManager.AddMessage("If you can beat me at my fastest I'll give you a reward.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        }
+                    }
                 }
                 ConversationManager.AddMessage("Want to race?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, raceChoices);
             }
@@ -338,7 +427,31 @@ namespace MacGame.Npcs
                 else
                 {
                     // Mac won!
-                    ConversationManager.AddMessage("No fair! I wasn't going my fastest. Come try that again and see what happens buddy.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    if (!hasBeatenMedium)
+                    {
+                        Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow = true;
+                        StorageManager.TrySaveGame();
+                        ConversationManager.AddMessage("No fair! I wasn't going my fastest. Come try that again and see what happens buddy.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    }
+                    else if (!hasBeatenFast)
+                    {
+                        Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium = true;
+                        StorageManager.TrySaveGame();
+                        ConversationManager.AddMessage("That doesn't count, my shoe was untied! Try it one more time and I'll go my fastest.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    }
+                    else
+                    {
+                        if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
+                        {
+                            ConversationManager.AddMessage("You still got it Champ!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        }
+                        else
+                        {
+                            ConversationManager.AddMessage("Wow! You aren't just fast, you're frog fast! I unlocked my house. Take anything you want.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey = true;
+                            StorageManager.TrySaveGame();
+                        }
+                    }
                 }
             }
         }

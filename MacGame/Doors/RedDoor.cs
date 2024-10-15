@@ -4,22 +4,22 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace MacGame
+namespace MacGame.Doors
 {
 
     /// <summary>
     ///  A door that opens and closes. As opposed to a doorway that is always open.
     /// </summary>
-    public class GreenDoor : OpenCloseDoor
+    public class RedDoor : OpenCloseDoor
     {
-        
-        public GreenDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
+
+        public RedDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-        
+
         }
 
-        public override Rectangle DoorImageTextureSourceRectangle => Helpers.GetBigTileRect(0, 4);
+        public override Rectangle DoorImageTextureSourceRectangle => Helpers.GetBigTileRect(0, 3);
 
         public override bool IsInitiallyLocked
         {
@@ -31,12 +31,12 @@ namespace MacGame
 
         public override bool CanPlayerUnlock(Player player)
         {
-            return Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasGreenKey;
+            return Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasRedKey;
         }
 
         public override string LockMessage()
         {
-            return $"You need the green key to unlock this door.";
+            return $"You need the red key to unlock this door.";
         }
     }
 }

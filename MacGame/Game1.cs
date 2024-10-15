@@ -20,6 +20,8 @@ namespace MacGame
         private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
 
+        public const int TacosNeeded = 100;
+
         public readonly static Vector2 EarthGravity = new Vector2(0, 1600);
         public readonly static Vector2 MoonGravity = new Vector2(0, 700);
         public static Vector2 Gravity = new Vector2(0, 1600);
@@ -183,8 +185,7 @@ namespace MacGame
         /// </summary>
         public static LevelState LevelState { get; set; }
 
-
-    public Game1()
+        public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
 
@@ -221,12 +222,6 @@ namespace MacGame
                 if (names.Distinct().Count() != names.Count())
                 {
                     throw new Exception($"Coin names in world {key} are not unique.");
-                }
-
-                // Make sure there's at least one taco coin.
-                if (!coins.Any(c => c.Name == "TacoCoin"))
-                {
-                    throw new Exception($"World {key} is missing a Taco Coin.");
                 }
             }
         }
@@ -463,7 +458,6 @@ namespace MacGame
         }
 
         float pauseForCoinTimer = 0f;
-        float tacoCoinRevealTimer = 0f;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -946,11 +940,6 @@ namespace MacGame
             /// Gameplay with some menu displaying. The menu will transition the state back.
             /// </summary>
             PausedWithMenu,
-            
-            ///// <summary>
-            ///// Once you get 100 tacos the game will sort of pause while we reveal the 100 taco coin.
-            ///// </summary>
-            //RevealTacoCoin,
             
             /// <summary>
             /// Talking to an NPC or text coming up because of some action (trying to open a locked door, etc.)

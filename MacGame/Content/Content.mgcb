@@ -120,6 +120,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World1FirstRedHouse.tmx
 
+#begin Maps/World1FrogHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1FrogHouse.tmx
+
 #begin Maps/World1MineCart.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -129,6 +134,11 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/World1PurpleHouse.tmx
+
+#begin Maps/World1PurpleHouseBackRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1PurpleHouseBackRoom.tmx
 
 #begin Maps/World1SecondRedHouse.tmx
 /importer:TMXMapImporter

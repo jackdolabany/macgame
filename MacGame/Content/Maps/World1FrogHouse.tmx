@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="8" height="6" tilewidth="8" tileheight="8" infinite="0" nextlayerid="17" nextobjectid="3">
+ <properties>
+  <property name="LevelNumber" value="1"/>
+ </properties>
+ <tileset firstgid="1" source="Textures.tsx"/>
+ <layer id="14" name="Background" width="8" height="6">
+  <data encoding="base64">
+   8QAAAPEAAADxAAAA8QAAAPEAAADxAAAA8QAAAPEAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPMAAADzAAAA8wAAAPEAAADxAAAA8QAAAPEAAADxAAAA8QAAAPEAAADxAAAA
+  </data>
+ </layer>
+ <layer id="15" name="Tiles" width="8" height="6">
+  <data encoding="base64">
+   UQAAAFEAAABRAAAAUQAAAFEAAABRAAAAUQAAAFEAAABRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUQAAAFEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABRAAAAUQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEAAABRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUQAAAFEAAABRAAAAUQAAAFEAAABRAAAAUQAAAFEAAABRAAAA
+  </data>
+ </layer>
+ <layer id="16" name="GameObjects" width="8" height="6">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAArAAAALAAAAAAAAAAAAAAAAAAAAAAAAABcAAAAAAAAADsAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+ <objectgroup id="4" name="Object Layer 1">
+  <object id="1" name="Door" x="14.4435" y="22.3612" width="12.5825" height="20.8685">
+   <properties>
+    <property name="GoToDoor" value="FrogDoor"/>
+    <property name="GoToMap" value="World1"/>
+   </properties>
+  </object>
+  <object id="2" name="RaceCoin" x="29.7243" y="13.2631" width="20.3161" height="21.114"/>
+ </objectgroup>
+</map>

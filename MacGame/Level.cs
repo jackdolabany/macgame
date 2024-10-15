@@ -9,6 +9,7 @@ using MacGame.Enemies;
 using MacGame.Items;
 using MacGame.Npcs;
 using System.Linq;
+using MacGame.Doors;
 
 namespace MacGame
 {
@@ -49,11 +50,6 @@ namespace MacGame
         public List<Waypoint> Waypoints;
 
         public List<MovingBlockGroup> MovingBlockGroups { get; set; } = new List<MovingBlockGroup>();
-
-        /// <summary>
-        /// The coin you get when you get 100 tacos.
-        /// </summary>
-        public CricketCoin TacoCoin;
 
         /// <summary>
         /// For enemies that need to add enemies. 

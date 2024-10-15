@@ -27,6 +27,7 @@ namespace MacGame
                     new CoinInfo { Name = "SandTopCoin", Hint = "Deep in the caves is a room with so much sand, it'll make you puke." },
                     new CoinInfo { Name = "MinecartCoin", Hint = "I heard there's still something shiny down in the old mine." },
                     new CoinInfo { Name = "TacoCoin", Hint = "The hungry mouse." },
+                    new CoinInfo { Name = "RaceCoin", Hint = "Boy that Froggy sure is fast! And annoying." },
                 }
             },
             {

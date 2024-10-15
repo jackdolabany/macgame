@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using TileEngine;
 
-namespace MacGame
+namespace MacGame.Doors
 {
     public abstract class Door : GameObject
     {
@@ -17,7 +17,7 @@ namespace MacGame
 
         public Door(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
         {
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
+            WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
 
             SetCenteredCollisionRectangle(8, 16);
@@ -27,7 +27,7 @@ namespace MacGame
 
         public virtual void PlayerTriedToOpen(Player player)
         {
-            GlobalEvents.FireDoorEntered(this, this.GoToMap, this.GoToDoorName, this.Name);
+            GlobalEvents.FireDoorEntered(this, GoToMap, GoToDoorName, Name);
         }
 
         public abstract void PlayerSlidingOut();

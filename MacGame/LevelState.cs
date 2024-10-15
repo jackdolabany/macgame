@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace MacGame
 {
     /// <summary>
-    /// This class holds state that needs to be kept for a level. While traversing different map files within a level this state is maintained. It's 
+    /// This class holds non-savable state that needs to be kept for a level. While traversing different map files within a level this state is maintained. It's 
     /// only when you go back to the hub or enter a new level that this state would be reset.
     /// </summary>
     public class LevelState
@@ -16,12 +16,6 @@ namespace MacGame
         public string HubDoorNameYouCameFrom { get; set; } = "";
 
         /// <summary>
-        /// We need to track if the Taco coin was revealed in case the player paid for the
-        /// coin but didn't collect it yet. Go get it!
-        /// </summary>
-        public bool IsTacoCoinRevealed { get; set; } = false;
-
-        /// <summary>
         /// For the given level/world, track which tacos were picked up. 
         /// we need this so that a collected taco stays collected if you go
         /// into a door and back.
@@ -29,14 +23,11 @@ namespace MacGame
         /// </summary>
         public static Dictionary<string, List<Vector2>> MapNameToCollectedTacos = new Dictionary<string, List<Vector2>>();
 
-        
-
         public WaterHeight WaterHeight { get; set; } = WaterHeight.High;
 
         public void Reset()
         {
             HubDoorNameYouCameFrom = "";
-            IsTacoCoinRevealed = false;
             MapNameToCollectedTacos.Clear();
             WaterHeight = WaterHeight.High;
         }

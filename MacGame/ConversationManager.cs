@@ -273,6 +273,12 @@ namespace MacGame
             DrawDialogBox(spriteBatch, new Vector2(leftMargin, topMargin), tileWidth, tileHeight, 0f);
 
             int arrowX = leftMargin + bubbleWidth - advanceMessageArrowSourceRect.Width - 8;
+           
+            // Move the text advance arrow to the left if there's an image there.
+            if (currentMessage.ImagePosition == ImagePosition.Right && currentMessage.ImageSourceRectangle.HasValue)
+            {
+                arrowX -= currentMessage.ImageSourceRectangle.Value.Width;
+            }
 
             int textLeftMargin = leftMargin;
             if (currentMessage.ImagePosition == ImagePosition.Left && currentMessage.ImageSourceRectangle.HasValue)
@@ -287,7 +293,7 @@ namespace MacGame
             DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, wordHeight, currentLetterIndex);
 
             // Draw the choices.
-            var location = new Vector2(textLeftMargin + 8, topMargin + wordHeight + wordHeight);
+            var location = new Vector2(textLeftMargin + 16, topMargin + wordHeight + wordHeight - 8);
 
             if (currentMessage.Choices != null)
             {

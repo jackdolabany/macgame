@@ -14,8 +14,6 @@ namespace MacGame.Items
 
         public bool AlreadyCollected { get; set; } = false;
 
-        public bool IsTacoCoin { get; set; } = false;
-
         public CricketCoin(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");

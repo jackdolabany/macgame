@@ -46,8 +46,21 @@ namespace MacGame
     public class KeyStoargeState : ICloneable
     {
         public bool HasRedKey { get; set; }
+        
         public bool HasGreenKey { get; set; }
+        
         public bool HasBlueKey { get; set; }
+
+        /// <summary>
+        /// The player doesn't see that they have the Frog key, but if you beat Froggy in a race he'll unlock a door for you.
+        /// </summary>
+        public bool HasFrogKey { get; set; }
+
+        /// <summary>
+        /// The player doesn't know they have the taco key but if they give 100 tacos to the taco
+        /// guy he'll unlock a door for them.
+        /// </summary>
+        public bool HasTacoKey { get; set; }
 
         public object Clone()
         {
@@ -55,7 +68,9 @@ namespace MacGame
             {
                 HasRedKey = this.HasRedKey,
                 HasGreenKey = this.HasGreenKey,
-                HasBlueKey = this.HasBlueKey
+                HasBlueKey = this.HasBlueKey,
+                HasFrogKey = this.HasFrogKey,
+                HasTacoKey = this.HasTacoKey
             };
         }
     }
@@ -66,6 +81,7 @@ namespace MacGame
     public class LevelStorageState : ICloneable
     {
         public KeyStoargeState Keys { get; set; } = new KeyStoargeState();
+        
         public HashSet<string> UnlockedDoors { get; set; } = new HashSet<string>();
 
         /// <summary>
@@ -74,13 +90,26 @@ namespace MacGame
         /// </summary>
         public HashSet<string> CollectedCoins { get; set; } = new HashSet<string>();
 
+        /// <summary>
+        /// Saves if you beat the Frog on slow speed.
+        /// </summary>
+        public bool HasBeatenFroggySlow { get; set; }
+
+        /// <summary>
+        /// Saves if you beat the Frog on medium speed. We don't need to save if you beat
+        /// him on Fast because he'll give you a key and that gets saved.
+        /// </summary>
+        public bool HasBeatenFroggyMedium { get; set; }
+
         public object Clone()
         {
             return new LevelStorageState
             {
                 Keys = (KeyStoargeState)this.Keys.Clone(),
                 UnlockedDoors = this.UnlockedDoors.ToHashSet(),
-                CollectedCoins = this.CollectedCoins.ToHashSet()
+                CollectedCoins = this.CollectedCoins.ToHashSet(),
+                HasBeatenFroggySlow = this.HasBeatenFroggySlow,
+                HasBeatenFroggyMedium = this.HasBeatenFroggyMedium
             };
         }
     }

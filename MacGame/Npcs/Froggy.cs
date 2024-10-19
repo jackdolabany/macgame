@@ -212,6 +212,8 @@ namespace MacGame.Npcs
 
             if (_state == State.Racing)
             {
+                // TODO: race music
+
                 if (RacePath == null)
                 {
                     InitializeRacePath();
@@ -348,7 +350,7 @@ namespace MacGame.Npcs
                         }
                         else
                         {
-                            // You win! Show the special race coin.
+                            // You win!
                             hasBeatenFast = true;
                         }
                     }

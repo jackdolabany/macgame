@@ -148,23 +148,23 @@ namespace MacGame
             }
             else
             {
-                var coinCount = state.Levels.Select(l => l.Value.CollectedCoins.Count).Sum();
+                var sockCount = state.Levels.Select(l => l.Value.CollectedSocks.Count).Sum();
 
-                var percentageComplete = (int)System.Math.Round((float)coinCount / (float)Game1.TotalCoins * 100f);
+                var percentageComplete = (int)System.Math.Round((float)sockCount / (float)Game1.TotalSocks * 100f);
 
                 // offset for stats
                 x += 16;
                 y += 44;
 
-                // Draw the coin
-                var coinSourceRect = Helpers.GetTileRect(9, 2);
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle(8 + x, 8 + y, Game1.TileSize, Game1.TileSize), coinSourceRect, Color.White, 0f, Vector2.Zero, SpriteEffects.None, drawDepth);
+                // Draw the sock
+                var sockSourceRect = Helpers.GetTileRect(9, 2);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle(8 + x, 8 + y, Game1.TileSize, Game1.TileSize), sockSourceRect, Color.White, 0f, Vector2.Zero, SpriteEffects.None, drawDepth);
 
-                // Draw coin count
-                var coinText = $"{coinCount}\n";
-                spriteBatch.DrawString(Game1.Font, coinText, new Vector2(x + 44, y), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, drawDepth);
+                // Draw sock count
+                var sockText = $"{sockCount}\n";
+                spriteBatch.DrawString(Game1.Font, sockText, new Vector2(x + 44, y), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, drawDepth);
 
-                // Draw a crown to the right of the coins if they've beaten the game
+                // Draw a crown to the right of the socks if they've beaten the game
                 if (state.HasBeatedGame)
                 {
                     var crownSourceRect = Helpers.GetTileRect(12, 2);

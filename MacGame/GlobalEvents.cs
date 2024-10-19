@@ -9,7 +9,7 @@ namespace MacGame
     /// </summary>
     public static class GlobalEvents
     {
-        public static event EventHandler? CricketCoinCollected;
+        public static event EventHandler? SockCollected;
 
         /// <summary>
         /// A door is starting to open/close on Mac. This event notifieds the game state to stop 
@@ -25,9 +25,9 @@ namespace MacGame
 
         public static event EventHandler? OneHundredTacosCollected;
 
-        public static void FireCricketCoinCollected(Object sender, EventArgs args)
+        public static void FireSockCollected(Object sender, EventArgs args)
         {
-            var evt = CricketCoinCollected;
+            var evt = SockCollected;
             if (evt != null)
             {
                 evt(sender, args);

@@ -85,10 +85,10 @@ namespace MacGame
         public HashSet<string> UnlockedDoors { get; set; } = new HashSet<string>();
 
         /// <summary>
-        /// Each coin should have a unique string. Each level should have a number representing the sub world
-        /// you entered from the hub world. If there are coins in the hub world that level will be 0.
+        /// Each sock should have a unique string. Each level should have a number representing the sub world
+        /// you entered from the hub world. If there are socks in the hub world that level will be 0.
         /// </summary>
-        public HashSet<string> CollectedCoins { get; set; } = new HashSet<string>();
+        public HashSet<string> CollectedSocks { get; set; } = new HashSet<string>();
 
         /// <summary>
         /// Saves if you beat the Frog on slow speed.
@@ -107,7 +107,7 @@ namespace MacGame
             {
                 Keys = (KeyStoargeState)this.Keys.Clone(),
                 UnlockedDoors = this.UnlockedDoors.ToHashSet(),
-                CollectedCoins = this.CollectedCoins.ToHashSet(),
+                CollectedSocks = this.CollectedSocks.ToHashSet(),
                 HasBeatenFroggySlow = this.HasBeatenFroggySlow,
                 HasBeatenFroggyMedium = this.HasBeatenFroggyMedium
             };

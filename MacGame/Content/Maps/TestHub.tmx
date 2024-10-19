@@ -42,23 +42,23 @@
  <objectgroup id="4" name="Object Layer 1">
   <object id="1" name="FirstWorldDoor" x="85" y="76.25" width="17.75" height="25.5">
    <properties>
-    <property name="CoinsNeeded" value="0"/>
     <property name="GoToMap" value="World1"/>
     <property name="IsToSubworld" value="1"/>
+    <property name="SocksNeeded" value="0"/>
    </properties>
   </object>
   <object id="2" name="SecondWorldDoor" x="147.273" y="73.4545" width="17.75" height="30">
    <properties>
-    <property name="CoinsNeeded" value="4"/>
     <property name="GoToMap" value="TestWorld2"/>
     <property name="IsToSubworld" value="1"/>
+    <property name="SocksNeeded" value="4"/>
    </properties>
   </object>
   <object id="4" name="BossDoor" x="313.768" y="182.828" width="17.75" height="30">
    <properties>
-    <property name="CoinsNeeded" value="11"/>
     <property name="GoToMap" value="TestFinalBoss"/>
     <property name="Name" value="BossDoor"/>
+    <property name="SocksNeeded" value="11"/>
    </properties>
   </object>
   <object id="5" name="TestWorld" x="36.8068" y="74.8409" width="15" height="24">
@@ -87,16 +87,16 @@
   </object>
   <object id="22" name="ThirdWorldDoor" x="236.25" y="76.5" width="15.5" height="22.25">
    <properties>
-    <property name="CoinsNeeded" value="4"/>
     <property name="GoToMap" value="TestWorld3"/>
     <property name="IsToSubworld" value="1"/>
+    <property name="SocksNeeded" value="4"/>
    </properties>
   </object>
   <object id="23" name="FourthWorldDoor" x="301" y="77" width="13.25" height="22.25">
    <properties>
-    <property name="CoinsNeeded" value="4"/>
     <property name="GoToMap" value="TestWorld4"/>
     <property name="IsToSubworld" value="1"/>
+    <property name="SocksNeeded" value="4"/>
    </properties>
   </object>
  </objectgroup>

@@ -7,24 +7,24 @@ using System.Collections.Generic;
 
 namespace MacGame.Items
 {
-    public class CricketCoin : Item
+    public class Sock : Item
     {
 
         public string Name { get; set; }
 
         public bool AlreadyCollected { get; set; } = false;
 
-        public CricketCoin(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public Sock(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
 
             var animations = new AnimationDisplay();
             this.DisplayComponent = animations;
 
-            var spin = new AnimationStrip(textures, Helpers.GetBigTileRect(0, 1), 3, "spin");
+            var spin = new AnimationStrip(textures, Helpers.GetBigTileRect(3, 6), 8, "spin");
             spin.LoopAnimation = true;
-            spin.Oscillate = true;
-            spin.FrameLength = 0.25f;
+            spin.Oscillate = false;
+            spin.FrameLength = 0.33f;
             animations.Add(spin);
 
             animations.Play("spin");
@@ -36,7 +36,7 @@ namespace MacGame.Items
 
         public void CheckIfAlreadyCollected(int levelNumber)
         {
-            if (Game1.State.Levels[levelNumber].CollectedCoins.Contains(Name))
+            if (Game1.State.Levels[levelNumber].CollectedSocks.Contains(Name))
             {
                 AlreadyCollected = true;
                 this.DisplayComponent.TintColor = Color.White * 0.5f;
@@ -49,18 +49,18 @@ namespace MacGame.Items
 
             this.Enabled = false;
 
-            // Add this cricket coin if they don't already have it.
+            // Add this sock if they don't already have it.
             var levelState = Game1.State.Levels[Game1.CurrentLevel.LevelNumber];
-            if (!levelState.CollectedCoins.Contains(Name))
+            if (!levelState.CollectedSocks.Contains(Name))
             {
-                levelState.CollectedCoins.Add(Name);
-                player.CricketCoinCount++;
+                levelState.CollectedSocks.Add(Name);
+                player.SockCount++;
             }
 
             player.Health = Player.MaxHealth;
 
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
-            GlobalEvents.FireCricketCoinCollected(this, EventArgs.Empty);
+            GlobalEvents.FireSockCollected(this, EventArgs.Empty);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

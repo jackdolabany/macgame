@@ -127,7 +127,7 @@ namespace MacGame
             LoadSound("AlertBox");
             LoadSound("Bark");
             LoadSound("Climb");
-            LoadSound("CoinCollected");
+            LoadSound("SockCollected");
             LoadSound("ConversationStart");
             LoadSound("DoorOpen");
             LoadSound("DoorShut");

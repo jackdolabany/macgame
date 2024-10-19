@@ -32,30 +32,30 @@ namespace MacGame.Npcs
         public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(6, 0);
 
         /// <summary>
-        /// The dog gives you hints to where the next coin is.
+        /// The dog gives you hints to where the next sock is.
         /// </summary>
         public override void InitiateConversation()
         {
 
             var levelNumber = Game1.CurrentLevel.LevelNumber;
 
-            var coinInfos = CoinIndex.LevelNumberToCoins[levelNumber];
+            var sockInfos = SockIndex.LevelNumberToSocks[levelNumber];
 
-            var collectedCoins = Game1.State.Levels[levelNumber].CollectedCoins;
+            var collectedSocks = Game1.State.Levels[levelNumber].CollectedSocks;
 
-            // He'll say the hint for first coin with a hint that you don't have.
-            foreach (var coinInfo in coinInfos)
+            // He'll say the hint for first sock with a hint that you don't have.
+            foreach (var sockInfo in sockInfos)
             {
-                var hintText = coinInfo.Hint;
+                var hintText = sockInfo.Hint;
                 
-                if (collectedCoins == null || !collectedCoins.Contains(coinInfo.Name))
+                if (collectedSocks == null || !collectedSocks.Contains(sockInfo.Name))
                 {
                     ConversationManager.AddMessage(hintText, ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     return;
                 }
             }
 
-            ConversationManager.AddMessage("Nice work collecting coins. Don't skip chest day.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("Nice work collecting socks. Don't skip chest day.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

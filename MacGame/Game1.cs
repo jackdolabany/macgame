@@ -80,9 +80,9 @@ namespace MacGame
         public const string HubWorld = "TestHub";
 
         // Set in the ctor
-        public static int TotalCoins { get; private set; }
+        public static int TotalSocks { get; private set; }
 
-        AlertBoxMenu gotACricketCoinMenu;
+        AlertBoxMenu gotASockMenu;
 
         /// <summary>
         /// If you aren't in a hub world, this is the name of the door you came from.
@@ -199,7 +199,7 @@ namespace MacGame
 
             Content.RootDirectory = "Content";
 
-            GlobalEvents.CricketCoinCollected += OnCricketCoinCollected;
+            GlobalEvents.SockCollected += OnSockCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
             GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
 
@@ -208,29 +208,29 @@ namespace MacGame
             // Grab a 2 x 2 rectangle from the middle of this tile rect.
             WhiteSourceRect = new Rectangle(whiteTileRect.X + 4, whiteTileRect.Y + 4, 2, 2);
 
-            TotalCoins = CoinIndex.LevelNumberToCoins.Values.SelectMany(c => c).Count();
+            TotalSocks = SockIndex.LevelNumberToSocks.Values.SelectMany(c => c).Count();
 
             LevelState = new LevelState();
 
-            // Validate the CoinIndex
-            foreach (var key in CoinIndex.LevelNumberToCoins.Keys)
+            // Validate the SockIndex
+            foreach (var key in SockIndex.LevelNumberToSocks.Keys)
             {
-                var coins = CoinIndex.LevelNumberToCoins[key];
-                var names = coins.Select(c => c.Name);
+                var socks = SockIndex.LevelNumberToSocks[key];
+                var names = socks.Select(c => c.Name);
 
                 // Make sure the names are unique.
                 if (names.Distinct().Count() != names.Count())
                 {
-                    throw new Exception($"Coin names in world {key} are not unique.");
+                    throw new Exception($"Sock names in world {key} are not unique.");
                 }
             }
         }
 
-        private void OnCricketCoinCollected(object? sender, EventArgs e)
+        private void OnSockCollected(object? sender, EventArgs e)
         {
-            pauseForCoinTimer = 3f;
-            SoundManager.PlaySound("CoinCollected", 0.4f);
-            TransitionToState(GameState.GotCoin, TransitionType.Instant);
+            pauseForSockTimer = 3f;
+            SoundManager.PlaySound("SockCollected", 0.4f);
+            TransitionToState(GameState.GotSock, TransitionType.Instant);
         }
 
         private void OnDoorEntered(object? sender, DoorEnteredEventArgs args)
@@ -340,7 +340,7 @@ namespace MacGame
 
             ConversationManager.Initialize(Content);
 
-            gotACricketCoinMenu = new AlertBoxMenu(this, "You got a Cricket Coin!", (a, b) =>
+            gotASockMenu = new AlertBoxMenu(this, "You got a Sock!", (a, b) =>
             {
                 MenuManager.ClearMenus();
 
@@ -457,7 +457,7 @@ namespace MacGame
             }
         }
 
-        float pauseForCoinTimer = 0f;
+        float pauseForSockTimer = 0f;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -519,14 +519,14 @@ namespace MacGame
                     TimerManager.Update(elapsed);
                 }
             }
-            else if(_gameState == GameState.GotCoin)
+            else if(_gameState == GameState.GotSock)
             {
-                if (pauseForCoinTimer > 0)
+                if (pauseForSockTimer > 0)
                 {
-                    pauseForCoinTimer -= elapsed;
-                    if (pauseForCoinTimer <= 0)
+                    pauseForSockTimer -= elapsed;
+                    if (pauseForSockTimer <= 0)
                     {
-                        MenuManager.AddMenu(gotACricketCoinMenu);
+                        MenuManager.AddMenu(gotASockMenu);
                     }
                 }
             }
@@ -680,7 +680,7 @@ namespace MacGame
             {
                 case GameState.Playing:
                 case GameState.PausedWithMenu:
-                case GameState.GotCoin:
+                case GameState.GotSock:
                 case GameState.Conversation:
                 case GameState.PausedForAction:
 
@@ -813,14 +813,14 @@ namespace MacGame
                 spriteBatch.Draw(TileTextures, new Rectangle(8, TileSize + 20, TileSize, TileSize), Player.CurrentItem.ItemIcon.Source, Color.White);
             }
 
-            // Draw the number of tacos in the HUD for regular levels, or draw the Cricket coins for the Hub level.
+            // Draw the number of tacos in the HUD for regular levels, or draw the socks for the Hub level.
             Rectangle imageSource;
             int count;
 
             if (CurrentLevel.IsHubWorld)
             {
-                var cricketCoinSourceRect = Helpers.GetTileRect(9, 2);
-                DrawNumberOfThingsOnRight(spriteBatch, cricketCoinSourceRect, Player.CricketCoinCount, GAME_X_RESOLUTION - 40, hudYPos);
+                var SockSourceRect = Helpers.GetTileRect(9, 2);
+                DrawNumberOfThingsOnRight(spriteBatch, SockSourceRect, Player.SockCount, GAME_X_RESOLUTION - 40, hudYPos);
             }
             else
             {
@@ -893,7 +893,7 @@ namespace MacGame
             MenuManager.ClearMenus();
             Game1.State = (StorageState)ss.Clone();
 
-            Player.CricketCoinCount = Game1.State.Levels.Select(l => l.Value).Sum(l => l.CollectedCoins.Count);
+            Player.SockCount = Game1.State.Levels.Select(l => l.Value).Sum(l => l.CollectedSocks.Count);
 
             _goToMap = "";
             _putPlayerAtDoor = "";
@@ -932,9 +932,9 @@ namespace MacGame
             Playing,
             
             /// <summary>
-            /// Freeze the game for a moment but still draw and play a jingle when you get a coin.
+            /// Freeze the game for a moment but still draw and play a jingle when you get a sock.
             /// </summary>
-            GotCoin,
+            GotSock,
             
             /// <summary>
             /// Gameplay with some menu displaying. The menu will transition the state back.

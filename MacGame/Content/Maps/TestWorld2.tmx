@@ -26,28 +26,24 @@
   </data>
  </layer>
  <objectgroup id="4" name="Object Layer 1">
-  <object id="4" name="Coin1" x="794.545" y="1091.64" width="25.2273" height="23.3636">
+  <object id="4" name="Sock1" x="794.545" y="1091.64" width="25.2273" height="23.3636">
    <properties>
     <property name="Hint" value="I'm over to the left"/>
     <property name="Number" value="1"/>
    </properties>
   </object>
-  <object id="5" name="Coin2" x="1144.5" y="1062.91" width="29.6364" height="28.2273">
+  <object id="5" name="Sock2" x="1144.5" y="1062.91" width="29.6364" height="28.2273">
    <properties>
     <property name="Hint" value="The coin to the right"/>
     <property name="Number" value="2"/>
    </properties>
   </object>
-  <object id="6" name="Coin3" x="1359.38" y="1088.25" width="30.25" height="30.25">
+  <object id="6" name="Sock3" x="1359.38" y="1088.25" width="30.25" height="30.25">
    <properties>
     <property name="Hint" value="Next to the vine"/>
     <property name="Number" value="3"/>
    </properties>
   </object>
-  <object id="7" name="TacoCoin" x="1419" y="1100.75" width="25.875" height="20.375">
-   <properties>
-    <property name="IsTacoCoin" value="1"/>
-   </properties>
-  </object>
+  <object id="7" name="TacoSock" x="1419" y="1100.75" width="25.875" height="20.375"/>
  </objectgroup>
 </map>

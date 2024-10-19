@@ -28,7 +28,7 @@ namespace MacGame
         public string Description = "";
 
         /// <summary>
-        /// True if this map represents a room in the main hub world. As opposed to a level looking for a specific cricket coin.
+        /// True if this map represents a room in the main hub world. As opposed to a level looking for a sock.
         /// </summary>
         public bool IsHubWorld
         {

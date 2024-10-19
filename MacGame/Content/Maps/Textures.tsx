@@ -98,7 +98,7 @@
  </tile>
  <tile id="58">
   <properties>
-   <property name="LoadClass" value="Item.CricketCoin"/>
+   <property name="LoadClass" value="Item.Sock"/>
   </properties>
  </tile>
  <tile id="59">

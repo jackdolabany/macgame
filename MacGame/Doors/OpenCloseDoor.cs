@@ -17,7 +17,7 @@ namespace MacGame.Doors
         /// </summary>
         public bool IsToSubworld = false;
 
-        public int CoinsNeeded;
+        public int SocksNeeded;
 
         public bool IsLocked { get; set; }
 
@@ -119,18 +119,18 @@ namespace MacGame.Doors
         {
             get
             {
-                return CoinsNeeded > 0;
+                return SocksNeeded > 0;
             }
         }
 
         public virtual bool CanPlayerUnlock(Player player)
         {
-            return player.CricketCoinCount >= CoinsNeeded;
+            return player.SockCount >= SocksNeeded;
         }
 
         public virtual string LockMessage()
         {
-            return $"You need {CoinsNeeded} coins to unlock this door.";
+            return $"You need {SocksNeeded} socks to unlock this door.";
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -236,7 +236,7 @@ namespace MacGame.Doors
             }
             else if (IsLocked)
             {
-                // locked but the player now has enough coins to open it.
+                // locked but the player now has enough socks to open it.
                 if (JailBarAnimations.CurrentAnimationName != "open")
                 {
                     JailBarAnimations.Play("open");

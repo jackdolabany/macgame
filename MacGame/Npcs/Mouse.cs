@@ -11,8 +11,6 @@ namespace MacGame.Npcs
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
         List<ConversationChoice> choices;
 
-        public bool GiveCoin { get; private set; }
-
         public Mouse(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -33,7 +31,6 @@ namespace MacGame.Npcs
                 if (Game1.Player.Tacos >= Game1.TacosNeeded)
                 {
                     Game1.Player.Tacos = 0;
-                    GiveCoin = true;
                     ConversationManager.AddMessage("Wow! Those tacos were absolutely delicious! I'll unlock the door, go grab a reward for being so sweet!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey = true;
                     StorageManager.TrySaveGame();

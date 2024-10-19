@@ -185,12 +185,6 @@
 /processorParam:Quality=Best
 /build:SoundEffects/Climb.wav
 
-#begin SoundEffects/CoinCollected.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SoundEffects/CoinCollected.wav
-
 #begin SoundEffects/ConversationStart.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -274,6 +268,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/ShootFromCannon.wav
+
+#begin SoundEffects/SockCollected.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/SockCollected.wav
 
 #begin SoundEffects/TacoCollected.wav
 /importer:WavImporter

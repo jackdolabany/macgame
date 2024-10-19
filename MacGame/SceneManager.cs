@@ -193,24 +193,24 @@ namespace MacGame
 
                                 layerDepthObjects[z].Add(item);
 
-                                // Coins are special. We expect each one to be wrapped in an object on the map that contains the number and hint.
-                                if (item is CricketCoin)
+                                // Socks are special. We expect each one to be wrapped in an object on the map that contains the number and hint.
+                                if (item is Sock)
                                 {
                                     foreach (var obj in map.ObjectModifiers)
                                     {
                                         if (obj.GetScaledRectangle().Contains(item.CollisionRectangle))
                                         {
-                                            // Coins are special items.
-                                            var coin = (CricketCoin)item;
-                                            coin.Name = obj.Name;
+                                            // Socks are special items.
+                                            var sock = (Sock)item;
+                                            sock.Name = obj.Name;
 
-                                            // Validate the name in the master set of coins and hints
-                                            if (!CoinIndex.LevelNumberToCoins[level.LevelNumber].Any(c => c.Name == coin.Name))
+                                            // Validate the name in the master set of socks and hints
+                                            if (!SockIndex.LevelNumberToSocks[level.LevelNumber].Any(c => c.Name == sock.Name))
                                             {
-                                                throw new Exception($"Coin '{coin.Name}' not found in world {level.LevelNumber}.");
+                                                throw new Exception($"Sock '{sock.Name}' not found in world {level.LevelNumber}.");
                                             }
 
-                                            coin.CheckIfAlreadyCollected(level.LevelNumber);
+                                            sock.CheckIfAlreadyCollected(level.LevelNumber);
                                         }
                                     }
                                 }
@@ -263,9 +263,9 @@ namespace MacGame
                                             {
                                                 ((OpenCloseDoor)door).IsToSubworld = obj.Properties["IsToSubworld"] == "1";
                                             }
-                                            if (obj.Properties.ContainsKey("CoinsNeeded"))
+                                            if (obj.Properties.ContainsKey("SocksNeeded"))
                                             {
-                                                ((OpenCloseDoor)door).CoinsNeeded = int.Parse(obj.Properties["CoinsNeeded"]);
+                                                ((OpenCloseDoor)door).SocksNeeded = int.Parse(obj.Properties["SocksNeeded"]);
                                             }
 
                                             door.Name = obj.Name;

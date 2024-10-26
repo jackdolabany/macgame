@@ -95,7 +95,7 @@ namespace MacGame.Doors
             JailBarAnimations.Add(openJailBars);
 
             State = DoorState.Idle;
-            DoorAnimations.Play("Idle");
+            DoorAnimations.Play("idle");
         }
 
         public override void SetDrawDepth(float depth)

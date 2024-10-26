@@ -60,22 +60,29 @@ namespace MacGame
 
         public virtual void HandleNavigationInputs(ref Action ca, ref Action pa, float elapsed)
         {
-            // Move to the previous menu entry?
+            // Move to the previous menu entry that is not hidden.
             if (ca.up && !pa.up)
             {
-                selectedEntryIndex--;
+                do {
+                    selectedEntryIndex--;
 
-                if (selectedEntryIndex < 0)
-                    selectedEntryIndex = menuOptions.Count - 1;
+                    if (selectedEntryIndex < 0)
+                        selectedEntryIndex = menuOptions.Count - 1;
+                }
+                while (menuOptions[selectedEntryIndex].Hidden);
             }
 
-            // Move to the next menu entry?
+            // Move to the next menu entry that is not hidden.
             if (ca.down && !pa.down)
             {
-                selectedEntryIndex++;
+                do
+                {
+                    selectedEntryIndex++;
 
-                if (selectedEntryIndex >= menuOptions.Count)
-                    selectedEntryIndex = 0;
+                    if (selectedEntryIndex >= menuOptions.Count)
+                        selectedEntryIndex = 0;
+                }
+                while (menuOptions[selectedEntryIndex].Hidden);
             }
         }
 
@@ -174,14 +181,17 @@ namespace MacGame
             {
                 MenuOption option = menuOptions[i];
 
-                // each entry is to be centered horizontally
-                position.X = 0;
+                if (!option.Hidden)
+                {
+                    // each entry is to be centered horizontally
+                    position.X = 0;
 
-                // set the entry's position
-                option.Position += position;
+                    // set the entry's position
+                    option.Position = position;
 
-                // move down for the next entry the size of this entry
-                position.Y += option.GetHeight();
+                    // move down for the next entry the size of this entry
+                    position.Y += option.GetHeight();
+                }
             }
         }
 
@@ -218,14 +228,19 @@ namespace MacGame
             for (int i = 0; i < menuOptions.Count; i++)
             {
                 MenuOption option = menuOptions[i];
-                option.DrawDepth = DrawDepth;
-                option.Draw(spriteBatch);
+
+                // Don't draw hidden menu items.
+                if (!option.Hidden)
+                {
+                    option.DrawDepth = DrawDepth;
+                    option.Draw(spriteBatch);
+                }
             }
         }
 
         public virtual void AddedToMenuManager()
         {
-
+            isPositioned = false;
         }
 
         public MenuOption AddOption(string text, Action<object, MenuEventArgs> action)

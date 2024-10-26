@@ -50,7 +50,7 @@ namespace MacGame
             IsSaving = true;
 
             // Clone to be safe since we're going to a background thread.
-            StorageState stateToSave = (StorageState)Game1.State.Clone();
+            StorageState stateToSave = (StorageState)Game1.StorageState.Clone();
 
             if (saveSlot != null)
             {

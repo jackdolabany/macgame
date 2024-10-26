@@ -36,7 +36,7 @@ namespace MacGame.Items
 
         public void CheckIfAlreadyCollected(int levelNumber)
         {
-            if (Game1.State.Levels[levelNumber].CollectedSocks.Contains(Name))
+            if (Game1.StorageState.Levels[levelNumber].CollectedSocks.Contains(Name))
             {
                 AlreadyCollected = true;
                 this.DisplayComponent.TintColor = Color.White * 0.5f;
@@ -50,7 +50,7 @@ namespace MacGame.Items
             this.Enabled = false;
 
             // Add this sock if they don't already have it.
-            var levelState = Game1.State.Levels[Game1.CurrentLevel.LevelNumber];
+            var levelState = Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber];
             if (!levelState.CollectedSocks.Contains(Name))
             {
                 levelState.CollectedSocks.Add(Name);

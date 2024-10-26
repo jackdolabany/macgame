@@ -1,4 +1,5 @@
-﻿using MacGame.DisplayComponents;
+﻿using MacGame.Behaviors;
+using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,7 +39,6 @@ namespace MacGame.Npcs
         private Speed _speed = Speed.Slow;
         private LastRaceResult _result = LastRaceResult.DidNotRaceYet;
 
-        // TODO: Save/load this per level
         private bool hasBeatenSlow = false;
         private bool hasBeatenMedium = false;
         private bool hasBeatenFast = false;
@@ -54,8 +54,6 @@ namespace MacGame.Npcs
 
         List<string> boasts;
 
-        float moveSpeed = 200f;
-
         float slowSpeed = 100f;
         float medSpeed = 150f;
         float fastSpeed = 200f;
@@ -63,6 +61,9 @@ namespace MacGame.Npcs
         private Vector2 _startLocation;
         private Rectangle _startCollisionRect;
         private bool _isInitialized = false;
+
+        private MoveToLocation _moveToLocation;
+        
         public Froggy(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
@@ -76,6 +77,8 @@ namespace MacGame.Npcs
             //fastSpeed = 100f;
 
             Enabled = true;
+
+            _moveToLocation = new MoveToLocation(Vector2.Zero, 20f, "idle", "walk", "jump", "climb");
 
             _startLocation = this.WorldLocation;
             _startCollisionRect = this.CollisionRectangle;
@@ -114,15 +117,15 @@ namespace MacGame.Npcs
                 animations.Play("walk");
                 if (_speed == Speed.Slow)
                 {
-                    moveSpeed = slowSpeed;
+                    _moveToLocation.MoveSpeed = slowSpeed;
                 }
                 else if (_speed == Speed.Medium)
                 {
-                    moveSpeed = medSpeed;
+                    _moveToLocation.MoveSpeed = medSpeed;
                 }
                 else
                 {
-                    moveSpeed = fastSpeed;
+                    _moveToLocation.MoveSpeed = fastSpeed;
                 }
             }));
             raceChoices.Add(new ConversationChoice("No", () =>
@@ -155,19 +158,19 @@ namespace MacGame.Npcs
         public void Initialize()
         {
             // Set the approprate speed.
-            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow)
+            if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow)
             {
                 this.hasBeatenSlow = true;
                 _speed = Speed.Medium;
             }
 
-            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium)
+            if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium)
             {
                 this.hasBeatenMedium = true;
                 _speed = Speed.Fast;
             }
 
-            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
+            if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
             {
                 this.hasBeatenFast = true;
             }
@@ -231,94 +234,8 @@ namespace MacGame.Npcs
                         nextWaypoint = RacePath.Waypoints.First();
                     }
 
-                    // Go to the next waypoint.
-                    Vector2 inFrontOfCenter = new Vector2(Game1.TileSize, 0);
-                    Vector2 inFrontBelow = new Vector2(0, collisionRectangle.Height / 2 + 2);
-                    if (Flipped)
-                    {
-                        inFrontOfCenter.X *= -1;
-                        inFrontBelow.X *= -1;
-                    }
-
-                    var tileInFront = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter + inFrontOfCenter);
-                    var tileAtFrontBelow = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter + inFrontBelow);
-
-                    if (nextWaypoint.Location.X >= this.CollisionRectangle.Right)
-                    {
-                        this.velocity.X = moveSpeed;
-
-                        if (onGround && animations.CurrentAnimationName != "walk")
-                        {
-                            animations.Play("walk");
-                        }
-                        this.Flipped = false;
-                    }
-                    else if (nextWaypoint.Location.X <= this.CollisionRectangle.Left)
-                    {
-                        this.velocity.X = -moveSpeed;
-                        if (onGround && animations.CurrentAnimationName != "walk")
-                        {
-                            animations.Play("walk");
-                        }
-                        this.Flipped = true;
-                    }
-                    else
-                    {
-                        this.velocity.X = 0;
-                    }
-
-                    // Jump before you walk into a wall.
-                    if (tileInFront != null && !tileInFront.Passable && OnGround && this.velocity.X != 0)
-                    {
-                        this.velocity.Y -= 600;
-                        animations.Play("jump");
-                    }
-
-                    // Jump before a cliff, unless the waypoint is below you.
-                    if (tileAtFrontBelow != null && tileAtFrontBelow.Passable && OnGround && nextWaypoint.Location.Y < this.CollisionRectangle.Bottom)
-                    {
-                        this.velocity.Y -= 600;
-                        animations.Play("jump");
-                    }
-
-                    // Ladder climbing.
-                    var tileAtHead = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter.X.ToInt(), this.CollisionRectangle.Top);
-                    var tileAtFeet = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldLocation);
-                    var onLadder = (tileAtHead != null && tileAtHead.IsLadder) || (tileAtFeet != null && tileAtFeet.IsLadder);
-                    if (onLadder)
-                    {
-                        if (animations.CurrentAnimationName != "climb")
-                        {
-                            animations.Play("climb");
-                        }
-                        this.IsAffectedByGravity = false;
-
-                        // Move towards the center of the ladder
-                        var targetX = ((int)this.WorldLocation.X / Game1.TileSize * Game1.TileSize) + (Game1.TileSize / 2);
-
-                        if (targetX > this.WorldLocation.X)
-                        {
-                            this.velocity.X = 20;
-                        }
-                        else if (targetX <= this.WorldLocation.X)
-                        {
-                            this.velocity.X = -20;
-                        }
-
-                        // Climb up or down.
-                        if (nextWaypoint.Location.Y > this.CollisionCenter.Y)
-                        {
-                            this.velocity.Y = moveSpeed;
-                        }
-                        else if (nextWaypoint.Location.Y < this.CollisionCenter.Y)
-                        {
-                            this.velocity.Y = -moveSpeed;
-                        }
-                    }
-                    else
-                    {
-                        this.IsAffectedByGravity = true;
-                    }
+                    _moveToLocation.TargetLocation = nextWaypoint.Location;
+                    _moveToLocation.Update(this, gameTime, elapsed);
                 }
                 else
                 {
@@ -405,7 +322,7 @@ namespace MacGame.Npcs
                     }
                     else if (_speed == Speed.Fast)
                     {
-                        if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
+                        if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
                         {
                             ConversationManager.AddMessage("I know you're frog fast, but we could race for fun.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                         }
@@ -431,26 +348,26 @@ namespace MacGame.Npcs
                     // Mac won!
                     if (!hasBeatenMedium)
                     {
-                        Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow = true;
+                        Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow = true;
                         StorageManager.TrySaveGame();
                         ConversationManager.AddMessage("No fair! I wasn't going my fastest. Come try that again and see what happens buddy.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     }
                     else if (!hasBeatenFast)
                     {
-                        Game1.State.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium = true;
+                        Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium = true;
                         StorageManager.TrySaveGame();
                         ConversationManager.AddMessage("That doesn't count, my shoe was untied! Try it one more time and I'll go my fastest.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     }
                     else
                     {
-                        if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
+                        if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
                         {
                             ConversationManager.AddMessage("You still got it Champ!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                         }
                         else
                         {
                             ConversationManager.AddMessage("Wow! You aren't just fast, you're frog fast! I unlocked my house. Take anything you want.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                            Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey = true;
+                            Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey = true;
                             StorageManager.TrySaveGame();
                         }
                     }

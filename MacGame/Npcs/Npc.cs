@@ -130,5 +130,4 @@ namespace MacGame.Npcs
             ConversationManager.AddMessage(message, PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
         }
     }
-    
 }

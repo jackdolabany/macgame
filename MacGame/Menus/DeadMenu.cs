@@ -4,6 +4,8 @@ namespace MacGame
 {
     public class DeadMenu : Menu
     {
+
+        MenuOption backToHub;
         public DeadMenu(Game1 game)
             : base(game)
         {
@@ -19,10 +21,15 @@ namespace MacGame
                 });
             }
 
-            AddOption("Back to Hub", (a, b) => Game.GoToHub(true));
+            backToHub = AddOption("Back to Hub", (a, b) => Game.GoToHub(true));
             AddOption("Title Screen", (a, b) => Game.GoToTitleScreen());
 
-           
+        }
+
+        public override void AddedToMenuManager()
+        {
+            backToHub.Hidden = Game1.CurrentLevel.LevelNumber <= 0;
+            base.AddedToMenuManager();
         }
     }
 }

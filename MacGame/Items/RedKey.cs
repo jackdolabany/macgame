@@ -26,7 +26,7 @@ namespace MacGame.Items
         public override void WhenCollected(Player player)
         {
             this.Enabled = false;
-            Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasRedKey = true;
+            Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasRedKey = true;
             StorageManager.TrySaveGame();
         }
     }

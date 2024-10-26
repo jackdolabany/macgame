@@ -21,6 +21,8 @@ namespace MacGame
         public Color Color = Color.White;
         public Color SelectedColor = Color.Yellow;
 
+        public bool Hidden = false;
+
         private bool wasSelected = false;
 
         public float DrawScale

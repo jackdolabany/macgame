@@ -32,7 +32,7 @@ namespace MacGame.Npcs
                 {
                     Game1.Player.Tacos = 0;
                     ConversationManager.AddMessage("Wow! Those tacos were absolutely delicious! I'll unlock the door, go grab a reward for being so sweet!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                    Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey = true;
+                    Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey = true;
                     StorageManager.TrySaveGame();
                 }
                 else
@@ -55,7 +55,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            if (Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey)
+            if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey)
             {
 
                 var rando = Game1.Randy.Next(0, 4);

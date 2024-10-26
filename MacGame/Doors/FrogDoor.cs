@@ -29,7 +29,7 @@ namespace MacGame.Doors
 
         public override bool CanPlayerUnlock(Player player)
         {
-            return Game1.State.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey;
+            return Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey;
         }
 
         public override string LockMessage()

@@ -59,9 +59,9 @@ namespace MacGame
             player.ResetStateForLevelTransition(isNewLevel);
 
             // Make sure this exists for each level.
-            if (!Game1.State.Levels.ContainsKey(level.LevelNumber))
+            if (!Game1.StorageState.Levels.ContainsKey(level.LevelNumber))
             {
-                Game1.State.Levels.Add(level.LevelNumber, new LevelStorageState());
+                Game1.StorageState.Levels.Add(level.LevelNumber, new LevelStorageState());
             }
 
             if(map.Properties.ContainsKey("Description"))
@@ -224,15 +224,15 @@ namespace MacGame
                                 }
                                 else if (item is RedKey)
                                 {
-                                    item.Enabled = !Game1.State.Levels[level.LevelNumber].Keys.HasRedKey;
+                                    item.Enabled = !Game1.StorageState.Levels[level.LevelNumber].Keys.HasRedKey;
                                 }
                                 else if (item is GreenKey)
                                 {
-                                    item.Enabled = !Game1.State.Levels[level.LevelNumber].Keys.HasGreenKey;
+                                    item.Enabled = !Game1.StorageState.Levels[level.LevelNumber].Keys.HasGreenKey;
                                 }
                                 else if (item is BlueKey)
                                 {
-                                    item.Enabled = !Game1.State.Levels[level.LevelNumber].Keys.HasBlueKey;
+                                    item.Enabled = !Game1.StorageState.Levels[level.LevelNumber].Keys.HasBlueKey;
                                 }
                             }
                             else if (DoorClasses.Contains(loadClass))
@@ -274,7 +274,7 @@ namespace MacGame
                                             {
                                                 var openClosedDoor = (OpenCloseDoor)door;
 
-                                                var unlockedDoors = Game1.State.Levels[level.LevelNumber].UnlockedDoors;
+                                                var unlockedDoors = Game1.StorageState.Levels[level.LevelNumber].UnlockedDoors;
 
                                                 if (!openClosedDoor.IsInitiallyLocked || (unlockedDoors.Contains(door.Name) && openClosedDoor.CanPlayerUnlock(player)))
                                                 {
@@ -409,12 +409,12 @@ namespace MacGame
                     group.Name = obj.Properties["MoveGroup"];
                     group.MediumWaterOffset = int.Parse(obj.Properties["MediumWater"]);
                     group.LowWaterOffset = int.Parse(obj.Properties["LowWater"]);
-                    
+
                     // The object fully encases the tiles to move, not partially. #MATH
                     group.Rectangle = new Rectangle(
-                        (int)Math.Ceiling((float)obj.Rectangle.X / 8f), 
-                        (int)Math.Ceiling((float)obj.Rectangle.Y / 8f), 
-                        obj.Rectangle.Width / 8, 
+                        (int)Math.Ceiling((float)obj.Rectangle.X / 8f),
+                        (int)Math.Ceiling((float)obj.Rectangle.Y / 8f),
+                        obj.Rectangle.Width / 8,
                         obj.Rectangle.Height / 8);
 
                     level.MovingBlockGroups.Add(group);
@@ -428,6 +428,16 @@ namespace MacGame
                         throw new Exception("You have a race victory zone but not Froggy was found.");
                     }
                     froggy.SetVictoryZone(obj.GetScaledRectangle());
+                }
+                else if (obj.Properties.ContainsKey("LoadClass"))
+                {
+                    if (obj.Properties["LoadClass"] == "CollisionScript")
+                    {
+                        var script = new CollisionScript();
+                        script.CollisionRectangle = obj.GetScaledRectangle();
+                        script.Name = obj.Name;
+                        level.CollisionScripts.Add(script);
+                    }
                 }
             }
 

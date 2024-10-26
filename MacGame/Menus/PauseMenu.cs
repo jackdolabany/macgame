@@ -4,6 +4,9 @@ namespace MacGame
 {
     public class PauseMenu : Menu
     {
+
+        MenuOption backToHub;
+
         public PauseMenu(Game1 game)
             : base(game)
         {
@@ -11,7 +14,7 @@ namespace MacGame
             IsDismissable = true;
             this.IsOverlay = false;
 
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION * 0.333f);
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.333f).ToInt());
             this.Scale = 1f;
 
             var confirmExitGame = new YesNoMenu(Game, "Are you sure you \n want to exit to\nthe title screen?", (a, b) =>
@@ -34,8 +37,7 @@ namespace MacGame
                 });
             }
 
-            // TODO: Dont' show this if you're in the hub
-            var option = AddOption("Back to Hub", (a, b) => {
+            backToHub = AddOption("Back to Hub", (a, b) => {
                 PlayOptionSelectedSound();
                 Game.GoToHub(true);
             });
@@ -45,6 +47,12 @@ namespace MacGame
                 MenuManager.AddMenu(confirmExitGame);
             });
            
+        }
+
+        public override void AddedToMenuManager()
+        {
+            backToHub.Hidden = Game1.CurrentLevel.LevelNumber <= 0;
+            base.AddedToMenuManager();
         }
 
         public void SetupTitle(string title)

@@ -26,6 +26,6 @@
     <property name="GoToMap" value="World1PurpleHouse"/>
    </properties>
   </object>
-  <object id="2" name="TacoCoin" x="29.7243" y="13.2631" width="20.3161" height="21.114"/>
+  <object id="2" name="TacoSock" x="29.7243" y="13.2631" width="20.3161" height="21.114"/>
  </objectgroup>
 </map>

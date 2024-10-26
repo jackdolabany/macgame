@@ -55,7 +55,12 @@ namespace MacGame
 
         private static List<ConversationMessage> Messages = new List<ConversationMessage>();
 
-        public static void AddMessage(string text, Rectangle? imageSource = null, ImagePosition imagePosition = ImagePosition.Left, List<ConversationChoice> choices = null)
+        public static void AddMessage(
+            string text, 
+            Rectangle? imageSource = null, 
+            ImagePosition imagePosition = ImagePosition.Left, 
+            List<ConversationChoice>? choices = null, 
+            System.Action? completeAction = null)
         {
             bool isFirstMessage = false;
             if (Messages.Count == 0)
@@ -94,6 +99,8 @@ namespace MacGame
             {
                 lastMessage.Choices = choices;
             }
+
+            lastMessage.CompleteAction = completeAction;
 
             if (isFirstMessage)
             {
@@ -145,7 +152,10 @@ namespace MacGame
 
         public static void Update(float elapsed)
         {
-            if (Messages.Count == 0) return;
+            if (Messages.Count == 0)
+            {
+                return;
+            }
 
             var player = Game1.Player;
 
@@ -167,6 +177,11 @@ namespace MacGame
                         {
                             action.Invoke();
                         }
+                    }
+
+                    if (message.CompleteAction != null)
+                    {
+                        message.CompleteAction.Invoke();
                     }
 
                     Messages.RemoveAt(0);
@@ -475,6 +490,11 @@ namespace MacGame
 
         // An array of strings to show as choices after the last message.
         public List<ConversationChoice> Choices;
+
+        /// <summary>
+        /// Some kind of custom action to execute after the last message.
+        /// </summary>
+        public System.Action? CompleteAction { get; set; }
 
         public void PlaySound()
         {

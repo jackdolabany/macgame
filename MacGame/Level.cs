@@ -22,7 +22,7 @@ namespace MacGame
         public string Name = "";
 
         /// <summary>
-        /// Each level has a unique number. The hub world is 0.
+        /// Each level has a unique number. The into is -1 and the hub world is 0.
         /// </summary>
         public int LevelNumber = 0;
         public string Description = "";
@@ -38,6 +38,8 @@ namespace MacGame
             }
         }
 
+        private bool _isInitailized = false;
+
         public Player Player;
         public TileMap Map;
         public Camera Camera;
@@ -50,6 +52,8 @@ namespace MacGame
         public List<Waypoint> Waypoints;
 
         public List<MovingBlockGroup> MovingBlockGroups { get; set; } = new List<MovingBlockGroup>();
+
+        public List<CollisionScript> CollisionScripts { get; set; } = new List<CollisionScript>();
 
         /// <summary>
         /// For enemies that need to add enemies. 
@@ -79,8 +83,24 @@ namespace MacGame
             EnemiesToAdd.Enqueue(enemy);
         }
 
+        private void Initialize()
+        {
+            if (LevelNumber == -1)
+            {
+                // Custom intro code
+                // Set Ottie stationary so he doesn't move out of frame.
+                var ottie = (Ottie)this.Npcs.Single(npc => npc is Ottie);
+                ottie.BeStationary();
+            }
+        }
+
         public void Update(GameTime gameTime, float elapsed)
         {
+            if (!_isInitailized)
+            {
+                Initialize();
+                _isInitailized = true;
+            }
             RevealBlockManager.Update(elapsed);
 
             // Important that platforms update before player and enemies.
@@ -158,7 +178,7 @@ namespace MacGame
                         break;
                     }
                 }
-                
+
                 // if there's a door to go through and an NPC to talk to, prefer the one closer to Mac
                 if (doorToEnter != null && npcToTalkTo != null)
                 {
@@ -178,7 +198,7 @@ namespace MacGame
                 else if (npcToTalkTo != null)
                 {
                     npcToTalkTo.CheckPlayerInteractions(Player);
-                }   
+                }
             }
 
             while (EnemiesToAdd.Count > 0)
@@ -186,6 +206,51 @@ namespace MacGame
                 Enemies.Add(EnemiesToAdd.Dequeue());
             }
 
+            foreach (var script in this.CollisionScripts)
+            {
+                if (Player.CollisionRectangle.Intersects(script.CollisionRectangle))
+                {
+                    switch (script.Name)
+                    {
+                        case "IntroText":
+                            DisplayIntroText();
+                            break;
+                        case "OttisIntro":
+                            OttisIntro();
+                            break;
+                        default:
+                            throw new NotImplementedException($"Unknown collision script: {script.Name}");
+                    }
+                }
+            }
+        }
+
+        public void DisplayIntroText()
+        {
+            if (!Game1.StorageState.HasSeenIntroText)
+            {
+                Game1.StorageState.HasSeenIntroText = true;
+                ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+                ConversationManager.AddMessage("Oh no! My human forgot me in the yard. I'll have to try to find my way back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+            }
+        }
+
+        public void OttisIntro()
+        {
+            // Kill all enemies in case any are on screen.
+            foreach (var enemy in this.Enemies)
+            {
+                enemy.Kill();
+            }
+
+            Player.BecomeNpc();
+
+            // Find the one waypoint expected in this map.
+            var waypoint = Waypoints.Single();
+
+            Player.GoToLocation(waypoint.Location);
+            var ottis = (Ottie)Npcs.Single(npc => npc is Ottie);
+            ottis.GoToLocation(new Vector2(waypoint.Location.X + 2 * Game1.TileSize, waypoint.Location.Y));
         }
 
         Dictionary<Vector2, WaterWave> waterWaves;

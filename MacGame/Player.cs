@@ -8,6 +8,7 @@ using MacGame.Enemies;
 using MacGame.DisplayComponents;
 using MacGame.Items;
 using System.Collections.Generic;
+using MacGame.Behaviors;
 
 namespace MacGame
 {
@@ -21,7 +22,11 @@ namespace MacGame
         ClimbingLadder,
         ClimbingVine,
         Dead,
-        IsKnockedDown
+        IsKnockedDown,
+        /// <summary>
+        /// Set Mac to this state for some kind of custom programming for cut scenes or whatever.
+        /// </summary>
+        NPC
     }
 
     public class Player : GameObject
@@ -43,6 +48,16 @@ namespace MacGame
         private const float maxSpeed = 500;
 
         private MacState _state = MacState.Idle;
+
+        /// <summary>
+        /// If Mac is an NPC he'll walk towards this target.
+        /// </summary>
+        public Vector2 NpcModeTarget { get; set; }
+
+        /// <summary>
+        /// NPC behavior so Mac can go to a location.
+        /// </summary>
+        private MoveToLocation _moveToLocation { get; set; } 
 
         private bool IsRunning => _state == MacState.Running;
         private bool IsJumping => _state == MacState.Jumping;
@@ -68,6 +83,7 @@ namespace MacGame
         // other side of a vine, or snapping to other objects.
         private float cameraTrackingTimer = 0f;
         private bool IsKnockedDown => _state == MacState.IsKnockedDown;
+        private bool IsNpcMode => _state == MacState.NPC;
 
         private float invincibleTimeRemaining = 0.0f;
         private float invincibleFlashTimer = 0.0f;
@@ -279,6 +295,8 @@ namespace MacGame
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
 
             _shovel = new MacShovel(this, textures);
+
+            _moveToLocation = new MoveToLocation(Vector2.Zero, 150, "idle", "run", "jump", "climbLadder");
         }
 
         public override void SetDrawDepth(float depth)
@@ -287,6 +305,21 @@ namespace MacGame
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
+        }
+
+        public void BecomeNpc()
+        {
+            this._state = MacState.NPC;
+        }
+
+        public void GoToLocation(Vector2 location)
+        {
+            _moveToLocation.TargetLocation = location;
+        }
+
+        public bool IsAtLocation()
+        {
+            return _moveToLocation.IsAtLocation();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -334,6 +367,10 @@ namespace MacGame
             else if (IsInWater)
             {
                 HandleWaterInputs(elapsed);
+            }
+            else if (IsNpcMode)
+            {
+                _moveToLocation.Update(this, gameTime, elapsed);
             }
             else
             {
@@ -398,7 +435,6 @@ namespace MacGame
                 }
                 this.animations.WorldLocation += climbingOffset;
             }
-
         }
 
         /// <summary>
@@ -418,6 +454,7 @@ namespace MacGame
             Velocity = Vector2.Zero;
             IsInMineCart = false;
             IsInvisible = false;
+            _state = MacState.Idle;
         }
 
         /// <summary>
@@ -1353,7 +1390,7 @@ namespace MacGame
 
         public void AddUnlockedDoor(string doorName)
         {
-            var doors = Game1.State.Levels[Game1.CurrentLevel.LevelNumber].UnlockedDoors;
+            var doors = Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].UnlockedDoors;
             if (!doors.Contains(doorName))
             {
                 doors.Add(doorName);

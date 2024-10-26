@@ -23,6 +23,10 @@ namespace MacGame
 
         public float TotalElapsedTime { get; set; }
 
+        public bool HasSeenIntroText { get; set; } = false;
+
+        public bool HasBeatenIntroLevel { get; set; } = false;
+
         /// <param name="saveSlot">1 through 3</param>
         public StorageState(int saveSlot)
         {
@@ -39,6 +43,8 @@ namespace MacGame
             clone.HasBeatedGame = this.HasBeatedGame;
             clone.TotalElapsedTime = this.TotalElapsedTime;
             clone.Levels = this.Levels.ToDictionary(kvp => kvp.Key, kvp => (LevelStorageState)kvp.Value.Clone());
+            clone.HasSeenIntroText = this.HasSeenIntroText;
+            clone.HasBeatenIntroLevel = this.HasBeatenIntroLevel;
             return clone;
         }
     }

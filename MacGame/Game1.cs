@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World1";
+        public const string StartingWorld = "IntroLevel";
         private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
 
@@ -78,6 +78,7 @@ namespace MacGame
         public const string SaveGameFolder = "MacsAdventure";
 
         public const string HubWorld = "TestHub";
+        public const string IntroLevel = "IntroLevel";
 
         // Set in the ctor
         public static int TotalSocks { get; private set; }
@@ -142,6 +143,11 @@ namespace MacGame
 
         private GameState _gameState;
 
+        /// <summary>
+        /// How long to show the title screen after the intro.
+        /// </summary>
+        private float _titleScreenAfterIntroTimer = 0f;
+
         private GameState CurrentGameState
         {
             get { return _gameState; }
@@ -178,12 +184,20 @@ namespace MacGame
         /// <summary>
         /// The current game state that can be saved or loaded.
         /// </summary>
-        public static StorageState State { get; set; }
+        public static StorageState StorageState { get; set; }
 
         /// <summary>
         /// State about the current level that will reset if you go to the hub or a new level from the hub.
         /// </summary>
         public static LevelState LevelState { get; set; }
+
+        public static void ThrowDebugException(string message)
+        {
+            if (Game1.IS_DEBUG)
+            {
+                throw new Exception(message);
+            }
+        }
 
         public Game1()
         {
@@ -202,6 +216,7 @@ namespace MacGame
             GlobalEvents.SockCollected += OnSockCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
             GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
+            GlobalEvents.IntroComplete += OnIntroComplete;
 
             var whiteTileRect = Helpers.GetTileRect(1, 3);
 
@@ -258,6 +273,19 @@ namespace MacGame
         }
 
         /// <summary>
+        /// The initial intro level is complete, save the game and send them to the hub.
+        /// </summary>
+        private void OnIntroComplete(object? sender, EventArgs args)
+        {
+            // How many seconds to re-show the title screen after the intro.
+            // Might make this another screen later.
+            _titleScreenAfterIntroTimer = 3f;
+            StorageState.HasBeatenIntroLevel = true;
+            StorageManager.TrySaveGame();
+            TransitionToState(GameState.TitleFromIntro, TransitionType.SlowFade);
+        }
+
+        /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
         /// related content.  Calling base.Initialize will enumerate through any components
@@ -298,7 +326,7 @@ namespace MacGame
             WaterWaveFlyweight = new WaterWaveFlyweight(false);
             WaterWaveFlyweightAlt = new WaterWaveFlyweight(true);
 
-            Game1.State = new StorageState(1);
+            Game1.StorageState = new StorageState(1);
             Player = new Player(Content, inputManager, deadMenu);
             
             // test
@@ -339,6 +367,7 @@ namespace MacGame
             }
 
             ConversationManager.Initialize(Content);
+            CutsceneManager.Initialize(Content);
 
             gotASockMenu = new AlertBoxMenu(this, "You got a Sock!", (a, b) =>
             {
@@ -389,6 +418,17 @@ namespace MacGame
                     }
                 }
             }
+        }
+
+        public void StartNewGame()
+        {
+            MenuManager.ClearMenus();
+            TransitionToState(GameState.Playing);
+            pauseMenu.SetupTitle("Paused");
+            Player.ResetStateForLevelTransition(true);
+            LevelState.Reset();
+            CurrentLevel = sceneManager.LoadLevel(IntroLevel, Content, Player, Camera);
+            Camera.Map = CurrentLevel.Map;
         }
 
         public void RestartLevel()
@@ -501,7 +541,7 @@ namespace MacGame
                 WaterWaveFlyweight.Update(gameTime, elapsed);
                 WaterWaveFlyweightAlt.Update(gameTime, elapsed);
 
-                State.TotalElapsedTime += elapsed;
+                StorageState.TotalElapsedTime += elapsed;
 
                 if (Player.Enabled && inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause && !isPaused)
                 {
@@ -519,7 +559,7 @@ namespace MacGame
                     TimerManager.Update(elapsed);
                 }
             }
-            else if(_gameState == GameState.GotSock)
+            else if (_gameState == GameState.GotSock)
             {
                 if (pauseForSockTimer > 0)
                 {
@@ -594,10 +634,25 @@ namespace MacGame
                     MenuManager.AddMenu(mainMenu);
                 }
             }
+            else if (_gameState == GameState.TitleFromIntro && transitionToState == GameState.TitleFromIntro)
+            {
+                // Wait until the timer is up and then go to the hub world.
+                if (_titleScreenAfterIntroTimer > 0)
+                {
+                    _titleScreenAfterIntroTimer -= elapsed;
+                }
+                else
+                {
+                    GoToHub(false);
+                }
+            }
             else if (CurrentGameState == GameState.Conversation)
             {
                 ConversationManager.Update(elapsed);
-                if (!ConversationManager.IsInConversation())
+                CutsceneManager.Update(gameTime, elapsed);
+
+                // If the conversation is over, and they aren't transitioning into another state, go back to playing.
+                if (!ConversationManager.IsInConversation() && transitionToState == GameState.Conversation)
                 {
                     CurrentGameState = GameState.Playing;
                 }
@@ -694,6 +749,8 @@ namespace MacGame
 
                     CurrentLevel.Draw(spriteBatch, Camera.ViewPort);
 
+                    CutsceneManager.Draw(spriteBatch);
+
                     EffectsManager.Draw(spriteBatch);
 
                     spriteBatch.End();
@@ -736,7 +793,9 @@ namespace MacGame
 
                     spriteBatch.End();
                     break;
+               
                 case GameState.TitleScreen:
+                case GameState.TitleFromIntro:
 
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
@@ -822,7 +881,7 @@ namespace MacGame
                 var SockSourceRect = Helpers.GetTileRect(9, 2);
                 DrawNumberOfThingsOnRight(spriteBatch, SockSourceRect, Player.SockCount, GAME_X_RESOLUTION - 40, hudYPos);
             }
-            else
+            else if (CurrentLevel.LevelNumber > 0) // Don't show tacos in the hub or intro levels.
             {
                 var tacoIconSource = Helpers.GetTileRect(8, 2);
                 DrawNumberOfThingsOnRight(spriteBatch, tacoIconSource, Player.Tacos, GAME_X_RESOLUTION - 40, hudYPos);
@@ -830,7 +889,7 @@ namespace MacGame
 
             // Draw red/green/blue keys on the right below the tacos
             Vector2 keyLocation = new Vector2(GAME_X_RESOLUTION - 40, hudYPos + 48);
-            var level = Game1.State.Levels[Game1.CurrentLevel.LevelNumber];
+            var level = Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber];
             if (level.Keys.HasRedKey)
             {
                 var redKeySourceRect = Helpers.GetTileRect(13, 4);
@@ -873,7 +932,7 @@ namespace MacGame
             }
 
             // Draw the icon image
-            spriteBatch.Draw(TileTextures, new Rectangle(rightMostX - Game1.TileSize, yPos + 4, Game1.TileSize, Game1.TileSize), iconSourceRectangle, Color.White);
+            spriteBatch.Draw(TileTextures, new Rectangle(rightMostX - Game1.TileSize - 4, yPos + 8, Game1.TileSize, Game1.TileSize), iconSourceRectangle, Color.White);
         }
 
         public static void DrawBlackOverScreen(SpriteBatch spriteBatch, float opacity)
@@ -891,9 +950,9 @@ namespace MacGame
 
             SoundManager.StopSong();
             MenuManager.ClearMenus();
-            Game1.State = (StorageState)ss.Clone();
+            Game1.StorageState = (StorageState)ss.Clone();
 
-            Player.SockCount = Game1.State.Levels.Select(l => l.Value).Sum(l => l.CollectedSocks.Count);
+            Player.SockCount = Game1.StorageState.Levels.Select(l => l.Value).Sum(l => l.CollectedSocks.Count);
 
             _goToMap = "";
             _putPlayerAtDoor = "";
@@ -902,7 +961,14 @@ namespace MacGame
             CurrentLevel = sceneManager.LoadLevel(HubWorld, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
 
-            GoToHub(false);
+            if (ss.HasBeatenIntroLevel)
+            {
+                GoToHub(false);
+            }
+            else
+            {
+                StartNewGame();
+            }
         }
 
         public static void TacoCollected(string levelName, int x, int y)
@@ -928,9 +994,14 @@ namespace MacGame
         public enum GameState
         {
             TitleScreen,
-            
+
             Playing,
             
+            /// <summary>
+            /// After the intro level we'll fade to the title screen and then again to the hub level.
+            /// </summary>
+            TitleFromIntro,
+
             /// <summary>
             /// Freeze the game for a moment but still draw and play a jingle when you get a sock.
             /// </summary>

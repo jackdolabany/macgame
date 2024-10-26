@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using System;
 
 namespace MacGame.DisplayComponents
 {
@@ -75,7 +76,10 @@ namespace MacGame.DisplayComponents
             var anim = animations[CurrentAnimationName];
             if (anim.FinishedPlaying)
             {
-                Play(anim.NextAnimation);
+                if (!string.IsNullOrEmpty(anim.NextAnimation))
+                {
+                    Play(anim.NextAnimation);
+                }
             }
             else
             {
@@ -125,12 +129,28 @@ namespace MacGame.DisplayComponents
                 animations[name].Play(startFrame);
                 return animations[name];
             }
+            
+            if (Game1.IS_DEBUG)
+            {
+                throw new Exception("Animation not found: " + name);
+            }
+            
             return null;
+           
         }
 
         public AnimationStrip? Play(string name)
         {
             return Play(name, 0);
+        }
+
+        public AnimationStrip? PlayIfNotAlreadyPlaying(string name)
+        {
+            if (CurrentAnimationName != name)
+            {
+                return Play(name, 0);
+            }
+            return null;
         }
     }
 }

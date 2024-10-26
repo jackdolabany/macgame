@@ -25,6 +25,8 @@ namespace MacGame
 
         public static event EventHandler? OneHundredTacosCollected;
 
+        public static event EventHandler? IntroComplete;
+
         public static void FireSockCollected(Object sender, EventArgs args)
         {
             var evt = SockCollected;
@@ -50,6 +52,15 @@ namespace MacGame
             {
                 var args = new DoorEnteredEventArgs(transitionToMap, putPlayerAtDoor, doorNameEntered);
                 evt(sender, args);
+            }
+        }
+
+        public static void FireIntroComplete()
+        {
+            var evt = IntroComplete;
+            if (evt != null)
+            {
+                evt(null, EventArgs.Empty);
             }
         }
 

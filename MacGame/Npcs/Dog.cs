@@ -41,7 +41,7 @@ namespace MacGame.Npcs
 
             var sockInfos = SockIndex.LevelNumberToSocks[levelNumber];
 
-            var collectedSocks = Game1.State.Levels[levelNumber].CollectedSocks;
+            var collectedSocks = Game1.StorageState.Levels[levelNumber].CollectedSocks;
 
             // He'll say the hint for first sock with a hint that you don't have.
             foreach (var sockInfo in sockInfos)

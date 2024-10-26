@@ -1140,7 +1140,7 @@ namespace MacGame
             this.IsJustShotOutOfCannon = false;
             this.IsAffectedByGravity = false;
             this._state = MacState.Idle;
-            this.animations.Play("Idle");
+            this.animations.Play("idle");
         }
 
         public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)

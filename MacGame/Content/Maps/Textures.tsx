@@ -445,6 +445,11 @@
    <property name="LoadClass" value="Npc.HyperBluey"/>
   </properties>
  </tile>
+ <tile id="216">
+  <properties>
+   <property name="LoadClass" value="Npc.Toadie"/>
+  </properties>
+ </tile>
  <tile id="218">
   <properties>
    <property name="LoadClass" value="Platform.BreakingPlatform"/>

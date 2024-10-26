@@ -27,7 +27,7 @@
     <property name="GoToMap" value="World1"/>
    </properties>
   </object>
-  <object id="3" name="MinecartCoin" x="4317.24" y="118.394" width="21.4242" height="18"/>
+  <object id="3" name="MinecartSock" x="4317.24" y="118.394" width="21.4242" height="18"/>
  </objectgroup>
  <layer id="13" name="GameObjects" width="550" height="20">
   <data encoding="base64">

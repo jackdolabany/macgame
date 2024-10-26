@@ -217,6 +217,7 @@ namespace MacGame
             GlobalEvents.DoorEntered += OnDoorEntered;
             GlobalEvents.BeginDoorEnter += OnBeginDoorEnter;
             GlobalEvents.IntroComplete += OnIntroComplete;
+            GlobalEvents.FinalBossComplete += OnFinalBossComplete;
 
             var whiteTileRect = Helpers.GetTileRect(1, 3);
 
@@ -284,6 +285,14 @@ namespace MacGame
             StorageManager.TrySaveGame();
             TransitionToState(GameState.TitleFromIntro, TransitionType.SlowFade);
         }
+        
+        private void OnFinalBossComplete(object? sender, EventArgs args)
+        {
+            StorageState.HasBeatedGame = true;
+            StorageManager.TrySaveGame();
+            PlayCredits();
+        }
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -664,14 +673,10 @@ namespace MacGame
                 TimerManager.Update(elapsed);
                 CurrentLevel.PausedUpdate(gameTime, elapsed);
             }
-            //else if (CurrentGameState == GameState.PausedWithMenu)
-            //{
-            //    // Check if they are trying to unpause.
-            //    if (inputManager.CurrentAction.pause && !inputManager.PreviousAction.pause)
-            //    {
-            //        Unpause();
-            //    }
-            //}
+            else if (CurrentGameState == GameState.Credits)
+            {
+                CreditsScreen.Update(elapsed);
+            }
 
             if (Game1.IS_DEBUG)
             {
@@ -801,6 +806,13 @@ namespace MacGame
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
                     spriteBatch.DrawString(Font, "Mac's\nRidiculous\nAdventure", new Vector2(Game1.TileSize, Game1.TileSize), Color.DarkGray, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
                     spriteBatch.DrawString(Font, "Mac's\nRidiculous\nAdventure", new Vector2(Game1.TileSize + 4, Game1.TileSize - 4), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                    spriteBatch.End();
+                    break;
+
+
+                case GameState.Credits:
+                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+                    CreditsScreen.Draw(spriteBatch);
                     spriteBatch.End();
                     break;
                 default:
@@ -991,6 +1003,12 @@ namespace MacGame
             return false;
         }
 
+        public void PlayCredits()
+        {
+            CreditsScreen.Initialize();
+            TransitionToState(GameState.Credits);
+        }
+
         public enum GameState
         {
             TitleScreen,
@@ -1025,7 +1043,9 @@ namespace MacGame
 
             LoadingLevel,
 
-            Dead
+            Dead,
+
+            Credits
         }
     }
 }

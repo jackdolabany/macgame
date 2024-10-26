@@ -148,9 +148,7 @@ namespace MacGame
             }
             else
             {
-                var sockCount = state.Levels.Select(l => l.Value.CollectedSocks.Count).Sum();
-
-                var percentageComplete = (int)System.Math.Round((float)sockCount / (float)Game1.TotalSocks * 100f);
+                var percentageComplete = state.GetPercentComplete();
 
                 // offset for stats
                 x += 16;
@@ -161,7 +159,7 @@ namespace MacGame
                 spriteBatch.Draw(Game1.TileTextures, new Rectangle(8 + x, 8 + y, Game1.TileSize, Game1.TileSize), sockSourceRect, Color.White, 0f, Vector2.Zero, SpriteEffects.None, drawDepth);
 
                 // Draw sock count
-                var sockText = $"{sockCount}\n";
+                var sockText = $"{state.GetSockCount()}\n";
                 spriteBatch.DrawString(Game1.Font, sockText, new Vector2(x + 44, y), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, drawDepth);
 
                 // Draw a crown to the right of the socks if they've beaten the game
@@ -172,17 +170,7 @@ namespace MacGame
                 }
 
                 // Other stats
-                var totalPlayTime = TimeSpan.FromSeconds(state.TotalElapsedTime);
-                string totalPlayTimeText;
-                if (totalPlayTime > TimeSpan.FromDays(1))
-                {
-                    totalPlayTimeText = $"{totalPlayTime:dd\\:hh\\:mm}";
-                }
-                else
-                {                  
-                    totalPlayTimeText = $"{totalPlayTime:hh\\:mm}";
-                }
-
+                string totalPlayTimeText = state.GetFormattedPlayTime();
                 var statText = $"{percentageComplete.ToString("00")}%\n" +
                     totalPlayTimeText;
 

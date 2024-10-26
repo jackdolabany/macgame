@@ -27,6 +27,8 @@ namespace MacGame
 
         public static event EventHandler? IntroComplete;
 
+        public static event EventHandler? FinalBossComplete;
+
         public static void FireSockCollected(Object sender, EventArgs args)
         {
             var evt = SockCollected;
@@ -58,6 +60,15 @@ namespace MacGame
         public static void FireIntroComplete()
         {
             var evt = IntroComplete;
+            if (evt != null)
+            {
+                evt(null, EventArgs.Empty);
+            }
+        }
+
+        public static void FireFinalBossComplete()
+        {
+            var evt = FinalBossComplete;
             if (evt != null)
             {
                 evt(null, EventArgs.Empty);

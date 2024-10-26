@@ -58,7 +58,7 @@
    <properties>
     <property name="GoToMap" value="TestFinalBoss"/>
     <property name="Name" value="BossDoor"/>
-    <property name="SocksNeeded" value="11"/>
+    <property name="SocksNeeded" value="1"/>
    </properties>
   </object>
   <object id="5" name="TestWorld" x="36.8068" y="74.8409" width="15" height="24">

@@ -47,6 +47,33 @@ namespace MacGame
             clone.HasBeatenIntroLevel = this.HasBeatenIntroLevel;
             return clone;
         }
+
+        public int GetSockCount()
+        {
+            return this.Levels.Select(l => l.Value.CollectedSocks.Count).Sum();
+        }
+
+        public int GetPercentComplete()
+        {
+            var sockCount = this.GetSockCount();
+            var percentageComplete = (int)System.Math.Round((float)sockCount / (float)Game1.TotalSocks * 100f);
+            return percentageComplete;
+        }
+
+        public string GetFormattedPlayTime()
+        {
+            var totalPlayTime = TimeSpan.FromSeconds(this.TotalElapsedTime);
+            string totalPlayTimeText;
+            if (totalPlayTime > TimeSpan.FromDays(1))
+            {
+                totalPlayTimeText = $"{totalPlayTime:dd\\:hh\\:mm}";
+            }
+            else
+            {
+                totalPlayTimeText = $"{totalPlayTime:hh\\:mm}";
+            }
+            return totalPlayTimeText;
+        }
     }
 
     public class KeyStoargeState : ICloneable

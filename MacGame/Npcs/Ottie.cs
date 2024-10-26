@@ -116,7 +116,7 @@ namespace MacGame.Npcs
                     ConversationManager.AddMessage("Hey that's just like a game I know!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
 
                     // Ottis
-                    ConversationManager.AddMessage("Oh crap, don't want to get sued.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right, completeAction: showMoon);
+                    ConversationManager.AddMessage("Oh snap, don't want to get sued.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right, completeAction: showMoon);
                     ConversationManager.AddMessage("Instead, find me these magic moons. Hidden throughout the land by mysterious...", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
 
                     // Mac

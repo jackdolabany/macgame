@@ -72,6 +72,9 @@ namespace MacGame.Enemies
 
             Enabled = false;
             base.Kill();
+
+            // TODO: Final boss, just for now.
+            GlobalEvents.FireFinalBossComplete();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

@@ -533,6 +533,7 @@ namespace MacGame
 
             SoundManager.Update(elapsed);
             StorageManager.Update(elapsed);
+            ConversationManager.Update(elapsed);
 
             if (StorageManager.IsSavingOrLoading)
             {
@@ -556,7 +557,7 @@ namespace MacGame
                 {
                     Pause();
                 }
-                else if (ConversationManager.IsInConversation() && transitionTimer <= 0)
+                else if (ConversationManager.ShouldPauseForConversation() && transitionTimer <= 0)
                 {
                     CurrentGameState = GameState.Conversation;
                     return;
@@ -657,11 +658,10 @@ namespace MacGame
             }
             else if (CurrentGameState == GameState.Conversation)
             {
-                ConversationManager.Update(elapsed);
                 CutsceneManager.Update(gameTime, elapsed);
 
                 // If the conversation is over, and they aren't transitioning into another state, go back to playing.
-                if (!ConversationManager.IsInConversation() && transitionToState == GameState.Conversation)
+                if (!ConversationManager.ShouldPauseForConversation() && transitionToState == GameState.Conversation)
                 {
                     CurrentGameState = GameState.Playing;
                 }
@@ -764,11 +764,8 @@ namespace MacGame
                     spriteBatch.Begin();
                     DrawHud(spriteBatch);
 
-                    if (CurrentGameState == GameState.Conversation)
-                    {
-                        ConversationManager.Draw(spriteBatch);
-                    }
-
+                    ConversationManager.Draw(spriteBatch);
+                    
                     spriteBatch.End();
 
                     //// Test draw the processed textures

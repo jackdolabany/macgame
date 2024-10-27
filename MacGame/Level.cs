@@ -230,8 +230,8 @@ namespace MacGame
             if (!Game1.StorageState.HasSeenIntroText)
             {
                 Game1.StorageState.HasSeenIntroText = true;
-                ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
-                ConversationManager.AddMessage("Oh no! My human forgot me in the yard. I'll have to try to find my way back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+                ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
+                ConversationManager.AddMessage("Oh no! My human forgot me in the yard. I'll have to find my way home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
             }
         }
 

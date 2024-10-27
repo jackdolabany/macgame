@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using TileEngine;
+using System.Runtime.CompilerServices;
 
 namespace MacGame
 {
     public static class ConversationManager
     {
-
         public enum ImagePosition
         {
             Left, Right
@@ -55,13 +55,47 @@ namespace MacGame
 
         private static List<ConversationMessage> Messages = new List<ConversationMessage>();
 
+        /// <summary>
+        /// When you add a message we figure out if we should show it at the top or bottom of the screen.
+        /// </summary>
+        private static Float _float;
+
+        /// <summary>
+        /// Conversations can pause gameplay or just pop up over the gameplay and
+        /// the text will advance after some time.
+        /// </summary>
+        private static bool _pauseGameplay = false;
+
+        /// <summary>
+        /// If the message doesn't pause gameplay the messages will advance after some time.
+        /// </summary>
+        private static float _showMessageTimeRemaining = 0f;
+        private const float _messageTime = 3f;
+
         public static void AddMessage(
             string text, 
             Rectangle? imageSource = null, 
             ImagePosition imagePosition = ImagePosition.Left, 
             List<ConversationChoice>? choices = null, 
-            System.Action? completeAction = null)
+            System.Action? completeAction = null,
+            bool pauseGameplay = true)
         {
+            _pauseGameplay = pauseGameplay;
+
+            if (!_pauseGameplay)
+            {
+                _showMessageTimeRemaining = _messageTime;
+            }    
+
+            // float to top or bottom depending on Mac's position.
+            _float = Float.Bottom;
+
+            // Display the message on the top if Mac is near the bottom of the screen.
+            if (Game1.Player.WorldLocation.Y > Game1.Camera.Position.Y + Game1.TileSize)
+            {
+                _float = Float.Top;
+            }
+
             bool isFirstMessage = false;
             if (Messages.Count == 0)
             {
@@ -145,9 +179,9 @@ namespace MacGame
             conversationTexture = content.Load<Texture2D>(@"Textures\ReallyBigTextures");
         }
 
-        public static bool IsInConversation()
+        public static bool ShouldPauseForConversation()
         {
-            return Messages.Count > 0;
+            return Messages.Count > 0 && _pauseGameplay;
         }
 
         public static void Update(float elapsed)
@@ -157,16 +191,23 @@ namespace MacGame
                 return;
             }
 
+            if (_showMessageTimeRemaining > 0)
+            {
+                _showMessageTimeRemaining -= elapsed;
+            }
+
             var player = Game1.Player;
 
             var pa = player.InputManager.PreviousAction;
             var ca = player.InputManager.CurrentAction;
 
+            var pressedAcceptButton = ca.acceptMenu && !pa.acceptMenu;
+
             // if enough time has passed and we dont need to block the inputs any more, see if they pressed the button
             // if so, advance through the messages.
             if (currentLetterIndex >= totalLetters)
             {
-                if (ca.acceptMenu && !pa.acceptMenu)
+                if ((pressedAcceptButton && _pauseGameplay) || (_showMessageTimeRemaining <= 0 && !_pauseGameplay))
                 {
                     var message = Messages[0];
 
@@ -186,6 +227,8 @@ namespace MacGame
 
                     Messages.RemoveAt(0);
                     SetupNewMessage();
+
+                    _showMessageTimeRemaining = _messageTime;
                 }
             }
 
@@ -240,16 +283,7 @@ namespace MacGame
             int leftMargin = (Game1.GAME_X_RESOLUTION - bubbleWidth) / 2;
             int topMargin;
 
-            // float to top or bottom depending on Mac's position.
-            Float @float = Float.Bottom;
-
-            // Display the message on the top if Mac is near the bottom of the screen.
-            if (Game1.Player.WorldLocation.Y > Game1.Camera.Position.Y + Game1.TileSize)
-            {
-                @float = Float.Top;
-            }
-
-            switch (@float)
+            switch (_float)
             {
                 case Float.Top:
                     topMargin = 60;
@@ -327,8 +361,8 @@ namespace MacGame
                 }
             }
 
-            // draw the advance the text arrow
-            if (Messages.Count > 1 && currentLetterIndex >= totalLetters)
+            // draw the advance the text arrow if they can press the button to advance text.
+            if (_pauseGameplay && Messages.Count > 1 && currentLetterIndex >= totalLetters)
             {
                 spriteBatch.Draw(Game1.TileTextures, new Vector2(arrowX, topMargin + bubbleHeight - advanceMessageArrowSourceRect.Height - 2), advanceMessageArrowSourceRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, textDepth);
             }

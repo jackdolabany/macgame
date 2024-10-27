@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.10.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -189,6 +189,11 @@
    <property name="LoadClass" value="Enemy.Beetle"/>
   </properties>
  </tile>
+ <tile id="89">
+  <properties>
+   <property name="LoadClass" value="Enemy.Cricket"/>
+  </properties>
+ </tile>
  <tile id="91">
   <properties>
    <property name="Hidden" value="1"/>
@@ -207,11 +212,6 @@
  <tile id="96">
   <properties>
    <property name="LoadClass" value="Enemy.Frog"/>
-  </properties>
- </tile>
- <tile id="97">
-  <properties>
-   <property name="LoadClass" value="Cannon"/>
   </properties>
  </tile>
  <tile id="100">
@@ -267,9 +267,9 @@
    <property name="LoadClass" value="Enemy.Urchin"/>
   </properties>
  </tile>
- <tile id="115">
+ <tile id="112">
   <properties>
-   <property name="LoadClass" value="Enemy.Cricket"/>
+   <property name="LoadClass" value="Cannon"/>
   </properties>
  </tile>
  <tile id="117">

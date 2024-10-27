@@ -3,6 +3,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TileEngine;
 
 namespace MacGame.Npcs
@@ -86,47 +87,71 @@ namespace MacGame.Npcs
                 {
                     _didInitiateIntroConveration = true;
 
-                    var showStar = () => 
-                    {
-                        CutsceneManager.CollectiblePosition = WorldLocation + new Vector2(-90, -90);
-                        CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.Intro;
-                        CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowStar; 
-                    };
-                    var showMoon = () => { CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowMoon; };
-                    var showSock = () => { CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowSock; };
-                    var finish = () => 
-                    {
-                        CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.None;
-                        CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.None;
-                        GlobalEvents.FireIntroComplete();
-                    };
-
                     // Ottis
                     ConversationManager.AddMessage("Hi! I'm Ottis, I'm a good boy.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                    
+
                     // Mac
                     ConversationManager.AddMessage("Hey, I'm Mac. I could use a good person to help me get back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
                     ConversationManager.AddMessage("I thought this was going to be one of those straight forward games, like jump on a flagpole. Maybe save a princess.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
 
+                    var showStar = () =>
+                    {
+                        CutsceneManager.CollectiblePosition = WorldLocation + new Vector2(-90, -90);
+                        CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.Intro;
+                        CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowStar;
+
+                        TimerManager.AddNewTimer(2f, () =>
+                        {
+                            // Ottis
+                            ConversationManager.AddMessage("I can get you back home, just find me the lost Magic Stars.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+
+                            // Mac
+                            ConversationManager.AddMessage("Hey that's just like a game I know!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+
+                            var showMoon = () => {
+                                CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowMoon;
+
+                                TimerManager.AddNewTimer(2f, () =>
+                                {
+
+                                    ConversationManager.AddMessage("Instead, find me these magic moons. Hidden throughout the land by mysterious...", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+
+                                    var showSock = () =>
+                                    {
+                                        CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowSock;
+
+                                        TimerManager.AddNewTimer(2f, () =>
+                                        {
+                                            // Ottis
+                                            ConversationManager.AddMessage("Tell you what, I'm a dog and I like stinky socks. Find me the magic stinky gym socks.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                                           
+                                            var finish = () =>
+                                            {
+                                                CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.None;
+                                                CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.None;
+                                                GlobalEvents.FireIntroComplete();
+                                            };
+
+                                            // Mac
+                                            ConversationManager.AddMessage("I'll do it!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, completeAction: finish);
+                                        });
+                                    };
+
+                                    // Mac
+                                    ConversationManager.AddMessage("That sounds familiar too", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, completeAction: showSock);
+                                });
+
+                            };
+
+                            // Ottis
+                            ConversationManager.AddMessage("Oh snap, don't want to get sued.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right, completeAction: showMoon);
+                        });
+
+
+                    };
+
                     // Ottis
                     ConversationManager.AddMessage("No, it can't be like that. We'll get sued.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right, completeAction: showStar);
-                    ConversationManager.AddMessage("I can get you back home, just find me the lost Magic Stars.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-
-                    // Mac
-                    ConversationManager.AddMessage("Hey that's just like a game I know!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
-
-                    // Ottis
-                    ConversationManager.AddMessage("Oh snap, don't want to get sued.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right, completeAction: showMoon);
-                    ConversationManager.AddMessage("Instead, find me these magic moons. Hidden throughout the land by mysterious...", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-
-                    // Mac
-                    ConversationManager.AddMessage("That sounds familiar too", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, completeAction: showSock);
-
-                    // Ottis
-                    ConversationManager.AddMessage("Tell you what, I'm a dog and I like stinky socks. Find me the magic stinky gym socks.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-
-                    // Mac
-                    ConversationManager.AddMessage("I'll do it!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, completeAction: finish);
 
                 }
             }

@@ -58,7 +58,7 @@ namespace MacGame
             }
         }
 
-        public virtual void HandleNavigationInputs(ref Action ca, ref Action pa, float elapsed)
+        public virtual void HandleNavigationInputs(ref InputAction ca, ref InputAction pa, float elapsed)
         {
             // Move to the previous menu entry that is not hidden.
             if (ca.up && !pa.up)
@@ -91,7 +91,7 @@ namespace MacGame
             selectedEntryIndex = defaultSelectedEntryIndex;
         }
 
-        public virtual void HandleSelectionInputs(ref Action ca, ref Action pa, float elapsed)
+        public virtual void HandleSelectionInputs(ref InputAction ca, ref InputAction pa, float elapsed)
         {
             // Accept or cancel the menu? We pass in our ControllingPlayer, which may
             // either be null (to accept input from any player) or a specific index.

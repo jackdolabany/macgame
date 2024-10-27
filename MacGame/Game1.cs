@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World1";
+        public const string StartingWorld = "IntroLevel";
         private const bool startAtTitleScreen = true;
         public static bool IS_DEBUG = true;
 
@@ -36,6 +36,8 @@ namespace MacGame
         public const float MIN_DRAW_INCREMENT = 0.000001f;
 
         public static bool DrawAllCollisisonRects = false;
+        
+        public static Color SoftWhite = new Color(255, 241, 232);
 
         /// <summary>
         /// 8 x 8 Tiles
@@ -544,6 +546,8 @@ namespace MacGame
             var isPaused = CurrentGameState == GameState.PausedWithMenu;
 
             MenuManager.Update(elapsed);
+            
+            CutsceneManager.Update(gameTime, elapsed);
 
             if (_gameState == GameState.Playing)
             {
@@ -658,8 +662,6 @@ namespace MacGame
             }
             else if (CurrentGameState == GameState.Conversation)
             {
-                CutsceneManager.Update(gameTime, elapsed);
-
                 // If the conversation is over, and they aren't transitioning into another state, go back to playing.
                 if (!ConversationManager.ShouldPauseForConversation() && transitionToState == GameState.Conversation)
                 {
@@ -801,11 +803,10 @@ namespace MacGame
 
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
-                    spriteBatch.DrawString(Font, "Mac's\nRidiculous\nAdventure", new Vector2(Game1.TileSize, Game1.TileSize), Color.DarkGray, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
-                    spriteBatch.DrawString(Font, "Mac's\nRidiculous\nAdventure", new Vector2(Game1.TileSize + 4, Game1.TileSize - 4), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(TileTextures, new Rectangle(90, GAME_Y_RESOLUTION - 64, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
+                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(130, GAME_Y_RESOLUTION - 68), Game1.SoftWhite);
                     spriteBatch.End();
                     break;
-
 
                 case GameState.Credits:
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);

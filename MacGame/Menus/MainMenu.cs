@@ -29,7 +29,7 @@ namespace MacGame
             });
 
             this.IsOverlay = false;
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * 0.75f));
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (int)(Game1.GAME_Y_RESOLUTION * 0.66f));
         }
 
         public override void Draw(SpriteBatch spriteBatch)

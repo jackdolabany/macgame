@@ -34,7 +34,6 @@ namespace MacGame
         public static CutsceneType CurrentCutscene = CutsceneType.None;
         public static IntroState CurrentIntroState = IntroState.None;
         public static Vector2 CollectiblePosition = Vector2.Zero;
-
         public static void Initialize(ContentManager content)
         {
             _collectible = new AnimationDisplay();

@@ -171,7 +171,7 @@ namespace MacGame
             {
                 var size = Game1.Font.MeasureString(line);
                 
-                spriteBatch.DrawString(Game1.Font, line, new Vector2(positionX, positionY + yOffset), Color.White, 0f, new Vector2(size.X / 2f, size.Y / 2f), scale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(Game1.Font, line, new Vector2(positionX, positionY + yOffset), Game1.SoftWhite, 0f, new Vector2(size.X / 2f, size.Y / 2f), scale, SpriteEffects.None, 0);
             
                 yOffset += lineHeight;
 

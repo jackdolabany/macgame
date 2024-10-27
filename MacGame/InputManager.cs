@@ -6,8 +6,8 @@ namespace MacGame
 {
     public class InputManager
     {
-        public Action CurrentAction = new Action();
-        public Action PreviousAction = new Action();
+        public InputAction CurrentAction = new InputAction();
+        public InputAction PreviousAction = new InputAction();
         public const float JOYSTICK_GIVE = 0.3f;
 
         public bool Enabled = true;
@@ -17,7 +17,7 @@ namespace MacGame
             if (!Enabled) return;
 
             PreviousAction = CurrentAction;
-            CurrentAction = new Action();
+            CurrentAction = new InputAction();
 
             GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
 
@@ -90,7 +90,7 @@ namespace MacGame
 
 
 
-    public struct Action
+    public struct InputAction
     {
         public bool up;
         public bool down;

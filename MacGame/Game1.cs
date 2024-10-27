@@ -17,7 +17,7 @@ namespace MacGame
     {
 
         public const string StartingWorld = "World1";
-        private const bool startAtTitleScreen = false;
+        private const bool startAtTitleScreen = true;
         public static bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;
@@ -77,7 +77,7 @@ namespace MacGame
         /// </summary>
         public const string SaveGameFolder = "MacsAdventure";
 
-        public const string HubWorld = "TestHub";
+        public const string HubWorld = "HubWorld";
         public const string IntroLevel = "IntroLevel";
 
         // Set in the ctor

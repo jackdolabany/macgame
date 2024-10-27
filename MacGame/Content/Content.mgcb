@@ -45,6 +45,11 @@
 /processor:PassThroughProcessor
 /build:Maps/GreenRoom.tmx
 
+#begin Maps/HubWorld.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/HubWorld.tmx
+
 #begin Maps/IntroLevel.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

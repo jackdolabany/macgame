@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="8" tileheight="8" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="8" tileheight="8" infinite="0" nextlayerid="3" nextobjectid="1">
  <properties>
   <property name="LevelNumber" value="0"/>
  </properties>
  <tileset firstgid="1" source="Textures.tsx"/>
  <layer id="1" name="Tile Layer 1" width="3" height="3">
   <data encoding="base64">
-   iQAAAIkAAACJAAAAiQAAAEQAAACJAAAAiQAAAIkAAACJAAAA
+   iQAAAIkAAACJAAAAiQAAAP0AAACJAAAAiQAAAIkAAACJAAAA
   </data>
  </layer>
  <layer id="2" name="GameObjects" width="3" height="3">

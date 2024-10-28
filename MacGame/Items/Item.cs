@@ -106,7 +106,7 @@ namespace MacGame.Items
                     isOpen = true;
 
                     // Move it just above the player so he doesn't instantly collect it.
-                    this.worldLocation.Y = _player.CollisionRectangle.Top - 5;
+                    this.worldLocation.Y = _player.CollisionRectangle.Top - 8;
                 }
             }
             else if (Enabled)

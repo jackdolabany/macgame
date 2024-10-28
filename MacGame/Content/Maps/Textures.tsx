@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.2" tiledversion="1.2.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -214,6 +214,21 @@
    <property name="LoadClass" value="Enemy.Frog"/>
   </properties>
  </tile>
+ <tile id="97">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="98">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="99">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="100">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -270,6 +285,21 @@
  <tile id="112">
   <properties>
    <property name="LoadClass" value="Cannon"/>
+  </properties>
+ </tile>
+ <tile id="113">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="114">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="115">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="117">

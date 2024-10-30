@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World2";
+        public const string StartingWorld = "TestDoors";
         private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
 
@@ -432,14 +432,7 @@ namespace MacGame
                 {
                     if (door.Name == hubDoorPlayerCameFrom)
                     {
-                        if (isYeet)
-                        {
-                            door.PlayerSlidingOut();
-                        }
-                        else
-                        {
-                            Player.WorldLocation = door.WorldLocation;
-                        }
+                        door.ComeOutOfThisDoor(Player, isYeet);
                         break;
                     }
                 }
@@ -634,7 +627,7 @@ namespace MacGame
                     {
                         if (door.Name == _putPlayerAtDoor)
                         {
-                            Player.WorldLocation = door.WorldLocation;
+                            door.ComeOutOfThisDoor(Player);
                             break;
                         }
                     }

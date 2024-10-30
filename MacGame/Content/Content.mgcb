@@ -65,6 +65,11 @@
 /processor:PassThroughProcessor
 /build:Maps/SmallestTest.tmx
 
+#begin Maps/TestDoors.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestDoors.tmx
+
 #begin Maps/TestFinalBoss.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

@@ -31,5 +31,12 @@ namespace MacGame.Doors
         }
 
         public abstract void PlayerSlidingOut();
+
+        public virtual void ComeOutOfThisDoor(Player player, bool isYeet = false)
+        {
+            player.WorldLocation = this.WorldLocation;
+            player.Velocity = Vector2.Zero;
+            player.IsInvisible = false;
+        }
     }
 }

@@ -23,6 +23,9 @@ namespace MacGame.Doors
 
         private DoorState State;
 
+        // Whether we kick the player out of the door or he walks out nicely.
+        private bool isYeet = false;
+
         public enum DoorState
         {
             /// <summary>
@@ -133,6 +136,12 @@ namespace MacGame.Doors
             return $"You need {SocksNeeded} socks to unlock this door.";
         }
 
+        private void Unlock()
+        {
+            IsLocked = false;
+            _player.AddUnlockedDoor(Name);
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             if (IsLocked && JailBarAnimations.CurrentAnimation == null)
@@ -148,8 +157,7 @@ namespace MacGame.Doors
 
             if (JailBarAnimations.CurrentAnimationName == "open" && JailBarAnimations.CurrentAnimation!.FinishedPlaying)
             {
-                IsLocked = false;
-                _player.AddUnlockedDoor(Name);
+                Unlock();
             }
 
             if (State == DoorState.Idle)
@@ -189,14 +197,25 @@ namespace MacGame.Doors
             }
             else if (State == DoorState.ExitOpening)
             {
-                _player.IsInvisible = true;
+
+                // Weird hack but we want to show the player early if they walk out the door, late if they
+                // are tossed out. It looks better, trust me.
+                if (!isYeet)
+                {
+                    _player.IsInvisible = DoorAnimations.CurrentAnimation.currentFrameIndex < 1;
+                }
+
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
                     _player.IsInvisible = false;
-                    _player.SlideOutOfDoor(WorldLocation);
                     State = DoorState.ExitClosing;
                     DoorAnimations.Play("close");
-                    SoundManager.PlaySound("KickedOutOfDoor");
+                    if (isYeet)
+                    {
+                        _player.SlideOutOfDoor(WorldLocation);
+                        SoundManager.PlaySound("KickedOutOfDoor");
+                    }
+                    isYeet = false;
                 }
             }
             else if (State == DoorState.ExitClosing)
@@ -261,6 +280,24 @@ namespace MacGame.Doors
             State = DoorState.ExitOpening;
             _player.IsInvisible = true;
             _player.PositionForSlideOutOfDoor(WorldLocation);
+        }
+
+        public override void ComeOutOfThisDoor(Player player, bool isYeet = false)
+        {
+            base.ComeOutOfThisDoor(player);
+
+            DoorAnimations.Play("open");
+            SoundManager.PlaySound("DoorOpen");
+            State = DoorState.ExitOpening;
+            player.IsInvisible = true;
+
+            // Door unlocks as you go through it.
+            Unlock();
+            this.isYeet = isYeet;
+            if (isYeet)
+            {
+                _player.PositionForSlideOutOfDoor(WorldLocation);
+            }
         }
     }
 }

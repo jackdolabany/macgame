@@ -387,10 +387,6 @@ namespace MacGame
                                             {
                                                 button.DownAction = prop.Value;
                                             }
-                                            else if (prop.Key == "ButtonGroup")
-                                            {
-                                                button.ButtonGroup = prop.Value;
-                                            }
                                         }
                                     }
                                 }

@@ -39,7 +39,7 @@
   </object>
   <object id="2" name="SecondWorldDoor" x="138.273" y="69.9545" width="17.75" height="30">
    <properties>
-    <property name="GoToMap" value="TestWorld2"/>
+    <property name="GoToMap" value="World2"/>
     <property name="IsToSubworld" value="1"/>
     <property name="SocksNeeded" value="2"/>
    </properties>

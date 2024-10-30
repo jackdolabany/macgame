@@ -16,8 +16,8 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "IntroLevel";
-        private const bool startAtTitleScreen = true;
+        public const string StartingWorld = "World2";
+        private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;
@@ -36,14 +36,14 @@ namespace MacGame
         public const float MIN_DRAW_INCREMENT = 0.000001f;
 
         public static bool DrawAllCollisisonRects = false;
-        
+
         public static Color SoftWhite = new Color(255, 241, 232);
 
         /// <summary>
         /// 8 x 8 Tiles
         /// </summary>
         public static Texture2D TileTextures;
-        
+
         /// <summary>
         /// 16 x 16 tiles
         /// </summary>
@@ -59,7 +59,7 @@ namespace MacGame
         public static Rectangle WhiteSourceRect;
 
         public const int TileSize = TileMap.TileSize;
-        
+
         /// <summary>
         /// The scale that the content processor will apply to the tiles.
         /// For this game, we have 8x8 tiles, but they are scaled up to 32x32 for smooth scrolling.
@@ -72,7 +72,22 @@ namespace MacGame
 
         private static SceneManager sceneManager;
 
-        public static Level CurrentLevel;
+        private static Level _level;
+        public static Level CurrentLevel
+        {
+            get 
+            { 
+                return _level;
+            }
+            set
+            {
+                if (_level != null)
+                {
+                    _level.Reset();
+                }
+                _level = value;
+            }
+        }
 
         /// <summary>
         /// putting this here so it can easily be seen.

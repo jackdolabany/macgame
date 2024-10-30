@@ -416,6 +416,15 @@ namespace MacGame
 
         }
 
+        /// <summary>
+        /// Last chance to reset the level as we leave it so we don't come back to madness.
+        /// </summary>
+        public void Reset()
+        {
+            // back to default water height.
+            HighWater();
+        }
+
         public void HighWater()
         {
             SetWaterHeight(WaterHeight.High);

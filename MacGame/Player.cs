@@ -282,7 +282,7 @@ namespace MacGame
 
             this.IsAffectedByPlatforms = true;
 
-            SetCenteredCollisionRectangle(5, 7);
+            SetCenteredCollisionRectangle(5, 6);
 
             InputManager = inputManager;
             _deadMenu = deadMenu;
@@ -1280,7 +1280,7 @@ namespace MacGame
                 
             }
 
-            const float swimSpeed = 200f;
+            const float swimSpeed = 250f;
             const float maxSpeed = 100f;
 
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)

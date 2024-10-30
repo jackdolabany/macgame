@@ -34,11 +34,6 @@ namespace MacGame
 
         float cooldownTimer = 0f;
 
-        /// <summary>
-        /// Set from the map editor. When a button goes down of a certain group, the other buttons go back up.
-        /// </summary>
-        public string ButtonGroup = "";
-
         public Button(ContentManager content, int cellX, int cellY, Player player, bool isUp)
         {
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
@@ -90,13 +85,14 @@ namespace MacGame
                 cooldownTimer -= elapsed;
             }
 
-            if (cooldownTimer <= 0 
-                && _player.CollisionRectangle.Intersects(this.CollisionRectangle) 
-                && _player.Velocity.Y > 0 
+            if (cooldownTimer <= 0
+                && _player.CollisionRectangle.Intersects(this.CollisionRectangle)
+                && _player.Velocity.Y > 0
+                && !_player.IsInWater
                 && animations.CurrentAnimationName == "up")
             {
                 // TODO: Play sound
-                
+
                 animations.Play("down");
                 if (!string.IsNullOrEmpty(DownAction))
                 {
@@ -105,19 +101,29 @@ namespace MacGame
                     MethodInfo methodInfo = type.GetMethod(DownAction);
                     methodInfo.Invoke(Game1.CurrentLevel, null);
                 }
-                
+
                 cooldownTimer = 0.5f;
 
                 // Pop the player up a bit.
                 _player.Velocity = new Vector2(_player.Velocity.X, -300);
 
-                if (ButtonGroup != "")
+                // Water buttons should put the other buttons up or down.
+                if (this.DownAction.EndsWith("Water"))
                 {
-                    foreach (var button in Game1.CurrentLevel.GameObjects.OfType<Button>())
+                    var buttons = Game1.CurrentLevel.GameObjects.OfType<Button>();
+
+                    foreach (var button in buttons)
                     {
-                        if (button.ButtonGroup == ButtonGroup && button != this)
+                        if (button != this)
                         {
-                            button.MoveUp();
+                            if (button.DownAction == this.DownAction)
+                            {
+                                button.MoveDownNoAction();
+                            }
+                            else if (button.DownAction.EndsWith("Water"))
+                            {
+                                button.MoveUpNoAction();
+                            }
                         }
                     }
                 }
@@ -126,16 +132,14 @@ namespace MacGame
             base.Update(gameTime, elapsed);
         }
 
-        public void MoveUp()
+        public void MoveUpNoAction()
         {
             animations.Play("up");
-            if (!string.IsNullOrEmpty(UpAction))
-            {
-                // TODO: PlaySound
-                var type = Game1.CurrentLevel.GetType();
-                MethodInfo methodInfo = type.GetMethod(UpAction);
-                methodInfo.Invoke(Game1.CurrentLevel, null);
-            }
+        }
+
+        public void MoveDownNoAction()
+        {
+            animations.Play("down");
         }
     }
 }

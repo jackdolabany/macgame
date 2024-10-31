@@ -153,6 +153,9 @@ namespace MacGame.Items
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+            if (Game1.Camera.IsWayOffscreen(this.CollisionRectangle)) return;
+
             if (IsInChest)
             { 
                 if (!isOpen)

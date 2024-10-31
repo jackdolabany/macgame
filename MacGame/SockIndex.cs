@@ -34,7 +34,7 @@ namespace MacGame
                 2, 
                 new List<SockInfo>
                 {
-                    new SockInfo { Name = "WaterMazeSock", Hint = "There's a terrible maze deep in the water somewhere. I heard there's a sock stashed in there somewhere." },
+                    new SockInfo { Name = "WaterMazeSock", Hint = "There's a terrible maze deep in the water somewhere. I heard there's a sock stashed at the end." },
                     new SockInfo { Name = "RedDoorSock", Hint = "Find the red key." },
                     new SockInfo { Name = "GreenDoorSock", Hint = "Find the green key." },
                     new SockInfo { Name = "BlueDoorSock", Hint = "Find the blue key." },

@@ -102,6 +102,9 @@ namespace MacGame.DisplayComponents
             var drawPosition = center - new Vector2(drawObject.SourceRectangle.Width / 2, drawObject.SourceRectangle.Height / 2) * Scale;
             drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
 
+            // Lock them into an integer position.
+            drawObject.Position = new Vector2(drawObject.Position.X.ToInt(), drawObject.Position.Y.ToInt());
+
         }
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)

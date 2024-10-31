@@ -204,7 +204,7 @@
     <property name="Convo" value="Me:Welcome to animal village"/>
    </properties>
   </object>
-  <object id="39" x="1028.75" y="1083.88" width="15.875" height="15.875">
+  <object id="39" name="ChickenText" x="1028.75" y="1083.88" width="15.875" height="15.875">
    <properties>
     <property name="Convo" value="Me:The guy in the red house can give you tips"/>
    </properties>

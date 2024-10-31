@@ -170,6 +170,26 @@
 /processor:PassThroughProcessor
 /build:Maps/World2.tmx
 
+#begin Maps/World2BigPurpleHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2BigPurpleHouse.tmx
+
+#begin Maps/World2RedHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2RedHouse.tmx
+
+#begin Maps/World2SmallPurpleHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2SmallPurpleHouse.tmx
+
+#begin Maps/World2YellowHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2YellowHouse.tmx
+
 #begin Music/BossFight.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

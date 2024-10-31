@@ -98,6 +98,8 @@ namespace MacGame
         {
             if (!Enabled) return;
 
+            if (!Game1.Camera.IsObjectVisible(new Rectangle(WorldLocation.X.ToInt(), WorldLocation.Y.ToInt(), Game1.TileSize, Game1.TileSize))) return;
+
             // hijack the flyweight's display component, that's what it's there for.
             var ad = (AnimationDisplay)Game1.WaterWaveFlyweight.DisplayComponent;
             ad.WorldLocation = this.WorldLocation;

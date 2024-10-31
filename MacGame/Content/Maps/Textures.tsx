@@ -435,6 +435,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="169">
+  <properties>
+   <property name="LoadClass" value="Npc.OrangeCat"/>
+  </properties>
+ </tile>
  <tile id="171">
   <properties>
    <property name="LoadClass" value="GreenDoor"/>

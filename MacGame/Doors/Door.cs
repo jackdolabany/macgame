@@ -38,5 +38,12 @@ namespace MacGame.Doors
             player.Velocity = Vector2.Zero;
             player.IsInvisible = false;
         }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (Game1.Camera.IsWayOffscreen(this.CollisionRectangle)) return;
+
+            base.Draw(spriteBatch);
+        }
     }
 }

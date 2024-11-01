@@ -497,6 +497,11 @@ namespace MacGame
             }
             return strings;
         }
+
+        internal static void Clear()
+        {
+            Messages.Clear();
+        }
     }
 
     public class ConversationChoice

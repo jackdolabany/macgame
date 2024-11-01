@@ -1332,7 +1332,7 @@ namespace MacGame
             Enabled = false;
             this.CurrentItem = null;
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
-            SoundManager.PlaySound("MacDeath");
+            SoundManager.PlaySound("MacDeath", 0.5f);
             MenuManager.AddMenu(_deadMenu);
         }
 

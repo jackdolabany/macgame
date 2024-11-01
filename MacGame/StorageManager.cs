@@ -31,6 +31,13 @@ namespace MacGame
         private static bool IsSaving { get; set; }
         private static bool IsLoading { get; set; }
 
+        /// <summary>
+        /// Fade the disk for this amount of time after save.
+        /// </summary>
+        private const float DiskFadeTimerMax = 0.75f;
+        
+        private static float _diskfadeTimer = 0f;
+
         public static bool IsSavingOrLoading
         {
             get
@@ -60,7 +67,7 @@ namespace MacGame
             var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var fileName = string.Format(SavedGameFileName, stateToSave.SaveSlot);
 
-            Task.Run(() =>
+            var result = Task.Run(() =>
             {
                 // Convert to Json using JSON.NET and write the file.
                 var json = JsonConvert.SerializeObject(stateToSave);
@@ -85,9 +92,14 @@ namespace MacGame
                 // Testing
                 //System.Threading.Thread.Sleep(3000);
 
+                // Start to fade the icon away.
+                _diskfadeTimer = DiskFadeTimerMax;
+
                 DoneSavingOrLoading();
             });
 
+
+            if (result == null) return;
         }
 
         public static void TryLoadGame(int saveSlot)
@@ -165,25 +177,28 @@ namespace MacGame
 
         public static void Update(float elapsed)
         {
-            if (!IsSavingOrLoading) return; // save some clock cycles, this is by far the most common case.
-
-            // spinnerRotation += elapsed * 1;
+            if (_diskfadeTimer > 0)
+            {
+                _diskfadeTimer -= elapsed;
+            }
         }
 
         internal static void Draw(SpriteBatch spriteBatch)
         {
-            if (!IsSavingOrLoading) return;
-            //string savingText = "";
-            //if (IsSaving)
-            //{
-            //    savingText = "Saving...";
-            //}
-            //else if (IsLoading)
-            //{
-            //    savingText = "Loading...";
-            //}
-            // spriteBatch.DrawString(Game1.Font, savingText, new Vector2(Game1.GAME_X_RESOLUTION / 2 - 56, Game1.GAME_Y_RESOLUTION - 14), Color.LightGray, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(spinnerTexture, new Vector2(Game1.GAME_X_RESOLUTION - Game1.TileSize - 8, Game1.GAME_Y_RESOLUTION - Game1.TileSize - 8), spinnerSourceRect, Color.White, spinnerRotation, new Vector2(spinnerSourceRect.Width / 2, spinnerSourceRect.Height / 2), 1f, SpriteEffects.None, 0f);
+            if (IsSaving || _diskfadeTimer > 0)
+            {
+
+                var color = Color.White;
+
+                if (!IsSaving)
+                {
+                    color = Color.Lerp(Color.White, Color.Transparent, (DiskFadeTimerMax - _diskfadeTimer) / DiskFadeTimerMax);
+                }
+
+                spriteBatch.Draw(spinnerTexture, new Vector2(Game1.GAME_X_RESOLUTION - Game1.TileSize - 8, Game1.GAME_Y_RESOLUTION - Game1.TileSize - 8), spinnerSourceRect, color, spinnerRotation, new Vector2(spinnerSourceRect.Width / 2, spinnerSourceRect.Height / 2), 1f, SpriteEffects.None, 0f);
+            }
+           
+            
         }
     }
 }

@@ -408,6 +408,7 @@ namespace MacGame
         public void GoToHub(bool isYeet)
         {
             MenuManager.ClearMenus();
+            ConversationManager.Clear();
 
             TransitionToState(GameState.Playing);
 
@@ -442,6 +443,7 @@ namespace MacGame
         public void StartNewGame()
         {
             MenuManager.ClearMenus();
+            ConversationManager.Clear();
             TransitionToState(GameState.Playing);
             pauseMenu.SetupTitle("Paused");
             Player.ResetStateForLevelTransition(true);
@@ -454,6 +456,7 @@ namespace MacGame
         {
             Player.Health = Player.MaxHealth;
             MenuManager.ClearMenus();
+            ConversationManager.Clear();
             TransitionToState(GameState.Playing);
             CurrentLevel = sceneManager.LoadLevel(CurrentLevel.Name, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
@@ -462,6 +465,7 @@ namespace MacGame
         public void GoToTitleScreen()
         {
             MenuManager.ClearMenus();
+            ConversationManager.Clear();
             TransitionToState(GameState.TitleScreen);
         }
 
@@ -544,11 +548,6 @@ namespace MacGame
             SoundManager.Update(elapsed);
             StorageManager.Update(elapsed);
             ConversationManager.Update(elapsed);
-
-            if (StorageManager.IsSavingOrLoading)
-            {
-                return;
-            }
 
             // Menu manager update might unpause the game, we don't want to re-pause it on the same update frame.
             var isPaused = CurrentGameState == GameState.PausedWithMenu;
@@ -968,6 +967,7 @@ namespace MacGame
 
             SoundManager.StopSong();
             MenuManager.ClearMenus();
+            ConversationManager.Clear();
             Game1.StorageState = (StorageState)ss.Clone();
 
             Player.SockCount = Game1.StorageState.Levels.Select(l => l.Value).Sum(l => l.CollectedSocks.Count);

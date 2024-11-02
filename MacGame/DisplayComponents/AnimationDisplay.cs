@@ -55,7 +55,7 @@ namespace MacGame.DisplayComponents
             {
                 spriteBatch.Draw(
                     drawObject.Texture,
-                    drawObject.Position,
+                    drawObject.Position.ToIntegerVector(),
                     drawObject.SourceRectangle,
                     TintColor,
                     Rotation,
@@ -103,7 +103,7 @@ namespace MacGame.DisplayComponents
             drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
 
             // Lock them into an integer position.
-            drawObject.Position = new Vector2(drawObject.Position.X.ToInt(), drawObject.Position.Y.ToInt());
+            drawObject.Position = new Vector2(drawObject.Position.X, drawObject.Position.Y);
 
         }
 

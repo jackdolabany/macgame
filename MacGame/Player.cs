@@ -77,6 +77,7 @@ namespace MacGame
         public Vector2 JumpGravity;
 
         public bool IsInWater = false;
+        public bool IsJumpingOutOfWater = false;
 
         // Add time here to make the camera track Mac slowly for a period of time. This will help 
         // move the camera more naturally for a period when he does "snapping" actions like snapping to the
@@ -335,7 +336,24 @@ namespace MacGame
             }
 
             var wasInWater = IsInWater;
-            IsInWater = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter)?.IsWater ?? false;
+
+            if (!IsJumpingOutOfWater)
+            {
+                if (wasInWater)
+                {
+                    // Water is kind of sticky, once in you'll stay in water until your top and bottom pixel are out of water.
+                    var topPixel = new Vector2(this.WorldCenter.X, this.CollisionRectangle.Top);
+                    var isTopInWater = Game1.CurrentMap?.GetMapSquareAtPixel(topPixel)?.IsWater ?? false;
+                    var bottomPixel = new Vector2(this.WorldCenter.X, this.CollisionRectangle.Bottom);
+                    var isBottomInWater = Game1.CurrentMap?.GetMapSquareAtPixel(bottomPixel)?.IsWater ?? false;
+                    IsInWater = isTopInWater || isBottomInWater;
+                }
+                else
+                {
+                    // If you weren't in water, you're in water when your center pixel is in water.
+                    IsInWater = Game1.CurrentMap?.GetMapSquareAtPixel(this.WorldCenter)?.IsWater ?? false;
+                }
+            }
 
             if (!wasInWater && IsInWater)
             {
@@ -346,6 +364,11 @@ namespace MacGame
                 }
                 // TODO: Play water splash or swim sound
                 //SoundManager.PlaySound("Splash");
+            }
+
+            if (IsJumpingOutOfWater && this.Velocity.Y >= 0)
+            {
+                IsJumpingOutOfWater = false;
             }
 
             if (IsInMineCart)
@@ -1256,8 +1279,7 @@ namespace MacGame
 
             Vector2 headLocation = new Vector2(this.CollisionRectangle.Center.X, this.CollisionRectangle.Top);
             bool isHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation)?.IsWater ?? false;
-            bool justBelowHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation + new Vector2(0, 8))?.IsWater ?? false;
-            bool isJumpingOutOfWater = false;
+            bool justBelowHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation)?.IsWater ?? false;
 
             // If you are in water you can't jump very high.
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
@@ -1272,7 +1294,8 @@ namespace MacGame
                 }
                 else
                 {
-                    isJumpingOutOfWater = true;
+                    IsJumpingOutOfWater = true;
+                    IsInWater = false;
                     SoundManager.PlaySound("Jump");
                     // TODO: Too much!
                     this.velocity.Y -= 500;
@@ -1320,7 +1343,7 @@ namespace MacGame
 
             // If they are near the top, stop their movement so that they have a head above water but they don't pop out
             // this makes it easier to jump out of the water.
-            if (!isJumpingOutOfWater && !justBelowHeadUnderWater)
+            if (!IsJumpingOutOfWater && !justBelowHeadUnderWater)
             {
                 this.velocity.Y = MathHelper.Clamp(this.velocity.Y, 0, this.velocity.Y);
             }

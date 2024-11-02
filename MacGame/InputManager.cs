@@ -50,6 +50,7 @@ namespace MacGame
             }
 
             if (keyState.IsKeyDown(Keys.Space)
+                || keyState.IsKeyDown(Keys.X)
                 || gamePad.IsButtonDown(Buttons.A))
             {
                 CurrentAction.jump = true;
@@ -57,6 +58,7 @@ namespace MacGame
 
             if (keyState.IsKeyDown(Keys.Z)
                 || keyState.IsKeyDown(Keys.LeftShift)
+                || keyState.IsKeyDown(Keys.A)
                 || gamePad.IsButtonDown(Buttons.X))
             {
                 CurrentAction.action = true;

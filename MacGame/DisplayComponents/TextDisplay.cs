@@ -50,7 +50,7 @@ namespace MacGame.DisplayComponents
             {
                 spriteBatch.DrawString(Game1.Font,
                     Text,
-                    WorldLocation,
+                    WorldLocation.ToIntegerVector(),
                     TintColor,
                     Rotation,
                     RotationAndDrawOrigin,

@@ -41,7 +41,7 @@ namespace MacGame
             int x = (Game1.GAME_X_RESOLUTION - (tileWidth * Game1.TileSize)) / 2;
 
             //var height = (tileHeight * Game1.TileSize);
-            int y = (int)this.Position.Y - 44;
+            int y = (int)this.Position.Y - 40;
 
             // Put it behind this menu a bit
             var drawDepth = this.DrawDepth + Game1.MIN_DRAW_INCREMENT * 100;

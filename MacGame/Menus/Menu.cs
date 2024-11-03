@@ -15,7 +15,7 @@ namespace MacGame
 
         public Vector2 Position { get; set; }
         
-        public float Scale = 1f;
+        public float Scale = Game1.FontScale;
         protected Game1 Game;
         public float DrawDepth;
         
@@ -172,8 +172,7 @@ namespace MacGame
             // Start the menu items pushed down by the height of the menu title.
             if (!string.IsNullOrEmpty(menuTitle))
             {
-                position.Y += (int)Game1.Font.MeasureString(menuTitle).Y;
-                position.Y += 40; // Plus some padding.
+                position.Y += (Game1.Font.MeasureString(menuTitle).Y * Scale * 1.5f).ToInt();
             }
 
             // update each menu entry's location in turn
@@ -190,7 +189,7 @@ namespace MacGame
                     option.Position = position;
 
                     // move down for the next entry the size of this entry
-                    position.Y += option.GetHeight();
+                    position.Y += option.GetHeight() + 4;
                 }
             }
         }

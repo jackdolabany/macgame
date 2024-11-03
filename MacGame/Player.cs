@@ -478,7 +478,13 @@ namespace MacGame
             IsInMineCart = false;
             IsInvisible = false;
             _state = MacState.Idle;
-        }
+            this.IsInWater = false;
+            IsJumpingOutOfWater = false;
+            this.invincibleTimeRemaining = 0f;
+            this.IsInvisible = false;
+            this.IsJustShotOutOfCannon = false;
+            this.PlatformThatThisIsOn = null;
+    }
 
         /// <summary>
         /// Send the player sliding out of a hub door after being killed or whatever.
@@ -1361,7 +1367,6 @@ namespace MacGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-
             if (IsInvisible) return;
 
             if (IsInCannon) return;

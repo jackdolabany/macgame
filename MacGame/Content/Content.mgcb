@@ -13,6 +13,7 @@
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TileEngine.dll
 /reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TmxMapLibrary.dll
+/reference:..\..\..\..\.nuget\packages\system.drawing.common\8.0.10\lib\net6.0\System.Drawing.Common.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -29,6 +30,14 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenPixel.spritefont
+
+#begin Fonts/MacFont.png
+/importer:TextureImporter
+/processor:FontTextureProcessor
+/processorParam:FirstCharacter= 
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=NoChange
+/build:Fonts/MacFont.png
 
 #begin Maps/BlueRoom.tmx
 /importer:TMXMapImporter
@@ -189,6 +198,11 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/World2YellowHouse.tmx
+
+#begin Maps/World2YellowHouseBackRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2YellowHouseBackRoom.tmx
 
 #begin Music/BossFight.mp3
 /importer:Mp3Importer

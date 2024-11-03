@@ -207,7 +207,7 @@ namespace MacGame
         /// The bottom center of where you want a character.
         /// Center for certian particles.
         /// </summary>
-        public Vector2 WorldLocation
+        public virtual Vector2 WorldLocation
         {
             get { return worldLocation; }
             set { worldLocation = value; }

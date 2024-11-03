@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using TileEngine;
-using System.Runtime.CompilerServices;
 
 namespace MacGame
 {
@@ -36,7 +35,7 @@ namespace MacGame
         static int textWidth;
         static int textHeight;
 
-        public static float textScale = 1f;
+        public static float textScale = Game1.FontScale;
 
         private static float letterTimer = 0f;
         private const float letterTimerGoal = 0.04f;
@@ -339,7 +338,7 @@ namespace MacGame
             var wordHeight = Game1.TileSize + 4;
 
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 22), textScale, textDepth, wordHeight, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 14), textScale, textDepth, wordHeight, currentLetterIndex);
 
             // Draw the choices.
             var location = new Vector2(textLeftMargin + 16, topMargin + wordHeight + wordHeight - 8);
@@ -449,7 +448,7 @@ namespace MacGame
                 }
                 previousLinesLetterCount += currentLine.Length;
                 spriteBatch.DrawString(Font, lineToDraw, drawLocation, Game1.SoftWhite, 0f, Vector2.Zero, scale, SpriteEffects.None, depth);
-                drawLocation.Y += wordHeight;
+                drawLocation.Y += wordHeight + 4;
                 if (previousLinesLetterCount > maxLetters)
                 {
                     return;

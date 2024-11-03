@@ -1,0 +1,111 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "HubWorld.tmx": {
+            "scale": 4,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 245.75,
+                "y": 88
+            }
+        },
+        "World1.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 972,
+                "y": 1073.2727272727275
+            }
+        },
+        "World1FirstRedHouse.tmx": {
+            "scale": 10.6875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 24.23391812865497,
+                "y": 39.953216374269005
+            }
+        },
+        "World1PurpleHouse.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 8.90625,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 38.06315789473685,
+                "y": 55.91578947368421
+            }
+        },
+        "World2.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 5.5,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 1229.090909090909,
+                "y": 1020.1818181818182
+            }
+        },
+        "World2BigPurpleHouse.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 8.90625,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 40.30877192982456,
+                "y": 47.943859649122814
+            }
+        },
+        "World2RedHouse.tmx": {
+            "scale": 8.221153846153845,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 60.14970760233919,
+                "y": 51.93918128654971
+            }
+        },
+        "World2SmallPurpleHouse.tmx": {
+            "scale": 8.90625,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 49.5719298245614,
+                "y": 47.943859649122814
+            }
+        },
+        "World2YellowHouse.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 5.5,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 69.36363636363636,
+                "y": 66.90909090909092
+            }
+        },
+        "World2YellowHouseBackRoom.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 5.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 56.81818181818182,
+                "y": 56.72727272727272
+            }
+        }
+    },
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+    ],
+    "project": "MacGame.tiled-project",
+    "recentFiles": [
+        "World1PurpleHouse.tmx",
+        "World1FirstRedHouse.tmx",
+        "World1.tmx"
+    ]
+}

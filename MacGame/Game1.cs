@@ -154,7 +154,7 @@ namespace MacGame
         private static KeyboardState previousKeyState;
 
         public static SpriteFont Font;
-
+        public static float FontScale = 4f;
         private PauseMenu pauseMenu;
         private MainMenu mainMenu;
 
@@ -343,8 +343,10 @@ namespace MacGame
             ReallyBigTileTextures = Content.Load<Texture2D>(@"Textures\ReallyBigTextures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
 
-            Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
+            //Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
             //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
+            Font = Content.Load<SpriteFont>(@"Fonts\MacFont");
+            
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 
@@ -770,7 +772,10 @@ namespace MacGame
                     spriteBatch.End();
 
                     // Draw the HUD over everything.
-                    spriteBatch.Begin();
+                    spriteBatch.Begin(SpriteSortMode.FrontToBack,
+                        BlendState.AlphaBlend,
+                        SamplerState.PointClamp);
+
                     DrawHud(spriteBatch);
 
                     ConversationManager.Draw(spriteBatch);
@@ -811,7 +816,7 @@ namespace MacGame
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
                     spriteBatch.Draw(TileTextures, new Rectangle(90, GAME_Y_RESOLUTION - 64, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
-                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(130, GAME_Y_RESOLUTION - 68), Game1.SoftWhite);
+                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(130, GAME_Y_RESOLUTION - 68), Game1.SoftWhite, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
                     spriteBatch.End();
                     break;
 
@@ -825,7 +830,7 @@ namespace MacGame
             }
 
             // Draw the menus to a new sprite batch ignoring the camera stuff.
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             MenuManager.Draw(spriteBatch);
 
             // Draw the saving/loading menu
@@ -933,19 +938,21 @@ namespace MacGame
         {
             int onesPlace = count % 10;
 
-            spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(rightMostX, yPos), Color.White);
+            spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(rightMostX, yPos), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
 
             if (count > 9)
             {
                 int tensPlace = (count / 10) % 10;
-                rightMostX -= Game1.TileSize;
-                spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(rightMostX, yPos), Color.White);
+                int width = (Font.MeasureString(Numbers[tensPlace]).X * Game1.FontScale).ToInt();
+                rightMostX -= width;
+                spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(rightMostX, yPos), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
             }
             if (count > 99)
             {
                 int hundredsPlace = (count / 100) % 10;
-                rightMostX -= Game1.TileSize;
-                spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Color.White);
+                int width = (Font.MeasureString(Numbers[hundredsPlace]).X * Game1.FontScale).ToInt();
+                rightMostX -= width;
+                spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
             }
 
             // Draw the icon image

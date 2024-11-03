@@ -15,7 +15,6 @@ namespace MacGame
             this.IsOverlay = false;
 
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.333f).ToInt());
-            this.Scale = 1f;
 
             var confirmExitGame = new YesNoMenu(Game, "Are you sure you \n want to exit to\nthe title screen?", (a, b) =>
             {

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace MacGame
 {
@@ -144,7 +143,7 @@ namespace MacGame
             {
                 var text = "Empty";
                 var position = new Vector2(x + 52, y + 52);
-                spriteBatch.DrawString(Game1.Font, text, position, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, drawDepth);
+                spriteBatch.DrawString(Game1.Font, text, position, Color.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, drawDepth);
             }
             else
             {
@@ -160,7 +159,7 @@ namespace MacGame
 
                 // Draw sock count
                 var sockText = $"{state.GetSockCount()}\n";
-                spriteBatch.DrawString(Game1.Font, sockText, new Vector2(x + 44, y), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, drawDepth);
+                spriteBatch.DrawString(Game1.Font, sockText, new Vector2(x + 44, y), Color.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, drawDepth);
 
                 // Draw a crown to the right of the socks if they've beaten the game
                 if (state.HasBeatedGame)
@@ -174,7 +173,7 @@ namespace MacGame
                 var statText = $"{percentageComplete.ToString("00")}%\n" +
                     totalPlayTimeText;
 
-                spriteBatch.DrawString(Game1.Font, statText, new Vector2(x + 16, y + 44), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, drawDepth);
+                spriteBatch.DrawString(Game1.Font, statText, new Vector2(x + 16, y + 44), Color.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, drawDepth);
 
             }
 

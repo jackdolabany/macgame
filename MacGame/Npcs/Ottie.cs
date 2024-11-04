@@ -91,16 +91,17 @@ namespace MacGame.Npcs
                     ConversationManager.AddMessage("Hi! I'm Ottis, I'm a good boy.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
 
                     // Mac
-                    ConversationManager.AddMessage("Hey, I'm Mac. I could use a good person to help me get back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
-                    ConversationManager.AddMessage("I thought this was going to be one of those straight forward games, like jump on a flagpole. Maybe save a princess.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+                    ConversationManager.AddMessage("Hey, I'm Mac. I could use a good person. I need to get back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+                    ConversationManager.AddMessage("I thought this was going to be a straight forward game, like jump on a flagpole. Maybe save a princess.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
 
                     var showStar = () =>
                     {
                         CutsceneManager.CollectiblePosition = WorldLocation + new Vector2(-90, -90);
                         CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.Intro;
-                        CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowStar;
+                        
+                        TimerManager.AddNewTimer(1f, () => CutsceneManager.ShowStar());
 
-                        TimerManager.AddNewTimer(2f, () =>
+                        TimerManager.AddNewTimer(2.5f, () =>
                         {
                             // Ottis
                             ConversationManager.AddMessage("I can get you back home, just find me the lost Magic Stars.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
@@ -109,18 +110,21 @@ namespace MacGame.Npcs
                             ConversationManager.AddMessage("Hey that's just like a game I know!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
 
                             var showMoon = () => {
-                                CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowMoon;
 
-                                TimerManager.AddNewTimer(2f, () =>
+                                CutsceneManager.HideCollectable();
+                                TimerManager.AddNewTimer(1f, () => CutsceneManager.ShowMoon());
+
+                                TimerManager.AddNewTimer(2.5f, () =>
                                 {
 
                                     ConversationManager.AddMessage("Instead, find me these magic moons. Hidden throughout the land by mysterious...", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
 
                                     var showSock = () =>
                                     {
-                                        CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.ShowSock;
+                                        CutsceneManager.HideCollectable();
+                                        TimerManager.AddNewTimer(1f, () => CutsceneManager.ShowSock());
 
-                                        TimerManager.AddNewTimer(2f, () =>
+                                        TimerManager.AddNewTimer(2.5f, () =>
                                         {
                                             // Ottis
                                             ConversationManager.AddMessage("Tell you what, I'm a dog and I like stinky socks. Find me the magic stinky gym socks.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
@@ -128,7 +132,7 @@ namespace MacGame.Npcs
                                             var finish = () =>
                                             {
                                                 CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.None;
-                                                CutsceneManager.CurrentIntroState = CutsceneManager.IntroState.None;
+                                                CutsceneManager.HideCollectable();
                                                 GlobalEvents.FireIntroComplete();
                                             };
 

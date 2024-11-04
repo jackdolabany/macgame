@@ -13,8 +13,6 @@ namespace MacGame
     public static class CutsceneManager
     {
 
-        private static bool _showCollectible = true;
-
         private static AnimationDisplay _collectible;
 
         public enum CutsceneType
@@ -23,16 +21,7 @@ namespace MacGame
             Intro
         }
 
-        public enum IntroState
-        {
-            None,
-            ShowStar,
-            ShowMoon,
-            ShowSock
-        }
-
         public static CutsceneType CurrentCutscene = CutsceneType.None;
-        public static IntroState CurrentIntroState = IntroState.None;
         public static Vector2 CollectiblePosition = Vector2.Zero;
         public static void Initialize(ContentManager content)
         {
@@ -50,8 +39,26 @@ namespace MacGame
             sock.LoopAnimation = true;
             sock.FrameLength = 0.2f;
             _collectible.Add(sock);
+        }
 
-            _collectible.Play("star");
+        public static void ShowMoon()
+        {
+            _collectible.PlayIfNotAlreadyPlaying("moon");
+        }
+
+        public static void ShowSock()
+        {
+            _collectible.PlayIfNotAlreadyPlaying("sock");
+        }
+
+        public static void ShowStar()
+        {
+            _collectible.PlayIfNotAlreadyPlaying("star");
+        }
+
+        public static void HideCollectable()
+        {
+            _collectible.StopPlaying();
         }
 
         public static void Update(GameTime gameTime, float elapsed)
@@ -59,22 +66,7 @@ namespace MacGame
             if (CurrentCutscene == CutsceneType.Intro)
             {
                 _collectible.Update(gameTime, elapsed, CollectiblePosition, false);
-                switch (CurrentIntroState)
-                {
-                    case IntroState.None:
-                        break;
-                    case IntroState.ShowStar:
-                        _collectible.PlayIfNotAlreadyPlaying("star");
-                        break;
-                    case IntroState.ShowMoon:
-                        _collectible.PlayIfNotAlreadyPlaying("moon");
-                        break;
-                    case IntroState.ShowSock:
-                        _collectible.PlayIfNotAlreadyPlaying("sock");
-                        break;
-                }
             }
-            
         }
 
         public static void Draw(SpriteBatch spriteBatch)

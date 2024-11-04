@@ -155,5 +155,11 @@ namespace MacGame.DisplayComponents
             }
             return null;
         }
+
+        internal void StopPlaying()
+        {
+            CurrentAnimationName = "";
+            this.drawObject.Texture = null;
+        }
     }
 }

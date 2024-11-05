@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.0" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -44,6 +44,11 @@
  <tile id="22">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="23">
+  <properties>
+   <property name="LoadClass" value="Enemy.Skull"/>
   </properties>
  </tile>
  <tile id="27">
@@ -392,6 +397,16 @@
  <tile id="151">
   <properties>
    <property name="LoadClass" value="Platform.StaticPlatform"/>
+  </properties>
+ </tile>
+ <tile id="152">
+  <properties>
+   <property name="BlockPlayer" value="SlopeUp"/>
+  </properties>
+ </tile>
+ <tile id="153">
+  <properties>
+   <property name="BlockPlayer" value="SlopeDown"/>
   </properties>
  </tile>
  <tile id="155">

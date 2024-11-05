@@ -11,12 +11,20 @@
                 "y": 88
             }
         },
+        "IntroLevel.tmx": {
+            "scale": 11,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 164.8181818181818,
+                "y": 82.31818181818181
+            }
+        },
         "World1.tmx": {
             "scale": 5.5,
-            "selectedLayer": 0,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 972,
-                "y": 1073.2727272727275
+                "x": 1359.0909090909092,
+                "y": 1073.3636363636365
             }
         },
         "World1FirstRedHouse.tmx": {
@@ -43,10 +51,10 @@
                 4
             ],
             "scale": 5.5,
-            "selectedLayer": 4,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1229.090909090909,
-                "y": 1020.1818181818182
+                "x": 1836.7272727272727,
+                "y": 994.4545454545455
             }
         },
         "World2BigPurpleHouse.tmx": {

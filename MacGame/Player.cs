@@ -1284,7 +1284,7 @@ namespace MacGame
             }
 
             Vector2 headLocation = new Vector2(this.CollisionRectangle.Center.X, this.CollisionRectangle.Top);
-            bool isHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation)?.IsWater ?? false;
+            bool isHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation + new Vector2(0, -20))?.IsWater ?? false;
             bool justBelowHeadUnderWater = Game1.CurrentMap?.GetMapSquareAtPixel(headLocation)?.IsWater ?? false;
 
             // If you are in water you can't jump very high.
@@ -1304,7 +1304,7 @@ namespace MacGame
                     IsInWater = false;
                     SoundManager.PlaySound("Jump");
                     // TODO: Too much!
-                    this.velocity.Y -= 500;
+                    this.velocity.Y =- 500;
                 }
                 
             }

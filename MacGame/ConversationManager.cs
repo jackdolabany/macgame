@@ -338,7 +338,7 @@ namespace MacGame
             var wordHeight = Game1.TileSize + 4;
 
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 14), textScale, textDepth, wordHeight, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 26), textScale, textDepth, wordHeight, currentLetterIndex);
 
             // Draw the choices.
             var location = new Vector2(textLeftMargin + 16, topMargin + wordHeight + wordHeight - 8);

@@ -172,7 +172,8 @@ namespace MacGame
             // Start the menu items pushed down by the height of the menu title.
             if (!string.IsNullOrEmpty(menuTitle))
             {
-                position.Y += (Game1.Font.MeasureString(menuTitle).Y * Scale * 1.5f).ToInt();
+                var titleSize = Game1.Font.MeasureString(menuTitle);
+                position.Y += (titleSize.Y * Scale * 2f).ToInt();
             }
 
             // update each menu entry's location in turn
@@ -189,7 +190,7 @@ namespace MacGame
                     option.Position = position;
 
                     // move down for the next entry the size of this entry
-                    position.Y += option.GetHeight() + 4;
+                    position.Y += option.GetHeight() + 8;
                 }
             }
         }

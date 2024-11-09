@@ -20,7 +20,7 @@ namespace MacGame
         public LoadMenu(Game1 game)
             : base(game)
         {
-            this.menuTitle = "Load Game";
+            this.menuTitle = "      Select File";
 
             // 7 tiles of border to the right
             var statsAreaWidth = Game1.TileSize * 7;
@@ -37,11 +37,11 @@ namespace MacGame
         {
             if (state == null)
             {
-                return AddOption($"New Game {slotNumber}", (a, b) => LoadGame(slotNumber));
+                return AddOption($"New {slotNumber}", (a, b) => LoadGame(slotNumber));
             }
             else
             {
-                return AddOption($"Continue {slotNumber}", (a, b) => LoadGame(slotNumber));
+                return AddOption($"Saved {slotNumber}", (a, b) => LoadGame(slotNumber));
             }
         }
 
@@ -142,7 +142,7 @@ namespace MacGame
             if (state == null)
             {
                 var text = "Empty";
-                var position = new Vector2(x + 52, y + 52);
+                var position = new Vector2(x + 32, y + 52);
                 spriteBatch.DrawString(Game1.Font, text, position, Color.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, drawDepth);
             }
             else

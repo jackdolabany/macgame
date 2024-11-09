@@ -20,7 +20,7 @@ namespace MacGame
                 PlayOptionSelectedSound();
             });
 
-            confirmMenu = new YesNoMenu(Game, "Are you sure you want\nto exit the game?", (sender, args) => this.Game.Exit());
+            confirmMenu = new YesNoMenu(Game, "  Exit Game. \nAre you sure?", (sender, args) => this.Game.Exit());
             confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 120);
 
             AddOption("Quit", (sender, args) => {
@@ -40,8 +40,7 @@ namespace MacGame
 
             int x = (Game1.GAME_X_RESOLUTION - (tileWidth * Game1.TileSize)) / 2;
 
-            //var height = (tileHeight * Game1.TileSize);
-            int y = (int)this.Position.Y - 40;
+            int y = (int)this.Position.Y - 46;
 
             // Put it behind this menu a bit
             var drawDepth = this.DrawDepth + Game1.MIN_DRAW_INCREMENT * 100;

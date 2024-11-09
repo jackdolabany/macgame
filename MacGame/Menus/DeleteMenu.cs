@@ -48,13 +48,13 @@ namespace MacGame
         {
             if (state == null)
             {
-                var alertBox = new AlertBoxMenu(this.Game, "    File is\nalready empty", Cancel);
+                var alertBox = new AlertBoxMenu(this.Game, "     File is\nalready empty.", Cancel);
                 alertBox.IsOverlay = true;
                 return AddOption($"Empty {slotNumber}", (a, b) => MenuManager.AddMenu(alertBox));
             }
             else
             {
-                var ConfirmDelete = new YesNoMenu(this.Game, $"   Are you sure\n    you want to\ndelete this game?", (a, b) => DeleteGame(slotNumber));
+                var ConfirmDelete = new YesNoMenu(this.Game, $" Delete game.\nAre you sure?", (a, b) => DeleteGame(slotNumber));
                 ConfirmDelete.IsOverlay = true;
                 return AddOption($"Delete {slotNumber}", (a, b) => MenuManager.AddMenu(ConfirmDelete));
             }

@@ -39,6 +39,22 @@
 /processorParam:TextureFormat=NoChange
 /build:Fonts/MacFont.png
 
+#begin Fonts/NesFont.png
+/importer:TextureImporter
+/processor:FontTextureProcessor
+/processorParam:FirstCharacter= 
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Fonts/NesFont.png
+
+#begin Fonts/NesFontCaps.png
+/importer:TextureImporter
+/processor:FontTextureProcessor
+/processorParam:FirstCharacter= 
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Fonts/NesFontCaps.png
+
 #begin Maps/BlueRoom.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

@@ -51,11 +51,11 @@ namespace MacGame
         {
             var credits = new List<Credit>();
 
-            credits.Add(new Credit("Executive Producer"));
+            credits.Add(new Credit("Producer"));
             credits.Last().AddPerson("Jack Dolabany");
-            credits.Add(new Credit("Game Design"));
+            credits.Add(new Credit("Level Design"));
             credits.Last().AddPerson("Jack Dolabany");
-            credits.Add(new Credit("Story"));
+            credits.Add(new Credit("Writing"));
             credits.Last().AddPerson("Jack Dolabany");
             credits.Add(new Credit("Artwork"));
             credits.Last().AddPerson("Sophia Dolabany");
@@ -64,14 +64,14 @@ namespace MacGame
             credits.Last().AddPerson("Jack Dolabany");
             credits.Add(new Credit("Marketing"));
             credits.Last().AddPerson("Jack Dolabany");
-            credits.Add(new Credit("Quality Assurance"));
+            credits.Add(new Credit("QA"));
             credits.Last().AddPerson("Jack Dolabany");
             credits.Add(new Credit("Music"));
             credits.Last().AddPerson("TBD");
             credits.Add(new Credit("Sound Effects"));
             credits.Last().AddPerson("Jack Dolabany");
-            credits.Add(new Credit("Special Thanks"));
-            credits.Last().AddPerson("Jack Frost Dolabany");
+            credits.Add(new Credit("Thanks"));
+            credits.Last().AddPerson("Jack F. Dolabany");
             credits.Last().AddPerson("Kayla Dolabany");
 
             positionX = Game1.GAME_X_RESOLUTION / 2;
@@ -162,7 +162,7 @@ namespace MacGame
             var creditLines = Lines[lineIndex];
             float scale = Game1.FontScale;
 
-            var lineHeight = Game1.Font.MeasureString(creditLines[0]).Y * scale;
+            var lineHeight = Game1.Font.MeasureString(creditLines[0]).Y * scale + 8;
             var totalHeight = lineHeight * creditLines.Count;
 
             var yOffset = -totalHeight / 2;

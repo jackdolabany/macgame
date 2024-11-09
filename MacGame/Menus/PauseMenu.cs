@@ -16,7 +16,7 @@ namespace MacGame
 
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.333f).ToInt());
 
-            var confirmExitGame = new YesNoMenu(Game, "Are you sure you \n want to exit to\nthe title screen?", (a, b) =>
+            var confirmExitGame = new YesNoMenu(Game, "    Exit to  \ntitle screen.\n    Are you  \n     sure?", (a, b) =>
             {
                 this.Game.GoToTitleScreen();
             });

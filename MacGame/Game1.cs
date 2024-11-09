@@ -17,7 +17,7 @@ namespace MacGame
     {
 
         public const string StartingWorld = "World2";
-        private const bool startAtTitleScreen = false;
+        private const bool startAtTitleScreen = true;
         public static bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;
@@ -345,8 +345,9 @@ namespace MacGame
 
             //Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
             //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
-            Font = Content.Load<SpriteFont>(@"Fonts\MacFont");
-            
+            //Font = Content.Load<SpriteFont>(@"Fonts\MacFont");
+            Font = Content.Load<SpriteFont>(@"Fonts\NesFontCaps");
+
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
 
@@ -815,8 +816,10 @@ namespace MacGame
 
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
-                    spriteBatch.Draw(TileTextures, new Rectangle(90, GAME_Y_RESOLUTION - 64, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
-                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(130, GAME_Y_RESOLUTION - 68), Game1.SoftWhite, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+
+                   // Draw the copyright cirlced C thing.
+                    spriteBatch.Draw(TileTextures, new Rectangle(38, GAME_Y_RESOLUTION - 64, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
+                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(78, GAME_Y_RESOLUTION - 64), Game1.SoftWhite, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
                     spriteBatch.End();
                     break;
 
@@ -874,7 +877,7 @@ namespace MacGame
         public static void DrawHud(SpriteBatch spriteBatch)
         {
             // Draw the hearts in the HUD
-            var hudYPos = 3;
+            var hudYPos = 8;
             for (int i = 0; i < Player.MaxHealth; i++)
             {
                 var heartXPos = 8 + (i * TileSize);
@@ -956,7 +959,7 @@ namespace MacGame
             }
 
             // Draw the icon image
-            spriteBatch.Draw(TileTextures, new Rectangle(rightMostX - Game1.TileSize - 4, yPos + 8, Game1.TileSize, Game1.TileSize), iconSourceRectangle, Color.White);
+            spriteBatch.Draw(TileTextures, new Rectangle(rightMostX - Game1.TileSize - 4, yPos, Game1.TileSize, Game1.TileSize), iconSourceRectangle, Color.White);
         }
 
         public static void DrawBlackOverScreen(SpriteBatch spriteBatch, float opacity)

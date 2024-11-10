@@ -20,7 +20,7 @@ namespace MacGame
                 PlayOptionSelectedSound();
             });
 
-            confirmMenu = new YesNoMenu(Game, "  Exit Game. \nAre you sure?", (sender, args) => this.Game.Exit());
+            confirmMenu = new YesNoMenu(Game, "    Exit Game  \nAre you sure?", (sender, args) => this.Game.Exit());
             confirmMenu.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 120);
 
             AddOption("Quit", (sender, args) => {

@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "WingWorldVertical";
+        public const string StartingWorld = "World2";
         private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
 

@@ -1,6 +1,7 @@
 {
-    "activeFile": "",
+    "activeFile": "World2.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "HubWorld.tmx": {
@@ -15,16 +16,20 @@
             "scale": 11,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 164.8181818181818,
-                "y": 82.31818181818181
+                "x": 680.0454545454545,
+                "y": 64
             }
+        },
+        "Textures.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 8
         },
         "World1.tmx": {
             "scale": 5.5,
             "selectedLayer": 6,
             "viewCenter": {
-                "x": 1359.0909090909092,
-                "y": 1073.3636363636365
+                "x": 1024.090909090909,
+                "y": 880
             }
         },
         "World1FirstRedHouse.tmx": {
@@ -51,9 +56,9 @@
                 4
             ],
             "scale": 5.5,
-            "selectedLayer": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 1836.7272727272727,
+                "x": 759.0909090909091,
                 "y": 994.4545454545455
             }
         },
@@ -109,11 +114,18 @@
     },
     "map.lastUsedFormat": "tmx",
     "openFiles": [
+        "IntroLevel.tmx",
+        "World1.tmx",
+        "Textures.tsx",
+        "World2.tmx"
     ],
     "project": "MacGame.tiled-project",
     "recentFiles": [
+        "IntroLevel.tmx",
+        "World1.tmx",
+        "Textures.tsx",
+        "World2.tmx",
         "World1PurpleHouse.tmx",
-        "World1FirstRedHouse.tmx",
-        "World1.tmx"
+        "World1FirstRedHouse.tmx"
     ]
 }

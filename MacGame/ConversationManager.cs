@@ -338,7 +338,7 @@ namespace MacGame
             var wordHeight = Game1.TileSize + 4;
 
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + Game1.TileSize, topMargin + 26), textScale, textDepth, wordHeight, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + 24, topMargin + 26), textScale, textDepth, wordHeight, currentLetterIndex);
 
             // Draw the choices.
             var location = new Vector2(textLeftMargin + 16, topMargin + wordHeight + wordHeight - 8);
@@ -468,22 +468,40 @@ namespace MacGame
 
             var paragraphs = text.Split("\n".ToCharArray());
 
+            var spaceLength = Font.MeasureString(" ").X * scale;
+
             foreach (var paragraph in paragraphs)
             {
                 var words = paragraph.Split(" ".ToCharArray());
                 foreach (string word in words)
                 {
-                    var wordLength = Font.MeasureString(word + " ").X * scale;
+                    var wordLength = Font.MeasureString(word).X * scale;
+                    var isFirstWord = currentLine == "";
+                    if (!isFirstWord)
+                    {
+                        // Need a space too if it's not the first word.
+                        wordLength += spaceLength;
+                    }
+
                     remainingLineSpace -= wordLength;
+
+
                     if (remainingLineSpace > 0)
                     {
-                        currentLine += word + " ";
+                        if (isFirstWord)
+                        {
+                            currentLine = word;
+                        }
+                        else
+                        {
+                            currentLine += " " + word;
+                        }
                     }
                     else
                     {
                         strings.Add(currentLine);
                         remainingLineSpace = (float)maxWidth - wordLength;
-                        currentLine = word + " ";
+                        currentLine = word;
                     }
                 }
 

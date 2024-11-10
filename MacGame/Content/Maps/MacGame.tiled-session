@@ -1,5 +1,9 @@
 {
-    "activeFile": "World2.tmx",
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "WingWorldVertical.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -16,13 +20,24 @@
             "scale": 11,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 680.0454545454545,
-                "y": 64
+                "x": 680.0909090909091,
+                "y": 64.04545454545455
             }
         },
         "Textures.tsx": {
             "scaleInDock": 4,
             "scaleInEditor": 8
+        },
+        "WingWorldVertical.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 1.5,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 2171.333333333333,
+                "y": 1767.6666666666665
+            }
         },
         "World1.tmx": {
             "scale": 5.5,
@@ -58,7 +73,7 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 908,
+                "x": 669.5,
                 "y": 1095.25
             }
         },
@@ -73,6 +88,14 @@
                 "y": 59.901754385964914
             }
         },
+        "World2MineCart.tmx": {
+            "scale": 0.33,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1533.3333333333335,
+                "y": -307.5757575757575
+            }
+        },
         "World2RedHouse.tmx": {
             "scale": 8.221153846153845,
             "selectedLayer": 0,
@@ -82,11 +105,14 @@
             }
         },
         "World2SmallPurpleHouse.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
             "scale": 8.90625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 49.5719298245614,
-                "y": 47.943859649122814
+                "x": 76.0701754385965,
+                "y": 59.564912280701755
             }
         },
         "World2YellowHouse.tmx": {
@@ -114,17 +140,29 @@
     },
     "map.lastUsedFormat": "tmx",
     "openFiles": [
-        "IntroLevel.tmx",
-        "World1.tmx",
-        "Textures.tsx",
-        "World2.tmx"
-    ],
-    "project": "MacGame.tiled-project",
-    "recentFiles": [
+        "WingWorldVertical.tmx",
         "IntroLevel.tmx",
         "World1.tmx",
         "Textures.tsx",
         "World2.tmx",
+        "World2BigPurpleHouse.tmx",
+        "World2YellowHouseBackRoom.tmx",
+        "World2YellowHouse.tmx",
+        "World2SmallPurpleHouse.tmx",
+        "World2MineCart.tmx"
+    ],
+    "project": "MacGame.tiled-project",
+    "recentFiles": [
+        "World2MineCart.tmx",
+        "World2SmallPurpleHouse.tmx",
+        "World2YellowHouse.tmx",
+        "World2YellowHouseBackRoom.tmx",
+        "World2BigPurpleHouse.tmx",
+        "World2.tmx",
+        "Textures.tsx",
+        "World1.tmx",
+        "IntroLevel.tmx",
+        "WingWorldVertical.tmx",
         "World1PurpleHouse.tmx",
         "World1FirstRedHouse.tmx"
     ]

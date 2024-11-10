@@ -150,6 +150,11 @@
 /processor:PassThroughProcessor
 /build:Maps/TestWorld4.tmx
 
+#begin Maps/WingWorldVertical.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/WingWorldVertical.tmx
+
 #begin Maps/World1.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -199,6 +204,11 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/World2BigPurpleHouse.tmx
+
+#begin Maps/World2MineCart.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2MineCart.tmx
 
 #begin Maps/World2RedHouse.tmx
 /importer:TMXMapImporter

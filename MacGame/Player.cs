@@ -137,7 +137,6 @@ namespace MacGame
         private float appleCooldownTimer = 0f;
         private const float appleCooldownTime = 0.3f;
 
-        private float InfiniteJumpTimer = 0f;
         public Item? CurrentItem = null;
 
         private bool HasShovel
@@ -558,6 +557,10 @@ namespace MacGame
             }
             else
             {
+                if (HasWings || HasApples)
+                {
+                    CurrentItem = null;
+                }
                 invincibleTimeRemaining = 0.75f;
                 SoundManager.PlaySound("TakeHit");
                 var hitBackBoost = new Vector2(100, -200);
@@ -977,17 +980,6 @@ namespace MacGame
             else
             {
                 playClimbSoundTimer = 0f;
-            }
-
-            // Limit the time the player has the infinite jump powerup. They'll only lose it after some time if they hit the ground.
-            if (HasWings)
-            {
-                InfiniteJumpTimer += elapsed;
-                if ((InfiniteJumpTimer >= 6f && OnGround) || IsClimbingLadder || IsClimbingVine)
-                {
-                    InfiniteJumpTimer = 0;
-                    this.CurrentItem = null;
-                }
             }
 
             // Bound the player to the map left and right.

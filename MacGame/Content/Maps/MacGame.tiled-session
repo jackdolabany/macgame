@@ -55,11 +55,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 5.5,
-            "selectedLayer": 4,
+            "scale": 2,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 759.0909090909091,
-                "y": 994.4545454545455
+                "x": 908,
+                "y": 1095.25
             }
         },
         "World2BigPurpleHouse.tmx": {

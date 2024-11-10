@@ -26,9 +26,9 @@
     <property name="GoToMap" value="World2"/>
    </properties>
   </object>
-  <object id="4" x="61.3053" y="53.6702" width="15.1579" height="12.3509">
+  <object id="4" name="CatConvo" x="61.3053" y="53.6702" width="15.1579" height="12.3509">
    <properties>
-    <property name="Convo" value="Me:Every time I go for a swim I lose my socks in the water. Why do I even leave them on?"/>
+    <property name="Convo" value="Me:Every time I go for a swim I lose my socks in the water. Why do I wear them swimming in the first place?"/>
    </properties>
   </object>
  </objectgroup>

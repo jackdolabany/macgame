@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace MacGame
 {
@@ -6,6 +7,7 @@ namespace MacGame
     {
 
         MenuOption backToHub;
+        MenuOption toggleFullScreen;
 
         public PauseMenu(Game1 game)
             : base(game)
@@ -39,6 +41,15 @@ namespace MacGame
             backToHub = AddOption("Back to Hub", (a, b) => {
                 PlayOptionSelectedSound();
                 Game.GoToHub(true);
+            });
+
+
+            Func<string> GetFullScreenText = () => Game.IsFullScreen() ? "Windowed" : "Full Screen";
+
+            toggleFullScreen = AddOption(GetFullScreenText(), (a, b) => {
+                PlayOptionSelectedSound();
+                Game.ToggleFullScreen();
+                toggleFullScreen.Text = GetFullScreenText();
             });
 
             AddOption("Quit", (a, b) =>

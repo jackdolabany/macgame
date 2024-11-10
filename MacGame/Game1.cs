@@ -18,7 +18,7 @@ namespace MacGame
 
         public const string StartingWorld = "World2";
         private const bool startAtTitleScreen = false;
-        public static bool IS_DEBUG = true;
+        public static bool IS_DEBUG = false;
 
         public const int TacosNeeded = 100;
 
@@ -149,7 +149,7 @@ namespace MacGame
                 return CurrentLevel?.Map;
             }
         }
-
+        
         public static Camera Camera;
         private static KeyboardState previousKeyState;
 
@@ -229,6 +229,11 @@ namespace MacGame
             Window.Title = "Mac Game";
 
             Content.RootDirectory = "Content";
+
+            if (!IS_DEBUG)
+            {
+                graphics.IsFullScreen = true;
+            }
 
             GlobalEvents.SockCollected += OnSockCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
@@ -405,6 +410,16 @@ namespace MacGame
                 StorageManager.TrySaveGame();
                 TransitionToState(GameState.Playing, TransitionType.Instant);
             });
+        }
+
+        public void ToggleFullScreen()
+        {
+            graphics.ToggleFullScreen();
+        }
+
+        public bool IsFullScreen()
+        {
+            return graphics.IsFullScreen;
         }
 
         /// <param name="isYeet">True to yeet the player out of the door as punishment for quitting or dying.</param>

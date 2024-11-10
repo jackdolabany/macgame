@@ -23,6 +23,10 @@ namespace MacGame
 
         public static CutsceneType CurrentCutscene = CutsceneType.None;
         public static Vector2 CollectiblePosition = Vector2.Zero;
+
+        public static float FadeInTimer = 0;
+        public static float FadeOutTimer = 0;
+
         public static void Initialize(ContentManager content)
         {
             _collectible = new AnimationDisplay();
@@ -44,21 +48,24 @@ namespace MacGame
         public static void ShowMoon()
         {
             _collectible.PlayIfNotAlreadyPlaying("moon");
+            FadeInTimer = 0.5f;
         }
 
         public static void ShowSock()
         {
             _collectible.PlayIfNotAlreadyPlaying("sock");
+            FadeInTimer = 0.5f;
         }
 
         public static void ShowStar()
         {
             _collectible.PlayIfNotAlreadyPlaying("star");
+            FadeInTimer = 0.5f;
         }
 
         public static void HideCollectable()
         {
-            _collectible.StopPlaying();
+            FadeOutTimer = 0.5f;
         }
 
         public static void Update(GameTime gameTime, float elapsed)
@@ -66,6 +73,32 @@ namespace MacGame
             if (CurrentCutscene == CutsceneType.Intro)
             {
                 _collectible.Update(gameTime, elapsed, CollectiblePosition, false);
+
+                if (FadeInTimer > 0)
+                {
+                    FadeInTimer -= elapsed;
+                    if (FadeInTimer <= 0)
+                    {
+                        FadeInTimer = 0;
+                    }
+
+                    // Adjust the opacity of the collectible to fade in.
+                    var fadePercent = 1 - (FadeInTimer / 0.5f);
+                    _collectible.TintColor = Color.Lerp(Color.Transparent, Color.White, fadePercent);
+                }
+
+                if (FadeOutTimer > 0)
+                {
+                    FadeOutTimer -= elapsed;
+                    if (FadeOutTimer <= 0)
+                    {
+                        FadeOutTimer = 0;
+                    }
+
+                    // Adjust the opacity of the collectible to fade out.
+                    var fadePercent = 1 - (FadeOutTimer / 0.5f);
+                    _collectible.TintColor = Color.Lerp(Color.White, Color.Transparent, fadePercent);
+                }
             }
         }
 

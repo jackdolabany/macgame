@@ -91,7 +91,7 @@ namespace MacGame.Npcs
                     ConversationManager.AddMessage("Hi! I'm Ottis, I'm a good boy.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
 
                     // Mac
-                    ConversationManager.AddMessage("Hey, I'm Mac. I could use a good person. I need to get back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
+                    ConversationManager.AddMessage("I'm Mac and I could use a good person to help me get back home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
                     ConversationManager.AddMessage("I thought this was going to be a straight forward game, like jump on a flagpole. Maybe save a princess.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left);
 
                     var showStar = () =>
@@ -142,7 +142,7 @@ namespace MacGame.Npcs
                                     };
 
                                     // Mac
-                                    ConversationManager.AddMessage("That sounds familiar too", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, completeAction: showSock);
+                                    ConversationManager.AddMessage("That sounds familiar too.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, completeAction: showSock);
                                 });
 
                             };

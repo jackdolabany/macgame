@@ -109,7 +109,7 @@ namespace MacGame
             if (imageSource != null)
             {
                 lineWidth -= imageSource.Value.Width;
-                lineWidth += 18; // Cheat a little bit to make it look better.
+                lineWidth += 32; // Cheat a little bit to make it look better.
             }
 
             var lines = GetLineWrappedText(text, lineWidth, textScale);

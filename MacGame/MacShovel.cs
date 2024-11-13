@@ -79,7 +79,7 @@ namespace MacGame
                 // Check collisions with enemies
                 foreach (var enemy in Game1.CurrentLevel.Enemies)
                 {
-                    if (enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    if (enemy.Enabled && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
                         enemy.TakeHit(1, Vector2.Zero);
                     }

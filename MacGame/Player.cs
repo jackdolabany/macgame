@@ -505,6 +505,8 @@ namespace MacGame
 
         public void CheckEnemyInteractions(Enemy enemy)
         {
+            if (!enemy.Enabled) return;
+
             if (enemy.Alive)
             {
                 // Check body collisions
@@ -515,19 +517,19 @@ namespace MacGame
                     // Pad 1 pixel to make it a little easier
                     var wasAboveEnemy = _previousCollisionRectangle.Bottom - 8 <= enemy.CollisionRectangle.Top;
 
-                    if (enemy.Alive && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine && !IsInWater && !IsInMineCart)
+                    if (enemy.Alive && enemy.CanBeJumpedOn && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine && !IsInWater && !IsInMineCart)
                     {
                         // If the player was above the enemy, the enemy was jumped on and takes a hit.
                         enemy.TakeHit(1, Vector2.Zero);
                         velocity.Y = -450;
                     }
-                    else if (enemy.Alive && !enemy.IsInvincibleAfterHit)
+                    else if (enemy.Alive && enemy.Enabled && !enemy.IsInvincibleAfterHit)
                     {
                         TakeHit(enemy);
                     }
 
                 }
-                else
+                else if (enemy.CanBeHitWithWeapons)
                 {
                     foreach (var apple in Apples.RawList)
                     {

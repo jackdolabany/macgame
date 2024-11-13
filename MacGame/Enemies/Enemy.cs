@@ -39,6 +39,16 @@ namespace MacGame.Enemies
             }
         }
 
+        /// <summary>
+        /// Whether or not the player can hurt the enemy by jumping on them.
+        /// </summary>
+        public bool CanBeJumpedOn { get; protected set; } = true;
+
+        /// <summary>
+        /// Whether or not the player can kill the enemy with a shovel or apples.
+        /// </summary>
+        public bool CanBeHitWithWeapons { get; protected set; } = true;
+
         protected float Health { get; set; }
         public float Attack { get; set; }
         public bool IsCustomPlayerColliding { get; set; }

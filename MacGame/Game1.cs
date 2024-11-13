@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "IntroLevel";
+        public const string StartingWorld = "WingWorldFlappy";
         private const bool startAtTitleScreen = false;
         public static bool IS_DEBUG = true;
 
@@ -472,7 +472,8 @@ namespace MacGame
 
         public void RestartLevel()
         {
-            Player.Health = Player.MaxHealth;
+            Player.ResetStateForLevelTransition(true);
+            Player.CurrentItem = null;
             MenuManager.ClearMenus();
             ConversationManager.Clear();
             TransitionToState(GameState.Playing);

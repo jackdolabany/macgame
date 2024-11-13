@@ -150,6 +150,11 @@
 /processor:PassThroughProcessor
 /build:Maps/TestWorld4.tmx
 
+#begin Maps/WingWorldFlappy.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/WingWorldFlappy.tmx
+
 #begin Maps/WingWorldVertical.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

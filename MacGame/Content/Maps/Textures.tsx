@@ -966,6 +966,21 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="454">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesDownRight"/>
+  </properties>
+ </tile>
+ <tile id="455">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesDown"/>
+  </properties>
+ </tile>
+ <tile id="456">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesDownLeft"/>
+  </properties>
+ </tile>
  <tile id="464">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -979,6 +994,16 @@
  <tile id="466">
   <properties>
    <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="470">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesRight"/>
+  </properties>
+ </tile>
+ <tile id="472">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesLeft"/>
   </properties>
  </tile>
  <tile id="480">
@@ -999,6 +1024,21 @@
  <tile id="483">
   <properties>
    <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="486">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesUpRight"/>
+  </properties>
+ </tile>
+ <tile id="487">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesUp"/>
+  </properties>
+ </tile>
+ <tile id="488">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpikesUpLeft"/>
   </properties>
  </tile>
  <tile id="496">

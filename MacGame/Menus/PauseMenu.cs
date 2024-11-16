@@ -16,9 +16,9 @@ namespace MacGame
             IsDismissable = true;
             this.IsOverlay = false;
 
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.333f).ToInt());
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.25f).ToInt());
 
-            var confirmExitGame = new YesNoMenu(Game, "    Exit to  \ntitle screen.\n    Are you  \n     sure?", (a, b) =>
+            var confirmExitGame = new YesNoMenu(Game, "Exit to title screen.\n   Are you sure?", (a, b) =>
             {
                 this.Game.GoToTitleScreen();
             });
@@ -62,6 +62,7 @@ namespace MacGame
         public override void AddedToMenuManager()
         {
             backToHub.Hidden = Game1.CurrentLevel.LevelNumber <= 0;
+            CenterMenuAndChoices();
             base.AddedToMenuManager();
         }
 

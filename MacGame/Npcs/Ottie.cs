@@ -96,7 +96,7 @@ namespace MacGame.Npcs
 
                     var showStar = () =>
                     {
-                        CutsceneManager.CollectiblePosition = WorldLocation + new Vector2(-90, -90);
+                        CutsceneManager.CollectiblePosition = WorldLocation + new Vector2(-58, -58);
                         CutsceneManager.CurrentCutscene = CutsceneManager.CutsceneType.Intro;
                         
                         TimerManager.AddNewTimer(1f, () => CutsceneManager.ShowStar());

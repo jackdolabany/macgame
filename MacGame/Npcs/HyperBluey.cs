@@ -46,7 +46,8 @@ namespace MacGame.Npcs
             if (randomSaying == 1)
             {
                 MacSays("Wow you look like a bearded dragon like me!");
-                ISay("Are you blind? I'm a Crested Gecko.");
+                ISay("Are you blind?"); 
+                ISay("I'm a Crested Gecko.");
             }
             else if (randomSaying == 2)
             {
@@ -57,9 +58,9 @@ namespace MacGame.Npcs
             }
             else if (randomSaying == 3)
             {
-                ISay("Sometimes I wonder what it's all about");
+                ISay("Sometimes I wonder what it's all about.");
                 MacSays("Life?");
-                ISay("No, this game");
+                ISay("No, this game.");
             }
             else if (randomSaying == 4)
             {

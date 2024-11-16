@@ -159,7 +159,8 @@ namespace MacGame
 
         public static void Initialize(ContentManager content)
         {
-            bubbleWidth = 14 * Game1.TileSize;
+            // Controls how many 8x8 blocks the text bubble is.
+            bubbleWidth = 16 * Game1.TileSize;
             bubbleHeight = 5 * Game1.TileSize;
 
             textWidth = bubbleWidth - 2 * Game1.TileSize;
@@ -285,10 +286,10 @@ namespace MacGame
             switch (_float)
             {
                 case Float.Top:
-                    topMargin = 60;
+                    topMargin = Game1.TileSize;
                     break;
                 case Float.Bottom:
-                    topMargin = Game1.GAME_Y_RESOLUTION - bubbleHeight - 40;
+                    topMargin = Game1.GAME_Y_RESOLUTION - bubbleHeight - Game1.TileSize;
                     break;
                 default:
                     throw new Exception("Float not supported");
@@ -302,11 +303,11 @@ namespace MacGame
                 switch (currentMessage.ImagePosition)
                 {
                     case ImagePosition.Left:
-                        personXOffset = Game1.TileSize + 10;
+                        personXOffset = leftMargin + 10;
                         personSpriteEffect = SpriteEffects.None;
                         break;
                     case ImagePosition.Right:
-                        personXOffset = Game1.GAME_X_RESOLUTION - currentMessage.ImageSourceRectangle.Value.Width - Game1.TileSize - 18;
+                        personXOffset = leftMargin - 18 + bubbleWidth - currentMessage.ImageSourceRectangle.Value.Width;
                         personSpriteEffect = SpriteEffects.FlipHorizontally;
                         break;
                     default:

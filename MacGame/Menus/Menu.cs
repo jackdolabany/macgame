@@ -195,6 +195,24 @@ namespace MacGame
             }
         }
 
+        public void CenterMenuAndChoices()
+        {
+            // Start with a fudge factor to favor the top of the screen.
+            var totalMenuHeight = 100f;
+            totalMenuHeight += Game1.Font.MeasureString(menuTitle).Y * Scale;
+
+            foreach(var choice in this.menuOptions)
+            {
+                if (!choice.Hidden)
+                {
+                    totalMenuHeight += Game1.Font.MeasureString(choice.Text).Y * Scale;
+                }
+            }
+
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION - totalMenuHeight) / 2);
+        }
+
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (!IsVisible) return;

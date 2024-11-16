@@ -20,7 +20,7 @@ namespace MacGame
         public LoadMenu(Game1 game)
             : base(game)
         {
-            this.menuTitle = "      Select File";
+            this.menuTitle = "Select File";
 
             // 7 tiles of border to the right
             var statsAreaWidth = Game1.TileSize * 7;
@@ -37,11 +37,11 @@ namespace MacGame
         {
             if (state == null)
             {
-                return AddOption($"New {slotNumber}", (a, b) => LoadGame(slotNumber));
+                return AddOption($"New Game {slotNumber}", (a, b) => LoadGame(slotNumber));
             }
             else
             {
-                return AddOption($"Saved {slotNumber}", (a, b) => LoadGame(slotNumber));
+                return AddOption($"Continue {slotNumber}", (a, b) => LoadGame(slotNumber));
             }
         }
 

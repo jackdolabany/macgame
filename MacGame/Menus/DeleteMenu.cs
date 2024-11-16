@@ -55,6 +55,7 @@ namespace MacGame
             else
             {
                 var ConfirmDelete = new YesNoMenu(this.Game, $" Delete game.\nAre you sure?", (a, b) => DeleteGame(slotNumber));
+                ConfirmDelete.CenterMenuAndChoices();
                 ConfirmDelete.IsOverlay = true;
                 return AddOption($"Delete {slotNumber}", (a, b) => MenuManager.AddMenu(ConfirmDelete));
             }

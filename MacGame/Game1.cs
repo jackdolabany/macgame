@@ -16,9 +16,9 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "WingWorldFlappy";
-        private const bool startAtTitleScreen = false;
-        public static bool IS_DEBUG = true;
+        public const string StartingWorld = "IntroLevel";
+        private const bool startAtTitleScreen = true;
+        public const bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;
 
@@ -29,8 +29,14 @@ namespace MacGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public const int GAME_X_RESOLUTION = 128 * TileScale;
-        public const int GAME_Y_RESOLUTION = 128 * TileScale;
+        public const int GAME_X_RESOLUTION = 160 * TileScale;
+        public const int GAME_Y_RESOLUTION = 112 * TileScale;
+        //public const int GAME_X_RESOLUTION = 128 * TileScale;
+        //public const int GAME_Y_RESOLUTION = 128 * TileScale;
+
+        // Remember the old window height and width when toggling back from full screen.
+        public static int oldWindowedWidth;
+        public static int oldWindowedHeight;
 
         public static Random Randy = new Random();
         public const float MIN_DRAW_INCREMENT = 0.000001f;
@@ -222,18 +228,26 @@ namespace MacGame
 
             var scale = 2;
 
-            graphics.PreferredBackBufferWidth = GAME_X_RESOLUTION * scale;
-            graphics.PreferredBackBufferHeight = GAME_Y_RESOLUTION * scale;
+            var startInFullscreen = !IS_DEBUG;
+
+            if (startInFullscreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.IsFullScreen = true;
+                oldWindowedWidth = GAME_X_RESOLUTION * scale;
+                oldWindowedHeight = GAME_Y_RESOLUTION * scale;
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = GAME_X_RESOLUTION * scale;
+                graphics.PreferredBackBufferHeight = GAME_Y_RESOLUTION * scale;
+            }
 
             Window.AllowUserResizing = true;
             Window.Title = "Mac Game";
 
             Content.RootDirectory = "Content";
-
-            if (!IS_DEBUG)
-            {
-                graphics.IsFullScreen = true;
-            }
 
             GlobalEvents.SockCollected += OnSockCollected;
             GlobalEvents.DoorEntered += OnDoorEntered;
@@ -331,6 +345,7 @@ namespace MacGame
             //this.IsFixedTimeStep = true;
 
             sceneManager = new SceneManager();
+
             base.Initialize();
         }
 
@@ -414,7 +429,31 @@ namespace MacGame
 
         public void ToggleFullScreen()
         {
-            graphics.ToggleFullScreen();
+            if (IsFullScreen())
+            {
+                graphics.ToggleFullScreen();
+                graphics.PreferredBackBufferWidth = oldWindowedWidth;
+                graphics.PreferredBackBufferHeight = oldWindowedHeight;
+                graphics.ApplyChanges();
+            }
+            else
+            {
+                // Going from windowed to full screen.
+                oldWindowedWidth = graphics.PreferredBackBufferWidth;
+                oldWindowedHeight = graphics.PreferredBackBufferHeight;
+                
+                // Monogame is a helpy helperton and tries to find a resolution compatible with your PreferredBackBuffer size.
+                // I just want the native resolution because I'm going to draw black bars in the Draw method if the aspect ratio is off.
+                // So we need to re-set the resolution to the native res after monogame messes it up.
+                var nativeResolutionX = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                var nativeResolutionY = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                
+                graphics.ToggleFullScreen();
+
+                graphics.PreferredBackBufferWidth = nativeResolutionX;
+                graphics.PreferredBackBufferHeight = nativeResolutionY;
+                graphics.ApplyChanges();
+            }
         }
 
         public bool IsFullScreen()
@@ -789,7 +828,7 @@ namespace MacGame
                     spriteBatch.End();
 
                     // Draw the HUD over everything.
-                    spriteBatch.Begin(SpriteSortMode.FrontToBack,
+                    spriteBatch.Begin(SpriteSortMode.Deferred,
                         BlendState.AlphaBlend,
                         SamplerState.PointClamp);
 
@@ -834,8 +873,8 @@ namespace MacGame
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
 
                    // Draw the copyright cirlced C thing.
-                    spriteBatch.Draw(TileTextures, new Rectangle(38, GAME_Y_RESOLUTION - 64, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
-                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(78, GAME_Y_RESOLUTION - 64), Game1.SoftWhite, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(TileTextures, new Rectangle(102, GAME_Y_RESOLUTION - 46, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
+                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(138, GAME_Y_RESOLUTION - 46), Game1.SoftWhite, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
                     spriteBatch.End();
                     break;
 
@@ -879,11 +918,32 @@ namespace MacGame
             // XNA draws a bright purple color to the backbuffer by default when we switch to it. Lame! Let's clear it out.
             GraphicsDevice.Clear(Color.Black);
 
-            // Draw the gameRenderTarget with everything in it to the back buffer. We'll reuse spritebatch and just stretch it to fit.
+            // Draw the gameRenderTarget with everything in it to the back buffer.We'll reuse spritebatch and just stretch it to fit.
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            // We need to stretch the image to fit the screen size. 
-            spriteBatch.Draw(gameRenderTarget, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), Color.White);
+            // Figure out the size to render based on the output resolution. We might have black bars on the top or bottom of the screen.
+            var widthRatio = (float)Window.ClientBounds.Width / GAME_X_RESOLUTION;
+
+            var heightRatio = (float)Window.ClientBounds.Height / GAME_Y_RESOLUTION;
+
+            var drawWidth = Window.ClientBounds.Width;
+            var drawHeight = Window.ClientBounds.Height;
+
+            if (widthRatio < heightRatio)
+            {
+                // Shrink the height to match the width
+                drawHeight = (int)(GAME_Y_RESOLUTION * widthRatio);
+            }
+            else
+            {
+                // Shrink the height to match the width
+                drawWidth = (int)(GAME_X_RESOLUTION * heightRatio);
+            }
+
+            int xOffset = ((Window.ClientBounds.Width - drawWidth) / 2f).ToInt();
+            int yOffset = ((Window.ClientBounds.Height - drawHeight) / 2f).ToInt();
+
+            spriteBatch.Draw(gameRenderTarget, new Rectangle(xOffset, yOffset, drawWidth, drawHeight), Color.White);
 
             spriteBatch.End();
 

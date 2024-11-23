@@ -31,8 +31,6 @@ namespace MacGame
 
         public const int GAME_X_RESOLUTION = 160 * TileScale;
         public const int GAME_Y_RESOLUTION = 112 * TileScale;
-        //public const int GAME_X_RESOLUTION = 128 * TileScale;
-        //public const int GAME_Y_RESOLUTION = 128 * TileScale;
 
         // Remember the old window height and width when toggling back from full screen.
         public static int oldWindowedWidth;
@@ -431,10 +429,10 @@ namespace MacGame
         {
             if (IsFullScreen())
             {
-                graphics.ToggleFullScreen();
+                
                 graphics.PreferredBackBufferWidth = oldWindowedWidth;
                 graphics.PreferredBackBufferHeight = oldWindowedHeight;
-                graphics.ApplyChanges();
+                graphics.ToggleFullScreen();
             }
             else
             {
@@ -447,12 +445,11 @@ namespace MacGame
                 // So we need to re-set the resolution to the native res after monogame messes it up.
                 var nativeResolutionX = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 var nativeResolutionY = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                
-                graphics.ToggleFullScreen();
 
                 graphics.PreferredBackBufferWidth = nativeResolutionX;
                 graphics.PreferredBackBufferHeight = nativeResolutionY;
-                graphics.ApplyChanges();
+
+                graphics.ToggleFullScreen();
             }
         }
 

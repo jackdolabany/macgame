@@ -197,11 +197,16 @@ namespace MacGame
 
         public void CenterMenuAndChoices()
         {
-            // Start with a fudge factor to favor the top of the screen.
-            var totalMenuHeight = 100f;
-            totalMenuHeight += Game1.Font.MeasureString(menuTitle).Y * Scale;
+            
+            var totalMenuHeight = 0f;
 
-            foreach(var choice in this.menuOptions)
+            if (!string.IsNullOrEmpty(menuTitle))
+            {
+                // Start with a fudge factor to favor the top of the screen and give room for the title.
+                totalMenuHeight += 100 + Game1.Font.MeasureString(menuTitle).Y * Scale;
+            }
+
+            foreach (var choice in this.menuOptions)
             {
                 if (!choice.Hidden)
                 {

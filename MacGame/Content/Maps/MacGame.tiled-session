@@ -21,8 +21,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 105,
-                "y": 30
+                "x": 680,
+                "y": 64.125
             }
         },
         "Textures.tsx": {
@@ -33,8 +33,8 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 265.66666666666663,
-                "y": 56.333333333333314
+                "x": 391.66666666666663,
+                "y": 116.66666666666664
             }
         },
         "WingWorldVertical.tmx": {
@@ -44,16 +44,16 @@
             "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 2200.333333333333,
-                "y": 1999.6666666666665
+                "x": 2213.333333333333,
+                "y": 2034.333333333333
             }
         },
         "World1.tmx": {
             "scale": 5.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1054.3636363636365,
-                "y": 1064
+                "x": 1024,
+                "y": 880.0909090909091
             }
         },
         "World1FirstRedHouse.tmx": {
@@ -62,6 +62,14 @@
             "viewCenter": {
                 "x": 24.23391812865497,
                 "y": 39.953216374269005
+            }
+        },
+        "World1Minecart.tmx": {
+            "scale": 0.4033203125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2199.2445520581114,
+                "y": 79.34140435835343
             }
         },
         "World1PurpleHouse.tmx": {
@@ -82,8 +90,8 @@
             "scale": 1.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 1024.3333333333333,
-                "y": 1024.3333333333333
+                "x": 1024.6666666666665,
+                "y": 1024.6666666666665
             }
         },
         "World2BigPurpleHouse.tmx": {
@@ -93,16 +101,16 @@
             "scale": 8.90625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 52.04210526315789,
-                "y": 47.99999999999999
+                "x": 51.9859649122807,
+                "y": 47.94385964912281
             }
         },
         "World2MineCart.tmx": {
             "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2201.5151515151515,
-                "y": 2001.5151515151513
+                "x": 2203.030303030303,
+                "y": 2003.0303030303028
             }
         },
         "World2RedHouse.tmx": {
@@ -120,8 +128,8 @@
             "scale": 8.90625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 52.04210526315789,
-                "y": 47.99999999999999
+                "x": 51.9859649122807,
+                "y": 47.94385964912281
             }
         },
         "World2YellowHouse.tmx": {
@@ -131,8 +139,8 @@
             "scale": 5.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 51.909090909090914,
-                "y": 47.90909090909091
+                "x": 51.81818181818181,
+                "y": 47.81818181818183
             }
         },
         "World2YellowHouseBackRoom.tmx": {
@@ -142,8 +150,8 @@
             "scale": 5.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 51.909090909090914,
-                "y": 47.90909090909091
+                "x": 51.81818181818181,
+                "y": 47.81818181818183
             }
         }
     },
@@ -171,10 +179,10 @@
     "project": "MacGame.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "Textures.tsx",
         "WingWorldVertical.tmx",
         "IntroLevel.tmx",
         "World1.tmx",
-        "Textures.tsx",
         "World2.tmx",
         "World2BigPurpleHouse.tmx",
         "World2YellowHouseBackRoom.tmx",

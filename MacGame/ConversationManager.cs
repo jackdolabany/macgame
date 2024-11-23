@@ -130,6 +130,14 @@ namespace MacGame
 
             if (choices != null)
             {
+
+                if (lastMessage == null)
+                {
+                    var currentMessage = new ConversationMessage() { Texts = new List<string>(), ImagePosition = imagePosition, ImageSourceRectangle = imageSource };
+                    lastMessage = currentMessage;
+                    Messages.Add(currentMessage);
+                }
+
                 lastMessage.Choices = choices;
             }
 

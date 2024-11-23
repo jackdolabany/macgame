@@ -20,7 +20,7 @@ namespace TileEngine
         /// </summary>
         public static Rectangle GetTileRect(int x, int y)
         {
-            return new Rectangle(x * TileMap.TileSize + (2 * x) + 1, y * TileMap.TileSize + (2 * y) + 1, TileMap.TileSize, TileMap.TileSize);
+            return GetPaddedTileRect(x, y, TileMap.TileSize);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace TileEngine
         /// </summary>
         public static Rectangle GetBigTileRect(int x, int y)
         {
-            return new Rectangle(x * TileMap.TileSize * 2 + (2 * x) + 1, y * TileMap.TileSize * 2 + (2 * y) + 1, TileMap.TileSize * 2, TileMap.TileSize * 2);
+            return GetPaddedTileRect(x, y, TileMap.TileSize * 2);
         }
 
         /// <summary>
@@ -38,7 +38,25 @@ namespace TileEngine
         /// </summary>
         public static Rectangle GetReallyBigTileRect(int x, int y)
         {
-            return new Rectangle(x * TileMap.TileSize * 3 + (2 * x) + 1, y * TileMap.TileSize * 3 + (2 * y) + 1, TileMap.TileSize * 3, TileMap.TileSize * 3);
+            return GetPaddedTileRect(x, y, TileMap.TileSize * 3);
+        }
+
+        /// <summary>
+        /// Gets a 64 x 64 tile rect.
+        /// </summary>
+        public static Rectangle GetMegaTileRect(int x, int y)
+        {
+            return GetPaddedTileRect(x, y, TileMap.TileSize * 4);
+        }
+
+        /// <summary>
+        /// Given a tile size, this finds the tile at the x and y position while expecting a 1 pixel border around each tile.
+        /// In processing we add a 1px border around each tile so that scaling it doesn't add artifacts from the tiles next door 
+        /// which is what the GPU would like to do. Why? idk, that's how GPUs work.
+        /// </summary>
+        public static Rectangle GetPaddedTileRect(int x, int y, int tileSize)
+        {
+            return new Rectangle(x * tileSize + (2 * x) + 1, y * tileSize + (2 * y) + 1, tileSize, tileSize);
         }
 
         /// <summary>

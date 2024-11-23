@@ -46,6 +46,14 @@ namespace MacGame
         }
 
         /// <summary>
+        /// Gets a 64 x 64 tile from a big tile set. Expects a 1px border around every tile.
+        /// </summary>
+        public static Rectangle GetMegaTileRect(int x, int y)
+        {
+            return TileEngine.Helpers.GetMegaTileRect(x, y);
+        }
+
+        /// <summary>
         /// Scales a rectangle up or down, keeping it centered.
         /// </summary>
         public static Rectangle Scale(this Rectangle input, float scale)

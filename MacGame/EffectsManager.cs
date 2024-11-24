@@ -13,9 +13,11 @@ namespace MacGame
     {
         public const int MAX_PARTICLES = 1000;
         public const int MAX_TEXT_PARTICLES = 10;
+        public const int MAX_EXPLOSIONS = 20;
 
         private static GameObjectCircularBuffer Particles = new GameObjectCircularBuffer(MAX_PARTICLES);
         private static GameObjectCircularBuffer TextParticles = new GameObjectCircularBuffer(MAX_TEXT_PARTICLES);
+        private static GameObjectCircularBuffer Explosions = new GameObjectCircularBuffer(MAX_EXPLOSIONS);
 
         static Texture2D SparkTexture;
         static Rectangle WhiteSquareSourceRectangle;
@@ -40,6 +42,13 @@ namespace MacGame
                 var particle = GetEmptyParticle();
                 particle.DisplayComponent = new TextDisplay("");
                 TextParticles.SetItem(particle, i);
+            }
+
+            // Initialize explosions.
+            for (int i = 0; i < MAX_EXPLOSIONS; i++)
+            {
+                var explosion = new Explosion(content);
+                Explosions.SetItem(explosion, i);
             }
         }
 
@@ -73,18 +82,27 @@ namespace MacGame
         {
             Particles.Disable();
             TextParticles.Disable();
+            Explosions.Disable();
         }
 
         static public void Update(GameTime gameTime, float elapsed)
         {
             Particles.Update(gameTime, elapsed);
             TextParticles.Update(gameTime, elapsed);
+            Explosions.Update(gameTime, elapsed);
         }
 
         static public void Draw(SpriteBatch spriteBatch)
         {
             Particles.Draw(spriteBatch);
             TextParticles.Draw(spriteBatch);
+            Explosions.Draw(spriteBatch);
+        }
+
+        public static void AddExplosion(Vector2 location)
+        {
+            var explosion = (Explosion)Explosions.GetNextObject();
+            explosion.Explode(location);
         }
 
         public static void EnemyPop(Vector2 location, int pointCount, Color color, float speed)

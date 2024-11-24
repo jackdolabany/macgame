@@ -23,6 +23,7 @@ namespace MacGame.Enemies
         private GooseState state = GooseState.Idle;
 
         float idleTimer = 0;
+        float explosionTimer = 0;
 
         public CanadaGooseBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -75,7 +76,7 @@ namespace MacGame.Enemies
             {
                 idleTimer += elapsed;
 
-                if (idleTimer >= 3f)
+                if (idleTimer >= 1.5f)
                 {
                     state = GooseState.Attacking;
                     idleTimer = 0;
@@ -102,6 +103,20 @@ namespace MacGame.Enemies
                         state = GooseState.Idle;
                     }
                 }
+            }
+
+
+            // random explosions
+            explosionTimer += elapsed;
+            if (explosionTimer >= 0.05f)
+            {
+                explosionTimer = 0f;
+                // Get a random location over this collision rectangle
+                var randomX = Game1.Randy.Next(CollisionRectangle.Width);
+                var randomY = Game1.Randy.Next(CollisionRectangle.Height);
+
+                var randomLocation = new Vector2(CollisionRectangle.X + randomX, CollisionRectangle.Y + randomY);
+                EffectsManager.AddExplosion(randomLocation);
             }
 
             base.Update(gameTime, elapsed);

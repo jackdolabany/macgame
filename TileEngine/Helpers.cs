@@ -46,7 +46,7 @@ namespace TileEngine
         /// </summary>
         public static Rectangle GetMegaTileRect(int x, int y)
         {
-            return GetPaddedTileRect(x, y, TileMap.TileSize * 4);
+            return GetPaddedTileRect(x, y, TileMap.TileSize * 8);
         }
 
         /// <summary>

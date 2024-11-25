@@ -18,8 +18,6 @@ namespace MacGame
             var ad = new AnimationDisplay();
             this.DisplayComponent = ad;
             ad.Add(explosion);
-
-            this.SetCenteredCollisionRectangle(24, 24);
             Enabled = false;
         }
 
@@ -37,7 +35,7 @@ namespace MacGame
             Enabled = true;
             AnimationDisplay.Play("explosion");
             WorldLocation = location + new Vector2(0, this.AnimationDisplay.CurrentAnimation.FrameRectangle.Height / 2);
-
+            this.Rotation = Game1.Randy.GetRandomFourWayRotation();
             // TODO: Add explosion sound
             //SoundManager.PlayExplosion(volume);
         }

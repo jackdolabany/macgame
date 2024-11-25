@@ -18,7 +18,9 @@ namespace MacGame.Enemies
         public enum GooseState
         {
             Idle,
-            Attacking
+            Attacking,
+            Dying,
+            Dead
         }
         private GooseState state = GooseState.Idle;
 
@@ -42,6 +44,11 @@ namespace MacGame.Enemies
             honk.FrameLength = 0.14f;
             animations.Add(honk);
 
+            var repeatHonk = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 1), 2, "repeatHonk");
+            repeatHonk.LoopAnimation = true;
+            repeatHonk.FrameLength = 0.14f;
+            animations.Add(repeatHonk);
+
             var attack = new AnimationStrip(textures, Helpers.GetMegaTileRect(2, 1), 3, "attack");
             attack.LoopAnimation = false;
             attack.FrameLength = 0.14f;
@@ -55,7 +62,7 @@ namespace MacGame.Enemies
             Health = 3;
             IsAffectedByGravity = false;
 
-            SetCenteredCollisionRectangle(60, 60);
+            collisionRectangle = new Rectangle(-120, -200, 150, 200);
 
             startLocationX = WorldLocation.X;
 
@@ -105,19 +112,27 @@ namespace MacGame.Enemies
                 }
             }
 
-
-            // random explosions
-            explosionTimer += elapsed;
-            if (explosionTimer >= 0.05f)
+            if (state == GooseState.Dying)
             {
-                explosionTimer = 0f;
-                // Get a random location over this collision rectangle
-                var randomX = Game1.Randy.Next(CollisionRectangle.Width);
-                var randomY = Game1.Randy.Next(CollisionRectangle.Height);
+                // Honk like crazy
+                this.animations.PlayIfNotAlreadyPlaying("repeatHonk");
+                
+                // random explosions
+                explosionTimer += elapsed;
+                if (explosionTimer >= 0.2f)
+                {
+                    explosionTimer = 0f;
+                    // Get a random location over this collision rectangle
+                    var randomX = Game1.Randy.Next(CollisionRectangle.Width);
+                    var randomY = Game1.Randy.Next(CollisionRectangle.Height);
 
-                var randomLocation = new Vector2(CollisionRectangle.X + randomX, CollisionRectangle.Y + randomY);
-                EffectsManager.AddExplosion(randomLocation);
+                    var randomLocation = new Vector2(CollisionRectangle.X + randomX, CollisionRectangle.Y + randomY);
+                    EffectsManager.AddExplosion(randomLocation);
+                }
+
+                // TODO: Count down a timer and then just be dead.
             }
+         
 
             base.Update(gameTime, elapsed);
 

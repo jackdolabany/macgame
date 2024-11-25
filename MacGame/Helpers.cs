@@ -139,11 +139,6 @@ namespace MacGame
             return (float)Math.Atan2(direction.Y, direction.X);
         }
 
-        public static bool GetBool(this Random randy)
-        {
-            return randy.Next(0, 2) == 0;
-        }
-
         public static bool NextBool(this Random randy)
         {
             return randy.Next(0, 2) == 0;
@@ -157,9 +152,20 @@ namespace MacGame
         /// <summary>
         /// Gets a random float rotation between 0 and 2pi
         /// </summary>
-        public static float NextRotation(this Random randy)
+        public static float GetRandomRotation(this Random randy)
         {
             return randy.NextVector().ToRadians();
+        }
+
+        public static float GetRandomFourWayRotation(this Random randy)
+        {
+            return GetRandomValue(new [] { 0f, MathHelper.PiOver2, MathHelper.Pi, MathHelper.PiOver2 + MathHelper.Pi });
+        }
+
+        public static T GetRandomValue<T>(T[] array)
+        {
+            var index = Game1.Randy.Next(array.Length);
+            return array[index];
         }
 
         //Get a unit vector in a completely random direction.

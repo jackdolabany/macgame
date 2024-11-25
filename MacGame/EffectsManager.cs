@@ -302,7 +302,7 @@ namespace MacGame
                 piece.Rotation = (float)Game1.Randy.NextDouble() * MathHelper.TwoPi;
             }
 
-            piece.IsRotationClockwise = Game1.Randy.GetBool();
+            piece.IsRotationClockwise = Game1.Randy.NextBool();
             piece.SetStaticImage(image, imageSourceRect);
 
             piece.SetDrawDepth(drawDepth);

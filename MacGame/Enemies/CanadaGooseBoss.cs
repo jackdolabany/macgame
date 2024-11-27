@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -11,12 +12,11 @@ namespace MacGame.Enemies
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        private float speed = 40;
-        private float startLocationX;
-        private float maxTravelDistance = 8 * Game1.TileScale;
+        private int _honkCount = 0;
 
         public enum GooseState
         {
+            InitialHonks,
             Idle,
             Attacking,
             Dying,
@@ -26,6 +26,11 @@ namespace MacGame.Enemies
 
         float idleTimer = 0;
         float explosionTimer = 0;
+
+        public List<Enemy> GooseBalls = new List<Enemy>();
+        public Vector2 idleHeadLocation;
+
+        public int previousFrameIndex = 0;
 
         public CanadaGooseBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -64,9 +69,28 @@ namespace MacGame.Enemies
 
             collisionRectangle = new Rectangle(-120, -200, 150, 200);
 
-            startLocationX = WorldLocation.X;
+            state = GooseState.InitialHonks;
 
-            state = GooseState.Idle;
+            TimerManager.AddNewTimer(1.5f, () =>
+            {
+                animations.Play("honk").FollowedBy("idle");
+            });
+            TimerManager.AddNewTimer(2.2f, () =>
+            {
+                animations.Play("honk").FollowedBy("idle");
+            });
+            TimerManager.AddNewTimer(2.9f, () =>
+            {
+                state = GooseState.Idle;
+            });
+
+            GooseBalls.Add(new CanadaGooseBall(content, cellX, cellY, player, camera));
+            GooseBalls.Add(new CanadaGooseBall(content, cellX, cellY, player, camera));
+
+            //new Vector2(32, 20);
+
+
+            idleHeadLocation = worldLocation + new Vector2(16, -176);
         }
 
         public override void Kill()
@@ -102,6 +126,25 @@ namespace MacGame.Enemies
                         animations.Play("attack");
                     }
                 }
+                else if (animations.CurrentAnimationName == "honk" && animations.CurrentAnimation!.currentFrameIndex == 1 && previousFrameIndex == 0)
+                {
+                    // When we honk shoot an idle ball when the frame swaps from 0 to 1.
+                    foreach (var ball in GooseBalls)
+                    {
+                        if (!ball.Enabled || ball.Dead)
+                        {
+                            ball.Enabled = true;
+                            ball.Dead = false;
+
+                            var yVelocity = -Game1.Randy.Next(0, 400);
+                            ball.Velocity = new Vector2(0, yVelocity);
+
+                            ball.WorldLocation = idleHeadLocation + new Vector2(0, 16);
+
+                            break;
+                        }
+                    }
+                }
                 else
                 {
                     if (animations.CurrentAnimation!.FinishedPlaying)
@@ -133,9 +176,33 @@ namespace MacGame.Enemies
                 // TODO: Count down a timer and then just be dead.
             }
          
+            foreach (var ball in GooseBalls)
+            {
+                if (ball.Enabled)
+                {
+                    ball.Update(gameTime, elapsed);
+                }
+            }
+
+            previousFrameIndex = animations.CurrentAnimation!.currentFrameIndex;
 
             base.Update(gameTime, elapsed);
 
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+
+            // Draw the balls
+            foreach (var ball in GooseBalls)
+            {
+                if (ball.Enabled && ball.Alive)
+                {
+                    ball.Draw(spriteBatch);
+                }
+            }
+
+            base.Draw(spriteBatch);
         }
     }
 }

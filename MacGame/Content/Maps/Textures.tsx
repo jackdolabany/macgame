@@ -111,6 +111,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="61">
+  <properties>
+   <property name="LoadClass" value="SpringBoard"/>
+  </properties>
+ </tile>
  <tile id="64">
   <properties>
    <property name="LoadClass" value="Platform.StaticPlatform"/>

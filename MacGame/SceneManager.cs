@@ -391,6 +391,12 @@ namespace MacGame
                                     }
                                 }
                             }
+                            else if (loadClass == "SpringBoard")
+                            {
+                                var springBoard = new SpringBoard(contentManager, x, y, player);
+                                level.SpringBoards.Add(springBoard);
+                                layerDepthObjects[z].Add(springBoard);
+                            }
                         }
                     }
                 }

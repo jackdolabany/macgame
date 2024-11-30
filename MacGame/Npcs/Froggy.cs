@@ -378,7 +378,7 @@ namespace MacGame.Npcs
         public override void Draw(SpriteBatch spriteBatch)
         {
            
-            if (Game1.DrawAllCollisisonRects)
+            if (Game1.DrawAllCollisionRects)
             {
                 // Draw the waypoints for debugging
                 foreach (var waypoint in Game1.CurrentLevel.Waypoints)

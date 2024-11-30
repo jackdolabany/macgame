@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World2GooseChamber";
+        public const string StartingWorld = "CollisionWorld";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -39,7 +39,7 @@ namespace MacGame
         public static Random Randy = new Random();
         public const float MIN_DRAW_INCREMENT = 0.000001f;
 
-        public static bool DrawAllCollisisonRects = false;
+        public static bool DrawAllCollisionRects = false;
 
         public static Color SoftWhite = new Color(255, 241, 232);
 
@@ -143,6 +143,14 @@ namespace MacGame
             get
             {
                 return CurrentLevel.Platforms;
+            }
+        }
+
+        public static IEnumerable<SpringBoard> SpringBoards
+        {
+            get
+            {
+                return CurrentLevel.SpringBoards;
             }
         }
 
@@ -760,7 +768,7 @@ namespace MacGame
 
                 if (keyState.IsKeyDown(Keys.D) && !previousKeyState.IsKeyDown(Keys.D))
                 {
-                    Game1.DrawAllCollisisonRects = !Game1.DrawAllCollisisonRects;
+                    Game1.DrawAllCollisionRects = !Game1.DrawAllCollisionRects;
                 }
                 previousKeyState = keyState;
             }

@@ -674,6 +674,49 @@ namespace MacGame
                 }
             }
 
+            // Check Spring Boards.
+            if (IsAffectedByGravity && IsAffectedByPlatforms && PlatformThatThisIsOn == null)
+            {
+                foreach (var springBoard in Game1.SpringBoards)
+                {
+
+                    var wasAbove = currentPositionRect.Bottom <= springBoard.TopHeight;
+                    var nowBelow = afterMoveRect.Bottom + 2f /*fudge*/ >= springBoard.TopHeight;
+
+                    if (isFalling && afterMoveRect.X <= springBoard.CollisionRectangle.Right && afterMoveRect.Right >= springBoard.CollisionRectangle.X && wasAbove && nowBelow)
+                    {
+                        springBoard.GameObjectOnMe = this;
+
+                        // The springboard will adjust the height of the gameObject on it when it gets updated
+                        // after this.
+
+                        onGround = true;
+                        velocity.Y = 0;
+
+                        if (!previouslyOnGround)
+                        {
+                            Landed = true;
+                            LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
+                        }
+
+                    }
+                    else
+                    {
+                        if (springBoard.GameObjectOnMe == this)
+                        {
+                            springBoard.GameObjectOnMe = null;
+
+                            // If they're moving up give them a little boost
+                            if (velocity.Y < 0)
+                            {
+                                this.velocity.Y -= 300 * springBoard.Compression;
+                            }
+                        }
+                    }
+
+                }
+            }
+
             Landed = Landed && ((afterMoveRect.Y - currentPositionRect.Y) > 5);
 
             return moveAmount;
@@ -769,14 +812,14 @@ namespace MacGame
             }
 
             // Draw Collision Rectangle in reddish
-            if (DrawCollisionRect || Game1.DrawAllCollisisonRects && !collisionRectangle.IsEmpty)
+            if (DrawCollisionRect || Game1.DrawAllCollisionRects && !collisionRectangle.IsEmpty)
             {
                 Color color = Color.Red * 0.25f;
                 spriteBatch.Draw(Game1.TileTextures, CollisionRectangle, Game1.WhiteSourceRect, color);
             }
 
             // Draw a square at the GameObjects location
-            if (DrawLocation || Game1.DrawAllCollisisonRects)
+            if (DrawLocation || Game1.DrawAllCollisionRects)
             {
                 var squareSize = 4;
                 var offset = squareSize / 2;

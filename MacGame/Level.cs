@@ -48,6 +48,7 @@ namespace MacGame
         public List<Npc> Npcs;
         public List<GameObject> GameObjects;
         public List<Platform> Platforms;
+        public List<SpringBoard> SpringBoards;
         public List<Door> Doors;
         public List<Waypoint> Waypoints;
 
@@ -71,6 +72,7 @@ namespace MacGame
             Enemies = new List<Enemy>();
             Items = new List<Item>();
             Platforms = new List<Platform>();
+            SpringBoards = new List<SpringBoard>();
             GameObjects = new List<GameObject>();
             Npcs = new List<Npc>();
             Doors = new List<Door>();
@@ -107,6 +109,11 @@ namespace MacGame
             foreach (var p in Platforms)
             {
                 p.Update(gameTime, elapsed);
+            }
+
+            foreach (var sb in SpringBoards)
+            {
+                sb.Update(gameTime, elapsed);
             }
 
             Player.Update(gameTime, elapsed);
@@ -474,6 +481,11 @@ namespace MacGame
             foreach (var p in Platforms)
             {
                 p.Draw(spriteBatch);
+            }
+
+            foreach (var sb in SpringBoards)
+            {
+                sb.Draw(spriteBatch);
             }
 
             foreach (var door in Doors)

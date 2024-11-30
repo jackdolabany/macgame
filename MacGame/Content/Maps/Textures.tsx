@@ -936,6 +936,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="438">
+  <properties>
+   <property name="LoadClass" value="Enemy.CanadaGooseBoss"/>
+  </properties>
+ </tile>
  <tile id="448">
   <properties>
    <property name="BlockPlayer" value="1"/>

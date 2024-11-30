@@ -23,5 +23,10 @@
         {
             objects[index] = item;
         }
+        public T GetItem(int index)
+        {
+            return objects[index];
+        }
+
     }
 }

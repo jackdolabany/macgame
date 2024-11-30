@@ -210,6 +210,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World2BigPurpleHouse.tmx
 
+#begin Maps/World2GooseChamber.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2GooseChamber.tmx
+
 #begin Maps/World2MineCart.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -384,6 +389,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/BigTextures.png
+
+#begin Textures/MegaTextures.png
+/importer:TextureImporter
+/processor:MegaTileBorderImageProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/MegaTextures.png
 
 #begin Textures/ReallyBigTextures.png
 /importer:TextureImporter

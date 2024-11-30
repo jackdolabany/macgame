@@ -60,7 +60,7 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (GameObjectOnMe != null)
+            if (GameObjectOnMe != null && GameObjectOnMe.Enabled)
             {
                 Compression += elapsed * 2f;
                 Compression = Math.Min(1f, Compression);
@@ -76,7 +76,11 @@ namespace MacGame
                 // Move the object on the spring board
                 if (GameObjectOnMe.Velocity.Y >= 0)
                 {
-                    GameObjectOnMe.WorldLocation = new Vector2(GameObjectOnMe.WorldLocation.X, TopHeight);
+
+                    // get x offset between collision bottom and worldLocation
+                    var yOffset = GameObjectOnMe.CollisionRectangle.Bottom - GameObjectOnMe.WorldLocation.Y;
+
+                    GameObjectOnMe.WorldLocation = new Vector2(GameObjectOnMe.WorldLocation.X, TopHeight - yOffset.ToInt());
                 }
             }
 

@@ -11,9 +11,9 @@ namespace MacGame.Enemies
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        private float speed = 40;
-        private float startLocationX;
-        private float maxTravelDistance = 8 * Game1.TileScale;
+        private float speed = 30;
+        private float walkTimer = 0f;
+        private const float maxWalkTime = 3f;
 
         public Ant(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -34,8 +34,6 @@ namespace MacGame.Enemies
             IsAffectedByGravity = true;
 
             SetCenteredCollisionRectangle(6, 7);
-
-            startLocationX = WorldLocation.X;
         }
 
         public override void Kill()
@@ -58,15 +56,11 @@ namespace MacGame.Enemies
                 }
             }
 
-            var travelDistance = WorldCenter.X.ToInt() - startLocationX;
-
-            if (velocity.X > 0 && travelDistance >= maxTravelDistance)
+            walkTimer += elapsed;
+            if (walkTimer >= maxWalkTime)
             {
                 Flipped = !Flipped;
-            }
-            else if (velocity.X < 0 && travelDistance <= -maxTravelDistance)
-            {
-                Flipped = !Flipped;
+                walkTimer = 0;
             }
 
             base.Update(gameTime, elapsed);

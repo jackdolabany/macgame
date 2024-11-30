@@ -675,7 +675,7 @@ namespace MacGame
             }
 
             // Check Spring Boards.
-            if (IsAffectedByGravity && IsAffectedByPlatforms && PlatformThatThisIsOn == null)
+            if (IsAffectedByGravity && IsAffectedByPlatforms && PlatformThatThisIsOn == null && !OnGround)
             {
                 foreach (var springBoard in Game1.SpringBoards)
                 {
@@ -683,7 +683,7 @@ namespace MacGame
                     var wasAbove = currentPositionRect.Bottom <= springBoard.TopHeight;
                     var nowBelow = afterMoveRect.Bottom + 2f /*fudge*/ >= springBoard.TopHeight;
 
-                    if (isFalling && afterMoveRect.X <= springBoard.CollisionRectangle.Right && afterMoveRect.Right >= springBoard.CollisionRectangle.X && wasAbove && nowBelow)
+                    if (this != springBoard && isFalling && afterMoveRect.X <= springBoard.CollisionRectangle.Right && afterMoveRect.Right >= springBoard.CollisionRectangle.X && wasAbove && nowBelow)
                     {
                         springBoard.GameObjectOnMe = this;
 

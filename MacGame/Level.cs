@@ -51,6 +51,11 @@ namespace MacGame
         public List<SpringBoard> SpringBoards;
         public List<Door> Doors;
         public List<Waypoint> Waypoints;
+        
+        /// <summary>
+        /// Objects that Mac can pick up.
+        /// </summary>
+        public List<IPickupObject> PickupObjects;
 
         public List<MovingBlockGroup> MovingBlockGroups { get; set; } = new List<MovingBlockGroup>();
 
@@ -78,6 +83,7 @@ namespace MacGame
             Doors = new List<Door>();
             RevealBlockManager = new RevealBlockManager();
             Waypoints = new List<Waypoint>();
+            PickupObjects = new List<IPickupObject>();
         }
 
         public static void AddEnemy(Enemy enemy)
@@ -111,12 +117,12 @@ namespace MacGame
                 p.Update(gameTime, elapsed);
             }
 
+            Player.Update(gameTime, elapsed);
+
             foreach (var sb in SpringBoards)
             {
                 sb.Update(gameTime, elapsed);
             }
-
-            Player.Update(gameTime, elapsed);
 
             Camera.Position = Player.GetCameraPosition(Camera);
 

@@ -54,7 +54,7 @@ namespace MacGame
         protected bool onCeiling;
         protected bool onLeftWall;
         protected bool onRightWall;
-        
+
         // Track if the character was on a slope tile which can lock them to it.
         protected bool onSlope;
 
@@ -87,7 +87,7 @@ namespace MacGame
         // Encapsulates common display logic and state
         public DisplayComponent DisplayComponent;
 
-        public virtual float DrawDepth
+public virtual float DrawDepth
         {
             get
             {
@@ -683,7 +683,7 @@ namespace MacGame
                     var wasAbove = currentPositionRect.Bottom <= springBoard.TopHeight;
                     var nowBelow = afterMoveRect.Bottom + 2f /*fudge*/ >= springBoard.TopHeight;
 
-                    if (this != springBoard && isFalling && afterMoveRect.X <= springBoard.CollisionRectangle.Right && afterMoveRect.Right >= springBoard.CollisionRectangle.X && wasAbove && nowBelow)
+                    if (!springBoard.IsPickedUp && this != springBoard && isFalling && afterMoveRect.X <= springBoard.CollisionRectangle.Right && afterMoveRect.Right >= springBoard.CollisionRectangle.X && wasAbove && nowBelow)
                     {
                         springBoard.GameObjectOnMe = this;
 

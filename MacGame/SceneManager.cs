@@ -395,6 +395,7 @@ namespace MacGame
                             {
                                 var springBoard = new SpringBoard(contentManager, x, y, player);
                                 level.SpringBoards.Add(springBoard);
+                                level.PickupObjects.Add(springBoard);
                                 layerDepthObjects[z].Add(springBoard);
                             }
                         }

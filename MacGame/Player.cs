@@ -66,6 +66,12 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
 
+        IPickupObject pickedUpObject;
+
+        // Track a pickup object that you recently dropped so you can kick it out.
+        IPickupObject recentlyDropped;
+        float kickTimer = 0;
+
         // Track if the player jumped off of sand or ice so that we can maintain the adjusted
         // movement speed through the jump.
         private bool isInJumpFromSand = false;
@@ -1040,6 +1046,65 @@ namespace MacGame
                     _shovel.TryDig(digDirection);
                 }
             }
+
+            // Pick up objects
+            if (pickedUpObject == null && recentlyDropped == null && !IsClimbingLadder && !IsClimbingVine && InputManager.CurrentAction.action)
+            {
+                Rectangle pickupRectangle;
+                if (IsFacingRight())
+                {
+                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left + 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
+                }
+                else
+                {
+                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left - 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
+                }
+                foreach (var puo in Game1.CurrentLevel.PickupObjects)
+                {
+                    if (puo.CanBePickedUp && pickupRectangle.Intersects(puo.CollisionRectangle))
+                    {
+                        this.pickedUpObject = puo;
+                        puo.Pickup();
+                        break;
+                    }
+                }
+            }
+
+            // Move it along with the player
+            if (pickedUpObject != null)
+            {
+                pickedUpObject.MoveToPlayer(this);
+            }
+
+            // Drop it
+            if (!InputManager.CurrentAction.action && InputManager.PreviousAction.action && pickedUpObject != null || IsClimbingLadder || IsClimbingVine)
+            {
+                pickedUpObject.Drop(this);
+                recentlyDropped = pickedUpObject;
+                kickTimer = 0f;
+                pickedUpObject = null;
+            }
+
+            if (recentlyDropped != null)
+            {
+                // Check if Mac kicked it
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
+                {
+                    // Kick the item
+                    recentlyDropped.Kick(this);
+                }
+
+                // Item is only kickable for a short time.
+                kickTimer += elapsed;
+                if (kickTimer >= 1f)
+                {
+                    kickTimer = 0f;
+                    recentlyDropped = null;
+                }
+            
+            }
+
+            
 
             string nextAnimation;
             if (IsJumping)

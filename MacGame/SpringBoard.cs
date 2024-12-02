@@ -130,11 +130,11 @@ namespace MacGame
             this.velocity = player.Velocity;
             if (player.IsFacingRight())
             {                 
-                this.velocity.X = 100;
+                this.velocity.X += 50;
             }
             else
             {
-                this.velocity.X = -100;
+                this.velocity.X += -50;
             }
             this.isTileColliding = true;
         }

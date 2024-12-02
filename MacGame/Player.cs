@@ -9,6 +9,7 @@ using MacGame.DisplayComponents;
 using MacGame.Items;
 using System.Collections.Generic;
 using MacGame.Behaviors;
+using System.Threading.Tasks.Dataflow;
 
 namespace MacGame
 {
@@ -66,11 +67,14 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
 
-        IPickupObject pickedUpObject;
+        IPickupObject? pickedUpObject;
 
         // Track a pickup object that you recently dropped so you can kick it out.
-        IPickupObject recentlyDropped;
+        IPickupObject? recentlyDropped;
         float kickTimer = 0;
+
+        // Can't pick up Item. Use this so Mac can't insta pick up an item he just dropped or kicked.
+        float pickUpAgainTimer = 0;
 
         // Track if the player jumped off of sand or ice so that we can maintain the adjusted
         // movement speed through the jump.
@@ -1047,8 +1051,10 @@ namespace MacGame
                 }
             }
 
+            var isAbleToPickup = !IsClimbingLadder && !IsClimbingVine && !IsInMineCart && !HasWings && !IsInCannon && !IsInWater;  
+
             // Pick up objects
-            if (pickedUpObject == null && recentlyDropped == null && !IsClimbingLadder && !IsClimbingVine && InputManager.CurrentAction.action)
+            if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup && InputManager.CurrentAction.action)
             {
                 Rectangle pickupRectangle;
                 if (IsFacingRight())
@@ -1077,14 +1083,16 @@ namespace MacGame
             }
 
             // Drop it
-            if (!InputManager.CurrentAction.action && InputManager.PreviousAction.action && pickedUpObject != null || IsClimbingLadder || IsClimbingVine)
+            if (pickedUpObject != null && (!InputManager.CurrentAction.acceptMenu || !isAbleToPickup))
             {
                 pickedUpObject.Drop(this);
                 recentlyDropped = pickedUpObject;
                 kickTimer = 0f;
+                pickUpAgainTimer = 1f;
                 pickedUpObject = null;
             }
 
+            // If Mac recently dropped a block he can kick it away for a short time.
             if (recentlyDropped != null)
             {
                 // Check if Mac kicked it
@@ -1092,11 +1100,12 @@ namespace MacGame
                 {
                     // Kick the item
                     recentlyDropped.Kick(this);
+                    recentlyDropped = null;
                 }
 
                 // Item is only kickable for a short time.
                 kickTimer += elapsed;
-                if (kickTimer >= 1f)
+                if (kickTimer >= 0.15f)
                 {
                     kickTimer = 0f;
                     recentlyDropped = null;
@@ -1104,7 +1113,11 @@ namespace MacGame
             
             }
 
-            
+            // Don't let Mac pick up objects for a short time. Otherwise he can re-pick it up mid-air.
+            if (pickUpAgainTimer > 0)
+            {
+                pickUpAgainTimer -= elapsed;
+            }
 
             string nextAnimation;
             if (IsJumping)

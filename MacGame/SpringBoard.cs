@@ -64,7 +64,7 @@ namespace MacGame
         {
 
             // Fricton
-            if (OnGround )
+            if (OnGround)
             {
                 this.velocity.X -= (this.velocity.X * 2 * elapsed);
             }
@@ -108,9 +108,16 @@ namespace MacGame
 
             var velocityBeforeUpdate = this.velocity;
 
+            if (IsPickedUp)
+            {
+                // No velocity and move to the player.
+                this.Velocity = Vector2.Zero;
+                this.WorldLocation = Game1.Player.WorldLocation + new Vector2(16 * (Game1.Player.Flipped ? -1 : 1), -8);
+            }
+
             base.Update(gameTime, elapsed);
 
-            // Bounce off wallsa.
+            // Bounce off walls.
             if ((OnLeftWall && velocityBeforeUpdate.X < 0) || (OnRightWall && velocityBeforeUpdate.X > 0))
             {
                 // If you hit a wall travel in the opposite direction and reverse speed, lose some speed for momentum.
@@ -121,6 +128,7 @@ namespace MacGame
         public void Pickup()
         {
             this.isTileColliding = false;
+            this.IsAffectedByGravity = false;
             IsPickedUp = true;
         }
 
@@ -137,6 +145,8 @@ namespace MacGame
                 this.velocity.X += -50;
             }
             this.isTileColliding = true;
+            this.MoveToIgnoreCollisions();
+            this.IsAffectedByGravity = true;
         }
 
         public void Kick(Player player)
@@ -149,7 +159,8 @@ namespace MacGame
         public void MoveToPlayer(Player player)
         {
             this.WorldLocation = player.WorldLocation + new Vector2(16 * (player.Flipped ? -1 : 1), -8);
-            this.velocity = player.Velocity;
+            //this.velocity = Vector2.Zero;
+            //this.Update(new GameTime(), 0);
         }
 
         public bool CanBePickedUp

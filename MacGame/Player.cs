@@ -709,6 +709,7 @@ namespace MacGame
             
             // Climbing a ladder from standstill.
             if (isOverALadder 
+                && pickedUpObject == null
                 && canClimbLadders
                 && (InputManager.CurrentAction.up || (IsClimbingLadder && InputManager.CurrentAction.down)) // Need to press up to latch onto a ladder. Down only if you are already climbing.
                 && !(PlatformThatThisIsOn is LadderPlatform)) // Don't climb if you are standing on a ladder platform. Climbing down from atop a ladder is handled below.
@@ -872,7 +873,7 @@ namespace MacGame
             var tileAtCenter = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
             var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
 
-            if (!IsClimbingVine && canClimbVines && isOverVine && (!OnGround || InputManager.CurrentAction.up))
+            if (!IsClimbingVine && canClimbVines && isOverVine && (!OnGround || InputManager.CurrentAction.up) && pickedUpObject == null)
             {
                 _state = MacState.ClimbingVine;
             }
@@ -1004,13 +1005,80 @@ namespace MacGame
                 velocity.X = 0;
             }
 
+            var isAbleToPickup = !IsClimbingLadder && !IsClimbingVine && !IsInMineCart && !HasWings && !IsInCannon && !IsInWater;
+
+            bool didPickUpObject = false;
+            bool didKickObject = false;
+
+            // Pick up objects
+            if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup && InputManager.CurrentAction.action)
+            {
+                Rectangle pickupRectangle;
+                if (IsFacingRight())
+                {
+                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left + 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
+                }
+                else
+                {
+                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left - 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
+                }
+                foreach (var puo in Game1.CurrentLevel.PickupObjects)
+                {
+                    if (puo.CanBePickedUp && pickupRectangle.Intersects(puo.CollisionRectangle))
+                    {
+                        this.pickedUpObject = puo;
+                        puo.Pickup();
+                        didPickUpObject = true;
+                        break;
+                    }
+                }
+            }
+
+            // Drop it
+            if (pickedUpObject != null && (!InputManager.CurrentAction.action || !isAbleToPickup))
+            {
+                pickedUpObject.Drop(this);
+                recentlyDropped = pickedUpObject;
+                kickTimer = 0f;
+                pickUpAgainTimer = 1f;
+                pickedUpObject = null;
+            }
+
+            // If Mac recently dropped a block he can kick it away for a short time.
+            if (recentlyDropped != null)
+            {
+                // Check if Mac kicked it
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
+                {
+                    // Kick the item
+                    recentlyDropped.Kick(this);
+                    recentlyDropped = null;
+                    didKickObject = true;
+                }
+
+                // Item is only kickable for a short time.
+                kickTimer += elapsed;
+                if (kickTimer >= 0.15f)
+                {
+                    kickTimer = 0f;
+                    recentlyDropped = null;
+                }
+
+            }
+
+            // Don't let Mac pick up objects for a short time. Otherwise he can re-pick it up mid-air.
+            if (pickUpAgainTimer > 0)
+            {
+                pickUpAgainTimer -= elapsed;
+            }
+
             // Mac throws an apple if he has them.
             if (HasApples && appleCooldownTimer < appleCooldownTime)
             {
                 appleCooldownTimer += elapsed;
             }
 
-            if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && HasApples && appleCooldownTimer >= appleCooldownTime)
+            if (HasApples && InputManager.CurrentAction.action && !InputManager.PreviousAction.action && appleCooldownTimer >= appleCooldownTime && !didPickUpObject && !didKickObject)
             {
                 var apple = Apples.TryGetObject();
                 if (apple != null)
@@ -1028,7 +1096,7 @@ namespace MacGame
 
             if (HasShovel)
             {
-                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && !didPickUpObject && !didKickObject)
                 {
                     var digDirection = Flipped ? DigDirection.Left : DigDirection.Right;
                     if(InputManager.CurrentAction.up)
@@ -1049,74 +1117,6 @@ namespace MacGame
                     }
                     _shovel.TryDig(digDirection);
                 }
-            }
-
-            var isAbleToPickup = !IsClimbingLadder && !IsClimbingVine && !IsInMineCart && !HasWings && !IsInCannon && !IsInWater;  
-
-            // Pick up objects
-            if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup && InputManager.CurrentAction.action)
-            {
-                Rectangle pickupRectangle;
-                if (IsFacingRight())
-                {
-                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left + 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
-                }
-                else
-                {
-                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left - 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
-                }
-                foreach (var puo in Game1.CurrentLevel.PickupObjects)
-                {
-                    if (puo.CanBePickedUp && pickupRectangle.Intersects(puo.CollisionRectangle))
-                    {
-                        this.pickedUpObject = puo;
-                        puo.Pickup();
-                        break;
-                    }
-                }
-            }
-
-            // Move it along with the player
-            if (pickedUpObject != null)
-            {
-                pickedUpObject.MoveToPlayer(this);
-            }
-
-            // Drop it
-            if (pickedUpObject != null && (!InputManager.CurrentAction.acceptMenu || !isAbleToPickup))
-            {
-                pickedUpObject.Drop(this);
-                recentlyDropped = pickedUpObject;
-                kickTimer = 0f;
-                pickUpAgainTimer = 1f;
-                pickedUpObject = null;
-            }
-
-            // If Mac recently dropped a block he can kick it away for a short time.
-            if (recentlyDropped != null)
-            {
-                // Check if Mac kicked it
-                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
-                {
-                    // Kick the item
-                    recentlyDropped.Kick(this);
-                    recentlyDropped = null;
-                }
-
-                // Item is only kickable for a short time.
-                kickTimer += elapsed;
-                if (kickTimer >= 0.15f)
-                {
-                    kickTimer = 0f;
-                    recentlyDropped = null;
-                }
-            
-            }
-
-            // Don't let Mac pick up objects for a short time. Otherwise he can re-pick it up mid-air.
-            if (pickUpAgainTimer > 0)
-            {
-                pickUpAgainTimer -= elapsed;
             }
 
             string nextAnimation;

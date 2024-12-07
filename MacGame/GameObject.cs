@@ -323,7 +323,12 @@ public virtual float DrawDepth
             // How many should we check left or right?
             int startCellX;
             int endCellX;
-            if (moveAmount.X > 0)
+
+            // Need to check this here and store it in varaible. As we adjust the object it may change the
+            // moveAmount.X value but we want to preserve the original motion.
+            bool isMovingRight = moveAmount.X > 0;
+
+            if (isMovingRight)
             {
                 // moving to the right.
                 startCellX = Game1.CurrentMap.GetCellByPixelX(currentPositionRect.Right - 1);
@@ -353,7 +358,7 @@ public virtual float DrawDepth
                     // --> / |        |
                     //    /  | ignore |
                     int adjacentX = x - 1;
-                    if (velocity.X < 0)
+                    if (!isMovingRight)
                     {
                         adjacentX = x + 1;
                     }
@@ -369,7 +374,7 @@ public virtual float DrawDepth
                         if (!cell.Passable && !cell.IsSlope() || (isEnemyTileColliding && !cell.EnemyPassable))
                         {
                             // There was a collision, place the object to the edge of the tile.
-                            if (moveAmount.X > 0)
+                            if (isMovingRight)
                             {
                                 // Moving right
                                 float rightMostPoint = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
@@ -377,7 +382,7 @@ public virtual float DrawDepth
                                 moveAmount.X = Math.Min(moveAmount.X, distanceToTile);
                                 onRightWall = true;
                             }
-                            else if (moveAmount.X < 0)
+                            else
                             {
                                 // Moving left
                                 float leftMostPoint = this.WorldLocation.X + collisionRectangle.X;
@@ -730,6 +735,89 @@ public virtual float DrawDepth
         public void RotateTo(Vector2 direction)
         {
             Rotation = (float)Math.Atan2(direction.Y, direction.X);
+        }
+
+        /// <summary>
+        /// Moves an object left/right/up/down to avoid colliding iwht other objects. Ignores velocity. This is for when an object wasn't tile 
+        /// blocking but then becomes that way. We don't want it to wark into walls and such and will prefer to just make sure it's not colliding.
+        /// </summary>
+        protected void MoveToIgnoreCollisions()
+        {
+            // Run through the four corners, if any of them are not tile blocked, move the object slightly in the direction of not being blocked.
+            // if all corners are free we are good, if all corners are blocked, the object must be disabled. Sorry!
+            bool allCornersAreFree = true;
+            bool allCornersAreBlocked = true;
+
+            var velocityAwayFromBlocked = Vector2.Zero;
+
+            var topLeftCell = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.CollisionRectangle.Top);
+            if (topLeftCell == null || !topLeftCell.Passable)
+            {
+                allCornersAreFree = false;
+            }
+            else
+            {
+                allCornersAreBlocked = false;
+                velocityAwayFromBlocked += new Vector2(1, 1);
+            }
+
+            var topRightCell = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, this.CollisionRectangle.Top);
+            if (topRightCell == null || !topRightCell.Passable)
+            {
+                allCornersAreFree = false;
+            }
+            else
+            {
+                allCornersAreBlocked = false;
+                velocityAwayFromBlocked += new Vector2(-1, 1);
+            }
+
+            var bottomLeftCell = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom);
+            if (bottomLeftCell == null || !bottomLeftCell.Passable)
+            {
+                allCornersAreFree = false;
+            }
+            else
+            {
+                allCornersAreBlocked = false;
+                velocityAwayFromBlocked += new Vector2(1, -1);
+            }
+
+            var bottomRightCell = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, this.CollisionRectangle.Bottom);
+            if (bottomRightCell == null || !bottomRightCell.Passable)
+            {
+                allCornersAreFree = false;
+            }
+            else
+            {
+                allCornersAreBlocked = false;
+                velocityAwayFromBlocked += new Vector2(-1, -1);
+            }
+
+            if (allCornersAreFree)
+            {
+                return;
+            }
+
+            if (allCornersAreBlocked)
+            {
+                this.Enabled = false;
+            }
+
+            var oldVelocity = this.Velocity;
+
+            Vector2 moveAmount = velocityAwayFromBlocked;
+            if (isTileColliding)
+            {
+                moveAmount = horizontalCollisionTest(moveAmount);
+                moveAmount = verticalCollisionTest(moveAmount);
+            }
+
+            // Move them out of harm's way.
+            this.worldLocation += moveAmount;
+
+            // preserve the old velocity in case the collision tests changed it.
+            this.velocity = oldVelocity;
         }
 
         public virtual void Update(GameTime gameTime, float elapsed)

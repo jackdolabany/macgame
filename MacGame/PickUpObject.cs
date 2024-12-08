@@ -12,7 +12,15 @@ namespace MacGame
         Vector2 originalWorldLocation;
 
         public bool IsPickedUp { get; set; }
-        Player _player;
+        protected Player _player;
+        
+        /// <summary>
+        /// Track a short period after it's dropped so we can avoid colliding 
+        /// with the player right away.
+        /// </summary>
+        float recentlyDroppedTimer;
+        protected bool WasRecentlyDropped;
+
 
         public PickupObject(ContentManager content, int x, int y, Player player)
         {
@@ -66,6 +74,15 @@ namespace MacGame
                     }
                 }
             }
+
+            if (recentlyDroppedTimer > 0)
+            {
+                recentlyDroppedTimer -= elapsed;
+                if (recentlyDroppedTimer <= 0)
+                {
+                    WasRecentlyDropped = false;
+                }
+            }
         }
 
         public void Pickup()
@@ -90,6 +107,8 @@ namespace MacGame
             this.isTileColliding = true;
             this.MoveToIgnoreCollisions();
             this.IsAffectedByGravity = true;
+            recentlyDroppedTimer = 0.5f;
+            WasRecentlyDropped = true;
         }
 
         public void Kick()

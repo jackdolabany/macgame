@@ -1017,18 +1017,19 @@ namespace MacGame
             // Pick up objects
             if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup && InputManager.CurrentAction.action)
             {
-                Rectangle pickupRectangle;
+                var bottomPickUpRectangle = new Rectangle(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom, this.collisionRectangle.Width, 8);
+                Rectangle frontPickUpRectangle;
                 if (IsFacingRight())
                 {
-                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left + 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
+                    frontPickUpRectangle = new Rectangle(this.CollisionRectangle.Left + 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
                 }
                 else
                 {
-                    pickupRectangle = new Rectangle(this.CollisionRectangle.Left - 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
+                    frontPickUpRectangle = new Rectangle(this.CollisionRectangle.Left - 8, this.CollisionRectangle.Top, CollisionRectangle.Width, this.CollisionRectangle.Height);
                 }
                 foreach (var puo in Game1.CurrentLevel.PickupObjects)
                 {
-                    if (puo.CanBePickedUp && pickupRectangle.Intersects(puo.CollisionRectangle))
+                    if (puo.CanBePickedUp && (frontPickUpRectangle.Intersects(puo.CollisionRectangle) || bottomPickUpRectangle.Intersects(puo.CollisionRectangle)))
                     {
                         this.pickedUpObject = puo;
                         puo.Pickup();

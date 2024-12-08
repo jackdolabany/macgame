@@ -432,7 +432,7 @@ namespace MacGame
                     continue;
                 }
 
-                if (collisionObject.velocity.X != 0) continue;
+                //if (collisionObject.velocity.X != 0) continue;
 
                 if (isMovingRight)
                 {

@@ -51,7 +51,12 @@ namespace MacGame
         public List<SpringBoard> SpringBoards;
         public List<Door> Doors;
         public List<Waypoint> Waypoints;
-        
+
+        /// <summary>
+        /// These objects collide with other objects and block the way. They're checked when we check collisions deep inside GameObject.
+        /// </summary>
+        public List<GameObject> CustomCollisionObjects;
+
         /// <summary>
         /// Objects that Mac can pick up.
         /// </summary>
@@ -84,6 +89,7 @@ namespace MacGame
             RevealBlockManager = new RevealBlockManager();
             Waypoints = new List<Waypoint>();
             PickupObjects = new List<IPickupObject>();
+            CustomCollisionObjects = new List<GameObject>();
         }
 
         public static void AddEnemy(Enemy enemy)

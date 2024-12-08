@@ -398,6 +398,13 @@ namespace MacGame
                                 level.PickupObjects.Add(springBoard);
                                 layerDepthObjects[z].Add(springBoard);
                             }
+                            else if (loadClass == "Box")
+                            {
+                                var box = new Box(contentManager, x, y, player);
+                                level.GameObjects.Add(box);
+                                level.CustomCollisionObjects.Add(box);
+                                layerDepthObjects[z].Add(box);
+                            }
                         }
                     }
                 }

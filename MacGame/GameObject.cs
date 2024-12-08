@@ -87,7 +87,7 @@ namespace MacGame
         // Encapsulates common display logic and state
         public DisplayComponent DisplayComponent;
 
-public virtual float DrawDepth
+        public virtual float DrawDepth
         {
             get
             {
@@ -277,6 +277,26 @@ public virtual float DrawDepth
             }
         }
 
+        protected FloatRectangle getCollisionFloatRectangleForPosition(ref Vector2 position)
+        {
+            if (DisplayComponent == null)
+            {
+                return new FloatRectangle(
+                  position.X + collisionRectangle.X,
+                  position.Y + collisionRectangle.Y,
+                  collisionRectangle.Width,
+                  collisionRectangle.Height);
+            }
+            else
+            {
+                return new FloatRectangle(
+                  position.X - DisplayComponent.RotationAndDrawOrigin.X + collisionRectangle.X,
+                  position.Y - DisplayComponent.RotationAndDrawOrigin.Y + collisionRectangle.Y,
+                  collisionRectangle.Width,
+                  collisionRectangle.Height);
+            }
+        }
+
         /// <summary>
         /// Creates a collision Rectangle for the game object centered vertically on the GameObject. Assumes the default
         /// world location of the bottom center of the GameObject.
@@ -395,6 +415,49 @@ public virtual float DrawDepth
                             // We scan closest tiles first so no reason to continue with the for loop.
                             continue;
                         }
+                    }
+                }
+            }
+
+            // Check against all custom collision objects
+
+            newPosition = worldLocation + moveAmount;
+            afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
+
+            foreach (var collisionObject in Game1.CustomCollisionObjects)
+            {
+
+                // They are not in the same vertical space, no need to check horizontal collision.
+                if (afterMoveRect.Top > collisionObject.CollisionRectangle.Bottom || afterMoveRect.Bottom < collisionObject.CollisionRectangle.Top)
+                {
+                    continue;
+                }
+
+                if (isMovingRight)
+                {
+                    float beforeMoveRight = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
+                    float afterMoveRight = beforeMoveRight + moveAmount.X;
+                    var leftOfObject = collisionObject.worldLocation.X + collisionObject.collisionRectangle.X;
+
+                    if (beforeMoveRight <= leftOfObject && afterMoveRight > leftOfObject)
+                    {
+                        var distanceToObject = leftOfObject - beforeMoveRight;
+                        moveAmount.X = distanceToObject;
+                        onRightWall = true;
+                        this.velocity.X = 0;
+                    }
+                }
+                else
+                {
+                    float beforeMoveLeft = this.WorldLocation.X + collisionRectangle.X;
+                    float afterMoveLeft = beforeMoveLeft + moveAmount.X;
+                    var rightOfObject = collisionObject.worldLocation.X + collisionObject.collisionRectangle.Right;
+                    if (beforeMoveLeft >= rightOfObject && afterMoveLeft < rightOfObject)
+                    {
+                        var distanceToObject = rightOfObject - beforeMoveLeft;
+                        moveAmount.X = distanceToObject;
+                        onLeftWall = true;
+                        this.velocity.X = 0;
                     }
                 }
             }
@@ -612,6 +675,56 @@ public virtual float DrawDepth
                 }
 
                 moveAmount.Y = yToMove;
+            }
+
+            // Check custom collision objects
+            // Check against all custom collision objects
+
+            newPosition = worldLocation + moveAmount;
+            afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
+
+            foreach (var collisionObject in Game1.CustomCollisionObjects)
+            {
+                
+                // If they aren't in the same horizontal space, don't check vertical
+                if (afterMoveRect.Left > collisionObject.CollisionRectangle.Right || afterMoveRect.Right < collisionObject.CollisionRectangle.Left)
+                {
+                    continue;
+                }
+
+                if (isFalling)
+                {
+                    float beforeMoveBottom = this.WorldLocation.Y + collisionRectangle.Y + collisionRectangle.Height;
+                    float afterMoveBottom = beforeMoveBottom + moveAmount.Y;
+                    var topOfObject = collisionObject.worldLocation.Y + collisionObject.collisionRectangle.Y;
+
+                    if (beforeMoveBottom <= topOfObject && afterMoveBottom > topOfObject)
+                    {
+                        var distanceToObject = topOfObject - beforeMoveBottom;
+                        moveAmount.Y = distanceToObject;
+                        onGround = true;
+                        velocity.Y = 0;
+                        if (!previouslyOnGround)
+                        {
+                            Landed = true;
+                            LandingVelocity = Math.Max(LandingVelocity, this.velocity.Y);
+                        }
+                    }
+                }
+                else
+                {
+                    // Moving up.
+                    float beforeMoveTop = this.WorldLocation.Y + collisionRectangle.Y;
+                    float afterMoveTop = beforeMoveTop + moveAmount.Y;
+                    var bottomOfObject = collisionObject.worldLocation.Y + collisionObject.collisionRectangle.Bottom;
+                    if (beforeMoveTop >= bottomOfObject && afterMoveTop < bottomOfObject)
+                    {
+                        var distanceToObject = bottomOfObject - beforeMoveTop;
+                        moveAmount.Y = distanceToObject;
+                        onCeiling = true;
+                        this.velocity.Y = 0;
+                    }
+                }
             }
 
             // Test platforms. We'll reassign PlatformThatThisIsOn here. Moving platforms should be updated before GameObjects

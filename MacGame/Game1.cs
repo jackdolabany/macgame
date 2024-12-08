@@ -154,6 +154,14 @@ namespace MacGame
             }
         }
 
+        public static IEnumerable<GameObject> CustomCollisionObjects
+        {
+            get
+            {
+                return CurrentLevel.CustomCollisionObjects;
+            }
+        }
+
         public static TileMap CurrentMap
         {
             get

@@ -96,6 +96,11 @@
    <property name="LoadClass" value="ButtonDown"/>
   </properties>
  </tile>
+ <tile id="47">
+  <properties>
+   <property name="LoadClass" value="Box"/>
+  </properties>
+ </tile>
  <tile id="56">
   <properties>
    <property name="LoadClass" value="Enemy.Bird"/>

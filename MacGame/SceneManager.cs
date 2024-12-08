@@ -403,6 +403,7 @@ namespace MacGame
                                 var box = new Box(contentManager, x, y, player);
                                 level.GameObjects.Add(box);
                                 level.CustomCollisionObjects.Add(box);
+                                level.PickupObjects.Add(box);
                                 layerDepthObjects[z].Add(box);
                             }
                         }

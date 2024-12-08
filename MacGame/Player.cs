@@ -685,6 +685,10 @@ namespace MacGame
             if (OnGround && !IsClimbingLadder && !IsClimbingVine)
             {
                 this.velocity.X -= (this.velocity.X * friction * elapsed);
+                if (Math.Abs(this.velocity.X) < 1f)
+                {
+                    this.velocity.X = 0;
+                }
             }
 
             // Sliding is a special state when you are still moving after walking.
@@ -1037,7 +1041,7 @@ namespace MacGame
             // Drop it
             if (pickedUpObject != null && (!InputManager.CurrentAction.action || !isAbleToPickup))
             {
-                pickedUpObject.Drop(this);
+                pickedUpObject.Drop();
                 recentlyDropped = pickedUpObject;
                 kickTimer = 0f;
                 pickUpAgainTimer = 1f;
@@ -1051,7 +1055,7 @@ namespace MacGame
                 if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
                 {
                     // Kick the item
-                    recentlyDropped.Kick(this);
+                    recentlyDropped.Kick();
                     recentlyDropped = null;
                     didKickObject = true;
                 }

@@ -13,10 +13,10 @@ namespace MacGame
     public interface IPickupObject
     {
         public void Pickup();
-        public void Drop(Player player);
+        public void Drop();
 
-        public void MoveToPlayer(Player player);
-        public void Kick(Player player);
+        public void MoveToPlayer();
+        public void Kick();
 
         public Rectangle CollisionRectangle { get; }
 

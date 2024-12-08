@@ -162,7 +162,7 @@ namespace MacGame.Enemies
 
         public virtual void TakeHit(int damage, Vector2 force)
         {
-            if (IsInvincibleAfterHit)
+            if (IsInvincibleAfterHit || Dead || !Enabled)
             {
                 return;
             }

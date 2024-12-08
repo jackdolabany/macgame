@@ -420,7 +420,6 @@ namespace MacGame
             }
 
             // Check against all custom collision objects
-
             newPosition = worldLocation + moveAmount;
             afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
 
@@ -433,6 +432,8 @@ namespace MacGame
                     continue;
                 }
 
+                if (collisionObject.velocity.X != 0) continue;
+
                 if (isMovingRight)
                 {
                     float beforeMoveRight = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
@@ -444,7 +445,6 @@ namespace MacGame
                         var distanceToObject = leftOfObject - beforeMoveRight;
                         moveAmount.X = distanceToObject;
                         onRightWall = true;
-                        this.velocity.X = 0;
                     }
                 }
                 else
@@ -457,7 +457,6 @@ namespace MacGame
                         var distanceToObject = rightOfObject - beforeMoveLeft;
                         moveAmount.X = distanceToObject;
                         onLeftWall = true;
-                        this.velocity.X = 0;
                     }
                 }
             }
@@ -678,8 +677,6 @@ namespace MacGame
             }
 
             // Check custom collision objects
-            // Check against all custom collision objects
-
             newPosition = worldLocation + moveAmount;
             afterMoveRect = getCollisionRectangleForPosition(ref newPosition);
 

@@ -7,7 +7,7 @@ using TileEngine;
 
 namespace MacGame
 {
-    public class SpringBoard : GameObject, IPickupObject
+    public class SpringBoard : PickupObject
     {
         // How compressed is the spring between 0 and 1
         public float Compression { get; set; } = 0;
@@ -18,14 +18,10 @@ namespace MacGame
 
         Vector2 originalWorldLocation;
 
-        public bool IsPickedUp { get; set; }
+        public GameObject? GameObjectOnMe { get; set; }
 
-        public GameObject GameObjectOnMe { get; set; }
-
-        public SpringBoard(ContentManager content, int x, int y, Player player)
+        public SpringBoard(ContentManager content, int x, int y, Player player) : base(content, x, y, player)
         {
-
-            //_player = player;
 
             up = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), Helpers.GetTileRect(13, 3));
             middle = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), Helpers.GetTileRect(14, 3));
@@ -62,12 +58,6 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-
-            // Fricton
-            if (OnGround)
-            {
-                this.velocity.X -= (this.velocity.X * 2 * elapsed);
-            }
 
             if (GameObjectOnMe != null && GameObjectOnMe.Enabled)
             {
@@ -106,69 +96,7 @@ namespace MacGame
                 this.DisplayComponent = down;
             }
 
-            var velocityBeforeUpdate = this.velocity;
-
-            if (IsPickedUp)
-            {
-                // No velocity and move to the player.
-                this.Velocity = Vector2.Zero;
-                this.WorldLocation = Game1.Player.WorldLocation + new Vector2(16 * (Game1.Player.Flipped ? -1 : 1), -8);
-            }
-
             base.Update(gameTime, elapsed);
-
-            // Bounce off walls.
-            if ((OnLeftWall && velocityBeforeUpdate.X < 0) || (OnRightWall && velocityBeforeUpdate.X > 0))
-            {
-                // If you hit a wall travel in the opposite direction and reverse speed, lose some speed for momentum.
-                this.velocity.X = velocityBeforeUpdate.X * 0.5f * -1f;
-            }
-        }
-
-        public void Pickup()
-        {
-            this.isTileColliding = false;
-            this.IsAffectedByGravity = false;
-            IsPickedUp = true;
-        }
-
-        public void Drop(Player player)
-        {
-            IsPickedUp = false;
-            this.velocity = player.Velocity;
-            if (player.IsFacingRight())
-            {                 
-                this.velocity.X += 50;
-            }
-            else
-            {
-                this.velocity.X += -50;
-            }
-            this.isTileColliding = true;
-            this.MoveToIgnoreCollisions();
-            this.IsAffectedByGravity = true;
-        }
-
-        public void Kick(Player player)
-        {
-            this.Velocity = player.Velocity + new Vector2(200 * (player.IsFacingRight() ? 1 : -1), -200);
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 120f);
-            SoundManager.PlaySound("Jump");
-        }
-
-        public void MoveToPlayer(Player player)
-        {
-            this.WorldLocation = player.WorldLocation + new Vector2(16 * (player.Flipped ? -1 : 1), -8);
-            //this.velocity = Vector2.Zero;
-            //this.Update(new GameTime(), 0);
-        }
-
-        public bool CanBePickedUp
-        {
-            get
-            {
-                return Enabled;
-            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

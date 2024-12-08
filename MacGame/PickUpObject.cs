@@ -11,7 +11,7 @@ namespace MacGame
     {
         Vector2 originalWorldLocation;
 
-        public bool IsPickedUp { get; set; }
+        public bool IsPickedUp { get; private set; }
         protected Player _player;
         
         /// <summary>

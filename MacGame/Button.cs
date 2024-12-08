@@ -34,13 +34,22 @@ namespace MacGame
 
         float cooldownTimer = 0f;
 
-        public Button(ContentManager content, int cellX, int cellY, Player player, bool isUp)
+        private bool _isSpringButton;
+
+        /// <summary>
+        /// A button that Mac can compress.
+        /// </summary>
+        /// <param name="isUp">If true the button is initially up. Else, down.</param>
+        /// <param name="isSpringButton">If true the button is a spring button. It springs back up if Mac (or something else) isn't on it.</param>
+        public Button(ContentManager content, int cellX, int cellY, Player player, bool isUp, bool isSpringButton)
         {
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
 
             _player = player;
 
             Enabled = true;
+
+            _isSpringButton = isSpringButton;
 
             // This is a button. It doesn't do anything.
             IsAffectedByForces = false;
@@ -54,12 +63,25 @@ namespace MacGame
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var up = new AnimationStrip(textures, Helpers.GetTileRect(13, 2), 1, "up");
+            Rectangle upSource;
+            Rectangle downSource;
+            if (isSpringButton)
+            {
+                // Spring button uses slightly different graphics
+                upSource = Helpers.GetTileRect(9, 1);
+                downSource = Helpers.GetTileRect(10, 1);
+            }
+            else
+            {
+                upSource = Helpers.GetTileRect(13, 2);
+                downSource = Helpers.GetTileRect(14, 2);
+            }
+            var up = new AnimationStrip(textures, upSource, 1, "up");
             up.LoopAnimation = false;
             up.FrameLength = 0.14f;
             animations.Add(up);
 
-            var down = new AnimationStrip(textures, Helpers.GetTileRect(14, 2), 1, "down");
+            var down = new AnimationStrip(textures, downSource, 1, "down");
             down.LoopAnimation = false;
             down.FrameLength = 0.14f;
             animations.Add(down);
@@ -85,10 +107,34 @@ namespace MacGame
                 cooldownTimer -= elapsed;
             }
 
+            bool isColliding = false;
+            bool isPlayerColliding = false;
+            // Check if the player or an object is holding it down. 
+            if (_player.CollisionRectangle.Intersects(this.CollisionRectangle)
+                && (_isSpringButton || _player.Velocity.Y > 0) // must jump down onto regular buttons.
+                && !_player.IsInWater)
+            {
+                isColliding = true;
+                isPlayerColliding = true;
+            }
+
+            if (!isColliding)
+            {
+                // Check pick up objects
+                foreach (var puo in Game1.CurrentLevel.PickupObjects)
+                {
+                    var go = puo as PickupObject;
+                    if (!go.IsPickedUp && go.Enabled && go.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    {
+                        isColliding = true;
+                    }
+                }
+            }
+
+            // Should we allow enemies too?
+
             if (cooldownTimer <= 0
-                && _player.CollisionRectangle.Intersects(this.CollisionRectangle)
-                && _player.Velocity.Y > 0
-                && !_player.IsInWater
+                && isColliding
                 && animations.CurrentAnimationName == "up")
             {
                 // TODO: Play sound
@@ -105,7 +151,10 @@ namespace MacGame
                 cooldownTimer = 0.5f;
 
                 // Pop the player up a bit.
-                _player.Velocity = new Vector2(_player.Velocity.X, -300);
+                if (!_isSpringButton && isPlayerColliding)
+                {
+                    _player.Velocity = new Vector2(_player.Velocity.X, -300);
+                }
 
                 // Water buttons should put the other buttons up or down.
                 if (this.DownAction.EndsWith("Water"))
@@ -129,6 +178,19 @@ namespace MacGame
                 }
             }
 
+            if (!isColliding
+                && _isSpringButton
+                && animations.CurrentAnimationName == "down")
+            {
+                animations.Play("up");
+                if (!string.IsNullOrEmpty(UpAction))
+                {
+                    // TODO: PlaySound
+                    var type = Game1.CurrentLevel.GetType();
+                    MethodInfo methodInfo = type.GetMethod(UpAction);
+                    methodInfo.Invoke(Game1.CurrentLevel, null);
+                }
+            }
             base.Update(gameTime, elapsed);
         }
 

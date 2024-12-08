@@ -51,6 +51,11 @@
    <property name="LoadClass" value="Enemy.Skull"/>
   </properties>
  </tile>
+ <tile id="25">
+  <properties>
+   <property name="LoadClass" value="SpringButton"/>
+  </properties>
+ </tile>
  <tile id="27">
   <properties>
    <property name="LoadClass" value="Item.Shovel"/>
@@ -114,6 +119,11 @@
  <tile id="59">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="60">
+  <properties>
+   <property name="LoadClass" value="Rock"/>
   </properties>
  </tile>
  <tile id="61">

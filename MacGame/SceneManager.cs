@@ -364,13 +364,17 @@ namespace MacGame
                                     }
                                 }
                             }
-                            else if (loadClass == "ButtonUp" || loadClass == "ButtonDown")
+                            else if (loadClass == "ButtonUp" || loadClass == "ButtonDown" || loadClass == "SpringButton")
                             {
-                                var button = new Button(contentManager, x, y, player, loadClass == "ButtonUp");
+
+                                var isUp = loadClass == "ButtonUp" || loadClass == "SpringButton";
+                                var isSpring = loadClass == "SpringButton";
+
+                                var button = new Button(contentManager, x, y, player, isUp, isSpring);
                                 level.GameObjects.Add(button);
                                 layerDepthObjects[z].Add(button);
 
-                                // Cannon modifiers
+                                // Button modifiers
                                 foreach (var obj in map.ObjectModifiers)
                                 {
                                     if (obj.GetScaledRectangle().Contains(button.CollisionRectangle))
@@ -403,6 +407,13 @@ namespace MacGame
                                 var box = new Box(contentManager, x, y, player);
                                 level.GameObjects.Add(box);
                                 level.CustomCollisionObjects.Add(box);
+                                level.PickupObjects.Add(box);
+                                layerDepthObjects[z].Add(box);
+                            }
+                            else if (loadClass == "Rock")
+                            {
+                                var box = new Rock(contentManager, x, y, player);
+                                level.GameObjects.Add(box);
                                 level.PickupObjects.Add(box);
                                 layerDepthObjects[z].Add(box);
                             }

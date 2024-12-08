@@ -21,5 +21,7 @@ namespace MacGame
         public Rectangle CollisionRectangle { get; }
 
         public bool CanBePickedUp { get; }
+
+        public bool IsPickedUp { get; }
     }
 }

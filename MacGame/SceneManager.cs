@@ -417,6 +417,13 @@ namespace MacGame
                                 level.PickupObjects.Add(box);
                                 layerDepthObjects[z].Add(box);
                             }
+                            else if (loadClass == "BlockingPiston")
+                            {
+                                var blockingPiston = new BlockingPiston(contentManager, x, y, player);
+                                level.GameObjects.Add(blockingPiston);
+                                level.CustomCollisionObjects.Add(blockingPiston);
+                                layerDepthObjects[z].Add(blockingPiston);
+                            }
                         }
                     }
                 }

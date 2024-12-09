@@ -427,12 +427,10 @@ namespace MacGame
             {
 
                 // They are not in the same vertical space, no need to check horizontal collision.
-                if (afterMoveRect.Top > collisionObject.CollisionRectangle.Bottom || afterMoveRect.Bottom < collisionObject.CollisionRectangle.Top)
+                if (afterMoveRect.Top >= collisionObject.CollisionRectangle.Bottom || afterMoveRect.Bottom <= collisionObject.CollisionRectangle.Top)
                 {
                     continue;
                 }
-
-                //if (collisionObject.velocity.X != 0) continue;
 
                 if (isMovingRight)
                 {
@@ -684,7 +682,7 @@ namespace MacGame
             {
                 
                 // If they aren't in the same horizontal space, don't check vertical
-                if (afterMoveRect.Left > collisionObject.CollisionRectangle.Right || afterMoveRect.Right < collisionObject.CollisionRectangle.Left)
+                if (afterMoveRect.Left >= collisionObject.CollisionRectangle.Right || afterMoveRect.Right <= collisionObject.CollisionRectangle.Left)
                 {
                     continue;
                 }

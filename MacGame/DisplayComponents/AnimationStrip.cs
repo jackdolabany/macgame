@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MacGame.DisplayComponents
 {
-    public class AnimationStrip
+    public class AnimationStrip : ICloneable
     {
         private float frameTimer = 0f;
 

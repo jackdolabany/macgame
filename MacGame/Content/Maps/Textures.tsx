@@ -776,6 +776,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="352">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="361">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -804,6 +809,11 @@
  <tile id="366">
   <properties>
    <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="368">
+  <properties>
+   <property name="LoadClass" value="BlockingPiston"/>
   </properties>
  </tile>
  <tile id="380">

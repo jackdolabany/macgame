@@ -22,7 +22,7 @@ namespace MacGame
             WorldLocation = new Vector2(x * TileMap.TileSize + TileMap.TileSize / 2, (y + 1) * TileMap.TileSize);
             IsAffectedByGravity = true;
 
-            this.SetCenteredCollisionRectangle(8, 8);
+            this.SetCenteredCollisionRectangle(5, 5);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

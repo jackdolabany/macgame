@@ -26,6 +26,12 @@ namespace MacGame
         public string UpAction = "";
 
         /// <summary>
+        /// Put whatever you want here and the custom function up there will be able to read it.
+        /// Set this in the object that wraps this in the map editor.
+        /// </summary>
+        public string Args = "";
+
+        /// <summary>
         /// Set from the map editor.
         /// </summary>
         public string Name = "";
@@ -142,10 +148,7 @@ namespace MacGame
                 animations.Play("down");
                 if (!string.IsNullOrEmpty(DownAction))
                 {
-                    // TODO: PlaySound
-                    var type = Game1.CurrentLevel.GetType();
-                    MethodInfo methodInfo = type.GetMethod(DownAction);
-                    methodInfo.Invoke(Game1.CurrentLevel, null);
+                    Game1.CurrentLevel.ButtonAction(this, DownAction, Args);
                 }
 
                 cooldownTimer = 0.5f;
@@ -183,12 +186,10 @@ namespace MacGame
                 && animations.CurrentAnimationName == "down")
             {
                 animations.Play("up");
+                // TODO: PlaySound
                 if (!string.IsNullOrEmpty(UpAction))
                 {
-                    // TODO: PlaySound
-                    var type = Game1.CurrentLevel.GetType();
-                    MethodInfo methodInfo = type.GetMethod(UpAction);
-                    methodInfo.Invoke(Game1.CurrentLevel, null);
+                    Game1.CurrentLevel.ButtonAction(this, UpAction, Args);
                 }
             }
             base.Update(gameTime, elapsed);

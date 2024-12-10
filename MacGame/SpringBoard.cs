@@ -106,7 +106,7 @@ namespace MacGame
                 if (Game1.DrawAllCollisionRects)
                 {
                     var topOfSpringBoardRect = new Rectangle(this.CollisionRectangle.X, this.TopHeight, this.CollisionRectangle.Width, 3 * Game1.TileScale);
-                    spriteBatch.Draw(Game1.TileTextures, topOfSpringBoardRect, Game1.WhiteSourceRect, Color.Yellow);
+                    spriteBatch.Draw(Game1.TileTextures, topOfSpringBoardRect, Game1.WhiteSourceRect, Color.Yellow * 0.3f);
                 }
 
                 base.Draw(spriteBatch);

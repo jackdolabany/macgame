@@ -10,6 +10,7 @@ using MacGame.Items;
 using MacGame.Npcs;
 using System.Linq;
 using MacGame.Doors;
+using System.Diagnostics;
 
 namespace MacGame
 {
@@ -444,19 +445,71 @@ namespace MacGame
             HighWater();
         }
 
-        public void HighWater()
+        private void HighWater()
         {
             SetWaterHeight(WaterHeight.High);
         }
 
-        public void MediumWater()
+        private void MediumWater()
         {
             SetWaterHeight(WaterHeight.Medium);
         }
 
-        public void LowWater()
+        private void LowWater()
         {
             SetWaterHeight(WaterHeight.Low);
+        }
+
+        /// <summary>
+        /// Handles actions from buttons. You can set an UpAction or DownAction in the map editor by surrounding the button with an object.
+        /// You can pass additional data in with the Args property.
+        /// </summary>
+        public void ButtonAction(Button button, string action, string args)
+        {
+            switch (action)
+            {
+                case "HighWater":
+                    HighWater();
+                    break;
+                case "MediumWater":
+                    MediumWater();
+                    break;
+                case "LowWater":
+                    LowWater();
+                    break;
+                case "CloseBlockingPiston":
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is BlockingPiston)
+                        {
+                            var piston = (BlockingPiston)gameObject;
+                            if (piston.Name == args)
+                            {
+                                piston.Close();
+                            }
+                        }
+                    }
+                    break;
+                case "OpenBlockingPiston":
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is BlockingPiston)
+                        {
+                            var piston = (BlockingPiston)gameObject;
+                            if (piston.Name == args)
+                            {
+                                piston.Open();
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    if (Game1.IS_DEBUG)
+                    {
+                        throw new Exception($"Unknown button action: {action}");
+                    }
+                    break;
+            }
         }
 
         public int GetTileHightForWaterHeight(WaterHeight height)

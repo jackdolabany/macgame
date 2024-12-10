@@ -38,7 +38,7 @@ namespace MacGame
             // Fricton
             if (OnGround)
             {
-                this.velocity.X -= (this.velocity.X * 2 * elapsed);
+                this.velocity.X -= (this.velocity.X * 3.5f * elapsed);
                 if (Math.Abs(this.velocity.X) < 1f)
                 {
                     this.velocity.X = 0;

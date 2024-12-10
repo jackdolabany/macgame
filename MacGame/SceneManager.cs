@@ -391,6 +391,10 @@ namespace MacGame
                                             {
                                                 button.DownAction = prop.Value;
                                             }
+                                            else if (prop.Key == "Args")
+                                            {
+                                                button.Args = prop.Value;
+                                            }
                                         }
                                     }
                                 }
@@ -421,8 +425,16 @@ namespace MacGame
                             {
                                 var blockingPiston = new BlockingPiston(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);
-                                level.CustomCollisionObjects.Add(blockingPiston);
                                 layerDepthObjects[z].Add(blockingPiston);
+
+                                // BlockingPiston modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(blockingPiston.CollisionRectangle))
+                                    {
+                                        blockingPiston.Name = obj.Name;
+                                    }
+                                }
                             }
                         }
                     }
@@ -478,9 +490,10 @@ namespace MacGame
                 // Highest number things end up in the back.
                 var gameObjects = layerDepthObjects[layer].OrderBy(o => {
                     if (o is Door) return 1;
+                    if (o is BlockingPiston) return 1;
                     if (o is Npc) return 2;
                     if (o is Platform) return 3;
-                    if (o is Player) return 4; // always in front of kiosks on the same layer.
+                    if (o is Player) return 4;
                     return 5; // enemies and items in front of the player.
                 }).ToList();
 

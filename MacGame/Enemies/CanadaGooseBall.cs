@@ -42,12 +42,6 @@ namespace MacGame.Enemies
 
             this.velocity.X = Helpers.GetRandomValue(new int[] { 150, 200, 120 });
 
-            if (this.CollisionRectangle.Intersects(_player.CollisionRectangle))
-            {
-                _player.TakeHit(this);
-                this.Kill();
-            }
-
             base.Update(gameTime, elapsed);
 
             if (OnRightWall)

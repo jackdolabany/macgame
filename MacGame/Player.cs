@@ -560,6 +560,7 @@ namespace MacGame
         public void TakeHit(Enemy enemy)
         {
             if (IsInvincible) return;
+            if (Health <= 0) return;
 
             // player takes a hit.
             Health -= 1;

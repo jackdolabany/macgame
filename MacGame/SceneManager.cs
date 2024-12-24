@@ -169,10 +169,6 @@ namespace MacGame
                                     }
                                     level.Enemies.Add(gooseBoss.Head);
                                     layerDepthObjects[z].Add(gooseBoss.Head);
-
-                                    level.SpringBoards.Add(gooseBoss.SpringBoard);
-                                    level.PickupObjects.Add(gooseBoss.SpringBoard);
-                                    layerDepthObjects[z].Add(gooseBoss.SpringBoard);
                                 }
 
                             }

@@ -972,9 +972,11 @@ namespace MacGame
         {
             // Draw the hearts in the HUD
             var hudYPos = 8;
+            const int heartSpacer = 4;
+
             for (int i = 0; i < Player.MaxHealth; i++)
             {
-                var heartXPos = 8 + (i * TileSize);
+                var heartXPos = 8 + (i * (TileSize + heartSpacer));
                 if (i < Player.Health)
                 {
                     spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, TileSize, TileSize), Helpers.GetTileRect(1, 2), Color.White);
@@ -988,19 +990,26 @@ namespace MacGame
             // Draw the current Boss's health
             if (MaxBossHealth > 0 && DrawBossHealth)
             {
-                const int bossHealthYPosition = Game1.GAME_Y_RESOLUTION - 48;
-                var startingXPos = (GAME_X_RESOLUTION / 2) - (TileSize * MaxBossHealth / 2);
+                int bossHealthYPosition = 10;
+                var startingXPos = (GAME_X_RESOLUTION / 2) - (TileSize * MaxBossHealth / 2) - (heartSpacer * (MaxBossHealth - 1) / 2);
+                const string enemyText = "Enemy";
+                var textWidth = Font.MeasureString(enemyText).X * FontScale;
+                var startingTextXPos = (GAME_X_RESOLUTION / 2) - (textWidth / 2);
+
+                spriteBatch.DrawString(Font, enemyText, new Vector2(startingTextXPos + 6, bossHealthYPosition), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+
+                bossHealthYPosition += TileSize;
 
                 for (int i = 0; i < MaxBossHealth; i++)
                 {
-                    var heartXPos = startingXPos + (i * (TileSize));
+                    var heartXPos = startingXPos + (i * (TileSize + heartSpacer));
                     if (i < BossHealth)
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 2), Color.White);
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 2), Color.Red * 0.8f);
                     }
                     else
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 2), Color.White);
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 2), Color.Red * 0.8f);
                     }
                 }
             }

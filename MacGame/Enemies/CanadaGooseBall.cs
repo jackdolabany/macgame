@@ -22,7 +22,8 @@ namespace MacGame.Enemies
             IsAffectedByGravity = true;
             CanBeJumpedOn = false;
             CanBeHitWithWeapons = false;
-
+            IsAffectedByPlatforms = false;
+            
             SetCenteredCollisionRectangle(7, 7);
             this.CollisionRectangle = new Rectangle(this.collisionRectangle.X, this.collisionRectangle.Y, this.collisionRectangle.Width, this.collisionRectangle.Height - 8);
 

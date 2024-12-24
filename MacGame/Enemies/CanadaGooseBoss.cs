@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MacGame.DisplayComponents;
 using MacGame.Items;
+using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,7 +64,8 @@ namespace MacGame.Enemies
         {
             Phase1,
             Phase2,
-            Phase3
+            Phase3,
+            Dead
         }
 
         private GooseState state = GooseState.IdleHonking;
@@ -79,6 +82,10 @@ namespace MacGame.Enemies
                 {
                     return AttackPhase.Phase2;
                 }
+                else if (Health == 0)
+                {
+                    return AttackPhase.Dead;
+                }    
                 else
                 {
                     return AttackPhase.Phase1;
@@ -90,6 +97,7 @@ namespace MacGame.Enemies
         float idleTimer = 0;
         float takeHitTimer = 0;
         float explosionTimer = 0;
+        float stillBeforeFallingAfterDeathTimer = 0;
         
         // Set this to however many goose balls you want the goose to spit in the ball attack phase.
         int ballsToShoot = 0;
@@ -103,9 +111,6 @@ namespace MacGame.Enemies
         public CanadaGooseHead Head;
         public List<CanadaGooseNeck> Necks;
         Vector2 initialHeadLocation;
-
-        // The Goose will give you a springboard to help kill him. Seems like a bad idea, but who knows how Geese think?
-        public SpringBoard SpringBoard;
 
         Rectangle regularCollisionRectangle;
         Rectangle duckedDownCollisionRectangle;
@@ -121,7 +126,7 @@ namespace MacGame.Enemies
 
         private Player _player;
 
-        private int MaxHealth = 5;
+        private int MaxHealth = 6;
 
         // If so many seconds goes by and there's not current a spring, one will drop.
         float springTimer = 0f;
@@ -129,7 +134,26 @@ namespace MacGame.Enemies
 
         private bool isStanding;
 
-        Sock sock;
+        /// <summary>
+        /// In phase 1 the goose will enable moving platforms.
+        /// </summary>
+        private List<MovingPlatform> MovingPlatforms = new List<MovingPlatform>();
+
+        /// <summary>
+        /// In phase 2 the goose will enable the breaking platforms.
+        /// </summary>
+        private List<BreakingPlatform> BreakingPlatforms = new List<BreakingPlatform>();
+
+        /// <summary>
+        /// In phase 3 the goose will enable the springboard to help you kill it. Seems like a bad idea, but who knows how Geese think?
+        /// </summary>
+        private SpringBoard SpringBoard;
+        Vector2 springBoardInitialLocation;
+
+        /// <summary>
+        /// After death the Goose will reveal the sock.
+        /// </summary>
+        private Sock Sock;
 
         private bool isInitialized = false;
 
@@ -189,7 +213,7 @@ namespace MacGame.Enemies
             Attack = 1;
             Health = MaxHealth;
 
-            Health = 1;
+            Health = 2;
 
             IsAffectedByGravity = false;
 
@@ -216,24 +240,18 @@ namespace MacGame.Enemies
 
             idleHeadLocation = worldLocation + new Vector2(16, -176);
 
-            SpringBoard = new SpringBoard(content, 0, 0, _player);
-            SpringBoard.Enabled = false;
-
             springTimer = maxSpringTimer;
 
             // TODO: Sounds
             /*
              Getting hit
-
+            dying
+            honking
+            ball bouncing
+            ball hitting the wall
+            springboard breaking
+            explosions
              */
-        }
-
-        public override void Kill()
-        {
-            EffectsManager.SmallEnemyPop(WorldCenter);
-
-            Enabled = false;
-            base.Kill();
         }
 
         /// <summary>
@@ -287,22 +305,47 @@ namespace MacGame.Enemies
 
         private void Initialize()
         {
+            // Find a bunch of stuff we expect in the map.
             foreach (var item in Game1.CurrentLevel.Items)
             {
                 if (item is Sock)
                 {
-                    sock = item as Sock;
+                    Sock = item as Sock;
                 }
             }
 
-            if (sock == null)
+            if (Sock == null)
             {
                 throw new Exception("You need a sock in the level!");
             }
 
-            sock.Enabled = false;
+            Sock.Enabled = false;
 
+            foreach (var platform in Game1.CurrentLevel.Platforms)
+            {
+                if (platform is MovingPlatform)
+                {
+                    MovingPlatforms.Add(platform as MovingPlatform);
+                }
+                if (platform is BreakingPlatform)
+                {
+                    BreakingPlatforms.Add(platform as BreakingPlatform);
+                }
+            }
+
+            SpringBoard = Game1.CurrentLevel.SpringBoards.Single();
+            springBoardInitialLocation = SpringBoard.WorldLocation;
             isInitialized = true;
+        }
+
+        private void BreakSpringBoard()
+        {
+            if (SpringBoard.Enabled)
+            {
+                SpringBoard.Enabled = false;
+                EffectsManager.SmallEnemyPop(SpringBoard.WorldCenter);
+                springTimer = maxSpringTimer;
+            }
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -313,17 +356,38 @@ namespace MacGame.Enemies
                 Initialize();
             }
 
-            // If there's no springboard, make one appear so the player has a chance to jump on this goon.
-            if (!SpringBoard.Enabled && this.Alive && this.state != GooseState.Dying && this.state != GooseState.Dead)
+            // Enable/disable the environmental objects
+            foreach (var platform in MovingPlatforms)
             {
-                springTimer -= elapsed;
-                if (springTimer <= 0)
+                platform.Enabled = attackPhase == AttackPhase.Phase1;
+            }
+            
+            foreach (var platform in BreakingPlatforms)
+            {
+                if (attackPhase != AttackPhase.Phase2)
                 {
-                    SpringBoard.WorldLocation = this.WorldLocation + new Vector2(328, -448);
-                    SpringBoard.Enabled = true;
-                    // So it draws in the correct location.
-                    SpringBoard.Update(gameTime, elapsed);
+                    platform.Enabled = false;
                 }
+            }
+
+            if (attackPhase == AttackPhase.Phase3)
+            {
+                // If there's no springboard, make one appear so the player has a chance to jump on this goon.
+                if (!SpringBoard.Enabled && this.Alive && this.state != GooseState.Dying && this.state != GooseState.Dead)
+                {
+                    springTimer -= elapsed;
+                    if (springTimer <= 0)
+                    {
+                        SpringBoard.WorldLocation = springBoardInitialLocation;
+                        SpringBoard.Enabled = true;
+                        // So it draws in the correct location.
+                        SpringBoard.Update(gameTime, elapsed);
+                    }
+                }
+            }
+            else
+            {
+                SpringBoard.Enabled = false;
             }
 
             // Sit there idle and honk a few times as an intro or after taking a hit.
@@ -332,31 +396,22 @@ namespace MacGame.Enemies
                 if (animations.CurrentAnimationName == "honk" && animations.CurrentAnimation.FinishedPlaying)
                 {
                     _honkCount--;
-                    if (_honkCount <= 0)
-                    {
-                        animations.Play("idle");
-                    }
-                    else
-                    {
-                        animations.Play("honk");
-                    }
+                    animations.Play("idle");
                 }
 
                 if (animations.CurrentAnimationName == "idle")
                 {
                     idleTimer += elapsed;
-                    if (idleTimer >= 1.5f)
+                    if (idleTimer >= 0.4f && _honkCount > 0)
                     {
-                        if (_honkCount > 0)
-                        {
-                            // it's the initial idle, honk a bit.
-                            animations.Play("honk");
-                        }
-                        else
-                        {
-                            // we already honked, time to attack.
-                            InitiateNeckAttack();
-                        }
+                        // it's the initial idle, honk a bit.
+                        animations.Play("honk");
+                        idleTimer = 0;
+                    }
+                    if (idleTimer > 0.8f && _honkCount == 0)
+                    {
+                        // we already honked, time to attack.
+                        InitiateNeckAttack();
                     }
                 }
             }
@@ -389,20 +444,9 @@ namespace MacGame.Enemies
                 if (animations.CurrentAnimationName == "idle")
                 {
                     idleTimer += elapsed;
-                    if (idleTimer >= 1.5f)
+                    if (idleTimer >= 0.5f)
                     {
-                        switch (attackPhase)
-                        {
-                            case AttackPhase.Phase1:
-                            case AttackPhase.Phase2:
-                                // In phase 2, take a small pause. You shouldn't really be here in phase 1.
-                                ResetIdleHonking();
-                                break;
-                            case AttackPhase.Phase3:
-                                // No break in phase 3.
-                                InitiateNeckAttack();
-                                break;
-                        }
+                        ResetIdleHonking();
                     }
                 }
             }
@@ -420,7 +464,7 @@ namespace MacGame.Enemies
             if (state == GooseState.TakingHit)
             {
                 takeHitTimer += elapsed;
-                if (takeHitTimer >= 0.8f)
+                if (takeHitTimer >= 1.4f)
                 {
                     takeHitTimer = 0f;
                     ResetIdleHonking();
@@ -432,8 +476,15 @@ namespace MacGame.Enemies
                 // Honk like crazy
                 this.animations.PlayIfNotAlreadyPlaying("repeatHonk");
 
-                // Push the goose down off the bottom of the screen.
-                this.velocity = new Vector2(0, 50);
+                // Be still for a bit and then fall down to your death.
+                if (stillBeforeFallingAfterDeathTimer < 3f)
+                {
+                    stillBeforeFallingAfterDeathTimer += elapsed;
+                }
+                else
+                {
+                    this.velocity = new Vector2(0, 50);
+                }
 
                 // random explosions
                 explosionTimer += elapsed;
@@ -451,7 +502,7 @@ namespace MacGame.Enemies
                 if (this.CollisionRectangle.Top > (Game1.Camera.WorldRectangle.Bottom + 200))
                 {
                     state = GooseState.Dead;
-                    sock.Enabled = true;
+                    Sock.Enabled = true;
                 }
             }
 
@@ -461,7 +512,7 @@ namespace MacGame.Enemies
                 // Once you figure out what that is.
             }
 
-            Game1.DrawBossHealth = this.Alive;
+            Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
 
@@ -473,9 +524,7 @@ namespace MacGame.Enemies
 
                 if (collideWithGoose || collideWithHead)
                 {
-                    SpringBoard.Enabled = false;
-                    EffectsManager.SmallEnemyPop(SpringBoard.WorldCenter);
-                    springTimer = maxSpringTimer;
+                    BreakSpringBoard();
                 }
             }
 
@@ -483,7 +532,7 @@ namespace MacGame.Enemies
 
             // Check custom collisions with the standing head and neck rectangles
             // Warning: This mimics some logic in the Player class.
-            if (isStanding && Alive && Enabled)
+            if (isStanding && Alive && Enabled && state != GooseState.TakingHit && state != GooseState.Dying && state != GooseState.Dead)
             {
                 bool interactedWithHead = false;
                 if (_player.CollisionRectangle.Intersects(standingHeadRectangle))
@@ -576,26 +625,10 @@ namespace MacGame.Enemies
                     // Animation is back to idle, the attack should be done at this point.
                     idleTimer += elapsed;
 
-                    switch (attackPhase)
+                    if (idleTimer >= 1f)
                     {
-                        case AttackPhase.Phase1:
-                            // In phase one just hold idle for a bit before attacking again.
-                            if (idleTimer >= 4f)
-                            {
-                                idleTimer = 0;
-                                animations.Play("neckAttack");
-                            }
-                            break;
-                        case AttackPhase.Phase2:
-                        case AttackPhase.Phase3:
-                            // Start the ball attack right after.
-                            if (idleTimer >= 1f)
-                            {
-                                InitiateGooseBallAttack();
-                                idleTimer = 0f;
-                            }
-
-                            break;
+                        InitiateGooseBallAttack();
+                        idleTimer = 0f;
                     }
                 }
             }
@@ -651,12 +684,29 @@ namespace MacGame.Enemies
                 this.state = GooseState.TakingHit;
                 animations.Play("takeHit");
                 takeHitTimer = 0f;
+
+                if (!IsTempInvincibleFromBeingHit)
+                {
+                    InvincibleTimer += 3f;
+                }
             }
             else
             {
                 this.state = GooseState.Dying;
                 this.Dead = true;
                 explosionTimer = 0f;
+                stillBeforeFallingAfterDeathTimer = 0;
+
+            }
+
+            // Break the spring and goose balls
+            BreakSpringBoard();
+            foreach (var ball in GooseBalls)
+            {
+                if (ball.Enabled)
+                {
+                    ball.Kill();
+                }
             }
         }
 

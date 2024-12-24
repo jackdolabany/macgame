@@ -39,6 +39,7 @@ namespace MacGame
                     new SockInfo { Name = "GreenDoorSock", Hint = "Find the green key." },
                     new SockInfo { Name = "BlueDoorSock", Hint = "Find the blue key." },
                     new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
+                    new SockInfo { Name = "GooseBossSock", Hint = "Roast the goose!" },
                 }
             },
         };

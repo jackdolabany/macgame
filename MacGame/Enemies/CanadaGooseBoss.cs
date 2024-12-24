@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MacGame.DisplayComponents;
+using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -115,15 +116,22 @@ namespace MacGame.Enemies
         // When standing there's a special rectangle for the goose's head that Mac can jump on.
         protected Rectangle standingHeadRectangle;
 
+        // Where explosions will happen as the goose dies.
+        private Rectangle explosionRectangle;
+
         private Player _player;
 
         private int MaxHealth = 5;
 
         // If so many seconds goes by and there's not current a spring, one will drop.
         float springTimer = 0f;
-        const float maxSpringTimer = 7f;
+        const float maxSpringTimer = 5f;
 
         private bool isStanding;
+
+        Sock sock;
+
+        private bool isInitialized = false;
 
         public CanadaGooseBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -156,7 +164,7 @@ namespace MacGame.Enemies
             animations.Add(honk);
 
             var repeatHonk = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 1), 2, "repeatHonk");
-            repeatHonk.LoopAnimation = false;
+            repeatHonk.LoopAnimation = true;
             repeatHonk.FrameLength = 0.14f;
             animations.Add(repeatHonk);
 
@@ -180,6 +188,9 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             Attack = 1;
             Health = MaxHealth;
+
+            Health = 1;
+
             IsAffectedByGravity = false;
 
             regularCollisionRectangle = new Rectangle(-120, -100, 110, 100);
@@ -188,6 +199,8 @@ namespace MacGame.Enemies
 
             standingNeckRectangle = new Rectangle(this.WorldLocation.X.ToInt() - 50, this.worldLocation.Y.ToInt() - regularCollisionRectangle.Height - 85, 40, 85);
             standingHeadRectangle = new Rectangle(standingNeckRectangle.X, standingNeckRectangle.Y, 70, 20);
+
+            explosionRectangle = new Rectangle(this.CollisionRectangle.X, this.standingNeckRectangle.Y, this.CollisionRectangle.Width, CollisionRectangle.Bottom - standingNeckRectangle.Top);
 
             ResetIdleHonking();
 
@@ -207,6 +220,12 @@ namespace MacGame.Enemies
             SpringBoard.Enabled = false;
 
             springTimer = maxSpringTimer;
+
+            // TODO: Sounds
+            /*
+             Getting hit
+
+             */
         }
 
         public override void Kill()
@@ -266,17 +285,36 @@ namespace MacGame.Enemies
             }
         }
 
-        private void InitiateIdleBetweenAttacks()
+        private void Initialize()
         {
-            state = GooseState.IdlePauseBetweenAttacks;
-            animations.Play("idle");
-            idleTimer = 0f;
+            foreach (var item in Game1.CurrentLevel.Items)
+            {
+                if (item is Sock)
+                {
+                    sock = item as Sock;
+                }
+            }
+
+            if (sock == null)
+            {
+                throw new Exception("You need a sock in the level!");
+            }
+
+            sock.Enabled = false;
+
+            isInitialized = true;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            if (!isInitialized)
+            {
+                Initialize();
+            }
+
             // If there's no springboard, make one appear so the player has a chance to jump on this goon.
-            if (!SpringBoard.Enabled)
+            if (!SpringBoard.Enabled && this.Alive && this.state != GooseState.Dying && this.state != GooseState.Dead)
             {
                 springTimer -= elapsed;
                 if (springTimer <= 0)
@@ -393,21 +431,34 @@ namespace MacGame.Enemies
             {
                 // Honk like crazy
                 this.animations.PlayIfNotAlreadyPlaying("repeatHonk");
-                
+
+                // Push the goose down off the bottom of the screen.
+                this.velocity = new Vector2(0, 50);
+
                 // random explosions
                 explosionTimer += elapsed;
                 if (explosionTimer >= 0.2f)
                 {
                     explosionTimer = 0f;
                     // Get a random location over this collision rectangle
-                    var randomX = Game1.Randy.Next(CollisionRectangle.Width);
-                    var randomY = Game1.Randy.Next(CollisionRectangle.Height);
+                    var randomX = Game1.Randy.Next(explosionRectangle.Width);
+                    var randomY = Game1.Randy.Next(explosionRectangle.Height);
 
-                    var randomLocation = new Vector2(CollisionRectangle.X + randomX, CollisionRectangle.Y + randomY);
+                    var randomLocation = new Vector2(explosionRectangle.X + randomX, explosionRectangle.Y + randomY);
                     EffectsManager.AddExplosion(randomLocation);
                 }
 
-                // TODO: Count down a timer and then just be dead.
+                if (this.CollisionRectangle.Top > (Game1.Camera.WorldRectangle.Bottom + 200))
+                {
+                    state = GooseState.Dead;
+                    sock.Enabled = true;
+                }
+            }
+
+            if (state == GooseState.Dead)
+            {
+                // TODO: Wait for some time and then send Mac back where he came from. 
+                // Once you figure out what that is.
             }
 
             Game1.DrawBossHealth = this.Alive;
@@ -432,7 +483,7 @@ namespace MacGame.Enemies
 
             // Check custom collisions with the standing head and neck rectangles
             // Warning: This mimics some logic in the Player class.
-            if (isStanding)
+            if (isStanding && Alive && Enabled)
             {
                 bool interactedWithHead = false;
                 if (_player.CollisionRectangle.Intersects(standingHeadRectangle))
@@ -505,6 +556,11 @@ namespace MacGame.Enemies
                             this.collisionRectangle = regularCollisionRectangle;
                             idleTimer = 0f;
                         }
+                    }
+                    else
+                    {
+                        // Make sure the animation isn't paused on some other frame.
+                        animations.CurrentAnimation.IsPaused = false;
                     }
                 }
                 else if (animations.CurrentAnimationName == "neckAttackUp")
@@ -585,12 +641,23 @@ namespace MacGame.Enemies
 
         public override void TakeHit(int damage, Vector2 force)
         {
-            base.TakeHit(damage, force);
             // Yeet the player to the right.
+            Health -= damage;
+
             _player.Velocity = new Vector2(500, -800);
-            this.state = GooseState.TakingHit;
-            animations.Play("takeHit");
-            takeHitTimer = 0f;
+
+            if (Health > 0)
+            {
+                this.state = GooseState.TakingHit;
+                animations.Play("takeHit");
+                takeHitTimer = 0f;
+            }
+            else
+            {
+                this.state = GooseState.Dying;
+                this.Dead = true;
+                explosionTimer = 0f;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

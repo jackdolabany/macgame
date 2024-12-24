@@ -98,7 +98,8 @@ namespace MacGame.Enemies
         float takeHitTimer = 0;
         float explosionTimer = 0;
         float stillBeforeFallingAfterDeathTimer = 0;
-        
+        float brickDelayTimer = 0f;
+
         // Set this to however many goose balls you want the goose to spit in the ball attack phase.
         int ballsToShoot = 0;
         
@@ -212,8 +213,6 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             Attack = 1;
             Health = MaxHealth;
-
-            Health = 2;
 
             IsAffectedByGravity = false;
 
@@ -364,10 +363,15 @@ namespace MacGame.Enemies
             
             foreach (var platform in BreakingPlatforms)
             {
-                if (attackPhase != AttackPhase.Phase2)
+                if (attackPhase != AttackPhase.Phase2 || brickDelayTimer > 0f)
                 {
                     platform.Enabled = false;
                 }
+            }
+
+            if (brickDelayTimer > 0)
+            {
+                brickDelayTimer -= elapsed;
             }
 
             if (attackPhase == AttackPhase.Phase3)
@@ -674,8 +678,17 @@ namespace MacGame.Enemies
 
         public override void TakeHit(int damage, Vector2 force)
         {
+
+            var initialPhase = this.attackPhase;
+
             // Yeet the player to the right.
             Health -= damage;
+
+            // Set the brick delay timer as we transition from phase 1 to 2, so the breaking bricks don't show up right away.
+            if (initialPhase == AttackPhase.Phase1 && attackPhase == AttackPhase.Phase2)
+            {
+                brickDelayTimer += 6f;
+            }
 
             _player.Velocity = new Vector2(500, -800);
 

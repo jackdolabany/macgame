@@ -16,8 +16,6 @@ namespace MacGame
         StaticImageDisplay middle;
         StaticImageDisplay down;
 
-        Vector2 originalWorldLocation;
-
         public GameObject? GameObjectOnMe { get; set; }
 
         public SpringBoard(ContentManager content, int x, int y, Player player) : base(content, x, y, player)
@@ -32,7 +30,6 @@ namespace MacGame
             Enabled = true;
 
             WorldLocation = new Vector2(x * TileMap.TileSize + TileMap.TileSize / 2, (y + 1) * TileMap.TileSize);
-            originalWorldLocation = WorldLocation;
             IsAffectedByGravity = true;
 
             this.SetCenteredCollisionRectangle(8, 8);

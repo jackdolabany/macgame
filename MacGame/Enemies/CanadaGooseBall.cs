@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -19,6 +20,8 @@ namespace MacGame.Enemies
             
             DisplayComponent = new StaticImageDisplay(textures, Helpers.GetTileRect(7, 27));
             IsAffectedByGravity = true;
+            CanBeJumpedOn = false;
+            CanBeHitWithWeapons = false;
 
             SetCenteredCollisionRectangle(7, 7);
             this.CollisionRectangle = new Rectangle(this.collisionRectangle.X, this.collisionRectangle.Y, this.collisionRectangle.Width, this.collisionRectangle.Height - 8);
@@ -31,20 +34,27 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 120f);
+            EffectsManager.SmallEnemyPop(WorldCenter);
 
             Enabled = false;
             base.Kill();
         }
 
+        public override void AfterHittingPlayer()
+        {
+            this.Kill();
+            base.AfterHittingPlayer();
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
+            // TODO: Sounds when they bounce, sounds when they break.
 
-            this.velocity.X = Helpers.GetRandomValue(new int[] { 150, 200, 120 });
+            if (!Enabled) return;
 
             base.Update(gameTime, elapsed);
 
-            if (OnRightWall)
+            if (OnRightWall && Alive)
             {
                 this.Kill();
             }

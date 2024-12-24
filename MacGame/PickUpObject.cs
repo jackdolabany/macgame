@@ -68,7 +68,7 @@ namespace MacGame
                 // if it's moving check for enemy collisions
                 foreach (var enemy in Game1.CurrentLevel.Enemies)
                 {
-                    if (enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    if (enemy.Enabled && enemy.Alive && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
                         enemy.TakeHit(1, this.Velocity);
                     }
@@ -114,7 +114,7 @@ namespace MacGame
         public void Kick()
         {
             this.Velocity = _player.Velocity + new Vector2(200 * (_player.IsFacingRight() ? 1 : -1), -200);
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.White, 120f);
+            EffectsManager.SmallEnemyPop(WorldCenter);
             SoundManager.PlaySound("Jump");
         }
 

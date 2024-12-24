@@ -33,6 +33,9 @@ namespace MacGame
                 SoundManager.PlaySong("Stage1", true, 0.2f);
             }
 
+            // Set false on every level start. Boss enemies can set this true themselves.
+            Game1.DrawBossHealth = false;
+
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 
             var level = new Level(player, map, camera);
@@ -149,6 +152,29 @@ namespace MacGame
                                 var enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
                                 level.Enemies.Add(enemy);
                                 layerDepthObjects[z].Add(enemy);
+
+                                // Goose boss adds some things to the level.
+                                if (enemy is CanadaGooseBoss)
+                                {
+                                    var gooseBoss = (CanadaGooseBoss)enemy;
+                                    foreach (var ball in gooseBoss.GooseBalls)
+                                    {
+                                        level.Enemies.Add(ball);
+                                        layerDepthObjects[z].Add(ball);
+                                    }
+                                    foreach (var neck in gooseBoss.Necks)
+                                    {
+                                        level.Enemies.Add(neck);
+                                        layerDepthObjects[z].Add(neck);
+                                    }
+                                    level.Enemies.Add(gooseBoss.Head);
+                                    layerDepthObjects[z].Add(gooseBoss.Head);
+
+                                    level.SpringBoards.Add(gooseBoss.SpringBoard);
+                                    level.PickupObjects.Add(gooseBoss.SpringBoard);
+                                    layerDepthObjects[z].Add(gooseBoss.SpringBoard);
+                                }
+
                             }
                             else if (loadClass.StartsWith("Platform."))
                             {

@@ -105,6 +105,14 @@ namespace MacGame
             explosion.Explode(location);
         }
 
+        /// <summary>
+        ///  Standard enemy pop for enemies that are roughly 1 tile size.
+        /// </summary>
+        public static void SmallEnemyPop(Vector2 location)
+        {
+            EffectsManager.EnemyPop(location, 10, Color.White, 120f);
+        }
+
         public static void EnemyPop(Vector2 location, int pointCount, Color color, float speed)
         {
             // Add some particles

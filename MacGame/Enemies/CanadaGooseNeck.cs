@@ -13,9 +13,6 @@ namespace MacGame.Enemies
     /// </summary>
     public class CanadaGooseNeck : Enemy
     {
-
-        private Player _player;
-
         public CanadaGooseNeck(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -27,13 +24,14 @@ namespace MacGame.Enemies
             IsAbleToSurviveOutsideOfWorld = true;
             isTileColliding = false;
             isEnemyTileColliding = false;
+            CanBeHitWithWeapons = false;
+            CanBeJumpedOn = false;
+            Health = 100000;
 
             SetCenteredCollisionRectangle(8, 6);
            
             this.Enabled = false;
             this.Dead = true;
-          
-            _player = player;
         }
     }
 }

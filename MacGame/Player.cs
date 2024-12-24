@@ -513,48 +513,56 @@ namespace MacGame
             this.Flipped = true;
         }
 
+        public bool JumpedOnEnemyRectangle(Rectangle rectangle)
+        {
+            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart)
+            {
+                return false;
+            }
+
+            // Pad 1 pixel to make it a little easier
+            var wasAboveEnemy = _previousCollisionRectangle.Bottom - 8 <= rectangle.Top;
+
+            return wasAboveEnemy;
+        }
+
         public void CheckEnemyInteractions(Enemy enemy)
         {
             if (!enemy.Enabled) return;
 
-            if (enemy.Alive)
+            if (!enemy.Alive) return;
+
+            if (enemy.IsTempInvincibleFromBeingHit) return;
+
+            // Check body collisions
+            if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
             {
-                // Check body collisions
-                if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
+                if (enemy.CanBeJumpedOn && JumpedOnEnemyRectangle(enemy.CollisionRectangle))
                 {
-                    enemy.HandleCustomPlayerCollision(this);
-
-                    // Pad 1 pixel to make it a little easier
-                    var wasAboveEnemy = _previousCollisionRectangle.Bottom - 8 <= enemy.CollisionRectangle.Top;
-
-                    if (enemy.Alive && enemy.CanBeJumpedOn && !enemy.IsInvincibleAfterHit && wasAboveEnemy && !IsClimbingLadder && !IsClimbingVine && !IsInWater && !IsInMineCart)
-                    {
-                        // If the player was above the enemy, the enemy was jumped on and takes a hit.
-                        enemy.TakeHit(1, Vector2.Zero);
-                        velocity.Y = -450;
-                    }
-                    else if (enemy.Alive && enemy.Enabled && !enemy.IsInvincibleAfterHit)
-                    {
-                        TakeHit(enemy);
-                    }
-
+                    // If the player was above the enemy, the enemy was jumped on and takes a hit.
+                    enemy.TakeHit(1, Vector2.Zero);
+                    velocity.Y = -450;
                 }
-                else if (enemy.CanBeHitWithWeapons)
+                else
                 {
-                    foreach (var apple in Apples.RawList)
+                    TakeHit(enemy);
+                    enemy.AfterHittingPlayer();
+                }
+            }
+            else if (enemy.CanBeHitWithWeapons)
+            {
+                foreach (var apple in Apples.RawList)
+                {
+                    if (apple.Enabled)
                     {
-                        if (apple.Enabled)
+                        if(apple.CollisionRectangle.Intersects(enemy.CollisionRectangle))
                         {
-                            if(apple.CollisionRectangle.Intersects(enemy.CollisionRectangle))
-                            {
-                                apple.Smash();
-                                enemy.TakeHit(1, Vector2.Zero);
-                            }
+                            apple.Smash();
+                            enemy.TakeHit(1, Vector2.Zero);
                         }
                     }
                 }
             }
-
         }
 
         public void TakeHit(Enemy enemy)
@@ -574,7 +582,7 @@ namespace MacGame
                 {
                     CurrentItem = null;
                 }
-                invincibleTimeRemaining = 0.75f;
+                invincibleTimeRemaining = 1.5f;
                 SoundManager.PlaySound("TakeHit");
                 var hitBackBoost = new Vector2(100, -200);
                 if (CollisionCenter.X < enemy.CollisionCenter.X)

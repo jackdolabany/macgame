@@ -277,26 +277,6 @@ namespace MacGame
             }
         }
 
-        protected FloatRectangle getCollisionFloatRectangleForPosition(ref Vector2 position)
-        {
-            if (DisplayComponent == null)
-            {
-                return new FloatRectangle(
-                  position.X + collisionRectangle.X,
-                  position.Y + collisionRectangle.Y,
-                  collisionRectangle.Width,
-                  collisionRectangle.Height);
-            }
-            else
-            {
-                return new FloatRectangle(
-                  position.X - DisplayComponent.RotationAndDrawOrigin.X + collisionRectangle.X,
-                  position.Y - DisplayComponent.RotationAndDrawOrigin.Y + collisionRectangle.Y,
-                  collisionRectangle.Width,
-                  collisionRectangle.Height);
-            }
-        }
-
         /// <summary>
         /// Creates a collision Rectangle for the game object centered vertically on the GameObject. Assumes the default
         /// world location of the bottom center of the GameObject.
@@ -792,6 +772,10 @@ namespace MacGame
             {
                 foreach (var springBoard in Game1.SpringBoards)
                 {
+                    if (!springBoard.Enabled)
+                    {
+                        continue;
+                    }
 
                     var wasAbove = currentPositionRect.Bottom <= springBoard.TopHeight;
                     var nowBelow = afterMoveRect.Bottom + 2f /*fudge*/ >= springBoard.TopHeight;
@@ -822,7 +806,7 @@ namespace MacGame
                             // If they're moving up give them a little boost
                             if (velocity.Y < 0)
                             {
-                                this.velocity.Y -= 300 * springBoard.Compression;
+                                this.velocity.Y -= 200 * springBoard.Compression;
                             }
                         }
                     }

@@ -49,7 +49,7 @@ namespace MacGame.Enemies
         /// </summary>
         public bool CanBeHitWithWeapons { get; protected set; } = true;
 
-        protected float Health { get; set; }
+        protected int Health { get; set; }
         public float Attack { get; set; }
         public bool IsCustomPlayerColliding { get; set; }
         protected Vector2 InitialWorldLocation { get; set; }
@@ -60,7 +60,7 @@ namespace MacGame.Enemies
         public bool IsPlayerColliding = true;
 
 
-        public bool IsInvincibleAfterHit
+        public bool IsTempInvincibleFromBeingHit
         {
             get
             {
@@ -150,11 +150,6 @@ namespace MacGame.Enemies
                 && center.Y < currentTarget.Y + TileMap.TileSize;
         }
 
-        public virtual void HandleCustomPlayerCollision(Player player)
-        {
-            // do nothing   
-        }
-
         public virtual void PlayInvincibleHitSound()
         {
 
@@ -162,7 +157,7 @@ namespace MacGame.Enemies
 
         public virtual void TakeHit(int damage, Vector2 force)
         {
-            if (IsInvincibleAfterHit || Dead || !Enabled)
+            if (IsTempInvincibleFromBeingHit || Dead || !Enabled)
             {
                 return;
             }
@@ -274,6 +269,11 @@ namespace MacGame.Enemies
             {
                 base.Draw(spriteBatch);
             }
+        }
+
+        public virtual void AfterHittingPlayer()
+        {
+            // Do nothing.
         }
     }
 }

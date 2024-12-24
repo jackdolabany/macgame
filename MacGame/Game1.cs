@@ -74,6 +74,11 @@ namespace MacGame
 
         public static Player Player;
 
+        // Bosses can modify these to draw their life on the bottom.
+        public static bool DrawBossHealth = false;
+        public static int BossHealth = 0;
+        public static int MaxBossHealth = 0;
+
         private static SceneManager sceneManager;
 
         private static Level _level;
@@ -977,6 +982,26 @@ namespace MacGame
                 else
                 {
                     spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, hudYPos, TileSize, TileSize), Helpers.GetTileRect(2, 2), Color.White);
+                }
+            }
+
+            // Draw the current Boss's health
+            if (MaxBossHealth > 0 && DrawBossHealth)
+            {
+                const int bossHealthYPosition = Game1.GAME_Y_RESOLUTION - 48;
+                var startingXPos = (GAME_X_RESOLUTION / 2) - (TileSize * MaxBossHealth / 2);
+
+                for (int i = 0; i < MaxBossHealth; i++)
+                {
+                    var heartXPos = startingXPos + (i * (TileSize));
+                    if (i < BossHealth)
+                    {
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 2), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 2), Color.White);
+                    }
                 }
             }
 

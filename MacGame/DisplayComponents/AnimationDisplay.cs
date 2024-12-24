@@ -11,6 +11,7 @@ namespace MacGame.DisplayComponents
 
         protected DrawObject drawObject;
         public Dictionary<string, AnimationStrip> animations = new Dictionary<string, AnimationStrip>();
+        private Vector2 _position;
 
         public AnimationDisplay()
             : base()
@@ -51,6 +52,19 @@ namespace MacGame.DisplayComponents
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+            if (!animations.ContainsKey(CurrentAnimationName)) return;
+            var anim = animations[CurrentAnimationName];
+            drawObject.Texture = anim.Texture;
+            drawObject.SourceRectangle = anim.FrameRectangle;
+
+            var center = GetWorldCenter(ref _position);
+            var drawPosition = center - new Vector2(drawObject.SourceRectangle.Width / 2, drawObject.SourceRectangle.Height / 2) * Scale;
+            drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref _position), Rotation);
+
+            // Lock them into an integer position.
+            drawObject.Position = new Vector2(drawObject.Position.X, drawObject.Position.Y);
+
             if (drawObject.Texture != null)
             {
                 spriteBatch.Draw(
@@ -93,17 +107,7 @@ namespace MacGame.DisplayComponents
             }
             drawObject.Effect = effect;
 
-            if (!animations.ContainsKey(CurrentAnimationName)) return;
-
-            drawObject.Texture = anim.Texture;
-            drawObject.SourceRectangle = anim.FrameRectangle;
-
-            var center = GetWorldCenter(ref position);
-            var drawPosition = center - new Vector2(drawObject.SourceRectangle.Width / 2, drawObject.SourceRectangle.Height / 2) * Scale;
-            drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
-
-            // Lock them into an integer position.
-            drawObject.Position = new Vector2(drawObject.Position.X, drawObject.Position.Y);
+            _position = position;
 
         }
 
@@ -130,6 +134,7 @@ namespace MacGame.DisplayComponents
             {
                 CurrentAnimationName = name;
                 animations[name].Play(startFrame);
+                animations[name].IsPaused = false;
                 return animations[name];
             }
             

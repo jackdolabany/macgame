@@ -1005,11 +1005,11 @@ namespace MacGame
                     var heartXPos = startingXPos + (i * (TileSize + heartSpacer));
                     if (i < BossHealth)
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 2), Color.Red * 0.8f);
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 10), Color.Red * 0.8f);
                     }
                     else
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 2), Color.Red * 0.8f);
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 10), Color.Red * 0.8f);
                     }
                 }
             }

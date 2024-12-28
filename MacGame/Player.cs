@@ -437,6 +437,11 @@ namespace MacGame
                 DisplayComponent.TintColor = Color.White;
             }
 
+            if (IsInMineCart && Landed)
+            {
+                SoundManager.PlayMinecartLanded();
+            }
+
             base.Update(gameTime, elapsed);
 
             if (HasWings)
@@ -1206,7 +1211,7 @@ namespace MacGame
             {
                 // Regular jump.
                 this.velocity.Y -= 550;
-                SoundManager.PlaySound("Jump");
+                SoundManager.PlayMinecartJump();
             }
 
             // If the tile to the right is colliding, flip the player
@@ -1216,6 +1221,7 @@ namespace MacGame
                 if (tileToTheRight != null && !tileToTheRight.Passable && !tileToTheRight.IsSlope())
                 {
                     this.Flipped = true;
+                    SoundManager.PlaySound("Bounce");
                 }
             }
             else
@@ -1224,6 +1230,7 @@ namespace MacGame
                 if (tileToTheLeft != null && !tileToTheLeft.Passable && !tileToTheLeft.IsSlope())
                 {
                     this.Flipped = false;
+                    SoundManager.PlaySound("Bounce");
                 }
             }
         }

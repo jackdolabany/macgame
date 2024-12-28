@@ -444,6 +444,7 @@ namespace MacGame
 
         private Vector2 verticalCollisionTest(Vector2 moveAmount)
         {
+
             if (moveAmount.Y == 0) return moveAmount;
 
             bool previouslyOnGround = onGround;
@@ -814,7 +815,7 @@ namespace MacGame
                 }
             }
 
-            Landed = Landed && ((afterMoveRect.Y - currentPositionRect.Y) > 5);
+            Landed = Landed && moveAmount.Y > 0;
 
             return moveAmount;
         }

@@ -49,6 +49,7 @@ namespace MacGame.Enemies
             behavior.Update(this, gameTime, elapsed);
 
             base.Update(gameTime, elapsed);
+
         }
     }
 }

@@ -68,6 +68,7 @@ namespace MacGame.Behaviors
                                 {
                                     // Jump!
                                     enemy.Velocity = new Vector2(enemy.Velocity.X, -500);
+                                    SoundManager.PlayMinecartJump();
                                 }
                             }
                         }
@@ -83,6 +84,11 @@ namespace MacGame.Behaviors
             }
 
             wasVisible = startLocationVisible;
+
+            if (gameObject.Landed)
+            {
+                SoundManager.PlayMinecartLanded();
+            }
         }
     }
 }

@@ -54,13 +54,21 @@ namespace MacGame
                 this.WorldLocation = _player.WorldLocation + new Vector2(16 * (_player.Flipped ? -1 : 1), -8);
             }
 
+            var wasOnGround = OnGround;
+
             base.Update(gameTime, elapsed);
+
+            if (onGround && !wasOnGround)
+            {
+                SoundManager.PlaySound("Bounce");
+            }
 
             // Bounce off walls.
             if ((OnLeftWall && velocityBeforeUpdate.X < 0) || (OnRightWall && velocityBeforeUpdate.X > 0))
             {
                 // If you hit a wall travel in the opposite direction and reverse speed, lose some speed for momentum.
                 this.velocity.X = velocityBeforeUpdate.X * 0.5f * -1f;
+                SoundManager.PlaySound("Bounce");
             }
 
             if (this.velocity != Vector2.Zero)
@@ -90,6 +98,7 @@ namespace MacGame
             this.isTileColliding = false;
             this.IsAffectedByGravity = false;
             IsPickedUp = true;
+            SoundManager.PlaySound("Pickup");
         }
 
         public void Drop()
@@ -115,7 +124,7 @@ namespace MacGame
         {
             this.Velocity = _player.Velocity + new Vector2(200 * (_player.IsFacingRight() ? 1 : -1), -200);
             EffectsManager.SmallEnemyPop(WorldCenter);
-            SoundManager.PlaySound("Jump");
+            SoundManager.PlaySound("Kick");
         }
 
         public void MoveToPlayer()

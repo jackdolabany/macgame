@@ -155,12 +155,31 @@ namespace MacGame
             LoadSound("GooseHit");
             LoadSound("Swim");
             LoadSound("PlatformBreak");
+            LoadSound("Pickup");
+            LoadSound("Kick");
+            LoadSound("Bounce");
+            LoadSound("MinecartLand");
+            LoadSound("MinecartLandMetal");
+            LoadSound("MinecartJump");
+
 
             // Music.
             LoadSong("Stage1");
             LoadSong("BossFight");
 
             MusicVolume = 0.1f;
+        }
+
+        public static void PlayMinecartLanded()
+        {
+            SoundManager.PlaySound("MinecartLand", 0.6f);
+            SoundManager.PlaySound("MinecartLandMetal", 0.7f);
+        }
+
+        public static void PlayMinecartJump()
+        {
+            SoundManager.PlaySound("MinecartJump", 0.8f, 1.0f);
+            SoundManager.PlaySound("MinecartLandMetal", 0.7f);
         }
 
         /// <summary>

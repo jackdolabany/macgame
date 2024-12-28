@@ -48,12 +48,10 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            //ConversationManager.AddMessage("...", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-            //this.Enabled = false;
-            // TODO: Play sound
             if (animations.CurrentAnimationName != "disappear")
             {
                 animations.Play("disappear");
+                SoundManager.PlaySound("AlienDisappear");
             }
         }
     }

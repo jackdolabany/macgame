@@ -36,8 +36,7 @@ namespace MacGame
             AnimationDisplay.Play("explosion");
             WorldLocation = location + new Vector2(0, this.AnimationDisplay.CurrentAnimation.FrameRectangle.Height / 2);
             this.Rotation = Game1.Randy.GetRandomFourWayRotation();
-            // TODO: Add explosion sound
-            //SoundManager.PlayExplosion(volume);
+            SoundManager.PlaySound("Explosion");
         }
     }
 }

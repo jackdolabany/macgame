@@ -36,6 +36,7 @@ namespace MacGame.Enemies
         public override void Kill()
         {
             EffectsManager.SmallEnemyPop(WorldCenter);
+            SoundManager.PlaySound("Break");
 
             Enabled = false;
             base.Kill();
@@ -49,8 +50,6 @@ namespace MacGame.Enemies
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            // TODO: Sounds when they bounce, sounds when they break.
-
             if (!Enabled) return;
 
             base.Update(gameTime, elapsed);
@@ -63,6 +62,7 @@ namespace MacGame.Enemies
             if (OnGround)
             {
                 this.velocity.Y -= 700f;
+                SoundManager.PlaySound("GooseBallBounce");
             }
         }
     }

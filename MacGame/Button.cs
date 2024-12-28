@@ -143,8 +143,7 @@ namespace MacGame
                 && isColliding
                 && animations.CurrentAnimationName == "up")
             {
-                // TODO: Play sound
-
+                SoundManager.PlaySound("Click");
                 animations.Play("down");
                 if (!string.IsNullOrEmpty(DownAction))
                 {
@@ -186,7 +185,7 @@ namespace MacGame
                 && animations.CurrentAnimationName == "down")
             {
                 animations.Play("up");
-                // TODO: PlaySound
+                SoundManager.PlaySound("Click");
                 if (!string.IsNullOrEmpty(UpAction))
                 {
                     Game1.CurrentLevel.ButtonAction(this, UpAction, Args);

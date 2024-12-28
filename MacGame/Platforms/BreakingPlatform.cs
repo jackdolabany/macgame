@@ -47,6 +47,7 @@ namespace MacGame.Platforms
             if (animations.CurrentAnimationName == "idle" && Game1.Player.PlatformThatThisIsOn == this)
             {
                 animations.Play("break");
+                SoundManager.PlaySound("PlatformBreak");
             }
 
             if (Enabled && animations.CurrentAnimationName == "break" && animations.CurrentAnimation!.FinishedPlaying)

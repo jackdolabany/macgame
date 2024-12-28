@@ -184,13 +184,13 @@ namespace MacGame.Enemies
 
             var honk = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 1), 2, "honk");
             honk.LoopAnimation = false;
-            honk.FrameLength = 0.3f;
+            honk.FrameLength = 0.4f;
             honk.Oscillate = true;
             animations.Add(honk);
 
             var repeatHonk = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 1), 2, "repeatHonk");
             repeatHonk.LoopAnimation = true;
-            repeatHonk.FrameLength = 0.14f;
+            repeatHonk.FrameLength = 0.4f;
             animations.Add(repeatHonk);
 
             var neckAttack = new AnimationStrip(textures, Helpers.GetMegaTileRect(2, 1), 2, "neckAttack");
@@ -269,6 +269,7 @@ namespace MacGame.Enemies
         {
             state = GooseState.NeckAttack;
             animations.Play("neckAttack");
+            SoundManager.PlaySound("GooseHonk");
             idleTimer = 0;
         }
 
@@ -276,6 +277,7 @@ namespace MacGame.Enemies
         {
             state = GooseState.GooseBallAttack;
             animations.Play("honk");
+            SoundManager.PlaySound("GooseHonk");
             ballsToShoot = 2;
             idleTimer = 0;
             ShootBall();
@@ -344,6 +346,7 @@ namespace MacGame.Enemies
                 SpringBoard.Enabled = false;
                 EffectsManager.SmallEnemyPop(SpringBoard.WorldCenter);
                 springTimer = maxSpringTimer;
+                SoundManager.PlaySound("Break");
             }
         }
 
@@ -411,6 +414,7 @@ namespace MacGame.Enemies
                     {
                         // it's the initial idle, honk a bit.
                         animations.Play("honk");
+                        SoundManager.PlaySound("GooseHonk");
                         idleTimer = 0;
                     }
                     if (idleTimer > 0.8f && _honkCount == 0)
@@ -441,6 +445,7 @@ namespace MacGame.Enemies
                             else
                             {
                                 animations.Play("honk");
+                                SoundManager.PlaySound("GooseHonk");
                                 ShootBall();
                             }
                         }
@@ -572,6 +577,14 @@ namespace MacGame.Enemies
                 previousFrameIndex = -1;
             }
 
+            var onScreen = !Game1.Camera.IsWayOffscreen(this.CollisionRectangle);
+
+            // Honk for the repeat honk animation
+            if (animations.CurrentAnimationName == "repeatHonk" && animations.CurrentAnimation.currentFrameIndex == 0 && previousFrameIndex != 0 && onScreen)
+            {
+                SoundManager.PlaySound("GooseHonk");
+            }
+
             // Atttack by stretching your neck across the screen.
             // This has to be right after the base update otherwise the enabling/disabling of the head is 
             // going to look off.
@@ -692,6 +705,8 @@ namespace MacGame.Enemies
 
             // Yeet the player to the right.
             Health -= damage;
+
+            SoundManager.PlaySound("GooseHit");
 
             // Set the brick delay timer as we transition from phase 1 to 2, so the breaking bricks don't show up right away.
             if (initialPhase == AttackPhase.Phase1 && attackPhase == AttackPhase.Phase2)

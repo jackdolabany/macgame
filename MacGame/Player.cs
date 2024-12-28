@@ -371,8 +371,7 @@ namespace MacGame
                     EffectsManager.AddSplash(new Vector2(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom), new Vector2(0, this.velocity.Y));
                     EffectsManager.AddSplash(new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Bottom), new Vector2(0, this.velocity.Y));
                 }
-                // TODO: Play water splash or swim sound
-                //SoundManager.PlaySound("Splash");
+                SoundManager.PlaySound("Splash");
             }
 
             if (IsJumpingOutOfWater && this.Velocity.Y >= 0)
@@ -503,8 +502,6 @@ namespace MacGame
             PositionForSlideOutOfDoor(doorLocation);
             this.velocity = new Vector2(280, 0);
             this._state = MacState.IsKnockedDown;
-
-            // TODO: Play sound
         }
 
         public void PositionForSlideOutOfDoor(Vector2 doorLocation)
@@ -1381,8 +1378,10 @@ namespace MacGame
                     // weak water 'jump'
                     this.velocity.Y -= 100;
 
-                    // TODO: Swim sound
-                    //SoundManager.PlaySound("Jump");
+                    // random pitch
+                    var pitch = Game1.Randy.NextFloat() / 2f;
+
+                    SoundManager.PlaySound("Swim", 0.5f, pitch);
                 }
                 else
                 {

@@ -145,6 +145,16 @@ namespace MacGame
             LoadSound("TacoCollected");
             LoadSound("TakeHit");
             LoadSound("TypeLetter");
+            LoadSound("Click");
+            LoadSound("Explosion");
+            LoadSound("Break");
+            LoadSound("Splash");
+            LoadSound("AlienDisappear");
+            LoadSound("GooseBallBounce");
+            LoadSound("GooseHonk");
+            LoadSound("GooseHit");
+            LoadSound("Swim");
+            LoadSound("PlatformBreak");
 
             // Music.
             LoadSong("Stage1");

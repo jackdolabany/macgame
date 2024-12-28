@@ -144,6 +144,9 @@ namespace MacGame
             return randy.Next(0, 2) == 0;
         }
 
+        /// <summary>
+        /// Return a float between 0 and 1.0
+        /// </summary>
         public static float NextFloat(this Random randy)
         {
             return (float)randy.NextDouble();

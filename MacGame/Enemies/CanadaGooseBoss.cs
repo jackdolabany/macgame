@@ -383,6 +383,7 @@ namespace MacGame.Enemies
                     if (springTimer <= 0)
                     {
                         SpringBoard.WorldLocation = springBoardInitialLocation;
+                        SpringBoard.Velocity = Vector2.Zero;
                         SpringBoard.Enabled = true;
                         // So it draws in the correct location.
                         SpringBoard.Update(gameTime, elapsed);
@@ -674,6 +675,14 @@ namespace MacGame.Enemies
                     neck.Enabled = false;
                 }
             }
+        }
+
+        public override void AfterHittingPlayer()
+        {
+            base.AfterHittingPlayer();
+            
+            // yeet mac
+            _player.Velocity = new Vector2(500, -800);
         }
 
         public override void TakeHit(int damage, Vector2 force)

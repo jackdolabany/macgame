@@ -48,12 +48,6 @@ namespace MacGame.DisplayComponents
             }
         }
 
-        public Vector2 WorldLocation
-        {
-            get { return DrawObject.Position; }
-            set { DrawObject.Position = value; }
-        }
-
         public StaticImageDisplay(Texture2D texture, Rectangle textureSourceRectangle)
             : base()
         {
@@ -74,8 +68,20 @@ namespace MacGame.DisplayComponents
             };
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
+
+            var center = GetWorldCenter(ref position);
+            var drawPosition = center - new Vector2(DrawObject.SourceRectangle.Width / 2, DrawObject.SourceRectangle.Height / 2) * Scale;
+            DrawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
+            DrawObject.Position += Offset;
+            SpriteEffects effect = SpriteEffects.None;
+            if (flipped)
+            {
+                effect = SpriteEffects.FlipHorizontally;
+            }
+            DrawObject.Effect |= effect;
+
             if (DrawObject.Texture != null)
             {
                 spriteBatch.Draw(
@@ -89,22 +95,6 @@ namespace MacGame.DisplayComponents
                     DrawObject.Effect,
                     DrawDepth);
             }
-        }
-
-        public override void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
-        {
-            base.Update(gameTime, elapsed, position, flipped);
-
-            var center = GetWorldCenter(ref position);
-            var drawPosition = center - new Vector2(DrawObject.SourceRectangle.Width / 2, DrawObject.SourceRectangle.Height / 2) * Scale;
-            DrawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
-
-            SpriteEffects effect = SpriteEffects.None;
-            if (flipped)
-            {
-                effect = SpriteEffects.FlipHorizontally;
-            }
-            DrawObject.Effect |= effect;
         }
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)

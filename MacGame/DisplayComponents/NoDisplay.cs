@@ -24,14 +24,12 @@ namespace MacGame.DisplayComponents
             RotationAndDrawOrigin = new Vector2(0, 0);
         }
 
-        private Vector2 WorldLocation { get; set; }
-
-        public override void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
+        public override void Update(GameTime gameTime, float elapsed)
         {
             return;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
             return;
         }

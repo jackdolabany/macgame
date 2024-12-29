@@ -33,12 +33,6 @@ namespace MacGame.DisplayComponents
             }
         }
 
-        public Vector2 WorldLocation
-        {
-            get { return drawObject.Position; }
-            set { drawObject.Position = value; }
-        }
-
         public void Add(string key, AnimationStrip animation)
         {
             animations.Add(key, animation);
@@ -49,8 +43,30 @@ namespace MacGame.DisplayComponents
             animations.Add(animation.Name, animation);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
+            SpriteEffects effect = SpriteEffects.None;
+            if (flipped)
+            {
+                effect = SpriteEffects.FlipHorizontally;
+            }
+            drawObject.Effect = effect;
+
+            if (!animations.ContainsKey(CurrentAnimationName)) return;
+
+            var anim = animations[CurrentAnimationName];
+            drawObject.Texture = anim.Texture;
+            drawObject.SourceRectangle = anim.FrameRectangle;
+
+            var center = GetWorldCenter(ref position);
+            
+
+            var drawPosition = center - new Vector2(drawObject.SourceRectangle.Width / 2, drawObject.SourceRectangle.Height / 2) * Scale;
+
+            drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
+
+            drawObject.Position += Offset;
+
             if (drawObject.Texture != null)
             {
                 spriteBatch.Draw(
@@ -66,9 +82,9 @@ namespace MacGame.DisplayComponents
             }
         }
 
-        public override void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
+        public override void Update(GameTime gameTime, float elapsed)
         {
-            base.Update(gameTime, elapsed, position, flipped);
+            base.Update(gameTime, elapsed);
 
             // Update the animation
             if (!animations.ContainsKey(CurrentAnimationName)) return;
@@ -85,26 +101,6 @@ namespace MacGame.DisplayComponents
             {
                 anim.Update(elapsed);
             }
-
-            SpriteEffects effect = SpriteEffects.None;
-            if (flipped)
-            {
-                effect = SpriteEffects.FlipHorizontally;
-            }
-            drawObject.Effect = effect;
-
-            if (!animations.ContainsKey(CurrentAnimationName)) return;
-
-            drawObject.Texture = anim.Texture;
-            drawObject.SourceRectangle = anim.FrameRectangle;
-
-            var center = GetWorldCenter(ref position);
-            var drawPosition = center - new Vector2(drawObject.SourceRectangle.Width / 2, drawObject.SourceRectangle.Height / 2) * Scale;
-            drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
-
-            // Lock them into an integer position.
-            drawObject.Position = new Vector2(drawObject.Position.X, drawObject.Position.Y);
-
         }
 
         public override Vector2 GetWorldCenter(ref Vector2 worldLocation)

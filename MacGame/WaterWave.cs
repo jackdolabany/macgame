@@ -1,8 +1,6 @@
 ﻿using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
 using TileEngine;
 
 namespace MacGame
@@ -51,7 +49,7 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
             // There's no real logic here. Just update the display component.
-            DisplayComponent.Update(gameTime, elapsed, Vector2.Zero, false);
+            DisplayComponent.Update(gameTime, elapsed);
         }
     }
 
@@ -64,7 +62,7 @@ namespace MacGame
 
         public WaterWave(int cellX, int cellY, float drawDepth)
         {
-            WorldLocation = new Vector2(cellX * TileMap.TileSize, cellY * TileMap.TileSize);
+            WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             CellX = cellX;
             CellY = cellY;
             Enabled = true;
@@ -102,9 +100,8 @@ namespace MacGame
 
             // hijack the flyweight's display component, that's what it's there for.
             var ad = (AnimationDisplay)Game1.WaterWaveFlyweight.DisplayComponent;
-            ad.WorldLocation = this.WorldLocation;
             ad.DrawDepth = _drawDepth;
-            ad.Draw(spriteBatch);
+            ad.Draw(spriteBatch, this.WorldLocation, false);
         }
     }
 
@@ -121,9 +118,8 @@ namespace MacGame
         {
             // hijack the flyweight's display component, that's what it's there for.
             var ad = (AnimationDisplay)Game1.WaterWaveFlyweightAlt.DisplayComponent;
-            ad.WorldLocation = this.WorldLocation;
             ad.DrawDepth = _drawDepth;
-            ad.Draw(spriteBatch);
+            ad.Draw(spriteBatch, this.WorldLocation, false);
         }
     }
 }

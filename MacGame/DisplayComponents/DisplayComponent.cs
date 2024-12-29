@@ -10,7 +10,11 @@ namespace MacGame.DisplayComponents
         public virtual Vector2 RotationAndDrawOrigin { get; set; }
         public virtual float DrawDepth { get; set; }
         public virtual float Scale { get; set; }
-        public virtual bool Flipped { get; set; }
+
+        /// <summary>
+        /// Use this to draw the component at a different location than its world location.
+        /// </summary>
+        public Vector2 Offset { get; set; }
 
         protected float _rotation;
         public virtual float Rotation
@@ -34,11 +38,10 @@ namespace MacGame.DisplayComponents
 
         public abstract Vector2 GetWorldCenter(ref Vector2 worldLocation);
 
-        public abstract void Draw(SpriteBatch spriteBatch);
+        public abstract void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped);
 
-        public virtual void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
+        public virtual void Update(GameTime gameTime, float elapsed)
         {
-            Flipped = flipped;
         }
 
         protected static Vector2 RotateAroundOrigin(Vector2 point, Vector2 origin, float rotation)

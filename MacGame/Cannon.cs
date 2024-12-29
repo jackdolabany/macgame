@@ -127,6 +127,8 @@ namespace MacGame
 
             // Temp, get this from the map.
             IsRotating = true;
+
+            DisplayComponent.Offset += new Vector2(0, Game1.TileSize / 2);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -278,7 +280,6 @@ namespace MacGame
             base.Update(gameTime, elapsed);
 
             // The image is extra large compared to the hitbox so we need to offset it a bit.
-            image.WorldLocation += new Vector2(0, Game1.TileSize / 2);
            
         }
 

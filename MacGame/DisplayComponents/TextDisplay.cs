@@ -35,27 +35,23 @@ namespace MacGame.DisplayComponents
             RotationAndDrawOrigin = new Vector2(GetWidth() / 2, GetHeight() / 2);
         }
 
-        private Vector2 WorldLocation { get; set; }
-
-        public override void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
+        public override void Update(GameTime gameTime, float elapsed)
         {
-            base.Update(gameTime, elapsed, position, flipped);
-            WorldLocation = position;
-            Flipped = flipped;
+            base.Update(gameTime, elapsed);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
             if (!string.IsNullOrEmpty(Text))
             {
                 spriteBatch.DrawString(Game1.Font,
                     Text,
-                    WorldLocation.ToIntegerVector(),
+                    (Offset + position).ToIntegerVector(),
                     TintColor,
                     Rotation,
                     RotationAndDrawOrigin,
                     Scale,
-                    Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     DrawDepth);
             }
         }

@@ -43,6 +43,8 @@ namespace MacGame
             sock.LoopAnimation = true;
             sock.FrameLength = 0.2f;
             _collectible.Add(sock);
+
+            _collectible.TintColor = Color.Transparent;
         }
 
         public static void ShowMoon()
@@ -72,7 +74,7 @@ namespace MacGame
         {
             if (CurrentCutscene == CutsceneType.Intro)
             {
-                _collectible.Update(gameTime, elapsed, CollectiblePosition, false);
+                _collectible.Update(gameTime, elapsed);
 
                 if (FadeInTimer > 0)
                 {
@@ -106,7 +108,7 @@ namespace MacGame
         {
             if (CurrentCutscene == CutsceneType.Intro)
             {
-                _collectible.Draw(spriteBatch);
+                _collectible.Draw(spriteBatch, CollectiblePosition, false);
             }
         }
     }

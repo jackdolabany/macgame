@@ -975,21 +975,16 @@ namespace MacGame
 
             worldLocation = newPosition;
 
-            DisplayComponent.Update(gameTime, elapsed, this.worldLocation, this._flipped);
+            DisplayComponent.Update(gameTime, elapsed);
         }
 
         public virtual void AdjustPositionBeforeDraw(ref Vector2 newPosition, ref Vector2 previousLocation) { }
-
-        public void SetupDraw(GameTime gameTime, float elapsed)
-        {
-            this.DisplayComponent.Update(gameTime, elapsed, this.worldLocation, this.Flipped);
-        }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (Enabled)
             {
-                this.DisplayComponent.Draw(spriteBatch);
+                this.DisplayComponent.Draw(spriteBatch, this.WorldLocation, this.Flipped);
             }
 
             // Draw Collision Rectangle in reddish

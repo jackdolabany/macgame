@@ -91,9 +91,9 @@ namespace MacGame.Items
 
             if (IsInChest)
             {
-                ClosedChest.Update(gameTime, elapsed, ChestPosition, false);
-                OpenChestBottom.Update(gameTime, elapsed, ChestPosition, false);
-                OpenChestTop.Update(gameTime, elapsed, ChestPosition, false);
+                ClosedChest.Update(gameTime, elapsed);
+                OpenChestBottom.Update(gameTime, elapsed);
+                OpenChestTop.Update(gameTime, elapsed);
             }
 
             if (IsInChest && !isOpen)
@@ -161,14 +161,14 @@ namespace MacGame.Items
                 if (!isOpen)
                 {
                     // Item renders as a chest until it's opened.
-                    ClosedChest.Draw(spriteBatch);
+                    ClosedChest.Draw(spriteBatch, ChestPosition, this.Flipped);
                 }
                 else
                 {
                     // Draw the item between the open top and bottom of the chest.
-                    OpenChestTop.Draw(spriteBatch);
+                    OpenChestTop.Draw(spriteBatch, ChestPosition, this.Flipped);
                     base.Draw(spriteBatch);
-                    OpenChestBottom.Draw(spriteBatch);
+                    OpenChestBottom.Draw(spriteBatch, ChestPosition, this.Flipped);
                 }
             }
             else

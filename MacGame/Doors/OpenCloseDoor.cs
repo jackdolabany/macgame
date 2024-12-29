@@ -99,6 +99,12 @@ namespace MacGame.Doors
 
             State = DoorState.Idle;
             DoorAnimations.Play("idle");
+
+            // Need to offset the position of the DrawObject because it gets all screwed up since the
+            // graphic for the door is twice the size of the door. That's because it opens/closes and the
+            // animation graphic spills to the left of the door.
+            DoorAnimations.Offset -= new Vector2(16, 0);
+            JailBarAnimations.Offset -= new Vector2(16, 0);
         }
 
         public override void SetDrawDepth(float depth)
@@ -229,11 +235,6 @@ namespace MacGame.Doors
 
             base.Update(gameTime, elapsed);
 
-            // Need to offset the position of the DrawObject because it gets all screwed up since the
-            // graphic for the door is twice the size of the door. That's because it opens/closes and the
-            // animation graphic spills to the left of the door.
-            DoorAnimations.WorldLocation -= new Vector2(16, 0);
-            JailBarAnimations.WorldLocation -= new Vector2(16, 0);
         }
 
         /// <summary>

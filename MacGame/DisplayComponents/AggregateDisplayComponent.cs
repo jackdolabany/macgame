@@ -80,21 +80,6 @@ namespace MacGame.DisplayComponents
             }
         }
 
-        public override bool Flipped
-        {
-            get
-            {
-                return DisplayComponents[0].Flipped;
-            }
-            set
-            {
-                foreach (var dc in DisplayComponents)
-                {
-                    dc.Flipped = value;
-                }
-            }
-        }
-
         public override float Rotation
         {
             get
@@ -115,20 +100,20 @@ namespace MacGame.DisplayComponents
             // Do nothing
         }
 
-        public override void Update(GameTime gameTime, float elapsed, Vector2 position, bool flipped)
+        public override void Update(GameTime gameTime, float elapsed)
         {
             foreach (var dc in DisplayComponents)
             {
-                dc.Update(gameTime, elapsed, position, flipped);
+                dc.Update(gameTime, elapsed);
             }
-            base.Update(gameTime, elapsed, position, flipped);
+            base.Update(gameTime, elapsed);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
             foreach (var dc in DisplayComponents)
             {
-                dc.Draw(spriteBatch);
+                dc.Draw(spriteBatch, position + Offset, flipped);
             }
         }
 

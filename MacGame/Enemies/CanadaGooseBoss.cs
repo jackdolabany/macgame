@@ -388,8 +388,6 @@ namespace MacGame.Enemies
                         SpringBoard.WorldLocation = springBoardInitialLocation;
                         SpringBoard.Velocity = Vector2.Zero;
                         SpringBoard.Enabled = true;
-                        // So it draws in the correct location.
-                        SpringBoard.Update(gameTime, elapsed);
                     }
                 }
             }

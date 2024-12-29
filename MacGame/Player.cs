@@ -469,7 +469,11 @@ namespace MacGame
                 {
                     climbingOffset *= -1;
                 }
-                this.animations.WorldLocation += climbingOffset;
+                this.animations.Offset = climbingOffset;
+            }
+            else
+            {
+                this.animations.Offset = Vector2.Zero;
             }
         }
 

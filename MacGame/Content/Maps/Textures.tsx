@@ -615,9 +615,39 @@
    <property name="Water" value="2"/>
   </properties>
  </tile>
+ <tile id="268">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="269">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="270">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="282">
   <properties>
    <property name="Water" value="3"/>
+  </properties>
+ </tile>
+ <tile id="284">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="285">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="286">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="288">
@@ -861,6 +891,16 @@
    <property name="LoadClass" value="Enemy.AlienBug"/>
   </properties>
  </tile>
+ <tile id="394">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="395">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="396">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -899,6 +939,16 @@
  <tile id="408">
   <properties>
    <property name="LoadClass" value="Enemy.AlienJellyfish"/>
+  </properties>
+ </tile>
+ <tile id="410">
+  <properties>
+   <property name="LoadClass" value="Enemy.QuadcopterBoss"/>
+  </properties>
+ </tile>
+ <tile id="411">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="416">

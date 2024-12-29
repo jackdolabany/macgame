@@ -80,6 +80,11 @@
 /processor:PassThroughProcessor
 /build:Maps/IntroLevel.tmx
 
+#begin Maps/QuadcopterBoss.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/QuadcopterBoss.tmx
+
 #begin Maps/RedRoom.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

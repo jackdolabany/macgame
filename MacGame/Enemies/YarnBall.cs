@@ -12,6 +12,7 @@ namespace MacGame.Enemies
 
         StaticImageDisplay image => (StaticImageDisplay)DisplayComponent;
 
+        public bool IsBouncing { get; set; } = false;
         public YarnBall(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -19,15 +20,58 @@ namespace MacGame.Enemies
             DisplayComponent = new StaticImageDisplay(textures);
             image.Source = Helpers.GetTileRect(5, 2);
 
-            isTileColliding = false;
+            isTileColliding = true;
             isEnemyTileColliding = false;
             Attack = 1;
             Health = 1;
+
             IsAffectedByGravity = false;
             IsAbleToSurviveOutsideOfWorld = false;
             IsAbleToMoveOutsideOfWorld = true;
+            CanBeHitWithWeapons = false;
+            CanBeJumpedOn = false;
 
             SetCenteredCollisionRectangle(7, 7);
+        }
+
+        public override void Update(GameTime gameTime, float elapsed)
+        {
+
+            var wasOnCeiling = OnCeiling;
+            var wasOnGround = OnGround;
+            var wasOnLeftWall = OnLeftWall;
+            var wasOnRightWall = OnRightWall;
+            var previousVelocity = this.velocity;
+
+            base.Update(gameTime, elapsed);
+
+            if (!IsBouncing && Alive && Enabled)
+            {
+                if (OnLeftWall || OnRightWall || OnCeiling || OnGround)
+                {
+                    this.Kill();
+                }
+            }
+
+            if (Alive && Enabled && IsBouncing)
+            {
+                if (OnCeiling && !wasOnCeiling)
+                {
+                    velocity.Y = -previousVelocity.Y;
+                }
+                else if (OnGround && !wasOnGround)
+                {
+                    velocity.Y = -previousVelocity.Y;
+                }
+                if (OnLeftWall && !wasOnLeftWall)
+                {
+                    velocity.X = -previousVelocity.X;
+                }
+                else if (OnRightWall && !wasOnRightWall)
+                {
+                    velocity.X = -previousVelocity.X;
+                }
+            }
         }
 
         public override void Kill()

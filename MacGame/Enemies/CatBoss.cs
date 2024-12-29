@@ -14,15 +14,69 @@ namespace MacGame.Enemies
 
         bool hasBeenSeen = false;
 
-        YarnBall[] yarnBalls = new YarnBall[5];
+        YarnBall[] yarnBalls = new YarnBall[3];
 
         int nextYarnBallToThrowIndex = 0;
         const float maxThrowTimer = 2f;
         float throwTimer = maxThrowTimer;
 
-        int walkSpeed = 80;
+        int walkSpeed = 120;
         int maxTravelDistance = 24;
         int startLocationX;
+        const int MaxHealth = 6;
+        float jumpTimer = 0f;
+        float explosionTimer = 0f;
+
+        float dyingTimer = 0f;
+
+        /// <summary>
+        /// These are the attack phases for the cat.
+        /// </summary>
+        public enum AttackPhase
+        {
+            /// <summary>
+            /// Phase 1 walk around and shoot random balls.
+            /// </summary>
+            Phase1,
+
+            /// <summary>
+            /// Now the balls bounce off the room.
+            /// </summary>
+            Phase2,
+
+            /// <summary>
+            /// Same as phase 2 but the cat jumps randomly now.
+            /// </summary>
+            Phase3
+        }
+        
+        public enum CatState
+        {
+            Attacking,
+            Dying,
+            Dead
+        }
+
+        public CatState state = CatState.Attacking;
+
+        private AttackPhase attackPhase
+        {
+            get
+            {
+                if (Health == 1 || Health == 2)
+                {
+                    return AttackPhase.Phase3;
+                }
+                else if (Health == 3 || Health == 4)
+                {
+                    return AttackPhase.Phase2;
+                }
+                else
+                {
+                    return AttackPhase.Phase1;
+                }
+            }
+        }
 
         public CatBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -40,15 +94,16 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = false;
             Attack = 1;
-            Health = 3;
-            IsAffectedByGravity = false;
+
+            Health = MaxHealth;
+            IsAffectedByGravity = true;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
             SetCenteredCollisionRectangle(14, 14);
 
             // Cat has 5 yarn balls.
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < yarnBalls.Length; i++)
             {
                 yarnBalls[i] = new YarnBall(content, 0, 0, player, camera);
                 yarnBalls[i].Enabled = false;
@@ -59,10 +114,34 @@ namespace MacGame.Enemies
 
         public override void TakeHit(int damage, Vector2 force)
         {
-            base.TakeHit(damage, force);
+            var previousPhase = attackPhase;
+
+            Health -= damage;
+
             if (!IsTempInvincibleFromBeingHit)
             {
-                InvincibleTimer += 1f;
+                InvincibleTimer += 2f;
+            }
+
+            if (Alive && previousPhase == AttackPhase.Phase2 && attackPhase == AttackPhase.Phase3)
+            {
+                // Kill the yarn balls between attack phase 2 and 3.
+                foreach (var yarnball in yarnBalls)
+                {
+                    yarnball.Kill();
+                }
+            }
+
+            if (Health <= 0)
+            {
+                // DEATH!!!
+                state = CatState.Dying;
+                Dead = true;
+                this.velocity = Vector2.Zero;
+                foreach (var yarnball in yarnBalls)
+                {
+                    yarnball.Kill();
+                }
             }
         }
 
@@ -74,11 +153,16 @@ namespace MacGame.Enemies
             base.Kill();
 
             // TODO: Final boss, just for now.
-            GlobalEvents.FireFinalBossComplete();
+            TimerManager.AddNewTimer(2f, () =>
+            {
+                GlobalEvents.FireFinalBossComplete();
+            });
+            
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+
             base.Update(gameTime, elapsed);
 
             if (!hasBeenSeen)
@@ -87,29 +171,44 @@ namespace MacGame.Enemies
                 {
                     hasBeenSeen = true;
                     SoundManager.PlaySong("BossFight", true, 0.2f);
-                    Game1.Camera.CanScrollLeft = false;
                 }
             }
 
-            if (hasBeenSeen && Alive)
+            if (!hasBeenSeen) return;
+
+            Game1.DrawBossHealth = true;
+            Game1.MaxBossHealth = MaxHealth;
+            Game1.BossHealth = Health;
+
+            if (state == CatState.Attacking)
             {
                 throwTimer -= elapsed;
                 if (throwTimer < 0f)
                 {
-                    // Throw a yarn ball at the player.
-                    var yarnBall = yarnBalls[nextYarnBallToThrowIndex];
-                    yarnBall.Enabled = true;
-                    yarnBall.Alive = true;
-                    yarnBall.WorldLocation = WorldCenter;
-                    var direction = Player.WorldCenter - yarnBall.WorldCenter;
-                    direction.Normalize();
-                    yarnBall.Velocity = direction * 200;
+                    YarnBall? availableYarnBall = null;
 
-                    nextYarnBallToThrowIndex++;
-                    if (nextYarnBallToThrowIndex >= yarnBalls.Length)
+                    for (int i = 0; i < yarnBalls.Length; i++)
                     {
-                        nextYarnBallToThrowIndex = 0;
+                        if (!yarnBalls[i].Alive)
+                        {
+                            availableYarnBall = yarnBalls[i];
+                            break;
+                        }
                     }
+
+                    if (availableYarnBall != null)
+                    {
+                        availableYarnBall.Enabled = true;
+                        availableYarnBall.Alive = true;
+                        availableYarnBall.WorldLocation = WorldCenter;
+                        var direction = Player.WorldCenter - availableYarnBall.WorldCenter;
+                        direction.Normalize();
+                        availableYarnBall.Velocity = direction * 200;
+
+                        // Balls start bouncing later.
+                        availableYarnBall.IsBouncing = attackPhase == AttackPhase.Phase2 || attackPhase == AttackPhase.Phase3;
+                    }
+
                     throwTimer = maxThrowTimer;
                 }
 
@@ -119,18 +218,66 @@ namespace MacGame.Enemies
                     velocity.X *= -1;
                 }
 
-                var travelDistance = WorldCenter.X.ToInt() - startLocationX;
-
-                if (velocity.X > 0 && travelDistance >= maxTravelDistance)
+                if (OnLeftWall)
                 {
-                    Flipped = !Flipped;
+                    Flipped = false;
                 }
-                else if (velocity.X < 0 && travelDistance <= -maxTravelDistance)
+                else if (OnRightWall)
                 {
-                    Flipped = !Flipped;
+                    Flipped = true;
+                }
+
+                // Jump in phase 3
+                if (attackPhase == AttackPhase.Phase3)
+                {
+                    if (OnGround)
+                    {
+                        jumpTimer += elapsed;
+                        if (jumpTimer >=  0.8f)
+                        {
+                            jumpTimer = 0f;
+                            velocity.Y = -600;
+                        }
+                    }
                 }
 
             }
+
+            if (state == CatState.Dying)
+            {
+
+                // Add random explosions
+                explosionTimer += elapsed;
+                if (explosionTimer >= 0.25f)
+                {
+                    explosionTimer = 0f;
+
+                    // Make explosions slightly larger than the collision rect
+                    int explosionBuffer = 20;
+
+                    // Get a random location over this collision rectangle
+                    var randomX = Game1.Randy.Next(CollisionRectangle.Width + (explosionBuffer * 2));
+                    var randomY = Game1.Randy.Next(CollisionRectangle.Height + (explosionBuffer * 2));
+
+                    var randomLocation = new Vector2(CollisionRectangle.X + randomX - explosionBuffer, CollisionRectangle.Y + randomY - explosionBuffer);
+                    EffectsManager.AddExplosion(randomLocation);
+                }
+
+                dyingTimer += elapsed;
+                if (dyingTimer >= 4f)
+                {
+
+                    this.Kill();
+                    state = CatState.Dead;
+                 
+                }
+            }
+
+            if (state == CatState.Dead)
+            {
+                // Take them to wherever you need to take them. Once we figure out where that is.
+            }
+
         }
     }
 }

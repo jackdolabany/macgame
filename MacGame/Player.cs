@@ -577,7 +577,7 @@ namespace MacGame
             if (Health <= 0) return;
 
             // player takes a hit.
-            Health -= 1;
+            Health -= enemy.Attack;
             if (Health <= 0)
             {
                 Kill();

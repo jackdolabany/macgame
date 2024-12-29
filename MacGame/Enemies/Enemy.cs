@@ -50,7 +50,7 @@ namespace MacGame.Enemies
         public bool CanBeHitWithWeapons { get; protected set; } = true;
 
         protected int Health { get; set; }
-        public float Attack { get; set; }
+        public int Attack { get; set; } = 1;
         public bool IsCustomPlayerColliding { get; set; }
         protected Vector2 InitialWorldLocation { get; set; }
 

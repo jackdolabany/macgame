@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World1Minecart";
+        public const string StartingWorld = "TestFinalBoss";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -1005,11 +1005,11 @@ namespace MacGame
                     var heartXPos = startingXPos + (i * (TileSize + heartSpacer));
                     if (i < BossHealth)
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 10), Color.Red * 0.8f);
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 10), Color.White);
                     }
                     else
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 10), Color.Red * 0.8f);
+                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 10), Color.White);
                     }
                 }
             }

@@ -701,7 +701,6 @@ namespace MacGame.Enemies
 
             var initialPhase = this.attackPhase;
 
-            // Yeet the player to the right.
             Health -= damage;
 
             SoundManager.PlaySound("GooseHit");
@@ -712,6 +711,7 @@ namespace MacGame.Enemies
                 brickDelayTimer += 6f;
             }
 
+            // Yeet the player to the right.
             _player.Velocity = new Vector2(500, -800);
 
             if (Health > 0)

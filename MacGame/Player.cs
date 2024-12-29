@@ -1201,6 +1201,7 @@ namespace MacGame
             {
                 _state = MacState.Idle;
                 IsInMineCart = false;
+                SoundManager.PlaySound("Break");
                 return;
             }
 

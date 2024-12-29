@@ -24,8 +24,13 @@ namespace MacGame.Items
             {
                 player.Health = Player.MaxHealth;
             }
-            SoundManager.PlaySound("Health");
+            
             EffectsManager.EnemyPop(WorldCenter, 7, Color.Red, 80);
+        }
+
+        public override void PlayCollectedSound()
+        {
+            SoundManager.PlaySound("Health");
         }
     }
 }

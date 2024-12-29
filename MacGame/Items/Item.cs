@@ -63,9 +63,15 @@ namespace MacGame.Items
         private void Collect(Player player)
         {
             WhenCollected(player);
+            PlayCollectedSound();
         }
 
         public abstract void WhenCollected(Player player);
+
+        public virtual void PlayCollectedSound()
+        {
+            SoundManager.PlaySound("PowerUp");
+        }
 
         /// <summary>
         /// Store the original tint for when we make it flash.
@@ -104,6 +110,8 @@ namespace MacGame.Items
                 if (topOfPlayer.Intersects(bottomOfChest))
                 {
                     isOpen = true;
+
+                    SoundManager.PlaySound("ChestOpen");
 
                     // Move it just above the player so he doesn't instantly collect it.
                     this.worldLocation.Y = _player.CollisionRectangle.Top - 8;

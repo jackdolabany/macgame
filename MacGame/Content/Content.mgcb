@@ -282,6 +282,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/break.wav
 
+#begin SoundEffects/ChestOpen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ChestOpen.wav
+
 #begin SoundEffects/click.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -390,23 +396,11 @@
 /processorParam:Quality=Best
 /build:SoundEffects/MenuChoice.wav
 
-#begin SoundEffects/MenuChoice.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SoundEffects/MenuChoice.wav
-
 #begin SoundEffects/MinecartJump.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/MinecartJump.wav
-
-#begin SoundEffects/MinecartLand.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:SoundEffects/MinecartLand.wav
 
 #begin SoundEffects/MinecartLand.wav
 /importer:WavImporter
@@ -437,6 +431,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/PlatformBreak.wav
+
+#begin SoundEffects/PowerUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/PowerUp.wav
 
 #begin SoundEffects/Reveal.wav
 /importer:WavImporter

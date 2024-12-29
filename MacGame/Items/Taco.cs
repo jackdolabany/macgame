@@ -34,7 +34,10 @@ namespace MacGame.Items
 
             // Add to the collection so it stays collected.
             Game1.TacoCollected(Game1.CurrentLevel.Name, x, y);
-            
+        }
+
+        public override void PlayCollectedSound()
+        {
             SoundManager.PlaySound("TacoCollected", 0.3f);
         }
     }

@@ -36,6 +36,7 @@ namespace MacGame
                 {
                     this.Enabled = false;
                     _player.IsInMineCart = true;
+                    SoundManager.PlaySound("PowerUp");
                 }
             }
 

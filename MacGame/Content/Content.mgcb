@@ -282,6 +282,24 @@
 /processorParam:Quality=Best
 /build:SoundEffects/break.wav
 
+#begin SoundEffects/CatBossHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CatBossHit.wav
+
+#begin SoundEffects/CatBossJump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CatBossJump.wav
+
+#begin SoundEffects/CatBossShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CatBossShoot.wav
+
 #begin SoundEffects/ChestOpen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

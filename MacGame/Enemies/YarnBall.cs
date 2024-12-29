@@ -58,27 +58,34 @@ namespace MacGame.Enemies
                 if (OnCeiling && !wasOnCeiling)
                 {
                     velocity.Y = -previousVelocity.Y;
+                    SoundManager.PlaySound("Bounce");
                 }
                 else if (OnGround && !wasOnGround)
                 {
                     velocity.Y = -previousVelocity.Y;
+                    SoundManager.PlaySound("Bounce");
                 }
                 if (OnLeftWall && !wasOnLeftWall)
                 {
                     velocity.X = -previousVelocity.X;
+                    SoundManager.PlaySound("Bounce");
                 }
                 else if (OnRightWall && !wasOnRightWall)
                 {
                     velocity.X = -previousVelocity.X;
+                    SoundManager.PlaySound("Bounce");
                 }
             }
         }
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.Pink, 120f);
-
-            Enabled = false;
+            if (Enabled && Alive)
+            {
+                EffectsManager.EnemyPop(WorldCenter, 10, Color.Pink, 120f);
+                SoundManager.PlaySound("Break");
+                Enabled = false;
+            }
             base.Kill();
         }
     }

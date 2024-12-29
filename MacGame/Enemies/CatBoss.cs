@@ -26,6 +26,7 @@ namespace MacGame.Enemies
         const int MaxHealth = 6;
         float jumpTimer = 0f;
         float explosionTimer = 0f;
+        float deathSqueaksTimer = 0f;
 
         float dyingTimer = 0f;
 
@@ -96,13 +97,14 @@ namespace MacGame.Enemies
             Attack = 1;
 
             Health = MaxHealth;
+
             IsAffectedByGravity = true;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
             SetCenteredCollisionRectangle(14, 14);
 
-            // Cat has 5 yarn balls.
+            // Cat has yarn balls.
             for (int i = 0; i < yarnBalls.Length; i++)
             {
                 yarnBalls[i] = new YarnBall(content, 0, 0, player, camera);
@@ -117,6 +119,8 @@ namespace MacGame.Enemies
             var previousPhase = attackPhase;
 
             Health -= damage;
+
+            SoundManager.PlaySound("CatBossHit");
 
             if (!IsTempInvincibleFromBeingHit)
             {
@@ -205,6 +209,8 @@ namespace MacGame.Enemies
                         direction.Normalize();
                         availableYarnBall.Velocity = direction * 200;
 
+                        SoundManager.PlaySound("CatBossShoot");
+
                         // Balls start bouncing later.
                         availableYarnBall.IsBouncing = attackPhase == AttackPhase.Phase2 || attackPhase == AttackPhase.Phase3;
                     }
@@ -237,6 +243,7 @@ namespace MacGame.Enemies
                         {
                             jumpTimer = 0f;
                             velocity.Y = -600;
+                            SoundManager.PlaySound("CatBossJump");
                         }
                     }
                 }
@@ -261,6 +268,13 @@ namespace MacGame.Enemies
 
                     var randomLocation = new Vector2(CollisionRectangle.X + randomX - explosionBuffer, CollisionRectangle.Y + randomY - explosionBuffer);
                     EffectsManager.AddExplosion(randomLocation);
+                }
+
+                deathSqueaksTimer += elapsed;
+                if (deathSqueaksTimer >= 0.65f)
+                {
+                    deathSqueaksTimer = 0f;
+                    SoundManager.PlaySound("CatBossHit");
                 }
 
                 dyingTimer += elapsed;

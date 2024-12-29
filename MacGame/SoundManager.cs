@@ -163,6 +163,9 @@ namespace MacGame
             LoadSound("MinecartJump");
             LoadSound("PowerUp");
             LoadSound("ChestOpen");
+            LoadSound("CatBossHit");
+            LoadSound("CatBossJump");
+            LoadSound("CatBossShoot");
 
             // Music.
             LoadSong("Stage1");

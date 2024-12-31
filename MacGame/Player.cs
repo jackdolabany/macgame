@@ -187,6 +187,15 @@ namespace MacGame
                 return CannonYouAreIn != null;
             }
         }
+
+        public bool CanEnterCannon
+        {
+            get
+            {
+                return this.CannonYouAreIn == null && pickedUpObject == null;
+            }
+        }
+
         /// <summary>
         /// After being shot out of a cannon you are not effected by gravity for a period of time, 
         /// you can't enter inputs, and you smash through sand.
@@ -546,10 +555,10 @@ namespace MacGame
                 if (enemy.CanBeJumpedOn && JumpedOnEnemyRectangle(enemy.CollisionRectangle))
                 {
                     // If the player was above the enemy, the enemy was jumped on and takes a hit.
-                    enemy.TakeHit(1, Vector2.Zero);
+                    enemy.TakeHit(this,1, Vector2.Zero);
                     velocity.Y = -450;
                 }
-                else
+                else if (enemy.Attack > 0)
                 {
                     TakeHit(enemy);
                     enemy.AfterHittingPlayer();
@@ -564,7 +573,7 @@ namespace MacGame
                         if(apple.CollisionRectangle.Intersects(enemy.CollisionRectangle))
                         {
                             apple.Smash();
-                            enemy.TakeHit(1, Vector2.Zero);
+                            enemy.TakeHit(apple, 1, Vector2.Zero);
                         }
                     }
                 }
@@ -575,6 +584,7 @@ namespace MacGame
         {
             if (IsInvincible) return;
             if (Health <= 0) return;
+            if (enemy.Attack == 0) return;
 
             // player takes a hit.
             Health -= enemy.Attack;
@@ -1071,7 +1081,14 @@ namespace MacGame
                 if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action)
                 {
                     // Kick the item
-                    recentlyDropped.Kick();
+
+                    var isStraightUp = false;
+                    if (InputManager.CurrentAction.up && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+                    {
+                        isStraightUp = true;
+                    }
+
+                    recentlyDropped.Kick(isStraightUp);
                     recentlyDropped = null;
                     didKickObject = true;
                 }

@@ -109,30 +109,25 @@ namespace MacGame.Enemies
         }
 
         /// <summary>
-        /// Used in the constructor to properly place enemies on the map.
-        /// </summary>
-        public virtual void InitializeOnMap()
-        {
-            //// Move them to the ground (the tile below).
-            //var putOnGroundOffset = TileMap.TileSize - (this.collisionRectangle.Height + this.collisionRectangle.Y);
-            //this.WorldLocation += new Vector2(0, putOnGroundOffset);
-            //InitialWorldLocation = this.WorldLocation;
-            //if (DisplayComponent is CharacterDisplay)
-            //{
-            //    // For these guys the world location is typically the center of their X positon.
-            //    // Move them over half a tile so they are centered where you put them.
-            //    this.worldLocation.X = this.worldLocation.X + (TileMap.TileWidth / 2);
-            //}
-
-        }
-
-        /// <summary>
         /// Waypoints are relative to the level upper left of the level and in units of Tiles. 
         /// </summary>
         protected void GoToWaypoint(float speed, Vector2 wayPoint)
         {
             var currentTargetWorldLocation = wayPoint * new Vector2(TileMap.TileSize, TileMap.TileSize) + new Vector2(TileMap.TileSize / 2, TileMap.TileSize / 2);
-            var vectorToLocation = currentTargetWorldLocation - CollisionCenter;
+            GoToLocation(speed, currentTargetWorldLocation);
+        }
+
+        protected void GoToLocation(float speed, Vector2 location)
+        {
+            var vectorToLocation = location - CollisionCenter;
+
+            if (vectorToLocation.Length() <= 2f)
+            {
+                // you're already there.
+                Velocity = Vector2.Zero;
+                return;
+            }
+
             vectorToLocation.Normalize();
             Velocity = speed * vectorToLocation;
         }
@@ -155,7 +150,7 @@ namespace MacGame.Enemies
 
         }
 
-        public virtual void TakeHit(int damage, Vector2 force)
+        public virtual void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
             if (IsTempInvincibleFromBeingHit || Dead || !Enabled)
             {

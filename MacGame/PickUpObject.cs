@@ -9,7 +9,6 @@ namespace MacGame
 {
     public abstract class PickupObject : GameObject, IPickupObject
     {
-        Vector2 originalWorldLocation;
 
         public bool IsPickedUp { get; private set; }
         protected Player _player;
@@ -21,6 +20,13 @@ namespace MacGame
         float recentlyDroppedTimer;
         protected bool WasRecentlyDropped;
 
+        public virtual float Friction
+        {
+            get
+            {
+                return 3.5f;
+            }
+        }
 
         public PickupObject(ContentManager content, int x, int y, Player player)
         {
@@ -28,7 +34,6 @@ namespace MacGame
             WorldLocation = new Vector2(x * TileMap.TileSize + TileMap.TileSize / 2, (y + 1) * TileMap.TileSize);
 
             Enabled = true;
-            originalWorldLocation = WorldLocation;
             IsAffectedByGravity = true;
         }
 
@@ -38,8 +43,8 @@ namespace MacGame
             // Fricton
             if (OnGround)
             {
-                this.velocity.X -= (this.velocity.X * 3.5f * elapsed);
-                if (Math.Abs(this.velocity.X) < 1f)
+                this.velocity.X -= (this.velocity.X * Friction * elapsed);
+                if (Math.Abs(this.velocity.X) < 15f)
                 {
                     this.velocity.X = 0;
                 }
@@ -78,7 +83,7 @@ namespace MacGame
                 {
                     if (enemy.Enabled && enemy.Alive && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
-                        enemy.TakeHit(1, this.Velocity);
+                        enemy.TakeHit(this, 1, this.Velocity);
                     }
                 }
             }
@@ -120,9 +125,16 @@ namespace MacGame
             WasRecentlyDropped = true;
         }
 
-        public void Kick()
+        public void Kick(bool isStraightUp)
         {
-            this.Velocity = _player.Velocity + new Vector2(200 * (_player.IsFacingRight() ? 1 : -1), -200);
+            if (isStraightUp)
+            {
+                this.Velocity = _player.Velocity + new Vector2(0, -600);
+            }
+            else
+            {
+                this.Velocity = _player.Velocity + new Vector2(200 * (_player.IsFacingRight() ? 1 : -1), -200);
+            }
             EffectsManager.SmallEnemyPop(WorldCenter);
             SoundManager.PlaySound("Kick");
         }

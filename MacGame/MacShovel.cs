@@ -81,7 +81,7 @@ namespace MacGame
                 {
                     if (enemy.Enabled && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
-                        enemy.TakeHit(1, Vector2.Zero);
+                        enemy.TakeHit(this, 1, Vector2.Zero);
                     }
                 }
             }

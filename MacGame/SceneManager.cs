@@ -171,6 +171,14 @@ namespace MacGame
                                     layerDepthObjects[z].Add(gooseBoss.Head);
                                 }
 
+                                // Quadcopter boss adds some things to the level.
+                                if (enemy is QuadcopterBoss)
+                                {
+                                    var boss = (QuadcopterBoss)enemy;
+                                    level.Enemies.AddRange(boss.Bombs);
+                                    layerDepthObjects[z].AddRange(boss.Bombs);
+                                }
+
                             }
                             else if (loadClass.StartsWith("Platform."))
                             {
@@ -371,6 +379,7 @@ namespace MacGame
                                 {
                                     if (obj.GetScaledRectangle().Contains(cannon.CollisionRectangle))
                                     {
+                                        cannon.Name = obj.Name;
                                         foreach (var prop in obj.Properties)
                                         {
                                             if (obj.Properties.ContainsKey("AutoShoot"))
@@ -438,10 +447,17 @@ namespace MacGame
                             }
                             else if (loadClass == "Rock")
                             {
-                                var box = new Rock(contentManager, x, y, player);
-                                level.GameObjects.Add(box);
-                                level.PickupObjects.Add(box);
-                                layerDepthObjects[z].Add(box);
+                                var rock = new Rock(contentManager, x, y, player);
+                                level.GameObjects.Add(rock);
+                                level.PickupObjects.Add(rock);
+                                layerDepthObjects[z].Add(rock);
+                            }
+                            else if (loadClass == "Cannonball")
+                            {
+                                var cb = new Cannonball(contentManager, x, y, player);
+                                level.GameObjects.Add(cb);
+                                level.PickupObjects.Add(cb);
+                                layerDepthObjects[z].Add(cb);
                             }
                             else if (loadClass == "BlockingPiston")
                             {

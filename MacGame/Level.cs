@@ -503,6 +503,21 @@ namespace MacGame
                         }
                     }
                     break;
+                case "ShootCannon":
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is Cannon)
+                        {
+                            var cannon = (Cannon)gameObject;
+                            if (cannon.Name == args)
+                            {
+                                cannon.Shoot();
+                                break;
+                            }
+                        }
+                    }
+                    TimerManager.AddNewTimer(2f, () => button.MoveUpNoAction());
+                    break;
                 default:
                     if (Game1.IS_DEBUG)
                     {

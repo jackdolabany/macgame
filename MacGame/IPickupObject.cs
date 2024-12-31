@@ -16,7 +16,7 @@ namespace MacGame
         public void Drop();
 
         public void MoveToPlayer();
-        public void Kick();
+        public void Kick(bool isStraightUp);
 
         public Rectangle CollisionRectangle { get; }
 

@@ -117,7 +117,7 @@ namespace MacGame
                     {
                         if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                         {
-                            enemy.TakeHit(1000, Vector2.Zero);
+                            enemy.TakeHit(this, 1000, Vector2.Zero);
                         }
                     }
 

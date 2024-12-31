@@ -332,6 +332,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="116">
+  <properties>
+   <property name="LoadClass" value="Cannonball"/>
+  </properties>
+ </tile>
  <tile id="117">
   <properties>
    <property name="LoadClass" value="Platform.StaticPlatform"/>
@@ -779,6 +784,11 @@
   <properties>
    <property name="LoadClass" value="Doorway"/>
    <property name="Show" value="1"/>
+  </properties>
+ </tile>
+ <tile id="339">
+  <properties>
+   <property name="LoadClass" value="Enemy.Bomb"/>
   </properties>
  </tile>
  <tile id="345">

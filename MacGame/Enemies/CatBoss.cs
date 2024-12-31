@@ -114,7 +114,7 @@ namespace MacGame.Enemies
             startLocationX = WorldLocation.X.ToInt();
         }
 
-        public override void TakeHit(int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
             var previousPhase = attackPhase;
 

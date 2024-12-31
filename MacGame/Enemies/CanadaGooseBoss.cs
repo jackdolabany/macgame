@@ -547,7 +547,7 @@ namespace MacGame.Enemies
                 {
                     if (_player.JumpedOnEnemyRectangle(standingHeadRectangle))
                     {
-                        TakeHit(1, Vector2.Zero);
+                        TakeHit(_player, 1, Vector2.Zero);
                         interactedWithHead = true;
                     }
                     else
@@ -696,7 +696,7 @@ namespace MacGame.Enemies
             _player.Velocity = new Vector2(500, -800);
         }
 
-        public override void TakeHit(int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
 
             var initialPhase = this.attackPhase;

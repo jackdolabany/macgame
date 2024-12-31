@@ -1,4 +1,5 @@
 ﻿using MacGame.DisplayComponents;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -22,9 +23,12 @@ namespace MacGame
 
     public class Cannon : GameObject
     {
+
+        public string Name { get; set; }
+
         protected Player _player;
 
-        bool canAcceptPlayer = true;
+        bool isCooledOff = true;
         float cooldownTimer = 0.0f;
 
         /// <summary>
@@ -76,6 +80,24 @@ namespace MacGame
             } 
         }
 
+        public Cannonball CannonballInside;
+
+        public bool HasPlayerInside
+        {
+            get
+            {
+                return Game1.Player.CannonYouAreIn == this;
+            }
+        }
+
+        public bool HasCannonballInside
+        {
+            get
+            {
+                return CannonballInside != null;
+            }
+        }
+
         public bool PlayerCanShootOut
         {
             get
@@ -112,6 +134,11 @@ namespace MacGame
             }
         }
 
+        /// <summary>
+        /// The cannon will automatically shoot after some time if it has a cannon ball in it.
+        /// </summary>
+        private float _shootCannonballTimer = 0f;
+
         public Cannon(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
         {
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
@@ -144,7 +171,7 @@ namespace MacGame
                 delayAutoShotTimer -= elapsed;
             }
 
-            if (_player.CannonYouAreIn == null && canAcceptPlayer && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
+            if (_player.CanEnterCannon && isCooledOff && !HasCannonballInside && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
             {
                 _player.EnterCannon(this);
 
@@ -168,13 +195,13 @@ namespace MacGame
                 cooldownTimer -= elapsed;
                 if (cooldownTimer <= 0)
                 {
-                    canAcceptPlayer = true;
+                    isCooledOff = true;
                     cooldownTimer = 0f;
                 }   
             }
 
             RotationDirection? rotateTarget = null;
-            if (_player.CannonYouAreIn != this)
+            if (!HasPlayerInside && !HasCannonballInside)
             {
                 rotateTarget = RotationDirection.Up;
             }
@@ -183,9 +210,9 @@ namespace MacGame
                 rotateTarget = AutoShootDirection;
             }
 
-            bool rotateWithPlayerInside = IsRotating && _player.CannonYouAreIn == this && !AutoShootDirection.HasValue;
+            bool rotate = IsRotating && (HasPlayerInside || HasCannonballInside) && !AutoShootDirection.HasValue;
 
-            if (rotateWithPlayerInside || (rotateTarget.HasValue && rotateTarget != this.RotationDirection))
+            if (rotate || (rotateTarget.HasValue && rotateTarget != this.RotationDirection))
             {
                 rotateTimer += elapsed;
                 if (rotateTimer >= rotationTime)
@@ -277,6 +304,16 @@ namespace MacGame
                     break;
             }
 
+            // Shoot eventually if the player doesn't trigger a shot with a button or something.
+            if (HasCannonballInside)
+            {
+                _shootCannonballTimer += elapsed;
+                if (_shootCannonballTimer > 10f)
+                {
+                    Shoot();
+                }
+            }
+
             base.Update(gameTime, elapsed);
 
             // The image is extra large compared to the hitbox so we need to offset it a bit.
@@ -290,23 +327,44 @@ namespace MacGame
             base.Draw(spriteBatch);
         }
 
+        public void LoadCannonball(Cannonball ball)
+        {
+            CannonballInside = ball;
+            SoundManager.PlaySound("Dig");
+            _shootCannonballTimer = 0f;
+        }
+
         public void Shoot()
         {
-            // _player.CannonYouAreIn = null;
-
             var direction = ShootDirection;
             direction.Normalize();
 
             Vector2 velocity = direction * 600;
 
-            _player.ShootOutOfCannon(this, velocity);
+            if (HasPlayerInside)
+            {
+                _player.ShootOutOfCannon(this, velocity);
+            }
+            else if (HasCannonballInside)
+            {
+                CannonballInside.ShootOutOfCannon(velocity);
+            }
+            else
+            {
+                return;
+            }
 
             // Don't allow the player to enter for a bit. This is so you don't just go right back in.
             cooldownTimer = 0.5f;
-            canAcceptPlayer = false;
+            isCooledOff = false;
 
             SoundManager.PlaySound("ShootFromCannon", 0.5f);
 
+        }
+
+        public bool CanAcceptCannonball()
+        {
+            return isCooledOff && !HasPlayerInside && !HasCannonballInside;
         }
 
     }

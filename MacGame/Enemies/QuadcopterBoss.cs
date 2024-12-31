@@ -15,7 +15,7 @@ namespace MacGame.Enemies
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        const int MaxHealth = 4;
+        const int MaxHealth = 5;
         float explosionTimer = 0f;
         float dyingTimer = 0f;
         
@@ -54,6 +54,8 @@ namespace MacGame.Enemies
         private Vector2 wayOffScreenLocation;
         private Vector2 sweepStartLocation;
         private Vector2 sweepEndLoaction;
+        private float sweepStartX;
+        private float sweepEndX;
 
         float moveTimer = 0f;
 
@@ -65,13 +67,9 @@ namespace MacGame.Enemies
         public List<Bomb> Bombs = new List<Bomb>();
         float bombTimer = 0f;
 
-        private Player _player;
-
         public QuadcopterBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-
-            _player = player;
 
             DisplayComponent = new AnimationDisplay();
 
@@ -120,6 +118,10 @@ namespace MacGame.Enemies
             get
             {
                 float speed = 200;
+                if (Health < 5)
+                {
+                    speed *= 1.1f;
+                }
                 if (Health < 4)
                 {
                     speed *= 1.1f;
@@ -147,6 +149,10 @@ namespace MacGame.Enemies
             get
             {
                 float frequency = 2f;
+                if (Health < 5)
+                {
+                    frequency *= 0.9f;
+                }
                 if (Health < 4)
                 {
                     frequency *= 0.9f;
@@ -168,6 +174,10 @@ namespace MacGame.Enemies
             get
             {
                 float frequency = 8f;
+                if (Health < 5)
+                {
+                    frequency *= 0.8f;
+                }
                 if (Health < 4)
                 {
                     frequency *= 0.8f;
@@ -227,6 +237,22 @@ namespace MacGame.Enemies
             else
             {
                 isAngry = true;
+
+                // we're going to randomly reverse the x position of the sweep locations so that the quadcopter doesn't always sweep in the same direction.
+                var reverse = Game1.Randy.NextBool();
+                if (reverse)
+                {
+                    wayOffScreenLocation.X = sweepEndX;
+                    sweepStartLocation.X = sweepEndX;
+                    sweepEndLoaction.X = sweepStartX;
+                }
+                else
+                {
+                    wayOffScreenLocation.X = sweepStartX;
+                    sweepStartLocation.X = sweepStartX;
+                    sweepEndLoaction.X = sweepEndX;
+                }
+
                 currentTargetLocation = wayOffScreenLocation;
                 bombTimer = 0f;
             }
@@ -269,6 +295,8 @@ namespace MacGame.Enemies
             wayOffScreenLocation = middleLocation + new Vector2(-500, -200);
             sweepStartLocation = middleLocation + new Vector2(-500, 224);
             sweepEndLoaction = middleLocation + new Vector2(500, 224);
+            sweepStartX = sweepStartLocation.X;
+            sweepEndX = sweepEndLoaction.X;
 
         }
 
@@ -286,6 +314,7 @@ namespace MacGame.Enemies
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
+
             if (isAngry)
             {
                 animations.PlayIfNotAlreadyPlaying("red");

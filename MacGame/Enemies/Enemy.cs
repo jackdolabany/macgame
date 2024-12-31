@@ -121,7 +121,7 @@ namespace MacGame.Enemies
         {
             var vectorToLocation = location - CollisionCenter;
 
-            if (vectorToLocation.Length() <= 2f)
+            if (vectorToLocation.Length() <= 5f)
             {
                 // you're already there.
                 Velocity = Vector2.Zero;

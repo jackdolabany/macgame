@@ -339,7 +339,7 @@ namespace MacGame
             var direction = ShootDirection;
             direction.Normalize();
 
-            Vector2 velocity = direction * 600;
+            Vector2 velocity = direction * 700;
 
             if (HasPlayerInside)
             {

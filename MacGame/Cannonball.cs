@@ -43,6 +43,7 @@ namespace MacGame
                                 this.Enabled = false;
                                 CannonHoldingMe = cannon;
                                 cannon.LoadCannonball(this);
+                                IsShootingOutOfCannon = false;
                                 break;
                             }
                         }

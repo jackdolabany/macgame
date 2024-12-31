@@ -26,6 +26,8 @@ namespace MacGame.Enemies
             Dead
         }
 
+        public bool IsMovingToTargetLocation = true;
+
         public QuadState state = QuadState.Attacking;
 
         /// <summary>
@@ -272,6 +274,8 @@ namespace MacGame.Enemies
         public void Initialize()
         {
 
+            this.WorldLocation += new Vector2(2, 0);
+
             foreach (var item in Game1.CurrentLevel.Items)
             {
                 if (item is Sock)
@@ -288,8 +292,8 @@ namespace MacGame.Enemies
             Sock.Enabled = false;
             
             middleLocation = this.CollisionCenter;
-            leftLocation = middleLocation + new Vector2(-148, 64);
-            rightLocation = middleLocation + new Vector2(148, 64);
+            leftLocation = middleLocation + new Vector2(-148, 54);
+            rightLocation = middleLocation + new Vector2(148, 54);
             currentTargetLocation = middleLocation;
 
             wayOffScreenLocation = middleLocation + new Vector2(-500, -200);
@@ -315,7 +319,7 @@ namespace MacGame.Enemies
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
 
-            if (isAngry)
+            if (isAngry || state == QuadState.Dying)
             {
                 animations.PlayIfNotAlreadyPlaying("red");
             }
@@ -327,7 +331,10 @@ namespace MacGame.Enemies
             if (state == QuadState.Attacking)
             {
                 // Move towards the current location
-                GoToLocation(Speed, currentTargetLocation);
+                if (IsMovingToTargetLocation)
+                {
+                    GoToLocation(Speed, currentTargetLocation);
+                }
 
                 moveTimer += elapsed;
 
@@ -361,6 +368,8 @@ namespace MacGame.Enemies
                     if (moveTimer >= MoveFrequency)
                     {
                         moveTimer = 0f;
+                        IsMovingToTargetLocation = true;
+
                         if (currentTargetLocation == middleLocation)
                         {
                             currentTargetLocation = rightLocation;
@@ -381,9 +390,27 @@ namespace MacGame.Enemies
                             }
                         }
                     }
+
+                    if (IsCloseToCurrentMoveTarget())
+                    {
+                        IsMovingToTargetLocation = false;
+                    }
+
+                    if (!IsMovingToTargetLocation)
+                    {
+                        // Oscillate up and down around the targetLocation
+                        var frequency = 5f;
+                        var amplitude = 1f;
+                        this.velocity = Vector2.Zero;
+                        bounceOffset.Y = (float)Math.Sin(moveTimer * frequency) * amplitude;
+                        this.worldLocation += bounceOffset;
+                    }
+
                 }
                 else
                 {
+                    // Angry mode.
+                    IsMovingToTargetLocation = true; // never stop moving!
                     if (IsCloseToCurrentMoveTarget())
                     {
                         if (currentTargetLocation == wayOffScreenLocation)

@@ -18,22 +18,6 @@ namespace MacGame.Enemies
         const int MaxHealth = 4;
         float explosionTimer = 0f;
         float dyingTimer = 0f;
-
-        /// <summary>
-        /// These are the attack phases for the quad.
-        /// </summary>
-        public enum AttackPhase
-        {
-            /// <summary>
-            /// Flies around and drops bombs
-            /// </summary>
-            Phase1,
-
-            /// <summary>
-            /// Flies over you and tries to crash down on you.
-            /// </summary>
-            Phase2
-        }
         
         public enum QuadState
         {
@@ -43,21 +27,6 @@ namespace MacGame.Enemies
         }
 
         public QuadState state = QuadState.Attacking;
-
-        private AttackPhase attackPhase
-        {
-            get
-            {
-                if (Health == 1 || Health == 2 || Health == 3)
-                {
-                    return AttackPhase.Phase2;
-                }
-                else
-                {
-                    return AttackPhase.Phase1;
-                }
-            }
-        }
 
         /// <summary>
         /// After death the boss will reveal a sock.
@@ -143,6 +112,75 @@ namespace MacGame.Enemies
                 var bomb = new Bomb(content, 0, 0, player, camera);
                 bomb.Enabled = false;
                 Bombs.Add(bomb);
+            }
+        }
+
+        public float Speed
+        {
+            get
+            {
+                float speed = 200;
+                if (Health < 4)
+                {
+                    speed *= 1.1f;
+                }
+                if (Health < 3)
+                {
+                    speed *= 1.1f;
+                }
+                if (Health < 2)
+                {
+                    speed *= 1.1f;
+                }
+
+                if (isAngry)
+                {
+                    speed *= 2f;
+                }
+
+                return speed;
+            }
+        }
+
+        public float BombFrequency
+        {
+            get
+            {
+                float frequency = 2f;
+                if (Health < 4)
+                {
+                    frequency *= 0.9f;
+                }
+                if (Health < 3)
+                {
+                    frequency *= 0.9f;
+                }
+                if (Health < 2)
+                {
+                    frequency *= 0.9f;
+                }
+                return frequency;
+            }
+        }
+
+        public float MoveFrequency
+        {
+            get
+            {
+                float frequency = 8f;
+                if (Health < 4)
+                {
+                    frequency *= 0.8f;
+                }
+                if (Health < 3)
+                {
+                    frequency *= 0.8f;
+                }
+                if (Health < 2)
+                {
+                    frequency *= 0.8f;
+                }
+                return frequency;
             }
         }
 
@@ -248,22 +286,19 @@ namespace MacGame.Enemies
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
-            float velocity;
             if (isAngry)
             {
                 animations.PlayIfNotAlreadyPlaying("red");
-                velocity = 400;
             }
             else
             {
                 animations.PlayIfNotAlreadyPlaying("flying");
-                velocity = 200;
             }
 
             if (state == QuadState.Attacking)
             {
                 // Move towards the current location
-                GoToLocation(velocity, currentTargetLocation);
+                GoToLocation(Speed, currentTargetLocation);
 
                 moveTimer += elapsed;
 
@@ -272,7 +307,7 @@ namespace MacGame.Enemies
 
                     bombTimer += elapsed;
 
-                    if (bombTimer >= 2f)
+                    if (bombTimer >= BombFrequency)
                     {
                         bombTimer = 0f;
                         // Drop a bomb
@@ -294,7 +329,7 @@ namespace MacGame.Enemies
                         }
                     }
 
-                    if (moveTimer >= 8f)
+                    if (moveTimer >= MoveFrequency)
                     {
                         moveTimer = 0f;
                         if (currentTargetLocation == middleLocation)

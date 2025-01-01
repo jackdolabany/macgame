@@ -78,12 +78,16 @@ namespace MacGame.Enemies
             }
         }
 
+        public override void PlayDeathSound()
+        {
+            SoundManager.PlaySound("Break");
+        }
+
         public override void Kill()
         {
             if (Enabled && Alive)
             {
                 EffectsManager.EnemyPop(WorldCenter, 10, Color.Pink, 120f);
-                SoundManager.PlaySound("Break");
                 Enabled = false;
             }
             base.Kill();

@@ -33,11 +33,14 @@ namespace MacGame.Enemies
             _player = player;
         }
 
+        public override void PlayDeathSound()
+        {
+            SoundManager.PlaySound("Break");
+        }
+
         public override void Kill()
         {
             EffectsManager.SmallEnemyPop(WorldCenter);
-            SoundManager.PlaySound("Break");
-
             Enabled = false;
             base.Kill();
         }

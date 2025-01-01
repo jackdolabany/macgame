@@ -39,6 +39,8 @@ namespace MacGame.Enemies
             }
         }
 
+        public List<Enemy> ExtraEnemiesToAddAfterConstructor = new List<Enemy>();
+
         /// <summary>
         /// Whether or not the player can hurt the enemy by jumping on them.
         /// </summary>
@@ -163,7 +165,6 @@ namespace MacGame.Enemies
             if (Health <= 0)
             {
                 Kill();
-                PlayDeathSound();
             }
             else
             {
@@ -184,6 +185,7 @@ namespace MacGame.Enemies
         public virtual void Kill()
         {
             Dead = true;
+            PlayDeathSound();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -269,6 +271,11 @@ namespace MacGame.Enemies
         public virtual void AfterHittingPlayer()
         {
             // Do nothing.
+        }
+
+        protected void AddEnemyInConstructor(Enemy enemy)
+        {
+            ExtraEnemiesToAddAfterConstructor.Add(enemy);
         }
     }
 }

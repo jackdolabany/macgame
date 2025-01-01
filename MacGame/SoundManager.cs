@@ -166,6 +166,12 @@ namespace MacGame
             LoadSound("CatBossHit");
             LoadSound("CatBossJump");
             LoadSound("CatBossShoot");
+            LoadSound("SockReveal");
+            LoadSound("Disappear");
+            LoadSound("BatChirp");
+            LoadSound("Fire");
+            LoadSound("HitEnemy2");
+            LoadSound("DracDeath");
 
             // Music.
             LoadSong("Stage1");

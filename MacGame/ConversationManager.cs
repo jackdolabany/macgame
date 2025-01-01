@@ -20,6 +20,8 @@ namespace MacGame
             Bottom
         }
 
+        public static Rectangle PlayerSourceRectangle;
+
         // Dialog box background and border components
         static Rectangle borderCornerSourceRect;
         static Rectangle borderLeftEdgeSourceRect;
@@ -185,6 +187,8 @@ namespace MacGame
             advanceMessageArrowSourceRect = Helpers.GetTileRect(0, 14);
 
             conversationTexture = content.Load<Texture2D>(@"Textures\ReallyBigTextures");
+
+            PlayerSourceRectangle = Helpers.GetReallyBigTileRect(0, 0);
         }
 
         public static bool ShouldPauseForConversation()

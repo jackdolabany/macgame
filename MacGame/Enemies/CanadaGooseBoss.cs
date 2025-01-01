@@ -229,13 +229,18 @@ namespace MacGame.Enemies
 
             GooseBalls.Add(new CanadaGooseBall(content, cellX, cellY, player, camera));
             GooseBalls.Add(new CanadaGooseBall(content, cellX, cellY, player, camera));
+            ExtraEnemiesToAddAfterConstructor.AddRange(GooseBalls);
 
             Head = new CanadaGooseHead(content, cellX, cellY, player, camera);
+            ExtraEnemiesToAddAfterConstructor.Add(Head);
+
             Necks = new List<CanadaGooseNeck>();
             for (int i = 0; i < 10; i++)
             {
                 Necks.Add(new CanadaGooseNeck(content, cellX, cellY, player, camera));
             }
+
+            ExtraEnemiesToAddAfterConstructor.AddRange(Necks);
 
             idleHeadLocation = worldLocation + new Vector2(16, -176);
 
@@ -510,7 +515,7 @@ namespace MacGame.Enemies
                 if (this.CollisionRectangle.Top > (Game1.Camera.WorldRectangle.Bottom + 200))
                 {
                     state = GooseState.Dead;
-                    Sock.Enabled = true;
+                    Sock.FadeIn();
                 }
             }
 

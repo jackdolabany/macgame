@@ -13,6 +13,11 @@ namespace MacGame.Items
         public string Name { get; set; }
 
         public bool AlreadyCollected { get; set; } = false;
+        
+        const float fadeInTimerGoal = 3f;
+        float fadeInTimer = fadeInTimerGoal;
+
+        private Color Color = Color.White;
 
         public Sock(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
@@ -39,7 +44,7 @@ namespace MacGame.Items
             if (Game1.StorageState.Levels[levelNumber].CollectedSocks.Contains(Name))
             {
                 AlreadyCollected = true;
-                this.DisplayComponent.TintColor = Color.White * 0.5f;
+                Color = Color.White * 0.5f;
             }
         }
 
@@ -72,7 +77,24 @@ namespace MacGame.Items
                 Enabled = true;
             }
 
+            if (fadeInTimer < fadeInTimerGoal)
+            {
+                fadeInTimer += elapsed;
+                this.DisplayComponent.TintColor = Color * (fadeInTimer / fadeInTimerGoal);
+            }
+            else
+            {
+                this.DisplayComponent.TintColor = Color;
+            }
+
             base.Update(gameTime, elapsed);
+        }
+
+        public void FadeIn()
+        {
+            Enabled = true;
+            fadeInTimer = 0f;
+            SoundManager.PlaySound("SockReveal");
         }
     }
 }

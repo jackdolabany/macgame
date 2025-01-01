@@ -856,6 +856,11 @@
    <property name="LoadClass" value="BlockingPiston"/>
   </properties>
  </tile>
+ <tile id="369">
+  <properties>
+   <property name="LoadClass" value="Enemy.Dracula"/>
+  </properties>
+ </tile>
  <tile id="380">
   <properties>
    <property name="BlockPlayer" value="1"/>

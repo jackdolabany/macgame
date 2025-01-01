@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using MacGame.DisplayComponents;
 using MacGame.Items;
 using Microsoft.Xna.Framework;
@@ -113,6 +112,8 @@ namespace MacGame.Enemies
                 bomb.Enabled = false;
                 Bombs.Add(bomb);
             }
+
+            ExtraEnemiesToAddAfterConstructor.AddRange(Bombs);
         }
 
         public float Speed
@@ -462,7 +463,7 @@ namespace MacGame.Enemies
 
                     this.Kill();
                     state = QuadState.Dead;
-                    Sock.Enabled = true;
+                    Sock.FadeIn();
                 }
             }
 

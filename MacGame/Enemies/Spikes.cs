@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;

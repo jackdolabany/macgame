@@ -260,7 +260,7 @@ namespace MacGame
             // Kill all enemies in case any are on screen.
             foreach (var enemy in this.Enemies)
             {
-                enemy.Kill();
+                enemy.Enabled = false;
             }
 
             Player.BecomeNpc();

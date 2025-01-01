@@ -153,32 +153,12 @@ namespace MacGame
                                 level.Enemies.Add(enemy);
                                 layerDepthObjects[z].Add(enemy);
 
-                                // Goose boss adds some things to the level.
-                                if (enemy is CanadaGooseBoss)
+                                // Enemies might add extra enemies for projectiles and such.
+                                foreach(var e in enemy.ExtraEnemiesToAddAfterConstructor)
                                 {
-                                    var gooseBoss = (CanadaGooseBoss)enemy;
-                                    foreach (var ball in gooseBoss.GooseBalls)
-                                    {
-                                        level.Enemies.Add(ball);
-                                        layerDepthObjects[z].Add(ball);
-                                    }
-                                    foreach (var neck in gooseBoss.Necks)
-                                    {
-                                        level.Enemies.Add(neck);
-                                        layerDepthObjects[z].Add(neck);
-                                    }
-                                    level.Enemies.Add(gooseBoss.Head);
-                                    layerDepthObjects[z].Add(gooseBoss.Head);
+                                    level.Enemies.Add(e);
+                                    layerDepthObjects[z].Add(e);
                                 }
-
-                                // Quadcopter boss adds some things to the level.
-                                if (enemy is QuadcopterBoss)
-                                {
-                                    var boss = (QuadcopterBoss)enemy;
-                                    level.Enemies.AddRange(boss.Bombs);
-                                    layerDepthObjects[z].AddRange(boss.Bombs);
-                                }
-
                             }
                             else if (loadClass.StartsWith("Platform."))
                             {

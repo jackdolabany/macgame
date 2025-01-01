@@ -65,6 +65,11 @@
 /processor:PassThroughProcessor
 /build:Maps/CollisionWorld.tmx
 
+#begin Maps/Dracula.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/Dracula.tmx
+
 #begin Maps/GreenRoom.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -263,17 +268,47 @@
 /processorParam:Quality=Best
 /build:SoundEffects/AlertBox.wav
 
+#begin SoundEffects/AlertBox.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/AlertBox.wav
+
 #begin SoundEffects/alienDisappear.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/alienDisappear.wav
 
+#begin SoundEffects/AlienDisappear.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/AlienDisappear.wav
+
 #begin SoundEffects/Bark.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Bark.wav
+
+#begin SoundEffects/Bark.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Bark.wav
+
+#begin SoundEffects/BatChirp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/BatChirp.wav
+
+#begin SoundEffects/Bounce.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Bounce.wav
 
 #begin SoundEffects/Bounce.wav
 /importer:WavImporter
@@ -287,11 +322,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/break.wav
 
+#begin SoundEffects/Break.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Break.wav
+
 #begin SoundEffects/CatBossHit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/CatBossHit.wav
+
+#begin SoundEffects/CatBossHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CatBossHit.wav
+
+#begin SoundEffects/CatBossJump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CatBossJump.wav
 
 #begin SoundEffects/CatBossJump.wav
 /importer:WavImporter
@@ -305,6 +358,18 @@
 /processorParam:Quality=Best
 /build:SoundEffects/CatBossShoot.wav
 
+#begin SoundEffects/CatBossShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CatBossShoot.wav
+
+#begin SoundEffects/ChestOpen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ChestOpen.wav
+
 #begin SoundEffects/ChestOpen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -316,6 +381,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/click.wav
+
+#begin SoundEffects/Click.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Click.wav
+
+#begin SoundEffects/climb.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/climb.wav
 
 #begin SoundEffects/Climb.wav
 /importer:WavImporter
@@ -329,11 +406,35 @@
 /processorParam:Quality=Best
 /build:SoundEffects/ConversationStart.wav
 
+#begin SoundEffects/ConversationStart.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ConversationStart.wav
+
 #begin SoundEffects/Dig.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Dig.wav
+
+#begin SoundEffects/Dig.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Dig.wav
+
+#begin SoundEffects/Disappear.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Disappear.wav
+
+#begin SoundEffects/DoorOpen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/DoorOpen.wav
 
 #begin SoundEffects/DoorOpen.wav
 /importer:WavImporter
@@ -347,11 +448,35 @@
 /processorParam:Quality=Best
 /build:SoundEffects/DoorShut.wav
 
+#begin SoundEffects/DoorShut.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/DoorShut.wav
+
+#begin SoundEffects/DracDeath.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/DracDeath.wav
+
 #begin SoundEffects/explosion.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/explosion.wav
+
+#begin SoundEffects/Explosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Explosion.wav
+
+#begin SoundEffects/Fire.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Fire.wav
 
 #begin SoundEffects/gooseBallBounce.wav
 /importer:WavImporter
@@ -359,11 +484,23 @@
 /processorParam:Quality=Best
 /build:SoundEffects/gooseBallBounce.wav
 
+#begin SoundEffects/GooseBallBounce.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/GooseBallBounce.wav
+
 #begin SoundEffects/gooseHit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/gooseHit.wav
+
+#begin SoundEffects/GooseHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/GooseHit.wav
 
 #begin SoundEffects/gooseHonk.wav
 /importer:WavImporter
@@ -371,11 +508,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/gooseHonk.wav
 
+#begin SoundEffects/GooseHonk.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/GooseHonk.wav
+
 #begin SoundEffects/HarshHit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/HarshHit.wav
+
+#begin SoundEffects/HarshHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/HarshHit.wav
+
+#begin SoundEffects/health.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/health.wav
 
 #begin SoundEffects/Health.wav
 /importer:WavImporter
@@ -389,11 +544,35 @@
 /processorParam:Quality=Best
 /build:SoundEffects/HitEnemy.wav
 
+#begin SoundEffects/HitEnemy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/HitEnemy.wav
+
+#begin SoundEffects/HitEnemy2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/HitEnemy2.wav
+
+#begin SoundEffects/jump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/jump.wav
+
 #begin SoundEffects/Jump.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Jump.wav
+
+#begin SoundEffects/Kick.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Kick.wav
 
 #begin SoundEffects/Kick.wav
 /importer:WavImporter
@@ -407,11 +586,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/KickedOutOfDoor.wav
 
+#begin SoundEffects/KickedOutOfDoor.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/KickedOutOfDoor.wav
+
 #begin SoundEffects/MacDeath.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/MacDeath.wav
+
+#begin SoundEffects/MacDeath.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/MacDeath.wav
+
+#begin SoundEffects/MenuChoice.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/MenuChoice.wav
 
 #begin SoundEffects/MenuChoice.wav
 /importer:WavImporter
@@ -425,11 +622,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/MinecartJump.wav
 
+#begin SoundEffects/MinecartJump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/MinecartJump.wav
+
 #begin SoundEffects/MinecartLand.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/MinecartLand.wav
+
+#begin SoundEffects/MinecartLand.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/MinecartLand.wav
+
+#begin SoundEffects/MinecartLandMetal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/MinecartLandMetal.wav
 
 #begin SoundEffects/MinecartLandMetal.wav
 /importer:WavImporter
@@ -443,11 +658,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/OpenLockedDoor.wav
 
+#begin SoundEffects/OpenLockedDoor.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/OpenLockedDoor.wav
+
 #begin SoundEffects/Pickup.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Pickup.wav
+
+#begin SoundEffects/Pickup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Pickup.wav
+
+#begin SoundEffects/PlatformBreak.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/PlatformBreak.wav
 
 #begin SoundEffects/PlatformBreak.wav
 /importer:WavImporter
@@ -461,11 +694,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/PowerUp.wav
 
+#begin SoundEffects/PowerUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/PowerUp.wav
+
 #begin SoundEffects/Reveal.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Reveal.wav
+
+#begin SoundEffects/Reveal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Reveal.wav
+
+#begin SoundEffects/ShootFromCannon.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ShootFromCannon.wav
 
 #begin SoundEffects/ShootFromCannon.wav
 /importer:WavImporter
@@ -479,11 +730,35 @@
 /processorParam:Quality=Best
 /build:SoundEffects/SockCollected.wav
 
+#begin SoundEffects/SockCollected.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/SockCollected.wav
+
+#begin SoundEffects/SockReveal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/SockReveal.wav
+
 #begin SoundEffects/splash.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/splash.wav
+
+#begin SoundEffects/Splash.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Splash.wav
+
+#begin SoundEffects/Swim.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Swim.wav
 
 #begin SoundEffects/Swim.wav
 /importer:WavImporter
@@ -497,11 +772,29 @@
 /processorParam:Quality=Best
 /build:SoundEffects/TacoCollected.wav
 
+#begin SoundEffects/TacoCollected.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/TacoCollected.wav
+
 #begin SoundEffects/TakeHit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/TakeHit.wav
+
+#begin SoundEffects/TakeHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/TakeHit.wav
+
+#begin SoundEffects/TypeLetter.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/TypeLetter.wav
 
 #begin SoundEffects/TypeLetter.wav
 /importer:WavImporter

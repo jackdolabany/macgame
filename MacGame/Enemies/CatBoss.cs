@@ -151,8 +151,6 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.EnemyPop(WorldCenter, 40, Color.White, 120f);
-
             Enabled = false;
             base.Kill();
 

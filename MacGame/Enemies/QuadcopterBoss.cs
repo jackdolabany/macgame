@@ -15,7 +15,7 @@ namespace MacGame.Enemies
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        const int MaxHealth = 5;
+        const int MaxHealth = 4;
         float explosionTimer = 0f;
         float dyingTimer = 0f;
         
@@ -103,7 +103,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             CanBeJumpedOn = false;
 
-            this.CollisionRectangle = new Rectangle(-28 * Game1.TileScale, -42 * Game1.TileScale, 55 * Game1.TileScale, 21 * Game1.TileScale);
+            this.CollisionRectangle = new Rectangle(-28 * Game1.TileScale, -42 * Game1.TileScale, 56 * Game1.TileScale, 21 * Game1.TileScale);
 
             moveTimer = 4f;
 
@@ -356,7 +356,12 @@ namespace MacGame.Enemies
 
                                 // Shoot towards the player
                                 var xVelocity = Game1.Randy.NextFloat() * 300f;
-                                xVelocity = xVelocity * (Game1.Randy.NextBool() ? 1 : -1);
+
+                                // If the player is to the left, flip x velocity.
+                                if (Player.WorldCenter.X < WorldCenter.X)
+                                {
+                                    xVelocity *= -1;
+                                }
 
                                 bomb.Velocity = new Vector2(xVelocity, -600);
 

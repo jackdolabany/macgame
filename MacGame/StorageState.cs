@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,9 +33,16 @@ namespace MacGame
         {
             if (saveSlot < 1) throw new Exception("There is no save slot 0. It starts at 1");
 
-            if (saveSlot > 3) throw new Exception("Only 3 save slots.");
-
             this.SaveSlot = saveSlot;
+        }
+
+        public bool IsKeyblockUnlocked(int levelNumber, string mapName, int x, int y)
+        {
+            if (!this.Levels.ContainsKey(levelNumber)) return false;
+
+            if (!this.Levels[levelNumber].MapNameToKeyblocks.ContainsKey(mapName)) return false;
+
+            return this.Levels[levelNumber].MapNameToKeyblocks[mapName].Contains(new Vector2(x, y));
         }
 
         public object Clone()
@@ -134,16 +142,21 @@ namespace MacGame
         /// </summary>
         public bool HasBeatenFroggyMedium { get; set; }
 
+        /// <summary>
+        /// Save any keyblocks you unlocked so you don't have to keep unlocking them.
+        /// </summary>
+        public Dictionary<string, List<Vector2>> MapNameToKeyblocks = new Dictionary<string, List<Vector2>>();
+
         public object Clone()
         {
-            return new LevelStorageState
-            {
-                Keys = (KeyStoargeState)this.Keys.Clone(),
-                UnlockedDoors = this.UnlockedDoors.ToHashSet(),
-                CollectedSocks = this.CollectedSocks.ToHashSet(),
-                HasBeatenFroggySlow = this.HasBeatenFroggySlow,
-                HasBeatenFroggyMedium = this.HasBeatenFroggyMedium
-            };
+            var levelStorageState = new LevelStorageState();
+            levelStorageState.Keys = (KeyStoargeState)this.Keys.Clone();
+            levelStorageState.UnlockedDoors = this.UnlockedDoors.ToHashSet();
+            levelStorageState.CollectedSocks = this.CollectedSocks.ToHashSet();
+            levelStorageState.HasBeatenFroggySlow = this.HasBeatenFroggySlow;
+            levelStorageState.HasBeatenFroggyMedium = this.HasBeatenFroggyMedium;
+            levelStorageState.MapNameToKeyblocks = this.MapNameToKeyblocks.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToList());
+            return levelStorageState;
         }
     }
 }

@@ -172,6 +172,7 @@ namespace MacGame
             LoadSound("Fire");
             LoadSound("HitEnemy2");
             LoadSound("DracDeath");
+            LoadSound("Unlock");
 
             // Music.
             LoadSong("Stage1");

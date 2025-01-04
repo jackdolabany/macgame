@@ -736,11 +736,13 @@ namespace Squared.Tiled
                             }
 
                         }
-                        else if (tileInfo.properties.ContainsKey("DestroyMinecart"))
+                       
+                        if (tileInfo.properties.ContainsKey("DestroyMinecart"))
                         {
                             tileMap.MapCells[x][y].IsDestroyMinecart = true;
                         }
-                        else if (tileInfo.properties.ContainsKey("BlockPlayer"))
+                        
+                        if (tileInfo.properties.ContainsKey("BlockPlayer"))
                         {
                             tileMap.MapCells[x][y].Passable = false;
 
@@ -765,7 +767,8 @@ namespace Squared.Tiled
                                 tileMap.MapCells[x][y].RightHeight = 8 * tileScale;
                             }
                         }
-                        else if (tileInfo.properties.ContainsKey("PlayerStart"))
+                        
+                        if (tileInfo.properties.ContainsKey("PlayerStart"))
                         {
                             tileMap.PlayerStart = new Vector2(x, y);
                             tileMap.MapCells[x][y].LayerTiles[z].LoadClass = "PlayerStart";

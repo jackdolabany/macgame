@@ -1036,6 +1036,24 @@
    <property name="LoadClass" value="Enemy.CanadaGooseBoss"/>
   </properties>
  </tile>
+ <tile id="441">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+   <property name="LoadClass" value="RedKeyblock"/>
+  </properties>
+ </tile>
+ <tile id="442">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+   <property name="LoadClass" value="GreenKeyblock"/>
+  </properties>
+ </tile>
+ <tile id="443">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+   <property name="LoadClass" value="BlueKeyblock"/>
+  </properties>
+ </tile>
  <tile id="448">
   <properties>
    <property name="BlockPlayer" value="1"/>

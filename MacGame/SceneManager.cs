@@ -454,6 +454,17 @@ namespace MacGame
                                     }
                                 }
                             }
+                            else if (loadClass.EndsWith("Keyblock"))
+                            {
+                                // RedKeyblock, GreenKeyblock, or BlueKeyblock.
+                                Type t = Type.GetType(typeof(Keyblock).Namespace + "." + loadClass);
+
+                                var isLocked = !Game1.StorageState.IsKeyblockUnlocked(level.LevelNumber, level.Name, x, y);
+
+                                var keyblock = (Keyblock)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, isLocked });
+                                level.GameObjects.Add(keyblock);
+                                layerDepthObjects[z].Add(keyblock);
+                            }
                         }
                     }
                 }

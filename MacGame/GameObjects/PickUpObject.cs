@@ -60,10 +60,12 @@ namespace MacGame
             }
 
             var wasOnGround = OnGround;
+            var previousLocation = this.worldLocation;
 
             base.Update(gameTime, elapsed);
 
-            if (onGround && !wasOnGround)
+            // If you fell and landed on the ground.
+            if (onGround && !wasOnGround && this.worldLocation.Y > previousLocation.Y)
             {
                 SoundManager.PlaySound("Bounce");
             }

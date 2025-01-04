@@ -54,6 +54,20 @@ namespace MacGame
 
         public static void TrySaveGame(int? saveSlot = null)
         {
+
+            // Do a series of sleeping and checking in the case
+            // of 2 or 3 saves in a short time that overlap.
+            for (int i = 0; i < 10; i++)
+            {
+                if (!IsSaving) break;
+                System.Threading.Thread.Sleep(200);
+            }
+
+            if (IsSaving)
+            {
+                System.Threading.Thread.Sleep(200);
+            }
+
             IsSaving = true;
 
             // Clone to be safe since we're going to a background thread.

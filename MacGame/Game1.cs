@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "HubWorld";
+        public const string StartingWorld = "World2";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -394,7 +394,10 @@ namespace MacGame
             WaterWaveFlyweight = new WaterWaveFlyweight(false);
             WaterWaveFlyweightAlt = new WaterWaveFlyweight(true);
 
-            Game1.StorageState = new StorageState(1);
+            // A real player would load the game from the title, but default to the mythical 99th slot
+            // for debugging and such.
+            Game1.StorageState = new StorageState(99);
+
             Player = new Player(Content, inputManager, deadMenu);
             
             // test

@@ -48,7 +48,7 @@ namespace MacGame.Npcs
             {
                 var hintText = sockInfo.Hint;
                 
-                if (collectedSocks == null || !collectedSocks.Contains(sockInfo.Name))
+                if (!collectedSocks.Contains(sockInfo.Name))
                 {
                     ConversationManager.AddMessage(hintText, ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     return;

@@ -9,6 +9,8 @@ namespace MacGame
 {
     public static class SoundManager
     {
+        private static SoundEffectInstance seiMinecart;
+
         public static Dictionary<string, SoundEffect> Sounds { get; set; }
         public static Dictionary<string, Song> Songs { get; set; }
 
@@ -172,7 +174,11 @@ namespace MacGame
             LoadSound("Fire");
             LoadSound("HitEnemy2");
             LoadSound("DracDeath");
+            LoadSound("Minecart");
             LoadSound("Unlock");
+
+
+            seiMinecart = Sounds["Minecart"].CreateInstance();
 
             // Music.
             LoadSong("Stage1");
@@ -181,16 +187,33 @@ namespace MacGame
             MusicVolume = 0.1f;
         }
 
+        public static void PlayMinecart()
+        {
+            if (!(seiMinecart.State == SoundState.Playing))
+            {
+                seiMinecart.Volume = 0.05f;
+                //seiMinecart.Pitch = GetVariedPitch(0.1f);
+                seiMinecart.Play();
+            }
+        }
+
+        public static void StopMinecart()
+        {
+            if (seiMinecart.State == SoundState.Playing)
+            {
+                seiMinecart.Stop();
+            }
+        }
+
         public static void PlayMinecartLanded()
         {
-            SoundManager.PlaySound("MinecartLand", 0.6f);
-            SoundManager.PlaySound("MinecartLandMetal", 0.7f);
+            SoundManager.PlaySound("MinecartLand", 0.4f);
+            SoundManager.PlaySound("MinecartLandMetal", 0.3f);
         }
 
         public static void PlayMinecartJump()
         {
-            SoundManager.PlaySound("MinecartJump", 0.8f, 1.0f);
-            SoundManager.PlaySound("MinecartLandMetal", 0.7f);
+            SoundManager.PlaySound("Jump");
         }
 
         /// <summary>

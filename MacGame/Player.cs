@@ -10,6 +10,7 @@ using MacGame.Items;
 using System.Collections.Generic;
 using MacGame.Behaviors;
 using System.Threading.Tasks.Dataflow;
+using System.Net.Http;
 
 namespace MacGame
 {
@@ -386,6 +387,11 @@ namespace MacGame
             if (IsJumpingOutOfWater && this.Velocity.Y >= 0)
             {
                 IsJumpingOutOfWater = false;
+            }
+
+            if (!IsInMineCart)
+            {
+                SoundManager.StopMinecart();
             }
 
             if (IsInMineCart)
@@ -1212,6 +1218,11 @@ namespace MacGame
                 animations.Play("mineCart");
             }
 
+            if (OnGround)
+            {
+                SoundManager.PlayMinecart();
+            }
+
             // Cert
             var centerTile = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldCenter);
             if (centerTile != null && centerTile.IsDestroyMinecart)
@@ -1219,6 +1230,7 @@ namespace MacGame
                 _state = MacState.Idle;
                 IsInMineCart = false;
                 SoundManager.PlaySound("Break");
+                SoundManager.StopMinecart();
                 return;
             }
 
@@ -1234,6 +1246,7 @@ namespace MacGame
                 // Regular jump.
                 this.velocity.Y -= 550;
                 SoundManager.PlayMinecartJump();
+                SoundManager.StopMinecart();
             }
 
             // If the tile to the right is colliding, flip the player
@@ -1477,6 +1490,8 @@ namespace MacGame
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
             SoundManager.PlaySound("MacDeath", 0.5f);
             MenuManager.AddMenu(_deadMenu);
+            IsInMineCart = false;
+            SoundManager.StopMinecart();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

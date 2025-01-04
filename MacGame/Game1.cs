@@ -159,7 +159,7 @@ namespace MacGame
             }
         }
 
-        public static IEnumerable<GameObject> CustomCollisionObjects
+        public static IEnumerable<ICustomCollisionObject> CustomCollisionObjects
         {
             get
             {

@@ -53,6 +53,9 @@ namespace MacGame
                 Game1.Gravity = Game1.EarthGravity;
             }
 
+            // Just in case!
+            SoundManager.StopMinecart();
+
             var priorLevelNumber = -1;
             if (Game1.CurrentLevel != null)
             {

@@ -405,6 +405,10 @@ namespace MacGame
 
             foreach (var collisionObject in Game1.CustomCollisionObjects)
             {
+                if (!collisionObject.DoesCollideWithObject(this))
+                {
+                    continue;
+                }
 
                 // They are not in the same vertical space, no need to check horizontal collision.
                 if (afterMoveRect.Top >= collisionObject.CollisionRectangle.Bottom || afterMoveRect.Bottom <= collisionObject.CollisionRectangle.Top)
@@ -416,7 +420,7 @@ namespace MacGame
                 {
                     float beforeMoveRight = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
                     float afterMoveRight = beforeMoveRight + moveAmount.X;
-                    var leftOfObject = collisionObject.worldLocation.X + collisionObject.collisionRectangle.X;
+                    var leftOfObject = collisionObject.CollisionRectangle.Left;
 
                     if (beforeMoveRight <= leftOfObject && afterMoveRight > leftOfObject)
                     {
@@ -429,7 +433,7 @@ namespace MacGame
                 {
                     float beforeMoveLeft = this.WorldLocation.X + collisionRectangle.X;
                     float afterMoveLeft = beforeMoveLeft + moveAmount.X;
-                    var rightOfObject = collisionObject.worldLocation.X + collisionObject.collisionRectangle.Right;
+                    var rightOfObject = collisionObject.CollisionRectangle.Right;
                     if (beforeMoveLeft >= rightOfObject && afterMoveLeft < rightOfObject)
                     {
                         var distanceToObject = rightOfObject - beforeMoveLeft;
@@ -662,6 +666,11 @@ namespace MacGame
             foreach (var collisionObject in Game1.CustomCollisionObjects)
             {
                 
+                if (!collisionObject.DoesCollideWithObject(this))
+                {
+                    continue;
+                }
+
                 // If they aren't in the same horizontal space, don't check vertical
                 if (afterMoveRect.Left >= collisionObject.CollisionRectangle.Right || afterMoveRect.Right <= collisionObject.CollisionRectangle.Left)
                 {
@@ -672,7 +681,7 @@ namespace MacGame
                 {
                     float beforeMoveBottom = this.WorldLocation.Y + collisionRectangle.Y + collisionRectangle.Height;
                     float afterMoveBottom = beforeMoveBottom + moveAmount.Y;
-                    var topOfObject = collisionObject.worldLocation.Y + collisionObject.collisionRectangle.Y;
+                    var topOfObject = collisionObject.CollisionRectangle.Top;
 
                     if (beforeMoveBottom <= topOfObject && afterMoveBottom > topOfObject)
                     {
@@ -692,7 +701,7 @@ namespace MacGame
                     // Moving up.
                     float beforeMoveTop = this.WorldLocation.Y + collisionRectangle.Y;
                     float afterMoveTop = beforeMoveTop + moveAmount.Y;
-                    var bottomOfObject = collisionObject.worldLocation.Y + collisionObject.collisionRectangle.Bottom;
+                    var bottomOfObject = collisionObject.CollisionRectangle.Bottom;
                     if (beforeMoveTop >= bottomOfObject && afterMoveTop < bottomOfObject)
                     {
                         var distanceToObject = bottomOfObject - beforeMoveTop;

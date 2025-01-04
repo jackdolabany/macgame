@@ -462,11 +462,30 @@ namespace MacGame
                                 // RedKeyblock, GreenKeyblock, or BlueKeyblock.
                                 Type t = Type.GetType(typeof(Keyblock).Namespace + "." + loadClass);
 
-                                var isLocked = !Game1.StorageState.IsKeyblockUnlocked(level.LevelNumber, level.Name, x, y);
+                                var isLocked = !Game1.StorageState.IsMapSquareUnblocked(level.LevelNumber, level.Name, x, y);
 
                                 var keyblock = (Keyblock)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, isLocked });
                                 level.GameObjects.Add(keyblock);
                                 layerDepthObjects[z].Add(keyblock);
+                            }
+                            else if (loadClass.EndsWith("BreakBrick"))
+                            {
+                                var isBroken = Game1.StorageState.IsMapSquareUnblocked(level.LevelNumber, level.Name, x, y);
+                                var bb = new BreakBrick(contentManager, x, y, player, isBroken);
+                                level.GameObjects.Add(bb);
+                                layerDepthObjects[z].Add(bb);
+
+                                // BlockingPiston modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(bb.CollisionRectangle))
+                                    {
+                                        if (obj.Properties.ContainsKey("GroupName"))
+                                        {
+                                            bb.GroupName = obj.Properties["GroupName"];
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

@@ -33,8 +33,6 @@ namespace MacGame
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
 
-            SetCenteredCollisionRectangle(8, 8);
-
             // Extend the collision rectangle by 4 pixels in all directions since the tile is blocking it can 
             // never interact with the player as is.
             this.CollisionRectangle = new Rectangle((-TileMap.TileSize / 2) - 4, -TileMap.TileSize - 4, TileMap.TileSize + 8, TileMap.TileSize + 8);
@@ -71,13 +69,7 @@ namespace MacGame
                     
                     SoundManager.PlaySound("Unlock");
 
-                    // Add to storage state
-                    var mapNameToKeyblocks = Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].MapNameToKeyblocks;
-                    if (!mapNameToKeyblocks.ContainsKey(Game1.CurrentLevel.Name))
-                    {
-                        mapNameToKeyblocks.Add(Game1.CurrentLevel.Name, new List<Vector2>());
-                    }
-                    mapNameToKeyblocks[Game1.CurrentLevel.Name].Add(new Vector2(_cellX, _cellY));
+                    Game1.StorageState.AddUnblockedMapSquare(Game1.CurrentLevel.LevelNumber, Game1.CurrentLevel.Name, _cellX, _cellY);
                 }
             }
         }

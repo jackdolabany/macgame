@@ -16,6 +16,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="9">
+  <properties>
+   <property name="LoadClass" value="BreakBrick"/>
+  </properties>
+ </tile>
  <tile id="11">
   <properties>
    <property name="LoadClass" value="Item.InfiniteJump"/>

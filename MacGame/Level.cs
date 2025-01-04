@@ -518,6 +518,26 @@ namespace MacGame
                     }
                     TimerManager.AddNewTimer(2f, () => button.MoveUpNoAction());
                     break;
+                case "BreakBricks":
+                    
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is BreakBrick)
+                        {
+                            var bb = (BreakBrick)gameObject;
+                            if (bb.GroupName == args)
+                            {
+                                if (bb.IsBroken)
+                                {
+                                    // They've already been broken. Don't do anything.
+                                    return;
+                                }
+                                bb.Break();
+                            }
+                        }
+                    }
+                    SoundManager.PlaySound("Explosion");
+                    break;
                 default:
                     if (Game1.IS_DEBUG)
                     {

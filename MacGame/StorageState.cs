@@ -36,13 +36,24 @@ namespace MacGame
             this.SaveSlot = saveSlot;
         }
 
-        public bool IsKeyblockUnlocked(int levelNumber, string mapName, int x, int y)
+        public bool IsMapSquareUnblocked(int levelNumber, string mapName, int x, int y)
         {
             if (!this.Levels.ContainsKey(levelNumber)) return false;
 
-            if (!this.Levels[levelNumber].MapNameToKeyblocks.ContainsKey(mapName)) return false;
+            if (!this.Levels[levelNumber].MapNameToUnblockedMapSquares.ContainsKey(mapName)) return false;
 
-            return this.Levels[levelNumber].MapNameToKeyblocks[mapName].Contains(new Vector2(x, y));
+            return this.Levels[levelNumber].MapNameToUnblockedMapSquares[mapName].Contains(new Vector2(x, y));
+        }
+
+        public void AddUnblockedMapSquare(int levelNumber, string mapName, int x, int y)
+        {
+            // Add to storage state.
+            var mapNameToUnblockedSquares = this.Levels[levelNumber].MapNameToUnblockedMapSquares;
+            if (!mapNameToUnblockedSquares.ContainsKey(mapName))
+            {
+                mapNameToUnblockedSquares.Add(mapName, new List<Vector2>());
+            }
+            mapNameToUnblockedSquares[mapName].Add(new Vector2(x, y));
         }
 
         public object Clone()
@@ -143,9 +154,10 @@ namespace MacGame
         public bool HasBeatenFroggyMedium { get; set; }
 
         /// <summary>
-        /// Save any keyblocks you unlocked so you don't have to keep unlocking them.
+        /// Any previously blocking spaces that are no longer blocking can be saved here. Examples include
+        /// unlocked Keyblocks or blasted BreakBricks.
         /// </summary>
-        public Dictionary<string, List<Vector2>> MapNameToKeyblocks = new Dictionary<string, List<Vector2>>();
+        public Dictionary<string, List<Vector2>> MapNameToUnblockedMapSquares = new Dictionary<string, List<Vector2>>();
 
         public object Clone()
         {
@@ -155,7 +167,7 @@ namespace MacGame
             levelStorageState.CollectedSocks = this.CollectedSocks.ToHashSet();
             levelStorageState.HasBeatenFroggySlow = this.HasBeatenFroggySlow;
             levelStorageState.HasBeatenFroggyMedium = this.HasBeatenFroggyMedium;
-            levelStorageState.MapNameToKeyblocks = this.MapNameToKeyblocks.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToList());
+            levelStorageState.MapNameToUnblockedMapSquares = this.MapNameToUnblockedMapSquares.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToList());
             return levelStorageState;
         }
     }

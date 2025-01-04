@@ -56,7 +56,7 @@ namespace MacGame
         /// <summary>
         /// These objects collide with other objects and block the way. They're checked when we check collisions deep inside GameObject.
         /// </summary>
-        public List<GameObject> CustomCollisionObjects;
+        public List<ICustomCollisionObject> CustomCollisionObjects;
 
         /// <summary>
         /// Objects that Mac can pick up.
@@ -90,7 +90,7 @@ namespace MacGame
             RevealBlockManager = new RevealBlockManager();
             Waypoints = new List<Waypoint>();
             PickupObjects = new List<IPickupObject>();
-            CustomCollisionObjects = new List<GameObject>();
+            CustomCollisionObjects = new List<ICustomCollisionObject>();
         }
 
         public static void AddEnemy(Enemy enemy)

@@ -7,8 +7,13 @@ using TileEngine;
 
 namespace MacGame
 {
-    public class Box : PickupObject
+    public class Box : PickupObject, ICustomCollisionObject
     {
+        /// <summary>
+        /// Temporarily disable collision with the player when the box is dropped. That will help so that Mac
+        /// doesn't trap himself.
+        /// </summary>
+        private bool collideWithPlayer = true;
 
         public Box(ContentManager content, int x, int y, Player player) : base (content, x, y, player)
         {
@@ -22,29 +27,36 @@ namespace MacGame
             this.SetCenteredCollisionRectangle(8, 8);
         }
 
+        public bool DoesCollideWithObject(GameObject obj)
+        {
+            if (obj is Player && !collideWithPlayer)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override void Drop()
+        {
+            base.Drop();
+            collideWithPlayer = false;
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
-
-            // check for force interactions between the player and this box
-            // While the thing is moving it won't particiapte in perfect pixel x collisions.
-            // isntead we'll do this half assed force thing.
-            if (velocity != Vector2.Zero)
+            if (!collideWithPlayer)
             {
-                if (!IsPickedUp && !WasRecentlyDropped && this._player.CollisionRectangle.Intersects(this.CollisionRectangle))
+                // Collide with the player again as soon as they aren't overlapping.
+                if (!CollisionRectangle.Intersects(_player.CollisionRectangle))
                 {
-
-                    var directionToPushMac = _player.CollisionCenter- this.CollisionCenter;
-                    directionToPushMac.Normalize();
-                    var forceToPushMac =  ( _player.Velocity - this.Velocity);
-                    forceToPushMac = new Vector2(Math.Abs(forceToPushMac.X), Math.Abs(forceToPushMac.Y));
-
-                    _player.Velocity = directionToPushMac * forceToPushMac * 1.2f;
+                    collideWithPlayer = true;
                 }
-
             }
+            
 
             base.Update(gameTime, elapsed);
         }
+
 
     }
 

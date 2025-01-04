@@ -12,13 +12,6 @@ namespace MacGame
 
         public bool IsPickedUp { get; private set; }
         protected Player _player;
-        
-        /// <summary>
-        /// Track a short period after it's dropped so we can avoid colliding 
-        /// with the player right away.
-        /// </summary>
-        float recentlyDroppedTimer;
-        protected bool WasRecentlyDropped;
 
         public virtual float Friction
         {
@@ -87,15 +80,6 @@ namespace MacGame
                     }
                 }
             }
-
-            if (recentlyDroppedTimer > 0)
-            {
-                recentlyDroppedTimer -= elapsed;
-                if (recentlyDroppedTimer <= 0)
-                {
-                    WasRecentlyDropped = false;
-                }
-            }
         }
 
         public void Pickup()
@@ -106,7 +90,7 @@ namespace MacGame
             SoundManager.PlaySound("Pickup");
         }
 
-        public void Drop()
+        public virtual void Drop()
         {
             IsPickedUp = false;
             this.velocity = _player.Velocity;
@@ -121,8 +105,6 @@ namespace MacGame
             this.isTileColliding = true;
             this.MoveToIgnoreCollisions();
             this.IsAffectedByGravity = true;
-            recentlyDroppedTimer = 0.5f;
-            WasRecentlyDropped = true;
         }
 
         public void Kick(bool isStraightUp)

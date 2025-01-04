@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World1Minecart";
+        public const string StartingWorld = "CollisionWorld";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -159,7 +159,7 @@ namespace MacGame
             }
         }
 
-        public static IEnumerable<GameObject> CustomCollisionObjects
+        public static IEnumerable<ICustomCollisionObject> CustomCollisionObjects
         {
             get
             {

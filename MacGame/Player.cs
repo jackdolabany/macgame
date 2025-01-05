@@ -1019,11 +1019,11 @@ namespace MacGame
             {
                 if (!OnGround && velocity.Y > 0)
                 {
-                    _state = MacState.Jumping;
+                    _state = MacState.Falling;
                 }
                 else if (!OnGround && velocity.Y < 0)
                 {
-                    _state = MacState.Falling;
+                    _state = MacState.Jumping;
                 }
                 else if ((IsJumping || IsFalling) && OnGround && this.Velocity.Y >= 0)
                 {

@@ -21,10 +21,13 @@ namespace MacGame
             }
         }
 
+        Vector2 _originalWorldLoaction;
+
         public PickupObject(ContentManager content, int x, int y, Player player)
         {
             _player = player;
             WorldLocation = new Vector2(x * TileMap.TileSize + TileMap.TileSize / 2, (y + 1) * TileMap.TileSize);
+            _originalWorldLoaction = WorldLocation;
 
             Enabled = true;
             IsAffectedByGravity = true;
@@ -133,6 +136,23 @@ namespace MacGame
             get
             {
                 return Enabled;
+            }
+        }
+
+        /// <summary>
+        /// Breaks the object whether held or not and puts it back where it came from.
+        /// </summary>
+        public void BreakAndReset()
+        {
+            if (this.Enabled)
+            {
+                EffectsManager.SmallEnemyPop(this.WorldCenter);
+                SoundManager.PlaySound("Break");
+                this.IsPickedUp = false;
+                this.WorldLocation = _originalWorldLoaction;
+                isTileColliding = true;
+                IsAffectedByGravity = true;
+                this.Velocity = Vector2.Zero;
             }
         }
 

@@ -23,5 +23,7 @@ namespace MacGame
         public bool CanBePickedUp { get; }
 
         public bool IsPickedUp { get; }
+
+        public void BreakAndReset();
     }
 }

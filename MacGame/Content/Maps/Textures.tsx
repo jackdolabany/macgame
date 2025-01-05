@@ -540,6 +540,11 @@
    <property name="LoadClass" value="Platform.BreakingPlatform"/>
   </properties>
  </tile>
+ <tile id="221">
+  <properties>
+   <property name="LoadClass" value="DestroyPickupObjectField"/>
+  </properties>
+ </tile>
  <tile id="225">
   <properties>
    <property name="LoadClass" value="Npc.Ottie"/>

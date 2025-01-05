@@ -197,6 +197,23 @@ namespace MacGame
             }
         }
 
+        public bool IsHoldingObject
+        {
+            get
+            {
+                return pickedUpObject != null;
+            }
+        }
+
+        public void BreakPickupObject()
+        {
+            if (pickedUpObject != null)
+            {
+                pickedUpObject.BreakAndReset();
+                pickedUpObject = null;
+            }
+        }
+
         /// <summary>
         /// After being shot out of a cannon you are not effected by gravity for a period of time, 
         /// you can't enter inputs, and you smash through sand.

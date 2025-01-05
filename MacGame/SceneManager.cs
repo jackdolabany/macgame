@@ -487,6 +487,12 @@ namespace MacGame
                                     }
                                 }
                             }
+                            else if (loadClass == "DestroyPickupObjectField")
+                            {
+                                var field = new DestroyPickupObjectField(contentManager, x, y, player);
+                                level.GameObjects.Add(field);
+                                layerDepthObjects[z].Add(field);
+                            }
                         }
                     }
                 }

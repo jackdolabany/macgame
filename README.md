@@ -1,6 +1,6 @@
 # Mac's Ridiculous Adventure
 
-Help a lost bearded dragon named Mac to get back hom.
+Help a lost bearded dragon named Mac to get back home.
 
 ![image](https://github.com/user-attachments/assets/9111fcc4-eb99-42df-bb6f-e630fcf6d4b7)
 

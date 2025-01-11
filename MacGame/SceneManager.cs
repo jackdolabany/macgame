@@ -321,6 +321,12 @@ namespace MacGame
                                 level.GameObjects.Add(mineCart);
                                 layerDepthObjects[z].Add(mineCart);
                             }
+                            else if (loadClass == "Submarine")
+                            {
+                                var sub = new Submarine(contentManager, x, y, player);
+                                level.GameObjects.Add(sub);
+                                layerDepthObjects[z].Add(sub);
+                            }
                             else if (loadClass.StartsWith("Npc."))
                             {
                                 // Use reflection to load the items from the code

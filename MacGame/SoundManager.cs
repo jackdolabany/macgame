@@ -176,7 +176,7 @@ namespace MacGame
             LoadSound("DracDeath");
             LoadSound("Minecart");
             LoadSound("Unlock");
-
+            LoadSound("Shoot");
 
             seiMinecart = Sounds["Minecart"].CreateInstance();
 

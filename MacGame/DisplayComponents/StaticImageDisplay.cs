@@ -80,7 +80,7 @@ namespace MacGame.DisplayComponents
             {
                 effect = SpriteEffects.FlipHorizontally;
             }
-            DrawObject.Effect |= effect;
+            DrawObject.Effect = effect;
 
             if (DrawObject.Texture != null)
             {

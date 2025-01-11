@@ -1011,12 +1011,12 @@ namespace MacGame
                 var location = WorldLocation;
 
                 // Draw location in green
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle((location.X - offset).ToInt(), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Green);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle((location.X - offset).ToInt(), (location.Y - offset).ToInt(), squareSize, squareSize), Game1.WhiteSourceRect, Color.Green);
 
                 location = WorldCenter;
 
                 // Draw world center in Yellow
-                spriteBatch.Draw(Game1.TileTextures, new Rectangle((location.X - offset).ToInt(), (int)(location.Y - offset), squareSize, squareSize), Game1.WhiteSourceRect, Color.Yellow);
+                spriteBatch.Draw(Game1.TileTextures, new Rectangle((location.X - offset).ToInt(), (location.Y - offset).ToInt(), squareSize, squareSize), Game1.WhiteSourceRect, Color.Yellow);
             }
         }
 

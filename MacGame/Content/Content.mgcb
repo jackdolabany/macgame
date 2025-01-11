@@ -513,6 +513,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/Reveal.wav
 
+#begin SoundEffects/Shoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Shoot.wav
+
 #begin SoundEffects/ShootFromCannon.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

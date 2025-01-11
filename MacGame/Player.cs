@@ -9,8 +9,6 @@ using MacGame.DisplayComponents;
 using MacGame.Items;
 using System.Collections.Generic;
 using MacGame.Behaviors;
-using System.Threading.Tasks.Dataflow;
-using System.Net.Http;
 
 namespace MacGame
 {
@@ -94,6 +92,9 @@ namespace MacGame
         // move the camera more naturally for a period when he does "snapping" actions like snapping to the
         // other side of a vine, or snapping to other objects.
         private float cameraTrackingTimer = 0f;
+
+        private float noMoveTimer = 0f;
+
         private bool IsKnockedDown => _state == MacState.IsKnockedDown;
         private bool IsNpcMode => _state == MacState.NPC;
 
@@ -127,6 +128,11 @@ namespace MacGame
         private float yPositionWhenLastOnVine = 0;
 
         public bool IsInMineCart = false;
+        public bool IsInSub = false;
+        private Rectangle normalCollisionRectangle;
+
+        private Submarine subPlayerIsIn = null;
+
         private bool HasWings
         {
             get
@@ -147,6 +153,10 @@ namespace MacGame
 
         private float appleCooldownTimer = 0f;
         private const float appleCooldownTime = 0.3f;
+
+        public ObjectPool<Harpoon> Harpoons;
+        private float harpoonCooldownTimer = 0f;
+        private const float harpoonCooldownTime = 0.3f;
 
         public Item? CurrentItem = null;
 
@@ -250,12 +260,16 @@ namespace MacGame
             }
         }
 
+        Texture2D textures;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
             this.DisplayComponent = animations;
 
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
+            textures = content.Load<Texture2D>(@"Textures\Textures");
+            var bigTextures = content.Load<Texture2D>(@"Textures\BigTextures");
+
             var idle = new AnimationStrip(textures, Helpers.GetTileRect(1, 0), 1, "idle");
             idle.LoopAnimation = true;
             idle.FrameLength = 0.1f;
@@ -295,6 +309,11 @@ namespace MacGame
             mineCart.FrameLength = 0.1f;
             animations.Add(mineCart);
 
+            var sub = new AnimationStrip(bigTextures, Helpers.GetBigTileRect(7, 3), 2, "sub");
+            sub.LoopAnimation = true;
+            sub.FrameLength = 0.25f;
+            animations.Add(sub);
+
             var knockedDown = new AnimationStrip(textures, Helpers.GetTileRect(4, 0), 1, "knockedDown");
             knockedDown.LoopAnimation = false;
             knockedDown.FrameLength = 0.1f;
@@ -320,6 +339,7 @@ namespace MacGame
             this.IsAffectedByPlatforms = true;
 
             SetCenteredCollisionRectangle(5, 6);
+            normalCollisionRectangle = this.collisionRectangle;
 
             InputManager = inputManager;
             _deadMenu = deadMenu;
@@ -330,6 +350,12 @@ namespace MacGame
             Apples = new ObjectPool<Apple>(2);
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
+
+            Harpoons = new ObjectPool<Harpoon>(4);
+            Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
+            Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
+            Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
+            Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
 
             _shovel = new MacShovel(this, textures);
 
@@ -342,6 +368,7 @@ namespace MacGame
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
+            this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
         }
 
         public void BecomeNpc()
@@ -366,9 +393,14 @@ namespace MacGame
 
             _previousCollisionRectangle = this.CollisionRectangle;
 
-            if(cameraTrackingTimer >= 0)
+            if (cameraTrackingTimer > 0)
             {                 
                 cameraTrackingTimer -= elapsed;
+            }
+
+            if (noMoveTimer > 0)
+            {
+                noMoveTimer -= elapsed;
             }
 
             var wasInWater = IsInWater;
@@ -414,6 +446,10 @@ namespace MacGame
             if (IsInMineCart)
             {
                 HandleMineCartInputs(elapsed);
+            }
+            else if (IsInSub)
+            {
+                HandleSubInputs(elapsed);
             }
             else if (IsKnockedDown)
             {
@@ -493,6 +529,14 @@ namespace MacGame
                 }
             }
 
+            foreach (var harpoon in Harpoons.RawList)
+            {
+                if (harpoon.Enabled)
+                {
+                    harpoon.Update(gameTime, elapsed);
+                }
+            }
+
             // When climbing a vine, to make it look more natural, offset the sprite from the CollisionRectangle a bit.
             if (IsClimbingVine)
             {
@@ -525,6 +569,12 @@ namespace MacGame
             Enabled = true;
             Velocity = Vector2.Zero;
             IsInMineCart = false;
+            IsInSub = false;
+            subPlayerIsIn = null;
+            pickedUpObject = null;
+            CollisionRectangle = normalCollisionRectangle;
+            IsAffectedByGravity = true;
+            
             IsInvisible = false;
             _state = MacState.Idle;
             this.IsInWater = false;
@@ -533,7 +583,8 @@ namespace MacGame
             this.IsInvisible = false;
             this.IsJustShotOutOfCannon = false;
             this.PlatformThatThisIsOn = null;
-    }
+
+        }
 
         /// <summary>
         /// Send the player sliding out of a hub door after being killed or whatever.
@@ -553,7 +604,7 @@ namespace MacGame
 
         public bool JumpedOnEnemyRectangle(Rectangle rectangle)
         {
-            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart)
+            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart || IsInSub)
             {
                 return false;
             }
@@ -600,7 +651,19 @@ namespace MacGame
                         }
                     }
                 }
+                foreach (var harpoon in Harpoons.RawList)
+                {
+                    if (harpoon.Enabled)
+                    {
+                        if (harpoon.CollisionRectangle.Intersects(enemy.CollisionRectangle))
+                        {
+                            harpoon.Break();
+                            enemy.TakeHit(harpoon, 1, Vector2.Zero);
+                        }
+                    }
+                }
             }
+
         }
 
         public void TakeHit(Enemy enemy)
@@ -1057,7 +1120,7 @@ namespace MacGame
                 velocity.X = 0;
             }
 
-            var isAbleToPickup = !IsClimbingLadder && !IsClimbingVine && !IsInMineCart && !HasWings && !IsInCannon && !IsInWater;
+            var isAbleToPickup = !IsClimbingLadder && !IsClimbingVine && !IsInMineCart && !HasWings && !IsInCannon && !IsInWater && !IsInSub;
 
             bool didPickUpObject = false;
             bool didKickObject = false;
@@ -1287,6 +1350,75 @@ namespace MacGame
             }
         }
 
+        private void HandleSubInputs(float elapsed)
+        {
+            animations.PlayIfNotAlreadyPlaying("sub");
+
+            IsAffectedByGravity = false;
+
+            float subVelocity = 200f;
+
+            Velocity = Vector2.Zero;
+
+            // Disable the inputs for a short time so the camera can catch up to Mac's new location.
+            if (noMoveTimer > 0) return;
+
+            var isPixelInWater = (Vector2 pixel) =>
+            {
+                return Game1.CurrentMap.GetMapSquareAtPixel(pixel)?.IsWater ?? false;
+            };
+
+            if (InputManager.CurrentAction.up && isPixelInWater(this.WorldCenter))
+            {
+                this.velocity.Y = -subVelocity;
+            }
+            else if (InputManager.CurrentAction.down && isPixelInWater(this.WorldLocation))
+            {
+                this.velocity.Y = subVelocity;
+            }
+            if (InputManager.CurrentAction.left && isPixelInWater(new Vector2(this.CollisionRectangle.Left, this.WorldLocation.Y)))
+            {
+                this.velocity.X = -subVelocity;
+                this.Flipped = true;
+            }
+            else if (InputManager.CurrentAction.right && isPixelInWater(new Vector2(this.CollisionRectangle.Right, this.WorldLocation.Y)))
+            {
+                this.velocity.X = subVelocity;
+                this.Flipped = false;
+            }
+
+
+            // Mac throws an apple if he has them.
+            if (harpoonCooldownTimer < harpoonCooldownTime)
+            {
+                harpoonCooldownTimer += elapsed;
+            }
+
+            if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && harpoonCooldownTimer >= harpoonCooldownTime)
+            {
+                var harpoon = Harpoons.TryGetObject();
+                if (harpoon != null)
+                {
+                    harpoon.Enabled = true;
+                    harpoon.WorldLocation = this.WorldLocation + new Vector2(0, -4);
+                    harpoon.Velocity = new Vector2(280, 0);
+                    if (Flipped)
+                    {
+                        harpoon.Velocity *= -1;
+                    }
+                    harpoonCooldownTimer = 0;
+                    SoundManager.PlaySound("Shoot");
+                }
+            }
+
+            if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
+            {
+                subPlayerIsIn.PlayerExit();
+                this.ExitSub();
+            }
+
+        }
+
         private void HandleKnockedDownInputs(float elapsed)
         {
 
@@ -1301,6 +1433,35 @@ namespace MacGame
             {
                 _state = MacState.Idle;
             }); 
+        }
+
+        /// <summary>
+        /// Initiated by the sub.
+        /// </summary>
+        /// <param name="sub"></param>
+        public void EnterSub(Submarine sub)
+        {
+            // Slowly track the player for a short period to avoid jerky movement
+            cameraTrackingTimer = 0.2f;
+            noMoveTimer = 0.2f;
+            IsInSub = true;
+            IsAffectedByGravity = false;
+            subPlayerIsIn = sub;
+            this.WorldLocation = sub.WorldLocation;
+            this.CollisionRectangle = sub.RelativeCollisionRectangle;
+            // TODO: reset collision rect
+        }
+
+        /// <summary>
+        /// Initiated by the player.
+        /// </summary>
+        public void ExitSub()
+        {
+            IsInSub = false;
+            IsAffectedByGravity = true;
+            subPlayerIsIn = null;
+            this.collisionRectangle = normalCollisionRectangle;
+            // TODO: Collisino Rect goes back
         }
 
         public void EnterCannon(Cannon cannon)
@@ -1517,6 +1678,8 @@ namespace MacGame
 
             if (IsInCannon) return;
 
+            if (!Enabled) return;
+
             if (HasWings)
             {
                 wings.Draw(spriteBatch);
@@ -1534,6 +1697,24 @@ namespace MacGame
                     apple.Draw(spriteBatch);
                 }
             }
+
+            foreach (var harpoon in Harpoons.RawList)
+            {
+                if (harpoon.Enabled)
+                {
+                    harpoon.Draw(spriteBatch);
+                }
+            }
+
+            if (IsInSub)
+            {
+                // the sub sprite doesn't contain Mac so we're going to just draw his idle image behind the sub.
+                Vector2 position = this.WorldLocation + new Vector2(-16, -40);
+                var depth = this.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
+                var effect = this.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                spriteBatch.Draw(textures, position, Helpers.GetTileRect(1, 0), Color.White, 0f, Vector2.Zero, 1f, effect, depth);
+            }
+
             base.Draw(spriteBatch);
 
         }
@@ -1552,14 +1733,28 @@ namespace MacGame
         {
             // For a brief time the camera will slowly track Mac so that it doesn't adjust too quickly after he does some kind of 
             // snapping or quick moving action.
-            if (cameraTrackingTimer >= 0)
+            if (cameraTrackingTimer > 0)
             {
-                var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.1f);
+                var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.2f);
                 return cameraPosition;
             }
-            
+
             // Normally the Camera tracks the player
             return this.worldLocation;
+
+            // move towards the player.
+
+            //if (Vector2.Distance(camera.Position, this.worldLocation) > 400)
+            //{
+            //    // Too far away, snap to the player. This might be a scene transition.
+            //    return this.worldLocation;
+            //}
+            //else
+            //{
+            //    // move towards the player.
+            //    var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.2f);
+            //    return cameraPosition;
+            //}
         }
 
         public void AddUnlockedDoor(string doorName)

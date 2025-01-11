@@ -21,6 +21,11 @@
    <property name="LoadClass" value="BreakBrick"/>
   </properties>
  </tile>
+ <tile id="10">
+  <properties>
+   <property name="LoadClass" value="Submarine"/>
+  </properties>
+ </tile>
  <tile id="11">
   <properties>
    <property name="LoadClass" value="Item.InfiniteJump"/>

@@ -72,12 +72,11 @@ namespace MacGame.DisplayComponents
             var drawPosition = center - new Vector2(DrawObject.SourceRectangle.Width / 2, DrawObject.SourceRectangle.Height / 2) * Scale;
             DrawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);
             DrawObject.Position += Offset;
-            SpriteEffects effect = SpriteEffects.None;
+            var effect = DrawObject.Effect;
             if (flipped)
             {
-                effect = SpriteEffects.FlipHorizontally;
+                effect |= SpriteEffects.FlipHorizontally;
             }
-            DrawObject.Effect = effect;
 
             if (DrawObject.Texture != null)
             {
@@ -89,7 +88,7 @@ namespace MacGame.DisplayComponents
                     Rotation,
                     RotationAndDrawOrigin,
                     Scale,
-                    DrawObject.Effect,
+                    effect,
                     DrawDepth);
             }
         }

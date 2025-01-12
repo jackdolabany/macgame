@@ -39,7 +39,9 @@ namespace MacGame
             animations.Play("idle");
             // start the animation on a random frame to give it a random look
             idle.currentFrameIndex = Game1.Randy.Next(0, idle.FrameCount);
-            
+
+            // Add a little transparency to add to the "field" nature of this tile.
+            animations.TintColor = Color.White * 0.75f;
         }
 
 

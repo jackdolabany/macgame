@@ -158,6 +158,9 @@ namespace MacGame
         private float harpoonCooldownTimer = 0f;
         private const float harpoonCooldownTime = 0.3f;
 
+        public CircularBuffer<Bubble> Bubbles;
+        float bubbleTimer = 0;
+
         public Item? CurrentItem = null;
 
         private bool HasShovel
@@ -357,6 +360,12 @@ namespace MacGame
             Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
             Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
 
+            Bubbles = new CircularBuffer<Bubble>(10);
+            for (int i = 0; i < 10; i++)
+            {
+                Bubbles.SetItem(new Bubble(textures), i);
+            }
+
             _shovel = new MacShovel(this, textures);
 
             _moveToLocation = new MoveToLocation(Vector2.Zero, 150, "idle", "run", "jump", "climbLadder");
@@ -369,6 +378,11 @@ namespace MacGame
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
+            
+            for (int i = 0; i < Bubbles.Length; i++)
+            {
+                Bubbles.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            }
         }
 
         public void BecomeNpc()
@@ -534,6 +548,15 @@ namespace MacGame
                 if (harpoon.Enabled)
                 {
                     harpoon.Update(gameTime, elapsed);
+                }
+            }
+
+            for (int i = 0; i < Bubbles.Length; i++)
+            {
+                var bubble = Bubbles.GetItem(i);
+                if (bubble.Enabled)
+                {
+                    bubble.Update(gameTime, elapsed);
                 }
             }
 
@@ -1387,6 +1410,14 @@ namespace MacGame
                 this.Flipped = false;
             }
 
+            // we don't want diagonals to be faster than straight.
+            if (velocity != Vector2.Zero)
+            {
+                var tempVelocity = this.velocity;
+                tempVelocity.Normalize();
+                tempVelocity *= subVelocity;
+                this.Velocity = tempVelocity;
+            }
 
             // Mac throws an apple if he has them.
             if (harpoonCooldownTimer < harpoonCooldownTime)
@@ -1415,6 +1446,37 @@ namespace MacGame
             {
                 subPlayerIsIn.PlayerExit();
                 this.ExitSub();
+            }
+
+            float bubbleTimerGoal = 0.5f;
+
+            // Slow bubbles if you're not moving.
+            if (velocity == Vector2.Zero)
+            {
+                bubbleTimerGoal = 1.8f;
+            }
+
+            // Make a bubble every so often.
+            if (bubbleTimer < bubbleTimerGoal)
+            {
+                bubbleTimer += elapsed;
+            }
+            else
+            {
+                bubbleTimer = 0f;
+                var bubble = Bubbles.GetNextObject();
+                bubble.Reset();
+                bubble.WorldLocation = this.WorldLocation + new Vector2(-32 * (Flipped ? -1 : 1), 8);
+                bubble.Velocity = new Vector2(-50, -50);
+                if (velocity.X != 0)
+                {
+                    bubble.Velocity *= new Vector2(1.5f, 1);
+                }
+
+                if (Flipped)
+                {
+                    bubble.Velocity *= new Vector2(-1, 1);
+                }
             }
 
         }
@@ -1458,10 +1520,12 @@ namespace MacGame
         public void ExitSub()
         {
             IsInSub = false;
+            this.WorldLocation = new Vector2(subPlayerIsIn.WorldLocation.X, subPlayerIsIn.CollisionRectangle.Bottom - 4);
+            cameraTrackingTimer = 0.2f;
             IsAffectedByGravity = true;
             subPlayerIsIn = null;
             this.collisionRectangle = normalCollisionRectangle;
-            // TODO: Collisino Rect goes back
+            animations.Play("swim");
         }
 
         public void EnterCannon(Cannon cannon)
@@ -1662,6 +1726,12 @@ namespace MacGame
 
         public void Kill()
         {
+
+            if (IsInSub)
+            {
+                EffectsManager.AddExplosion(this.WorldCenter);
+            }
+
             Health = 0;
             Enabled = false;
             this.CurrentItem = null;
@@ -1703,6 +1773,14 @@ namespace MacGame
                 if (harpoon.Enabled)
                 {
                     harpoon.Draw(spriteBatch);
+                }
+            }
+
+            for (int i = 0; i < Bubbles.Length; i++)
+            {
+                if (Bubbles.GetItem(i).Enabled)
+                {
+                    Bubbles.GetItem(i).Draw(spriteBatch);
                 }
             }
 

@@ -24,7 +24,8 @@ namespace MacGame
 
         public readonly static Vector2 EarthGravity = new Vector2(0, 1600);
         public readonly static Vector2 MoonGravity = new Vector2(0, 700);
-        public static Vector2 Gravity = new Vector2(0, 1600);
+        public readonly static Vector2 WaterGravity = new Vector2(0, 5f);
+        public static Vector2 Gravity = EarthGravity;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;

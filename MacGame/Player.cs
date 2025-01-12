@@ -1425,7 +1425,9 @@ namespace MacGame
                 harpoonCooldownTimer += elapsed;
             }
 
-            if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && harpoonCooldownTimer >= harpoonCooldownTime)
+            var isInWater = isPixelInWater(this.WorldLocation);
+
+            if (isInWater && InputManager.CurrentAction.action && !InputManager.PreviousAction.action && harpoonCooldownTimer >= harpoonCooldownTime)
             {
                 var harpoon = Harpoons.TryGetObject();
                 if (harpoon != null)
@@ -1459,7 +1461,10 @@ namespace MacGame
             // Make a bubble every so often.
             if (bubbleTimer < bubbleTimerGoal)
             {
-                bubbleTimer += elapsed;
+                if (isInWater)
+                {
+                    bubbleTimer += elapsed;
+                }
             }
             else
             {

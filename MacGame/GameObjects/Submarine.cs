@@ -31,12 +31,13 @@ namespace MacGame
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
             _player = player;
+
+            IsAffectedByGravity = true;
+            IsAbleToSurviveOutsideOfWorld = false;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            base.Update(gameTime, elapsed);
-
             if (Enabled && allowPlayerIn)
             {
                 if (this.CollisionRectangle.Contains(_player.WorldCenter))
@@ -52,6 +53,25 @@ namespace MacGame
                 allowPlayerIn = true;
             }
 
+            base.Update(gameTime, elapsed);
+        }
+
+        public override Vector2 Gravity
+        {
+            get
+            {
+                var centerSquare = Game1.CurrentLevel.Map.GetMapSquareAtPixel(this.CollisionCenter);
+                var isInWater = centerSquare != null && centerSquare.IsWater;
+
+                if (isInWater)
+                {
+                    return Game1.WaterGravity;
+                }
+                else
+                {
+                    return Game1.EarthGravity;
+                }
+            }
         }
 
         public void PlayerEnter()
@@ -59,7 +79,6 @@ namespace MacGame
             this.Enabled = false;
             SoundManager.PlaySound("PowerUp");
         }
-
 
         public void PlayerExit()
         {

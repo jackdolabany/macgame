@@ -1433,7 +1433,7 @@ namespace MacGame
                 if (harpoon != null)
                 {
                     harpoon.Enabled = true;
-                    harpoon.WorldLocation = this.WorldLocation + new Vector2(0, -4);
+                    harpoon.WorldLocation = this.WorldLocation + new Vector2(0, -5);
                     harpoon.Velocity = new Vector2(280, 0);
                     if (Flipped)
                     {

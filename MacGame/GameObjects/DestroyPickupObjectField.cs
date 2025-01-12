@@ -44,7 +44,6 @@ namespace MacGame
             animations.TintColor = Color.White * 0.75f;
         }
 
-
         public override void Update(GameTime gameTime, float elapsed)
         {
 

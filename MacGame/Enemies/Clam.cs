@@ -55,7 +55,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             isEnemyTileColliding = false;
             Attack = 1;
-            Health = 1;
+            Health = 3;
             IsAffectedByGravity = false;
 
             SetCenteredCollisionRectangle(6, 5);

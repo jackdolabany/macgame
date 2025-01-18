@@ -367,6 +367,11 @@
    <property name="LoadClass" value="Enemy.Manta"/>
   </properties>
  </tile>
+ <tile id="127">
+  <properties>
+   <property name="LoadClass" value="Enemy.Shark"/>
+  </properties>
+ </tile>
  <tile id="128">
   <properties>
    <property name="LoadClass" value="Enemy.Bat"/>

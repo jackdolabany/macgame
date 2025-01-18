@@ -169,6 +169,10 @@ namespace MacGame.Enemies
             else
             {
                 PlayTakeHitSound();
+                if (!IsTempInvincibleFromBeingHit)
+                {
+                    InvincibleTimer += 0.75f;
+                }
             }
         }
 

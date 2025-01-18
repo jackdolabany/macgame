@@ -10,6 +10,10 @@ namespace MacGame
     {
         private Player _player;
 
+        /// <summary>
+        /// Used to temporarily block the player from entering after he leaves the sub, until he stops
+        /// colliding with it.
+        /// </summary>
         bool allowPlayerIn = false;
         
         public Rectangle RelativeCollisionRectangle
@@ -38,7 +42,7 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (Enabled && allowPlayerIn)
+            if (Enabled && allowPlayerIn && !_player.IsInSub)
             {
                 if (this.CollisionRectangle.Contains(_player.WorldCenter))
                 {

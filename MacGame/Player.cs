@@ -1148,6 +1148,13 @@ namespace MacGame
             bool didPickUpObject = false;
             bool didKickObject = false;
 
+            // If you jump off a spring I don't want you to pick it up as you're jumping. So as a hack around this
+            // you can't pick anything up for a short period after you jump
+            if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
+            {
+                pickUpAgainTimer = Math.Max(pickUpAgainTimer, 0.2f);
+            }
+
             // Pick up objects
             if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup && InputManager.CurrentAction.action)
             {

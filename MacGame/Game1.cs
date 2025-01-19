@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "CollisionWorld";
+        public const string StartingWorld = "World2Blowfish";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -994,26 +994,56 @@ namespace MacGame
             // Draw the current Boss's health
             if (MaxBossHealth > 0 && DrawBossHealth)
             {
+                // Draw hearts for bosses that take a few hits.
                 int bossHealthYPosition = 10;
-                var startingXPos = (GAME_X_RESOLUTION / 2) - (TileSize * MaxBossHealth / 2) - (heartSpacer * (MaxBossHealth - 1) / 2);
+                
                 const string enemyText = "Enemy";
                 var textWidth = Font.MeasureString(enemyText).X * FontScale;
                 var startingTextXPos = (GAME_X_RESOLUTION / 2) - (textWidth / 2);
 
                 spriteBatch.DrawString(Font, enemyText, new Vector2(startingTextXPos + 6, bossHealthYPosition), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
-
                 bossHealthYPosition += TileSize;
 
-                for (int i = 0; i < MaxBossHealth; i++)
+                if (MaxBossHealth <= 8)
                 {
-                    var heartXPos = startingXPos + (i * (TileSize + heartSpacer));
-                    if (i < BossHealth)
+                    var startingXPos = (GAME_X_RESOLUTION / 2) - (TileSize * MaxBossHealth / 2) - (heartSpacer * (MaxBossHealth - 1) / 2);
+
+                    // Draw hearts for bosses that take a few hits
+                    for (int i = 0; i < MaxBossHealth; i++)
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 10), Color.White);
+                        var heartXPos = startingXPos + (i * (TileSize + heartSpacer));
+                        if (i < BossHealth)
+                        {
+                            spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(1, 10), Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 10), Color.White);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    // Draw a health bar for bosses that take lots of hits.
+                    const int TotalPowerBars = 36;
+                    var startingXPos = (GAME_X_RESOLUTION / 2) - (4 * TotalPowerBars / 2) - (4 * (TotalPowerBars - 1) / 2);
+
+                    var percentHealth = (float)BossHealth / (float)MaxBossHealth;
+
+                    for (int i = 0; i < TotalPowerBars; i++)
                     {
-                        spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, TileSize, TileSize), Helpers.GetTileRect(2, 10), Color.White);
+                        var heartXPos = startingXPos + (i * 8);
+
+                        var percentPowerbar = (float)i / (float)TotalPowerBars;
+
+                        if (percentHealth > percentPowerbar)
+                        {
+                            spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, 4, 20), WhiteSourceRect, Color.Red);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(TileTextures, new Rectangle(heartXPos, bossHealthYPosition, 4, 20), WhiteSourceRect, Color.White);
+                        }
                     }
                 }
             }

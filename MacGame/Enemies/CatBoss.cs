@@ -16,13 +16,10 @@ namespace MacGame.Enemies
 
         YarnBall[] yarnBalls = new YarnBall[3];
 
-        int nextYarnBallToThrowIndex = 0;
         const float maxThrowTimer = 2f;
         float throwTimer = maxThrowTimer;
 
         int walkSpeed = 120;
-        int maxTravelDistance = 24;
-        int startLocationX;
         const int MaxHealth = 6;
         float jumpTimer = 0f;
         float explosionTimer = 0f;
@@ -111,7 +108,6 @@ namespace MacGame.Enemies
                 yarnBalls[i].Enabled = false;
                 Level.AddEnemy(yarnBalls[i]);
             }
-            startLocationX = WorldLocation.X.ToInt();
         }
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)

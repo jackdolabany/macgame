@@ -225,6 +225,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World2BigPurpleHouse.tmx
 
+#begin Maps/World2Blowfish.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2Blowfish.tmx
+
 #begin Maps/World2GooseChamber.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

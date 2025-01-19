@@ -1021,6 +1021,11 @@
    <property name="LoadClass" value="Npc.Spaceman"/>
   </properties>
  </tile>
+ <tile id="423">
+  <properties>
+   <property name="LoadClass" value="Enemy.Blowfish"/>
+  </properties>
+ </tile>
  <tile id="432">
   <properties>
    <property name="BlockPlayer" value="1"/>

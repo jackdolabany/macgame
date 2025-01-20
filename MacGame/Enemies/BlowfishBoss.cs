@@ -12,8 +12,6 @@ namespace MacGame.Enemies
     public class Blowfish : Enemy
     {
 
-        AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
-
         private float speed = 150;
         const int MaxHealth = 20;
 
@@ -66,18 +64,40 @@ namespace MacGame.Enemies
         float betweenShotsDelayTimer = 0f;
         const float betweenShotsDelayTimerGoal = 0.5f;
 
+        AnimationDisplay bigFishAnimationDisplay;
+        AnimationDisplay smallFishAnimationDisplay;
+
+        // Track the draw depth of the fish and just behind him.
+        // we'll swap the big and small fish in front of each other as the fish
+        // shrinks and grows.
+        float frontDrawDepth;
+        float backDrawDepth;
+
         public Blowfish(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            DisplayComponent = new AnimationDisplay();
+            bigFishAnimationDisplay = new AnimationDisplay();
+            smallFishAnimationDisplay = new AnimationDisplay();
 
-            var textures = content.Load<Texture2D>(@"Textures\MegaTextures");
-            var swim = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 2), 2, "swim");
-            swim.LoopAnimation = true;
-            swim.FrameLength = 0.3f;
-            animations.Add(swim);
+            DisplayComponent = new AggregateDisplay(new List<DisplayComponent> { bigFishAnimationDisplay, smallFishAnimationDisplay });
 
-            animations.Play("swim");
+            var textures = content.Load<Texture2D>(@"Textures\Textures");
+            var smallSwim = new AnimationStrip(textures, Helpers.GetTileRect(10, 26), 2, "swim");
+            smallSwim.LoopAnimation = true;
+            smallSwim.FrameLength = 0.3f;
+            smallFishAnimationDisplay.Add(smallSwim);
+            smallFishAnimationDisplay.Play("swim");
+
+            var megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
+            var bigSwim = new AnimationStrip(megaTextures, Helpers.GetMegaTileRect(0, 2), 2, "swim");
+            bigSwim.LoopAnimation = true;
+            bigSwim.FrameLength = 0.3f;
+            bigFishAnimationDisplay.Add(bigSwim);
+            bigFishAnimationDisplay.Play("swim");
+
+            // Line them up so the small fish is in the center of the big one.
+            bigFishAnimationDisplay.RotationAndDrawOrigin = new Vector2(0, 0);
+            smallFishAnimationDisplay.RotationAndDrawOrigin = new Vector2(0, 30 * Game1.TileScale);
 
             isEnemyTileColliding = false;
             isTileColliding = false;
@@ -90,9 +110,9 @@ namespace MacGame.Enemies
             this.CollisionRectangle = new Rectangle(-50, -170, 100, 80);
 
             bigCollisionRectangle = this.collisionRectangle;
-            smallCollisionRectangle = Rectangle.Empty;
+            smallCollisionRectangle = new Rectangle(-8, -132, 5 * Game1.TileScale, 4 * Game1.TileScale);
 
-            Scale = minScale;
+            bigFishAnimationDisplay.Scale = minScale;
             sizeTarget = SizeTarget.Small;
             growTimer = growTimerGoal;
 
@@ -137,6 +157,14 @@ namespace MacGame.Enemies
                 pointToStartFrom = closestWaypoint.Location;
             }
             nextWaypoint = waypoints.First();
+
+            frontDrawDepth = this.DrawDepth;
+            backDrawDepth = frontDrawDepth + Game1.MIN_DRAW_INCREMENT;
+
+            smallFishAnimationDisplay.DrawDepth = frontDrawDepth;
+            bigFishAnimationDisplay.DrawDepth = backDrawDepth;
+
+            
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -147,7 +175,20 @@ namespace MacGame.Enemies
                 Initialize();
             }
 
-            if (Scale > 0.9)
+            
+
+            if (bigFishAnimationDisplay.Scale < 0.3f)
+            {
+                smallFishAnimationDisplay.DrawDepth = frontDrawDepth;
+                bigFishAnimationDisplay.DrawDepth = backDrawDepth;
+            }
+            else
+            {
+                smallFishAnimationDisplay.DrawDepth = backDrawDepth;
+                bigFishAnimationDisplay.DrawDepth = frontDrawDepth;
+            }
+
+            if (bigFishAnimationDisplay.Scale > 0.9)
             {
                 CollisionRectangle = bigCollisionRectangle;
             }
@@ -187,11 +228,11 @@ namespace MacGame.Enemies
                     if (growTimer < growTimerGoal)
                     {
                         growTimer += elapsed;
-                        Scale = MathHelper.Lerp(minScale, maxScale, growTimer / growTimerGoal);
+                        bigFishAnimationDisplay.Scale = MathHelper.Lerp(minScale, maxScale, growTimer / growTimerGoal);
                     }
                     else
                     {
-                        Scale = maxScale;
+                        bigFishAnimationDisplay.Scale = maxScale;
                     }
                 }
                 else if (sizeTarget == SizeTarget.Small)
@@ -199,11 +240,11 @@ namespace MacGame.Enemies
                     if (growTimer < growTimerGoal)
                     {
                         growTimer += elapsed;
-                        Scale = MathHelper.Lerp(maxScale, minScale, growTimer / growTimerGoal);
+                        bigFishAnimationDisplay.Scale = MathHelper.Lerp(maxScale, minScale, growTimer / growTimerGoal);
                     }
                     else
                     {
-                        Scale = minScale;
+                        bigFishAnimationDisplay.Scale = minScale;
                     }
                 }
 
@@ -282,6 +323,13 @@ namespace MacGame.Enemies
             {
                 // Take them to wherever you need to take them. Once we figure out where that is.
             }
+
+
+
+            //bigFishAnimationDisplay.Scale = 0.1f;
+            //bigFishAnimationDisplay.DrawDepth = frontDrawDepth;
+            //smallFishAnimationDisplay.DrawDepth = backDrawDepth;
+
         }
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
@@ -345,6 +393,7 @@ namespace MacGame.Enemies
                 var direction = (EightWayRotationDirection)i;
                 spike.RotationDirection = new EightWayRotation(direction);
                 spike.Velocity = spike.RotationDirection.Vector2 * 200;
+                spike.SetDrawDepth(this.DrawDepth + (Game1.MIN_DRAW_INCREMENT * 2));
             }
         }
     }

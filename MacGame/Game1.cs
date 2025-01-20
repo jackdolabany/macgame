@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World2Blowfish";
+        public const string StartingWorld = "World1";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -38,7 +38,7 @@ namespace MacGame
         public static int oldWindowedHeight;
 
         public static Random Randy = new Random();
-        public const float MIN_DRAW_INCREMENT = 0.000001f;
+        public const float MIN_DRAW_INCREMENT = 0.00001f;
 
         public static bool DrawAllCollisionRects = false;
 

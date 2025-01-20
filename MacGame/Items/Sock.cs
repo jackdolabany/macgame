@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using TileEngine;
 
 namespace MacGame.Items
 {
@@ -37,6 +38,8 @@ namespace MacGame.Items
             SetCenteredCollisionRectangle(14, 14);
 
             IsInChest = false;
+
+            WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
         }
 
         public void CheckIfAlreadyCollected(int levelNumber)

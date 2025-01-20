@@ -209,12 +209,12 @@ namespace MacGame
                                 // Socks are special. We expect each one to be wrapped in an object on the map that contains the number and hint.
                                 if (item is Sock)
                                 {
+                                    var sock = (Sock)item;
                                     foreach (var obj in map.ObjectModifiers)
                                     {
                                         if (obj.GetScaledRectangle().Contains(item.CollisionRectangle))
                                         {
                                             // Socks are special items.
-                                            var sock = (Sock)item;
                                             sock.Name = obj.Name;
 
                                             // Validate the name in the master set of socks and hints
@@ -225,6 +225,11 @@ namespace MacGame
 
                                             sock.CheckIfAlreadyCollected(level.LevelNumber);
                                         }
+                                    }
+
+                                    if (string.IsNullOrWhiteSpace(sock.Name))
+                                    {
+                                        throw new Exception($"The sock has no name! x: {x}, y: {y}");
                                     }
                                 }
                                 else if (item is Taco)

@@ -42,6 +42,7 @@ namespace MacGame
                     new SockInfo { Name = "SpringboardSock", Hint = "I heard those crazy cats trapped a frog. Did you see it?" },
                     new SockInfo { Name = "GooseBossSock", Hint = "Roast the goose!" },
                     new SockInfo { Name = "MinecartSock2", Hint = "If you're feeling stressed take a nice relaxing minecart ride." },
+                    new SockInfo { Name = "BlowfishBossSock", Hint = "I heard a mad puffer fish is trying to start a sock collection. They don't even have feet." },
                 }
             },
         };

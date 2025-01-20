@@ -9,18 +9,6 @@ using TileEngine;
 namespace MacGame
 {
 
-    public enum RotationDirection
-    {
-        Right = 0,
-        DownRight = 1,
-        Down = 2,
-        DownLeft = 3,
-        Left = 4,
-        UpLeft = 5,
-        Up = 6,
-        UpRight = 7
-    }
-
     public class Cannon : GameObject
     {
 
@@ -39,9 +27,7 @@ namespace MacGame
         float rotationTime = 0.35f;
         float rotateTimer = 0f;
 
-        RotationDirection RotationDirection = RotationDirection.Up;
-
-        private RotationDirection? _autoShootDirection;
+        EightWayRotation RotationDirection = new EightWayRotation(EightWayRotationDirection.Up);
 
         /// <summary>
         /// If a cannon shoots you automatically this will delay it a bit. especially if it's going to auto shoot you in the 
@@ -60,10 +46,11 @@ namespace MacGame
         /// </summary>
         float inputDelayTimer = 0.0f;
 
+        private EightWayRotation? _autoShootDirection;
         /// <summary>
         /// Set this if you want the cannon to automatically shoot in a direction with no player control.
         /// </summary>
-        public RotationDirection? AutoShootDirection 
+        public EightWayRotation? AutoShootDirection 
         {
             get
             {
@@ -72,7 +59,7 @@ namespace MacGame
             set
             {
                 _autoShootDirection = value;
-                if (value.HasValue)
+                if (value != null)
                 {
                     // Speed it up if it's auto rotating.
                     rotationTime /= 2;
@@ -103,34 +90,6 @@ namespace MacGame
             get
             {
                 return AutoShootDirection == null && inputDelayTimer <= 0f;
-            }
-        }
-
-        Vector2 ShootDirection
-        {
-            get
-            {
-                switch (RotationDirection)
-                {
-                    case RotationDirection.Right:
-                        return new Vector2(1, 0);
-                    case RotationDirection.DownRight:
-                        return new Vector2(1, 1);
-                    case RotationDirection.Down:
-                        return new Vector2(0, 1);
-                    case RotationDirection.DownLeft:
-                        return new Vector2(-1, 1);
-                    case RotationDirection.Left:
-                        return new Vector2(-1, 0);
-                    case RotationDirection.UpLeft:
-                        return new Vector2(-1, -1);
-                    case RotationDirection.Up:
-                        return new Vector2(0, -1);
-                    case RotationDirection.UpRight:
-                        return new Vector2(1, -1);
-                    default:
-                        return Vector2.Zero;
-                }
             }
         }
 
@@ -180,7 +139,7 @@ namespace MacGame
 
                 inputDelayTimer = 0.4f;
 
-                if (AutoShootDirection == RotationDirection)
+                if (AutoShootDirection.HasValue && AutoShootDirection.Value.Direction == RotationDirection.Direction)
                 {
                     delayAutoShotTimer = 0.3f;
                 }
@@ -200,10 +159,10 @@ namespace MacGame
                 }   
             }
 
-            RotationDirection? rotateTarget = null;
+            EightWayRotation? rotateTarget = null;
             if (!HasPlayerInside && !HasCannonballInside)
             {
-                rotateTarget = RotationDirection.Up;
+                rotateTarget = new EightWayRotation(EightWayRotationDirection.Up);
             }
             else if (AutoShootDirection != null)
             {
@@ -212,7 +171,7 @@ namespace MacGame
 
             bool rotate = IsRotating && (HasPlayerInside || HasCannonballInside) && !AutoShootDirection.HasValue;
 
-            if (rotate || (rotateTarget.HasValue && rotateTarget != this.RotationDirection))
+            if (rotate || (rotateTarget.HasValue && rotateTarget.Value.Direction != this.RotationDirection.Direction))
             {
                 rotateTimer += elapsed;
                 if (rotateTimer >= rotationTime)
@@ -224,7 +183,7 @@ namespace MacGame
 
                     if (rotateTarget.HasValue)
                     {
-                        var diff = (int)rotateTarget - (int)this.RotationDirection;
+                        var diff = (int)rotateTarget.Value.Direction - (int)this.RotationDirection.Direction;
                         if (diff < 0)
                         {
                             diff += 8;
@@ -238,27 +197,16 @@ namespace MacGame
 
                     if (isRotationClockwise)
                     {
-                        this.RotationDirection += 1;
+                        this.RotationDirection.MoveClockwise();
                     }
                     else
                     {
-                        this.RotationDirection -= 1;
-                    }
-
-                    // In case we've rotate too far in either direction, reset it back to keep
-                    // the numbers 0 to 7
-                    if((int)this.RotationDirection == 8)
-                    {
-                        this.RotationDirection = RotationDirection.Right;
-                    }
-                    else if ((int)this.RotationDirection == -1)
-                    {
-                        this.RotationDirection = RotationDirection.UpRight;
+                        this.RotationDirection.MoveCounterClockwise();
                     }
                 }
             }
 
-            if (_player.CannonYouAreIn == this && AutoShootDirection == this.RotationDirection && delayAutoShotTimer <= 0f)
+            if (_player.CannonYouAreIn == this && AutoShootDirection.HasValue && AutoShootDirection.Value.Direction == this.RotationDirection.Direction && delayAutoShotTimer <= 0f)
             {
                 Shoot();
             }
@@ -267,37 +215,37 @@ namespace MacGame
             image.Rotation = 0;
             image.Effect = SpriteEffects.None;
 
-            switch (this.RotationDirection)
+            switch (this.RotationDirection.Direction)
             {               
-                case RotationDirection.Right:
+                case EightWayRotationDirection.Right:
                     image.Source = Helpers.GetBigTileRect(3, 2);
                     break;
-                case RotationDirection.DownRight:
+                case EightWayRotationDirection.DownRight:
                     image.Source = Helpers.GetBigTileRect(4, 2);
                     break;
-                case RotationDirection.Down:
+                case EightWayRotationDirection.Down:
                     image.Source = Helpers.GetBigTileRect(3, 2);
                     image.Rotation = MathHelper.PiOver2;
                     image.Effect = SpriteEffects.FlipVertically;
                     break;
-                case RotationDirection.DownLeft:
+                case EightWayRotationDirection.DownLeft:
                     image.Source = Helpers.GetBigTileRect(4, 2);
                     image.Effect = SpriteEffects.FlipHorizontally;
                     break;
-                case RotationDirection.Left:
+                case EightWayRotationDirection.Left:
                     image.Source = Helpers.GetBigTileRect(3, 2);
                     image.Effect = SpriteEffects.FlipHorizontally;
                     break;
-                case RotationDirection.UpLeft:
+                case EightWayRotationDirection.UpLeft:
                     image.Source = Helpers.GetBigTileRect(4, 2);
                     image.Effect = SpriteEffects.FlipHorizontally;
                     image.Rotation = MathHelper.PiOver2;
                     break;
-                case RotationDirection.Up:
+                case EightWayRotationDirection.Up:
                     image.Source = Helpers.GetBigTileRect(3, 2);
                     image.Rotation = -MathHelper.PiOver2;
                     break;
-                case RotationDirection.UpRight:
+                case EightWayRotationDirection.UpRight:
                     image.Source = Helpers.GetBigTileRect(4, 2);
                     image.Effect = SpriteEffects.None;
                     image.Rotation = MathHelper.Pi + MathHelper.PiOver2;
@@ -336,8 +284,7 @@ namespace MacGame
 
         public void Shoot()
         {
-            var direction = ShootDirection;
-            direction.Normalize();
+            var direction = RotationDirection.Vector2;
 
             Vector2 velocity = direction * 700;
 

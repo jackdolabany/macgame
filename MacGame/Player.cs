@@ -1549,6 +1549,8 @@ namespace MacGame
             this.IsAffectedByGravity = false;
             this._state = MacState.Idle;
             this.animations.Play("idle");
+
+            cameraTrackingTimer = 0.5f;
         }
 
         public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MacGame.DisplayComponents;
 using MacGame.Items;
 using Microsoft.Xna.Framework;
@@ -12,11 +14,7 @@ namespace MacGame.Enemies
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        private float speed = 40;
-        private float maxTravelDistance = 5 * Game1.TileSize;
-
-        private float minXLocation;
-        private float maxXLocation;
+        private float speed = 60;
         const int MaxHealth = 20;
 
         public enum FishState
@@ -48,7 +46,7 @@ namespace MacGame.Enemies
         SizeTarget sizeTarget = SizeTarget.Small;
 
         // These timers control how long it takes to shrink or grow, but not the time in between.
-        const float growTimerGoal = 2f;
+        const float growTimerGoal = 0.5f;
         float growTimer = 0;
 
         // Shrink or grow after a while.
@@ -56,6 +54,12 @@ namespace MacGame.Enemies
 
         const float maxScale = 1f;
         const float minScale = 0.05f;
+
+        Rectangle bigCollisionRectangle;
+        Rectangle smallCollisionRectangle;
+
+        List<Waypoint> waypoints = new List<Waypoint>();
+        Waypoint nextWaypoint;
 
         public Blowfish(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -71,18 +75,21 @@ namespace MacGame.Enemies
             animations.Play("swim");
 
             isEnemyTileColliding = false;
+            isTileColliding = false;
+            IsAbleToSurviveOutsideOfWorld = true;
+            IsAbleToMoveOutsideOfWorld = true;
             Attack = 1;
             Health = MaxHealth;
             IsAffectedByGravity = false;
 
             this.CollisionRectangle = new Rectangle(-50, -170, 100, 80);
 
-            var startLocationX = WorldLocation.X;
-            minXLocation = startLocationX - maxTravelDistance / 2;
-            maxXLocation = startLocationX + maxTravelDistance / 2;
+            bigCollisionRectangle = this.collisionRectangle;
+            smallCollisionRectangle = Rectangle.Empty;
 
             Scale = minScale;
             sizeTarget = SizeTarget.Small;
+            growTimer = growTimerGoal;
         }
 
         /// <summary>
@@ -104,6 +111,18 @@ namespace MacGame.Enemies
             }
 
             Sock.Enabled = false;
+
+            // Order the waypoints by distance from the frog and then distance to each other.
+            var levelWaypoints = Game1.CurrentLevel.Waypoints.ToList();
+            var pointToStartFrom = this.WorldLocation;
+            while (levelWaypoints.Any())
+            {
+                var closestWaypoint = levelWaypoints.OrderBy(w => Vector2.Distance(w.Location, pointToStartFrom)).First();
+                this.waypoints.Add(closestWaypoint);
+                levelWaypoints.Remove(closestWaypoint);
+                pointToStartFrom = closestWaypoint.Location;
+            }
+            nextWaypoint = waypoints.First();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -114,12 +133,20 @@ namespace MacGame.Enemies
                 Initialize();
             }
 
+            if (Scale > 0.9)
+            {
+                CollisionRectangle = bigCollisionRectangle;
+            }
+            else
+            {
+                CollisionRectangle = smallCollisionRectangle;
+            }
 
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
 
-            if (sizeTarget == SizeTarget.Small && Scale == minScale)
+            if (sizeTarget == SizeTarget.Small)
             {
                 changeSizeTimer += elapsed;
                 if (changeSizeTimer > 5f)
@@ -128,7 +155,7 @@ namespace MacGame.Enemies
                 }
             }
 
-            if (sizeTarget == SizeTarget.Big && Scale == maxScale)
+            if (sizeTarget == SizeTarget.Big)
             {
                 changeSizeTimer += elapsed;
                 if (changeSizeTimer > 10f)
@@ -140,39 +167,45 @@ namespace MacGame.Enemies
             // Shrink or grow based on growTimer
             if (sizeTarget == SizeTarget.Big)
             {
-                growTimer += elapsed;
                 if (growTimer < growTimerGoal)
                 {
+                    growTimer += elapsed;
                     Scale = MathHelper.Lerp(minScale, maxScale, growTimer / growTimerGoal);
+                }
+                else
+                {
+                    Scale = maxScale;
                 }
             }
             else if (sizeTarget == SizeTarget.Small)
             {
-                growTimer += elapsed;
                 if (growTimer < growTimerGoal)
                 {
+                    growTimer += elapsed;
                     Scale = MathHelper.Lerp(maxScale, minScale, growTimer / growTimerGoal);
                 }
-            }
-
-            if (Alive)
-            {
-                velocity.X = speed;
-                if (Flipped)
+                else
                 {
-                    velocity.X *= -1;
+                    Scale = minScale;
                 }
             }
 
-            if (velocity.X > 0 && (WorldLocation.X >= maxXLocation || OnRightWall))
+            GoToWaypoint(speed, nextWaypoint);
+
+            if (IsAtWaypoint(nextWaypoint))
             {
-                Flipped = !Flipped;
-                minXLocation = WorldLocation.X - maxTravelDistance;
+                nextWaypoint = waypoints[(waypoints.IndexOf(nextWaypoint) + 1) % waypoints.Count];
             }
-            else if (velocity.X < 0 && (WorldLocation.X <= minXLocation || OnLeftWall))
+
+            // Change flipped if they're moving in a direction.
+            // Maintain the value if velocity is 0 to prevent flickering.
+            if (velocity.X < 0)
             {
-                Flipped = !Flipped;
-                maxXLocation = WorldLocation.X + maxTravelDistance;
+                Flipped = true;
+            }
+            else if (velocity.X > 0)
+            {
+                Flipped = false;
             }
 
             base.Update(gameTime, elapsed);
@@ -223,7 +256,6 @@ namespace MacGame.Enemies
         {
             if (IsTempInvincibleFromBeingHit) return;
 
-
             Health -= damage;
 
             SoundManager.PlaySound("HitEnemy2");
@@ -250,13 +282,22 @@ namespace MacGame.Enemies
         public void Shrink()
         {
             growTimer = 0;
+            changeSizeTimer = 0;
             sizeTarget = SizeTarget.Small;
+            SoundManager.PlaySound("Shrink");
         }
 
         public void Grow()
         {
             growTimer = 0;
+            changeSizeTimer = 0;
             sizeTarget = SizeTarget.Big;
+            SoundManager.PlaySound("Grow");
+        }
+
+        public void ShootSpikes()
+        {
+            SoundManager.PlaySound("Shoot2");
         }
     }
 }

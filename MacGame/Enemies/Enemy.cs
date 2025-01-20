@@ -61,7 +61,6 @@ namespace MacGame.Enemies
         /// </summary>
         public bool IsPlayerColliding = true;
 
-
         public bool IsTempInvincibleFromBeingHit
         {
             get
@@ -113,10 +112,9 @@ namespace MacGame.Enemies
         /// <summary>
         /// Waypoints are relative to the level upper left of the level and in units of Tiles. 
         /// </summary>
-        protected void GoToWaypoint(float speed, Vector2 wayPoint)
+        protected void GoToWaypoint(float speed, Waypoint wayPoint)
         {
-            var currentTargetWorldLocation = wayPoint * new Vector2(TileMap.TileSize, TileMap.TileSize) + new Vector2(TileMap.TileSize / 2, TileMap.TileSize / 2);
-            GoToLocation(speed, currentTargetWorldLocation);
+            GoToLocation(speed, wayPoint.Location);
         }
 
         protected void GoToLocation(float speed, Vector2 location)
@@ -137,14 +135,11 @@ namespace MacGame.Enemies
         /// <summary>
         /// Returns if you are within a tile of the waypoint. This may blow up if you are moving too fast.
         /// </summary>
-        protected bool IsAtWaypoint(Vector2 wayPoint)
+        protected bool IsAtWaypoint(Waypoint wayPoint)
         {
-            var center = CollisionCenter;
-            var currentTarget = wayPoint * new Vector2(TileMap.TileSize, TileMap.TileSize);
-            return center.X > currentTarget.X
-                && center.X < currentTarget.X + TileMap.TileSize
-                && center.Y > currentTarget.Y
-                && center.Y < currentTarget.Y + TileMap.TileSize;
+            var vectorToLocation = wayPoint.Location - CollisionCenter;
+
+            return vectorToLocation.Length() <= 5f;
         }
 
         public virtual void PlayInvincibleHitSound()

@@ -1,7 +1,23 @@
-﻿namespace MacGame
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace MacGame
 {
-    public class CircularBuffer<T>
+    public class CircularBuffer<T> : IEnumerable, IEnumerable<T>
     {
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < objects.Length; i++)
+            {
+                yield return objects[i];
+            }
+        }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         protected T[] objects;
         protected int nextItemIndex = 0;
 
@@ -19,14 +35,22 @@
             return retVal;
         }
 
-        public void SetItem(T item, int index)
+        public void SetItem(int index, T item)
         {
             objects[index] = item;
         }
+
         public T GetItem(int index)
         {
             return objects[index];
         }
 
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            for (int i = 0; i < objects.Length; i++)
+            {
+                yield return objects[i];
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace MacGame.Enemies
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        private float speed = 60;
+        private float speed = 150;
         const int MaxHealth = 20;
 
         public enum FishState
@@ -29,7 +29,6 @@ namespace MacGame.Enemies
         float explosionTimer = 0f;
         float dyingTimer = 0f;
         float deathSqueaksTimer = 0f;
-
 
         /// <summary>
         /// After death reveal the sock.
@@ -46,20 +45,26 @@ namespace MacGame.Enemies
         SizeTarget sizeTarget = SizeTarget.Small;
 
         // These timers control how long it takes to shrink or grow, but not the time in between.
-        const float growTimerGoal = 0.5f;
+        const float growTimerGoal = 0.3f;
         float growTimer = 0;
 
         // Shrink or grow after a while.
         float changeSizeTimer = 0;
 
         const float maxScale = 1f;
-        const float minScale = 0.05f;
+        const float minScale = 0.1f;
 
         Rectangle bigCollisionRectangle;
         Rectangle smallCollisionRectangle;
 
         List<Waypoint> waypoints = new List<Waypoint>();
         Waypoint nextWaypoint;
+
+        CircularBuffer<BlowfishSpike> spikes;
+        float shootdelayTimer = 0f;
+        const float shootDelayTimerGoal = 4f;
+        float betweenShotsDelayTimer = 0f;
+        const float betweenShotsDelayTimerGoal = 0.5f;
 
         public Blowfish(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -90,6 +95,15 @@ namespace MacGame.Enemies
             Scale = minScale;
             sizeTarget = SizeTarget.Small;
             growTimer = growTimerGoal;
+
+            spikes = new CircularBuffer<BlowfishSpike>(64);
+            for (int i = 0; i < spikes.Length; i++)
+            {
+                var spike = new BlowfishSpike(content, 0, 0, player, camera);
+                spikes.SetItem(i, spike);
+            }
+
+            this.ExtraEnemiesToAddAfterConstructor.AddRange(spikes);
         }
 
         /// <summary>
@@ -146,55 +160,73 @@ namespace MacGame.Enemies
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
 
-            if (sizeTarget == SizeTarget.Small)
+            if (state == FishState.Attacking)
             {
-                changeSizeTimer += elapsed;
-                if (changeSizeTimer > 5f)
-                {
-                    Grow();
-                }
-            }
 
-            if (sizeTarget == SizeTarget.Big)
-            {
-                changeSizeTimer += elapsed;
-                if (changeSizeTimer > 10f)
+                if (sizeTarget == SizeTarget.Small)
                 {
-                    Shrink();
+                    changeSizeTimer += elapsed;
+                    if (changeSizeTimer > 5f)
+                    {
+                        Grow();
+                    }
                 }
-            }
 
-            // Shrink or grow based on growTimer
-            if (sizeTarget == SizeTarget.Big)
-            {
-                if (growTimer < growTimerGoal)
+                if (sizeTarget == SizeTarget.Big)
                 {
-                    growTimer += elapsed;
-                    Scale = MathHelper.Lerp(minScale, maxScale, growTimer / growTimerGoal);
+                    changeSizeTimer += elapsed;
+                    if (changeSizeTimer > 10f)
+                    {
+                        Shrink();
+                    }
                 }
-                else
-                {
-                    Scale = maxScale;
-                }
-            }
-            else if (sizeTarget == SizeTarget.Small)
-            {
-                if (growTimer < growTimerGoal)
-                {
-                    growTimer += elapsed;
-                    Scale = MathHelper.Lerp(maxScale, minScale, growTimer / growTimerGoal);
-                }
-                else
-                {
-                    Scale = minScale;
-                }
-            }
 
-            GoToWaypoint(speed, nextWaypoint);
+                // Shrink or grow based on growTimer
+                if (sizeTarget == SizeTarget.Big)
+                {
+                    if (growTimer < growTimerGoal)
+                    {
+                        growTimer += elapsed;
+                        Scale = MathHelper.Lerp(minScale, maxScale, growTimer / growTimerGoal);
+                    }
+                    else
+                    {
+                        Scale = maxScale;
+                    }
+                }
+                else if (sizeTarget == SizeTarget.Small)
+                {
+                    if (growTimer < growTimerGoal)
+                    {
+                        growTimer += elapsed;
+                        Scale = MathHelper.Lerp(maxScale, minScale, growTimer / growTimerGoal);
+                    }
+                    else
+                    {
+                        Scale = minScale;
+                    }
+                }
 
-            if (IsAtWaypoint(nextWaypoint))
-            {
-                nextWaypoint = waypoints[(waypoints.IndexOf(nextWaypoint) + 1) % waypoints.Count];
+                GoToWaypoint(speed, nextWaypoint);
+
+                if (IsAtWaypoint(nextWaypoint))
+                {
+                    nextWaypoint = waypoints[(waypoints.IndexOf(nextWaypoint) + 1) % waypoints.Count];
+                }
+
+                if (sizeTarget == SizeTarget.Big && shootdelayTimer < shootDelayTimerGoal)
+                {
+                    shootdelayTimer += elapsed;
+                }
+                else if (sizeTarget == SizeTarget.Big && shootdelayTimer >= shootDelayTimerGoal)
+                {
+                    betweenShotsDelayTimer += elapsed;
+                    if (betweenShotsDelayTimer >= betweenShotsDelayTimerGoal)
+                    {
+                        ShootSpikes();
+                        betweenShotsDelayTimer = 0f;
+                    }
+                }
             }
 
             // Change flipped if they're moving in a direction.
@@ -268,6 +300,11 @@ namespace MacGame.Enemies
                 state = FishState.Dying;
                 Dead = true;
                 this.velocity = Vector2.Zero;
+
+                foreach (BlowfishSpike spike in spikes)
+                {
+                    spike.Attack = 0;
+                }
             }
         }
 
@@ -285,6 +322,7 @@ namespace MacGame.Enemies
             changeSizeTimer = 0;
             sizeTarget = SizeTarget.Small;
             SoundManager.PlaySound("Shrink");
+            shootdelayTimer = 0f;
         }
 
         public void Grow()
@@ -293,11 +331,21 @@ namespace MacGame.Enemies
             changeSizeTimer = 0;
             sizeTarget = SizeTarget.Big;
             SoundManager.PlaySound("Grow");
+            shootdelayTimer = 0f;
         }
 
         public void ShootSpikes()
         {
             SoundManager.PlaySound("Shoot2");
+            for (int i = 0; i < 8; i++)
+            {
+                var spike = spikes.GetNextObject();
+                spike.Enabled = true;
+                spike.WorldLocation = this.CollisionCenter;
+                var direction = (EightWayRotationDirection)i;
+                spike.RotationDirection = new EightWayRotation(direction);
+                spike.Velocity = spike.RotationDirection.Vector2 * 200;
+            }
         }
     }
 }

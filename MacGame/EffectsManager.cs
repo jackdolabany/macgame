@@ -33,7 +33,7 @@ namespace MacGame
             {
                 var particle = GetEmptyParticle();
                 particle.DisplayComponent = new StaticImageDisplay(SparkTexture, WhiteSquareSourceRectangle);
-                Particles.SetItem(particle, i);
+                Particles.SetItem(i, particle);
             }
 
             // Initialize text particles.
@@ -41,14 +41,14 @@ namespace MacGame
             {
                 var particle = GetEmptyParticle();
                 particle.DisplayComponent = new TextDisplay("");
-                TextParticles.SetItem(particle, i);
+                TextParticles.SetItem(i, particle);
             }
 
             // Initialize explosions.
             for (int i = 0; i < MAX_EXPLOSIONS; i++)
             {
                 var explosion = new Explosion(content);
-                Explosions.SetItem(explosion, i);
+                Explosions.SetItem(i, explosion);
             }
         }
 

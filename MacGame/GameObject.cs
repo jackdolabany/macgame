@@ -287,6 +287,14 @@ namespace MacGame
             this.CollisionRectangle = new Rectangle(-width * Game1.TileScale / 2, -height * Game1.TileScale, width * Game1.TileScale, height * Game1.TileScale);
         }
 
+        public bool HasCollisionRectangle
+        {
+            get
+            {
+                return collisionRectangle.Height > 0 && collisionRectangle.Width > 0;
+            }
+        }
+
         public GameObject()
         {
             IsAbleToMoveOutsideOfWorld = true;

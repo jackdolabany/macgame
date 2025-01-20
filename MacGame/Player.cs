@@ -363,7 +363,7 @@ namespace MacGame
             Bubbles = new CircularBuffer<Bubble>(10);
             for (int i = 0; i < 10; i++)
             {
-                Bubbles.SetItem(new Bubble(textures), i);
+                Bubbles.SetItem(i, new Bubble(textures));
             }
 
             _shovel = new MacShovel(this, textures);
@@ -645,6 +645,8 @@ namespace MacGame
             if (!enemy.Alive) return;
 
             if (enemy.IsTempInvincibleFromBeingHit) return;
+
+            if (!enemy.HasCollisionRectangle) return;
 
             // Check body collisions
             if (CollisionRectangle.Intersects(enemy.CollisionRectangle))

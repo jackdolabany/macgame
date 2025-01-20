@@ -39,6 +39,24 @@ namespace MacGame.Enemies
         private Sock Sock;
         private bool _isInitialized = false;
 
+        public enum SizeTarget
+        {
+            Small,
+            Big
+        }
+
+        SizeTarget sizeTarget = SizeTarget.Small;
+
+        // These timers control how long it takes to shrink or grow, but not the time in between.
+        const float growTimerGoal = 2f;
+        float growTimer = 0;
+
+        // Shrink or grow after a while.
+        float changeSizeTimer = 0;
+
+        const float maxScale = 1f;
+        const float minScale = 0.05f;
+
         public Blowfish(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -62,6 +80,9 @@ namespace MacGame.Enemies
             var startLocationX = WorldLocation.X;
             minXLocation = startLocationX - maxTravelDistance / 2;
             maxXLocation = startLocationX + maxTravelDistance / 2;
+
+            Scale = minScale;
+            sizeTarget = SizeTarget.Small;
         }
 
         /// <summary>
@@ -97,6 +118,42 @@ namespace MacGame.Enemies
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
+
+            if (sizeTarget == SizeTarget.Small && Scale == minScale)
+            {
+                changeSizeTimer += elapsed;
+                if (changeSizeTimer > 5f)
+                {
+                    Grow();
+                }
+            }
+
+            if (sizeTarget == SizeTarget.Big && Scale == maxScale)
+            {
+                changeSizeTimer += elapsed;
+                if (changeSizeTimer > 10f)
+                {
+                    Shrink();
+                }
+            }
+
+            // Shrink or grow based on growTimer
+            if (sizeTarget == SizeTarget.Big)
+            {
+                growTimer += elapsed;
+                if (growTimer < growTimerGoal)
+                {
+                    Scale = MathHelper.Lerp(minScale, maxScale, growTimer / growTimerGoal);
+                }
+            }
+            else if (sizeTarget == SizeTarget.Small)
+            {
+                growTimer += elapsed;
+                if (growTimer < growTimerGoal)
+                {
+                    Scale = MathHelper.Lerp(maxScale, minScale, growTimer / growTimerGoal);
+                }
+            }
 
             if (Alive)
             {
@@ -188,6 +245,18 @@ namespace MacGame.Enemies
 
             Enabled = false;
             base.Kill();
+        }
+
+        public void Shrink()
+        {
+            growTimer = 0;
+            sizeTarget = SizeTarget.Small;
+        }
+
+        public void Grow()
+        {
+            growTimer = 0;
+            sizeTarget = SizeTarget.Big;
         }
     }
 }

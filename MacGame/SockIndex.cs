@@ -31,7 +31,7 @@ namespace MacGame
                 }
             },
             {
-                2, 
+                2,
                 new List<SockInfo>
                 {
                     new SockInfo { Name = "WaterMazeSock", Hint = "There's a terrible maze deep in the water somewhere. I heard there's a sock stashed at the end." },
@@ -43,6 +43,13 @@ namespace MacGame
                     new SockInfo { Name = "GooseBossSock", Hint = "Roast the goose!" },
                     new SockInfo { Name = "MinecartSock2", Hint = "If you're feeling stressed take a nice relaxing minecart ride." },
                     new SockInfo { Name = "BlowfishBossSock", Hint = "I heard a mad puffer fish is trying to start a sock collection. They don't even have feet." },
+                }
+            },{
+                3,
+                new List<SockInfo>
+                {
+                    new SockInfo { Name = "DraculaSock", Hint = "To resurrect Dracula you must find his 3 remains." },
+                    new SockInfo { Name = "QuadcopterSock", Hint = "Fight the drone wars you must." },
                 }
             },
         };

@@ -212,7 +212,8 @@ namespace MacGame
                                     var sock = (Sock)item;
                                     foreach (var obj in map.ObjectModifiers)
                                     {
-                                        if (obj.GetScaledRectangle().Contains(item.CollisionRectangle))
+                                        var scaledRect = obj.GetScaledRectangle();
+                                        if (scaledRect.Contains(item.CollisionRectangle))
                                         {
                                             // Socks are special items.
                                             sock.Name = obj.Name;

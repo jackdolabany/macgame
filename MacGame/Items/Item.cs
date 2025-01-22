@@ -60,7 +60,7 @@ namespace MacGame.Items
             OpenChestTop = new StaticImageDisplay(content.Load<Texture2D>(@"Textures\Textures"), Helpers.GetTileRect(15, 0));
         }
 
-        private void Collect(Player player)
+        protected virtual void Collect(Player player)
         {
             WhenCollected(player);
             PlayCollectedSound();

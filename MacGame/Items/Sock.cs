@@ -10,7 +10,6 @@ namespace MacGame.Items
 {
     public class Sock : Item
     {
-
         public string Name { get; set; }
 
         public bool AlreadyCollected { get; set; } = false;
@@ -19,6 +18,12 @@ namespace MacGame.Items
         float fadeInTimer = fadeInTimerGoal;
 
         private Color Color = Color.White;
+
+        /// <summary>
+        /// If this time is > 0 you can't collect the sock. This gives it a small period of time after fading in where you
+        /// can't collect it so you don't insta-collect it if you're already on it and it's weird.
+        /// </summary>
+        float blockFromCollectingTime = 0f;
 
         public Sock(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
@@ -35,7 +40,9 @@ namespace MacGame.Items
 
             animations.Play("spin");
 
-            SetCenteredCollisionRectangle(14, 14);
+            SetCenteredCollisionRectangle(14, 12);
+            // Move it up slightly
+            this.collisionRectangle.Y -= 8;
 
             IsInChest = false;
 
@@ -74,6 +81,11 @@ namespace MacGame.Items
         public override void Update(GameTime gameTime, float elapsed)
         {
 
+            if (blockFromCollectingTime > 0)
+            {
+                blockFromCollectingTime -= elapsed;
+            }
+
             if (AlreadyCollected)
             {
                 // They're enabled but not collectible if they are already collected. They're kind of of in a ghos tmode.
@@ -98,6 +110,15 @@ namespace MacGame.Items
             Enabled = true;
             fadeInTimer = 0f;
             SoundManager.PlaySound("SockReveal");
+            blockFromCollectingTime = fadeInTimerGoal + 0.5f;
+        }
+
+        protected override void Collect(Player player)
+        {
+            if (blockFromCollectingTime <= 0)
+            {
+                base.Collect(player);
+            }
         }
     }
 }

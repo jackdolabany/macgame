@@ -42,14 +42,23 @@ namespace MacGame.Enemies
 
         SizeTarget sizeTarget = SizeTarget.Small;
 
-        // These timers control how long it takes to shrink or grow, but not the time in between.
+        /// <summary>
+        /// How long it takes to shrink or grow.
+        /// </summary>
         const float growTimerGoal = 0.3f;
         float growTimer = 0;
 
         // Shrink or grow after a while.
         float changeSizeTimer = 0;
 
+        /// <summary>
+        /// Scale size when big
+        /// </summary>
         const float maxScale = 1f;
+
+        /// <summary>
+        /// Scale size when small.
+        /// </summary>
         const float minScale = 0.1f;
 
         Rectangle bigCollisionRectangle;
@@ -60,8 +69,17 @@ namespace MacGame.Enemies
 
         CircularBuffer<BlowfishSpike> spikes;
         float shootdelayTimer = 0f;
+
+        /// <summary>
+        /// Wait this long before shooting once big.
+        /// </summary>
         const float shootDelayTimerGoal = 4f;
+
         float betweenShotsDelayTimer = 0f;
+
+        /// <summary>
+        /// Take this much time between shots
+        /// </summary>
         const float betweenShotsDelayTimerGoal = 0.5f;
 
         AnimationDisplay bigFishAnimationDisplay;
@@ -72,6 +90,12 @@ namespace MacGame.Enemies
         // shrinks and grows.
         float frontDrawDepth;
         float backDrawDepth;
+
+        /// <summary>
+        /// Fish starts small for a while, track if he grew so that we don't have to 
+        /// wait as long to change size next time.
+        /// </summary>
+        bool _hasGrown = false;
 
         public Blowfish(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -163,8 +187,6 @@ namespace MacGame.Enemies
 
             smallFishAnimationDisplay.DrawDepth = frontDrawDepth;
             bigFishAnimationDisplay.DrawDepth = backDrawDepth;
-
-            
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -174,8 +196,6 @@ namespace MacGame.Enemies
                 _isInitialized = true;
                 Initialize();
             }
-
-            
 
             if (bigFishAnimationDisplay.Scale < 0.3f)
             {
@@ -206,8 +226,9 @@ namespace MacGame.Enemies
 
                 if (sizeTarget == SizeTarget.Small)
                 {
+                    var growGoal = _hasGrown ? 5f : 10f;
                     changeSizeTimer += elapsed;
-                    if (changeSizeTimer > 5f)
+                    if (changeSizeTimer > growGoal)
                     {
                         Grow();
                     }
@@ -380,6 +401,7 @@ namespace MacGame.Enemies
             sizeTarget = SizeTarget.Big;
             SoundManager.PlaySound("Grow");
             shootdelayTimer = 0f;
+            _hasGrown = true;
         }
 
         public void ShootSpikes()

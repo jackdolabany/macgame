@@ -9,6 +9,7 @@ using MacGame.DisplayComponents;
 using MacGame.Items;
 using System.Collections.Generic;
 using MacGame.Behaviors;
+using System.Threading;
 
 namespace MacGame
 {
@@ -903,6 +904,23 @@ namespace MacGame
                     this.velocity.Y = climbingSpeed;
                     this.PoisonPlatforms.Add(PlatformThatThisIsOn);
                     this.PlatformThatThisIsOn = null;
+                }
+            }
+
+            // When you climb up a ladder but a block is in the way and you stop it's annoying. Move the player towards the center of the ladder.
+            // this seems stupid but it helps a lot.
+            if (IsClimbingLadder && OnCeiling && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+            {
+                var blockTopLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.CollisionRectangle.Top - 4);
+                var blockTopRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, this.CollisionRectangle.Top - 4);
+                
+                if (blockTopLeft != null && !blockTopLeft.Passable && blockTopRight != null && blockTopRight.Passable)
+                {
+                    this.velocity.X = 50;
+                }
+                else if (blockTopLeft != null && blockTopLeft.Passable && blockTopRight != null && !blockTopRight.Passable)
+                {
+                    this.velocity.X = -50;
                 }
             }
 

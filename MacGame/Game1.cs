@@ -16,9 +16,9 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "HubWorld";
+        public const string StartingWorld = "World2GooseChamber";
         private const bool startAtTitleScreen = false;
-        public const bool IS_DEBUG = false;
+        public const bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;
 
@@ -79,6 +79,7 @@ namespace MacGame
         public static bool DrawBossHealth = false;
         public static int BossHealth = 0;
         public static int MaxBossHealth = 0;
+        public static string BossName = "";
 
         private static SceneManager sceneManager;
 
@@ -997,11 +998,10 @@ namespace MacGame
                 // Draw hearts for bosses that take a few hits.
                 int bossHealthYPosition = 10;
                 
-                const string enemyText = "Enemy";
-                var textWidth = Font.MeasureString(enemyText).X * FontScale;
+                var textWidth = Font.MeasureString(BossName).X * FontScale;
                 var startingTextXPos = (GAME_X_RESOLUTION / 2) - (textWidth / 2);
 
-                spriteBatch.DrawString(Font, enemyText, new Vector2(startingTextXPos + 6, bossHealthYPosition), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(Font, BossName, new Vector2(startingTextXPos + 6, bossHealthYPosition), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
                 bossHealthYPosition += TileSize;
 
                 if (MaxBossHealth <= 8)

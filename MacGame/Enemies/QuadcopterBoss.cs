@@ -319,6 +319,7 @@ namespace MacGame.Enemies
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
+            Game1.BossName = "Chopper";
 
             if (isAngry || state == QuadState.Dying)
             {

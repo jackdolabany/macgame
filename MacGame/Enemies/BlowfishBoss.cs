@@ -80,7 +80,7 @@ namespace MacGame.Enemies
         /// <summary>
         /// Take this much time between shots
         /// </summary>
-        const float betweenShotsDelayTimerGoal = 0.5f;
+        const float betweenShotsDelayTimerGoal = 0.75f;
 
         AnimationDisplay bigFishAnimationDisplay;
         AnimationDisplay smallFishAnimationDisplay;
@@ -220,6 +220,7 @@ namespace MacGame.Enemies
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
+            Game1.BossName = "Puff";
 
             if (state == FishState.Attacking)
             {

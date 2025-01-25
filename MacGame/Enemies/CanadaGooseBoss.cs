@@ -203,10 +203,15 @@ namespace MacGame.Enemies
             neckAttackUp.Reverse = true;
             animations.Add(neckAttackUp);
 
-            var takeHit = new AnimationStrip(textures, Helpers.GetMegaTileRect(4, 1), 1, "takeHit");
-            takeHit.LoopAnimation = false;
-            takeHit.FrameLength = 0.8f;
-            animations.Add(takeHit);
+            var upTakeHit = new AnimationStrip(textures, Helpers.GetMegaTileRect(5, 1), 1, "upTakeHit");
+            upTakeHit.LoopAnimation = false;
+            upTakeHit.FrameLength = 0.8f;
+            animations.Add(upTakeHit);
+
+            var downTakeHit = new AnimationStrip(textures, Helpers.GetMegaTileRect(4, 1), 2, "downTakeHit");
+            downTakeHit.LoopAnimation = false;
+            downTakeHit.FrameLength = 0.14f;
+            animations.Add(downTakeHit);
 
             animations.Play("idle");
 
@@ -528,6 +533,7 @@ namespace MacGame.Enemies
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
+            Game1.BossName = "Gary";
 
             // Collisions with the SpringBoard will destroy it.
             if (!SpringBoard.IsPickedUp && SpringBoard.Enabled)
@@ -722,7 +728,17 @@ namespace MacGame.Enemies
             if (Health > 0)
             {
                 this.state = GooseState.TakingHit;
-                animations.Play("takeHit");
+
+
+                if (animations.CurrentAnimationName == "neckAttack" || animations.CurrentAnimationName == "neckAttackUp")
+                {
+                    animations.Play("downTakeHit");
+                }
+                else
+                {
+                    animations.Play("upTakeHit");
+                }
+
                 takeHitTimer = 0f;
 
                 if (!IsTempInvincibleFromBeingHit)

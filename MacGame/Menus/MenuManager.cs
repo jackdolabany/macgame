@@ -26,6 +26,13 @@ namespace MacGame
         public static void AddMenu(Menu menu)
         {
             menu.ResestMenuIndex();
+
+            // Ignore inputs for a short time if this is the first menu. 
+            if (!Menus.Any())
+            {
+                menu.ignoreInputsTimer = 0.2f;
+            }
+
             Menus.Add(menu);
             menu.AddedToMenuManager();
         }

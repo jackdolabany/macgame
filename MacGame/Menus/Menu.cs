@@ -13,6 +13,12 @@ namespace MacGame
         protected string menuTitle;
         protected int defaultSelectedEntryIndex = 0;
 
+        /// <summary>
+        /// Set this timer to a value to ignroe inputs for that amount of time. Useful for
+        /// when a menu first pops up and you don't want the player's gameplay button presses to select something.
+        /// </summary>
+        public float ignoreInputsTimer = 0f;
+
         public Vector2 Position { get; set; }
         
         public float Scale = Game1.FontScale;
@@ -136,7 +142,17 @@ namespace MacGame
             }
 
             if (!isTopMenu) return;
-            HandleInputs(Game1.Player.InputManager, elapsed);
+            
+            if (ignoreInputsTimer > 0)
+            {
+                ignoreInputsTimer -= elapsed;
+            }
+
+            if (ignoreInputsTimer <= 0)
+            {
+                HandleInputs(Game1.Player.InputManager, elapsed);
+            }
+
             for (int i = 0; i < menuOptions.Count; i++)
             {
                 menuOptions[i].Update(elapsed, i == selectedEntryIndex);

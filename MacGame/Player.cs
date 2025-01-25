@@ -1753,7 +1753,10 @@ namespace MacGame
             this.CurrentItem = null;
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
             SoundManager.PlaySound("MacDeath", 0.5f);
-            MenuManager.AddMenu(_deadMenu);
+
+            // Pause for a bit before adding the dead menu
+            TimerManager.AddNewTimer(2f, () => MenuManager.AddMenu(_deadMenu));
+
             IsInMineCart = false;
             SoundManager.StopMinecart();
         }

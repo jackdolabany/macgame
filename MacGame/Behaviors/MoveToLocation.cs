@@ -1,5 +1,6 @@
 ﻿using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
+using System;
 using System.Xml.Linq;
 
 namespace MacGame.Behaviors
@@ -13,6 +14,11 @@ namespace MacGame.Behaviors
         public Vector2 TargetLocation { get; set; }
         public float MoveSpeed { get; set; }
 
+        /// <summary>
+        /// The x direction speed when jumping in case it needs to be different from regular.
+        /// </summary>
+        public float JumpMoveSpeed { get; set; }
+
         private string _idleAnimationName;
         private string _walkAnimationName;
         private string _jumpAnimationName;
@@ -20,10 +26,25 @@ namespace MacGame.Behaviors
 
         private bool _isAtLocation;
 
-        public MoveToLocation(Vector2 targetLocation, float moveSpeed, string idleAnimationName, string walkAnimationName, string jumpAnimationName, string climbAnimationName)
+        private bool isJumping;
+
+        /// <summary>
+        /// Create a new MoveToLocation behavior for NPCs to follow waypoints or just move to a location. They'll have a half hearted
+        /// attemp to avoid some obstacles or climb ladders.
+        /// </summary>
+        /// <param name="targetLocation"></param>
+        /// <param name="moveSpeed"></param>
+        /// <param name="jumpMoveSpeed">Pass something in here if you want to move verticaly at a different speed when jumping. This can
+        /// be useful if you have a character that moves at different speeds but you want to jump gaps consistently</param>
+        /// <param name="idleAnimationName"></param>
+        /// <param name="walkAnimationName"></param>
+        /// <param name="jumpAnimationName"></param>
+        /// <param name="climbAnimationName"></param>
+        public MoveToLocation(Vector2 targetLocation, float moveSpeed, float jumpMoveSpeed, string idleAnimationName, string walkAnimationName, string jumpAnimationName, string climbAnimationName)
         {
             TargetLocation = targetLocation;
             MoveSpeed = moveSpeed;
+            JumpMoveSpeed = jumpMoveSpeed;
             _idleAnimationName = idleAnimationName;
             _walkAnimationName = walkAnimationName;
             _jumpAnimationName = jumpAnimationName;
@@ -54,6 +75,12 @@ namespace MacGame.Behaviors
                 {
                     animations.Play(_walkAnimationName);
                 }
+
+                if (isJumping)
+                {
+                    gameObject.Velocity = new Vector2(JumpMoveSpeed, gameObject.Velocity.Y);
+                }
+
                 gameObject.Flipped = false;
             }
             else if (TargetLocation.X <= gameObject.CollisionRectangle.Left)
@@ -63,6 +90,12 @@ namespace MacGame.Behaviors
                 {
                     animations.Play(_walkAnimationName);
                 }
+
+                if (isJumping)
+                {
+                    gameObject.Velocity = new Vector2(-JumpMoveSpeed, gameObject.Velocity.Y);
+                }
+
                 gameObject.Flipped = true;
             }
             else
@@ -70,24 +103,46 @@ namespace MacGame.Behaviors
                 gameObject.Velocity = new Vector2(0, gameObject.Velocity.Y);
             }
 
-            // Jump before you walk into a wall.
-            if (tileInFront != null && !tileInFront.Passable && gameObject.OnGround && gameObject.Velocity.X != 0)
-            {
-                gameObject.Velocity -= new Vector2(0, 600);
-                animations.Play(_jumpAnimationName);
-            }
-
-            // Jump before a cliff, unless the waypoint is below you.
-            if (tileAtFrontBelow != null && tileAtFrontBelow.Passable && gameObject.OnGround && TargetLocation.Y < gameObject.CollisionRectangle.Bottom)
-            {
-                gameObject.Velocity -= new Vector2(0, 600);
-                animations.Play(_jumpAnimationName);
-            }
-
-            // Ladder climbing.
             var tileAtHead = Game1.CurrentMap?.GetMapSquareAtPixel(gameObject.WorldCenter.X.ToInt(), gameObject.CollisionRectangle.Top);
             var tileAtFeet = Game1.CurrentMap?.GetMapSquareAtPixel(gameObject.WorldLocation);
             var onLadder = (tileAtHead != null && tileAtHead.IsLadder) || (tileAtFeet != null && tileAtFeet.IsLadder);
+
+            if (onLadder || gameObject.OnGround)
+            {
+                isJumping = false;
+            }
+
+            // Jump before you walk into a wall.
+            if (!onLadder && tileInFront != null && !tileInFront.Passable && gameObject.OnGround && gameObject.Velocity.X != 0)
+            {
+                gameObject.Velocity -= new Vector2(0, 600);
+                animations.Play(_jumpAnimationName);
+                SoundManager.PlaySound("Jump");
+                isJumping = true;
+            }
+
+            // Jump before a cliff, unless the waypoint is below you.
+            if (!onLadder && tileAtFrontBelow != null && tileAtFrontBelow.Passable && gameObject.OnGround && TargetLocation.Y < gameObject.CollisionRectangle.Bottom)
+            {
+
+                // figure out how high you have to jump to hit the target location
+                var heightToTarget = TargetLocation.Y - gameObject.CollisionRectangle.Bottom;
+                var distanceToTarget = Math.Abs(TargetLocation.X - gameObject.CollisionCenter.X);
+
+                // at this speed, how long would it take to reach the target
+                var timeToImpact = distanceToTarget / JumpMoveSpeed;
+
+                var fallSpeedBasedOnGravity  = 0.5f * Game1.Gravity.Y * timeToImpact * timeToImpact;
+
+                var upwardSpeed = (heightToTarget - fallSpeedBasedOnGravity) / timeToImpact;
+
+                gameObject.Velocity += new Vector2(0, upwardSpeed);
+                animations.Play(_jumpAnimationName);
+                SoundManager.PlaySound("Jump");
+                isJumping = true;
+            }
+
+            // Ladder climbing.
             if (onLadder)
             {
                 if (animations.CurrentAnimationName != _climbAnimationName)
@@ -128,7 +183,7 @@ namespace MacGame.Behaviors
                 animations.Play(_idleAnimationName);
             }
 
-            _isAtLocation = gameObject.CollisionRectangle.Contains(TargetLocation.ToPoint());
+            _isAtLocation = Vector2.Distance(gameObject.CollisionCenter, TargetLocation) < 10;
         }
 
         public bool IsAtLocation()

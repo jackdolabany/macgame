@@ -368,7 +368,7 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
 
-            _moveToLocation = new MoveToLocation(Vector2.Zero, 150, "idle", "run", "jump", "climbLadder");
+            _moveToLocation = new MoveToLocation(Vector2.Zero, 150, 150, "idle", "run", "jump", "climbLadder");
         }
 
         public override void SetDrawDepth(float depth)

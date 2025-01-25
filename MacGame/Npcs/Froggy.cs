@@ -30,14 +30,14 @@ namespace MacGame.Npcs
         }
         private enum LastRaceResult
         {
-            DidNotRaceYet,
+            DidNotFinishYet,
             FroggyWon,
             MacWon
         }
 
         private State _state = State.IdleStart;
         private Speed _speed = Speed.Slow;
-        private LastRaceResult _result = LastRaceResult.DidNotRaceYet;
+        private LastRaceResult _result = LastRaceResult.DidNotFinishYet;
 
         private bool hasBeatenSlow = false;
         private bool hasBeatenMedium = false;
@@ -55,8 +55,8 @@ namespace MacGame.Npcs
         List<string> boasts;
 
         float slowSpeed = 100f;
-        float medSpeed = 150f;
-        float fastSpeed = 200f;
+        float medSpeed = 200;
+        float fastSpeed = 250;
 
         private Vector2 _startLocation;
         private Rectangle _startCollisionRect;
@@ -78,7 +78,7 @@ namespace MacGame.Npcs
 
             Enabled = true;
 
-            _moveToLocation = new MoveToLocation(Vector2.Zero, 20f, "idle", "walk", "jump", "climb");
+            _moveToLocation = new MoveToLocation(Vector2.Zero, slowSpeed, fastSpeed, "idle", "walk", "jump", "climb");
 
             _startLocation = this.WorldLocation;
             _startCollisionRect = this.CollisionRectangle;
@@ -237,14 +237,9 @@ namespace MacGame.Npcs
                     _moveToLocation.TargetLocation = nextWaypoint.Location;
                     _moveToLocation.Update(this, gameTime, elapsed);
                 }
-                else
-                {
-                    // No more waypoints
-                    _state = State.IdleEnd;
-                }
 
                 // Check if someone won.
-                if (_result == LastRaceResult.DidNotRaceYet)
+                if (_result == LastRaceResult.DidNotFinishYet)
                 {
                     if (_raceVictoryZone.Contains(this.WorldLocation))
                     {
@@ -292,7 +287,7 @@ namespace MacGame.Npcs
                     // If both the start location and the current frog are off camera, put the frog back.
                     this.WorldLocation = _startLocation;
                     _state = State.IdleStart;
-                    _result = LastRaceResult.DidNotRaceYet;
+                    _result = LastRaceResult.DidNotFinishYet;
                     RacePath = null;
                     _hasSpoken = false;
                 }

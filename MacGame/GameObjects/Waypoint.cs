@@ -17,6 +17,9 @@ namespace MacGame
             Location = new Vector2(x * Game1.TileSize + Game1.TileSize / 2, y * Game1.TileSize + Game1.TileSize / 2);
         }
 
+        /// <summary>
+        /// The center of the waypoint.
+        /// </summary>
         public Vector2 Location { get; set; }
     }
 

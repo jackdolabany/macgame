@@ -47,23 +47,33 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (_player.IsHoldingObject && _player.CollisionRectangle.Intersects(this.CollisionRectangle))
+            if (_player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
-                _player.BreakPickupObject();
-            }
-            else
-            {
-                foreach (var puo in Game1.CurrentLevel.PickupObjects)
+                // Breaks objects you are holding
+                if (_player.IsHoldingObject)
                 {
-                    if (!puo.IsPickedUp && puo.CollisionRectangle.Intersects(this.CollisionRectangle))
-                    {
-                        puo.BreakAndReset();
-                    }
+                    _player.BreakPickupObject();
+                }
+
+                // Lose wings/apples/whatever.
+                if (_player.CurrentItem != null)
+                {
+                    _player.CurrentItem = null;
+                    SoundManager.PlaySound("PowerUp");
+                }
+            }
+
+            // Break any pickup objects
+            foreach (var puo in Game1.CurrentLevel.PickupObjects)
+            {
+                if (!puo.IsPickedUp && puo.CollisionRectangle.Intersects(this.CollisionRectangle))
+                {
+                    puo.BreakAndReset();
                 }
             }
 
             // And why not? kill enemies
-            foreach(var enemy in Game1.CurrentLevel.Enemies)
+            foreach (var enemy in Game1.CurrentLevel.Enemies)
             {
                 if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                 {

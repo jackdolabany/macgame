@@ -63,7 +63,9 @@ namespace MacGame.Npcs
         private bool _isInitialized = false;
 
         private MoveToLocation _moveToLocation;
-        
+
+        private TimeSpan _raceFinishTime;
+
         public Froggy(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
@@ -244,6 +246,7 @@ namespace MacGame.Npcs
                     if (_raceVictoryZone.Contains(this.WorldLocation))
                     {
                         _result = LastRaceResult.FroggyWon;
+                        _raceFinishTime = gameTime.TotalGameTime;
                         _hasSpoken = false;
                     }
                     else if (_raceVictoryZone.Contains(Game1.Player.WorldLocation))
@@ -282,14 +285,18 @@ namespace MacGame.Npcs
                 this.velocity = Vector2.Zero;
                 IsAffectedByGravity = true;
 
-                if (_hasSpoken && Game1.Camera.IsWayOffscreen(this.CollisionRectangle) && Game1.Camera.IsWayOffscreen(this._startCollisionRect))
+                // Reset the race if you spoke to Froggy or if some time has gone by.
+                var canResetRace = _hasSpoken || (gameTime.TotalGameTime - _raceFinishTime).TotalSeconds > 10;
+
+                if (canResetRace && Game1.Camera.IsWayOffscreen(this.CollisionRectangle) && Game1.Camera.IsWayOffscreen(this._startCollisionRect))
                 {
-                    // If both the start location and the current frog are off camera, put the frog back.
+                    // If both the start location and the current frog are off camera, reset the race.
                     this.WorldLocation = _startLocation;
                     _state = State.IdleStart;
                     _result = LastRaceResult.DidNotFinishYet;
                     RacePath = null;
                     _hasSpoken = false;
+                    _raceFinishTime = TimeSpan.Zero;
                 }
             }
 
@@ -305,26 +312,13 @@ namespace MacGame.Npcs
                 if (!_hasSpoken)
                 {
                     _hasSpoken = true;
-                    if (_speed == Speed.Slow)
+                    if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
                     {
-                        ConversationManager.AddMessage("I'm fast.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        ConversationManager.AddMessage("Hi Fast, I'm Mac.", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
-                        ConversationManager.AddMessage("What? My name is Froggy, and I'm the fastest Frog in America. Honestly, you look ridiculous and slow.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        ConversationManager.AddMessage("I know you're frog fast, but we could race for fun.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     }
-                    else if (_speed == Speed.Medium)
+                    else
                     {
-                        ConversationManager.AddMessage("I'm not joking around this time Bucko.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                    }
-                    else if (_speed == Speed.Fast)
-                    {
-                        if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey)
-                        {
-                            ConversationManager.AddMessage("I know you're frog fast, but we could race for fun.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        }
-                        else
-                        {
-                            ConversationManager.AddMessage("If you can beat me at my fastest I'll give you a reward.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        }
+                        DoInitialConversation(_speed);
                     }
                 }
                 ConversationManager.AddMessage("Want to race?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, raceChoices);
@@ -345,13 +339,13 @@ namespace MacGame.Npcs
                     {
                         Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggySlow = true;
                         StorageManager.TrySaveGame();
-                        ConversationManager.AddMessage("No fair! I wasn't going my fastest. Come try that again and see what happens buddy.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        DoFrogDefeatedConversation(Speed.Slow);
                     }
                     else if (!hasBeatenFast)
                     {
                         Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].HasBeatenFroggyMedium = true;
                         StorageManager.TrySaveGame();
-                        ConversationManager.AddMessage("That doesn't count, my shoe was untied! Try it one more time and I'll go my fastest.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        DoFrogDefeatedConversation(Speed.Medium);
                     }
                     else
                     {
@@ -361,12 +355,200 @@ namespace MacGame.Npcs
                         }
                         else
                         {
-                            ConversationManager.AddMessage("Wow! You aren't just fast, you're frog fast! I unlocked my house. Take anything you want.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            DoFrogDefeatedConversation(Speed.Fast);
                             Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasFrogKey = true;
                             StorageManager.TrySaveGame();
                         }
                     }
                 }
+            }
+        }
+
+        private void DoInitialConversation(Speed speed)
+        {
+            switch (Game1.CurrentLevel.LevelNumber)
+            {
+                case 1:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("I'm fast.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            ConversationManager.AddMessage("Hi Fast, I'm Mac.", PlayerConversationRectangle, ConversationManager.ImagePosition.Left);
+                            ConversationManager.AddMessage("What? My name is Froggy, and I'm the fastest Frog in America. Honestly, you look ridiculous and slow.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("I'm not joking around this time Bucko.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("If you can beat me at my fastest I'll give you a reward.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("Have I met you before? The name's Froggy and racing is my game.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("I'll admit you're fast, for a potato. Try me again.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("I'll go my absolute fastest this time!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("Nobody beats Froggy in a race. Nobody!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("You have some speed, but I bet you can't do that again.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("I am green lightning! Beat me and get a reward. That's how confident I am.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("Froggy's the name and racing's my game!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("I let you win because you looked so slow and boring. This time I'll actually run.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("You'll never beat me a third time. I bet my house on it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                default:
+                    if (Game1.IS_DEBUG)
+                    {
+                        throw new Exception("You need to add a conversation for this level.");
+                    }
+                    break;
+            }
+        }
+
+        private void DoFrogDefeatedConversation(Speed speed)
+        {
+            switch (Game1.CurrentLevel.LevelNumber)
+            {
+                case 1:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("No fair! I wasn't going my fastest. Come try that again and see what happens buddy.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("That doesn't count, my shoe was untied! Try it one more time and I'll go my fastest.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("Wow! You aren't just fast, you're frog fast! I unlocked my house. Take anything you want.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("You're not as slow as I thought, but I wasn't going my fastest.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("What? I didn't even realize we were racing. Race me again and feel the pain!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("Wowza that was fast! Here's a key, go in my house and take whatever you want. You deserve it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("Darn! You got me, but it won't happen again.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("Inconceivable! Try me again, I never lose thrice!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("You're as fast as frogs! Go in my house for a special prize.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (speed)
+                    {
+                        case Speed.Slow:
+                            ConversationManager.AddMessage("That was OK but race me again and I'll actually try.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Medium:
+                            ConversationManager.AddMessage("I would have won but I tripped and fell. Try me again.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        case Speed.Fast:
+                            ConversationManager.AddMessage("Golly that was fast! Go in my house and take your reward. You deserve it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            break;
+                        default:
+                            if (Game1.IS_DEBUG)
+                            {
+                                throw new Exception("You need to add a conversation for this level.");
+                            }
+                            break;
+                    }
+                    break;
+                default:
+                    if (Game1.IS_DEBUG)
+                    {
+                        throw new Exception("You need to add a conversation for this level.");
+                    }
+                    break;
             }
         }
 

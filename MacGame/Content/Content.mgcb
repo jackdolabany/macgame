@@ -55,11 +55,6 @@
 /processorParam:TextureFormat=Color
 /build:Fonts/NesFontCaps.png
 
-#begin Maps/BlueRoom.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/BlueRoom.tmx
-
 #begin Maps/CollisionWorld.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -69,11 +64,6 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/Dracula.tmx
-
-#begin Maps/GreenRoom.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/GreenRoom.tmx
 
 #begin Maps/HubWorld.tmx
 /importer:TMXMapImporter
@@ -90,30 +80,15 @@
 /processor:PassThroughProcessor
 /build:Maps/QuadcopterBoss.tmx
 
-#begin Maps/RedRoom.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/RedRoom.tmx
-
 #begin Maps/SmallestTest.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/SmallestTest.tmx
 
-#begin Maps/TestDoors.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/TestDoors.tmx
-
 #begin Maps/TestFinalBoss.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/TestFinalBoss.tmx
-
-#begin Maps/TestHub.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/TestHub.tmx
 
 #begin Maps/TestLevel2.tmx
 /importer:TMXMapImporter
@@ -130,20 +105,10 @@
 /processor:PassThroughProcessor
 /build:Maps/TestLevel4.tmx
 
-#begin Maps/TestLittleSection.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/TestLittleSection.tmx
-
 #begin Maps/TestWingLevel.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/TestWingLevel.tmx
-
-#begin Maps/TestWorld2.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/TestWorld2.tmx
 
 #begin Maps/TestWorld3.tmx
 /importer:TMXMapImporter

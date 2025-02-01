@@ -146,21 +146,6 @@
    <property name="LoadClass" value="Platform.StaticPlatform"/>
   </properties>
  </tile>
- <tile id="65">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="66">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="67">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
  <tile id="68">
   <properties>
    <property name="Ladder" value="1"/>
@@ -896,24 +881,21 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
- <tile id="384">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="385">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
  <tile id="386">
   <properties>
-   <property name="BlockPlayer" value="1"/>
+   <property name="MinecartTrack" value="1"/>
   </properties>
  </tile>
  <tile id="387">
   <properties>
-   <property name="BlockPlayer" value="1"/>
+   <property name="BlockPlayer" value="SlopeUp"/>
+   <property name="MinecartTrack" value="1"/>
+  </properties>
+ </tile>
+ <tile id="388">
+  <properties>
+   <property name="BlockPlayer" value="SlopeDown"/>
+   <property name="MinecartTrack" value="1"/>
   </properties>
  </tile>
  <tile id="390">
@@ -947,21 +929,6 @@
   </properties>
  </tile>
  <tile id="398">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="400">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="401">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="402">
   <properties>
    <property name="BlockPlayer" value="1"/>
   </properties>

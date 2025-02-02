@@ -285,8 +285,9 @@ namespace MacGame.Npcs
                 this.velocity = Vector2.Zero;
                 IsAffectedByGravity = true;
 
-                // Reset the race if you spoke to Froggy or if some time has gone by.
-                var canResetRace = _hasSpoken || (gameTime.TotalGameTime - _raceFinishTime).TotalSeconds > 10;
+                // Reset the race if you spoke to Froggy. If you lost you don't have to talk to him, you can wait for 10 seconds to go by.
+                var tenSecondsPastResult = (gameTime.TotalGameTime - _raceFinishTime).TotalSeconds > 10;
+                var canResetRace = _hasSpoken || (_result == LastRaceResult.FroggyWon && tenSecondsPastResult);
 
                 if (canResetRace && Game1.Camera.IsWayOffscreen(this.CollisionRectangle) && Game1.Camera.IsWayOffscreen(this._startCollisionRect))
                 {

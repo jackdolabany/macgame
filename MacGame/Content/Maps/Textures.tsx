@@ -156,6 +156,11 @@
    <property name="Vine" value="1"/>
   </properties>
  </tile>
+ <tile id="74">
+  <properties>
+   <property name="LoadClass" value="Enemy.Stalactite"/>
+  </properties>
+ </tile>
  <tile id="77">
   <properties>
    <property name="LoadClass" value="Item.RedKey"/>

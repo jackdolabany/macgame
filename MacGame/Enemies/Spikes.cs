@@ -10,15 +10,11 @@ namespace MacGame.Enemies
     public abstract class Spikes : Enemy
     {
 
-        AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
-        
-        Texture2D textures;
-
         public Spikes(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
 
-            textures = content.Load<Texture2D>(@"Textures\Textures");
+            var textures = content.Load<Texture2D>(@"Textures\Textures");
             DisplayComponent = new StaticImageDisplay(textures, GetTextureRectangle());
 
             isTileColliding = false;
@@ -159,8 +155,4 @@ namespace MacGame.Enemies
             return Helpers.GetTileRect(6, 29);
         }
     }
-
-
-
- 
 }

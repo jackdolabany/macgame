@@ -75,6 +75,11 @@
 /processor:PassThroughProcessor
 /build:Maps/IntroLevel.tmx
 
+#begin Maps/Otis.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/Otis.tmx
+
 #begin Maps/QuadcopterBoss.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -315,6 +320,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/ConversationStart.wav
 
+#begin SoundEffects/Crackle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Crackle.wav
+
 #begin SoundEffects/Dig.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -350,6 +361,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Explosion.wav
+
+#begin SoundEffects/Fall.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Fall.wav
 
 #begin SoundEffects/Fire.wav
 /importer:WavImporter

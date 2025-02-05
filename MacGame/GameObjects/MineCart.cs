@@ -35,8 +35,8 @@ namespace MacGame
                 if (this.CollisionRectangle.Contains(_player.WorldCenter))
                 {
                     this.Enabled = false;
-                    _player.IsInMineCart = true;
-                    SoundManager.PlaySound("PowerUp");
+                    _player.EnterMineCart();
+                    SoundManager.PlaySound("PowerUp", 0.5f);
                 }
             }
 

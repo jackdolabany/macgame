@@ -131,7 +131,7 @@ namespace MacGame
                 sb.Update(gameTime, elapsed);
             }
 
-            Camera.Position = Player.GetCameraPosition(Camera);
+            Player.SetCameraTarget(Camera, elapsed);
 
             foreach (var enemy in Enemies)
             {

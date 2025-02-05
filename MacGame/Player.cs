@@ -9,7 +9,6 @@ using MacGame.DisplayComponents;
 using MacGame.Items;
 using System.Collections.Generic;
 using MacGame.Behaviors;
-using System.Threading;
 
 namespace MacGame
 {
@@ -89,10 +88,14 @@ namespace MacGame
         public bool IsInWater = false;
         public bool IsJumpingOutOfWater = false;
 
-        // Add time here to make the camera track Mac slowly for a period of time. This will help 
+        // Set smoothMoveCameraToTarget to true to make the camera track Mac slowly for a period of time. This will help 
         // move the camera more naturally for a period when he does "snapping" actions like snapping to the
         // other side of a vine, or snapping to other objects.
-        private float cameraTrackingTimer = 0f;
+        private bool smoothMoveCameraToTarget = false;
+        float maxCameraVelocity = 3000;
+        const float minCameraVelocity = 0;
+        float cameraAcceleration = 600f; 
+        private float cameraVelocity = minCameraVelocity;
 
         private float noMoveTimer = 0f;
 
@@ -129,6 +132,7 @@ namespace MacGame
         private float yPositionWhenLastOnVine = 0;
 
         public bool IsInMineCart = false;
+        const int mineCartVelocity = 350;
         public bool IsInSub = false;
         private Rectangle normalCollisionRectangle;
 
@@ -372,6 +376,12 @@ namespace MacGame
             _moveToLocation = new MoveToLocation(Vector2.Zero, 150, 150, "idle", "run", "jump", "climbLadder");
         }
 
+        private void SmoothMoveCameraToTarget(int initialVelocity = 0)
+        {
+            smoothMoveCameraToTarget = true;
+            cameraVelocity = initialVelocity;
+        }
+
         public override void SetDrawDepth(float depth)
         {
             this.DisplayComponent.DrawDepth = depth;
@@ -407,11 +417,6 @@ namespace MacGame
             InteractButtonPressedThisFrame = false;
 
             _previousCollisionRectangle = this.CollisionRectangle;
-
-            if (cameraTrackingTimer > 0)
-            {                 
-                cameraTrackingTimer -= elapsed;
-            }
 
             if (noMoveTimer > 0)
             {
@@ -526,6 +531,30 @@ namespace MacGame
             }
 
             base.Update(gameTime, elapsed);
+
+
+            // The minecart flips if it hits a wall.
+            if (IsInMineCart)
+            {
+                if (OnRightWall)
+                {
+                    this.Flipped = true;
+                    SoundManager.PlaySound("Bounce");
+                    velocity.X = -mineCartVelocity;
+                    // Since the minecart camera tracks behind you, flipping causes us to have to slowly move
+                    // the camera so we need to slow track for a second.
+                    SmoothMoveCameraToTarget(mineCartVelocity);
+                }
+                else if (OnLeftWall)
+                {
+                    this.Flipped = false;
+                    SoundManager.PlaySound("Bounce");
+                    velocity.X = mineCartVelocity;
+                    // Since the minecart camera tracks behind you, flipping causes us to have to slowly move
+                    // the camera so we need to slow track for a second.
+                    SmoothMoveCameraToTarget(mineCartVelocity);
+                }
+            }
 
             if (HasWings)
             {
@@ -1052,12 +1081,12 @@ namespace MacGame
                 // You can't move left and right on the vine, but Mac can flip.
                 if (!Flipped && InputManager.CurrentAction.left)
                 {
-                    cameraTrackingTimer = 0.2f;
+                    SmoothMoveCameraToTarget();
                     Flipped = true;
                 }
                 else if (Flipped && InputManager.CurrentAction.right)
                 {
-                    cameraTrackingTimer = 0.2f;
+                    SmoothMoveCameraToTarget();
                     Flipped = false;
                 }
 
@@ -1341,6 +1370,12 @@ namespace MacGame
 
         }
 
+        public void EnterMineCart()
+        {
+            this.IsInMineCart = true;
+            SmoothMoveCameraToTarget();
+        }
+
         private void HandleMineCartInputs(float elapsed)
         {
             if (animations.CurrentAnimationName != "mineCart")
@@ -1353,7 +1388,7 @@ namespace MacGame
                 SoundManager.PlayMinecart();
             }
 
-            // Cert
+            // Check for minecart destroying tiles
             var centerTile = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldCenter);
             if (centerTile != null && centerTile.IsDestroyMinecart)
             {
@@ -1361,10 +1396,11 @@ namespace MacGame
                 IsInMineCart = false;
                 SoundManager.PlaySound("Break");
                 SoundManager.StopMinecart();
+                SmoothMoveCameraToTarget();
                 return;
             }
 
-            this.velocity.X = 350;
+            this.velocity.X = mineCartVelocity;
             if (Flipped)
             {
                 this.velocity.X *= -1;
@@ -1377,26 +1413,6 @@ namespace MacGame
                 this.velocity.Y -= 550;
                 SoundManager.PlayMinecartJump();
                 SoundManager.StopMinecart();
-            }
-
-            // If the tile to the right is colliding, flip the player
-            if (!Flipped)
-            {
-                var tileToTheRight = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Right + 1, this.CollisionRectangle.Center.Y));
-                if (tileToTheRight != null && !tileToTheRight.Passable && !tileToTheRight.IsSlope())
-                {
-                    this.Flipped = true;
-                    SoundManager.PlaySound("Bounce");
-                }
-            }
-            else
-            {
-                var tileToTheLeft = Game1.CurrentMap.GetMapSquareAtPixel(new Vector2(this.CollisionRectangle.Left - 1, this.CollisionRectangle.Center.Y));
-                if (tileToTheLeft != null && !tileToTheLeft.Passable && !tileToTheLeft.IsSlope())
-                {
-                    this.Flipped = false;
-                    SoundManager.PlaySound("Bounce");
-                }
             }
         }
 
@@ -1536,7 +1552,7 @@ namespace MacGame
         public void EnterSub(Submarine sub)
         {
             // Slowly track the player for a short period to avoid jerky movement
-            cameraTrackingTimer = 0.2f;
+            SmoothMoveCameraToTarget();
             noMoveTimer = 0.2f;
             IsInSub = true;
             IsAffectedByGravity = false;
@@ -1553,7 +1569,7 @@ namespace MacGame
         {
             IsInSub = false;
             this.WorldLocation = new Vector2(subPlayerIsIn.WorldLocation.X, subPlayerIsIn.CollisionRectangle.Bottom - 4);
-            cameraTrackingTimer = 0.2f;
+            SmoothMoveCameraToTarget();
             IsAffectedByGravity = true;
             subPlayerIsIn = null;
             this.collisionRectangle = normalCollisionRectangle;
@@ -1570,7 +1586,7 @@ namespace MacGame
             this._state = MacState.Idle;
             this.animations.Play("idle");
 
-            cameraTrackingTimer = 0.5f;
+            SmoothMoveCameraToTarget();
         }
 
         public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)
@@ -1775,7 +1791,12 @@ namespace MacGame
             // Pause for a bit before adding the dead menu
             TimerManager.AddNewTimer(2f, () => MenuManager.AddMenu(_deadMenu));
 
-            IsInMineCart = false;
+            if (IsInMineCart)
+            {
+                IsInMineCart = false;
+                SmoothMoveCameraToTarget();
+            }
+
             SoundManager.StopMinecart();
         }
 
@@ -1844,32 +1865,94 @@ namespace MacGame
             return !IsFacingRight();
         }
 
-        public Vector2 GetCameraPosition(Camera camera)
+        public void SetCameraTarget(Camera camera, float elapsed)
         {
-            // For a brief time the camera will slowly track Mac so that it doesn't adjust too quickly after he does some kind of 
-            // snapping or quick moving action.
-            if (cameraTrackingTimer > 0)
+            var targetPosition = this.WorldLocation;
+
+            if (IsInMineCart && this.Velocity.X > 0)
             {
-                var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.2f);
-                return cameraPosition;
+                // Track behind the player
+                targetPosition = this.WorldLocation + new Vector2(150, 0);
+            }
+            else if (IsInMineCart && this.Velocity.X < 0)
+            {
+                // Track in front of the player
+                targetPosition = this.WorldLocation + new Vector2(-150, 0);
             }
 
-            // Normally the Camera tracks the player
-            return this.worldLocation;
+            if (!smoothMoveCameraToTarget)
+            {
+                // Snap to the target.
+                camera.Position = targetPosition;
+            }
+            else
+            {
+                // Move at an accelerating rate to catch up to the target.
+                // Note: An improvement here would be to track the character directly and
+                // have a velocity vector. Not track x and y separately. Or if I was to track
+                // them separate, have 2 velocities. This is the amature channel.
+                Vector2 positionToReturn = Vector2.Zero;
+                var distanceNeededToMoveX = targetPosition.X - camera.Position.X;
+                var distanceToMoveX = cameraVelocity * elapsed;
 
-            // move towards the player.
+                if (distanceNeededToMoveX < 0)
+                {
+                    distanceToMoveX = -distanceToMoveX;
+                }
 
-            //if (Vector2.Distance(camera.Position, this.worldLocation) > 400)
-            //{
-            //    // Too far away, snap to the player. This might be a scene transition.
-            //    return this.worldLocation;
-            //}
-            //else
-            //{
-            //    // move towards the player.
-            //    var cameraPosition = camera.Position + ((this.worldLocation - camera.Position) * 0.2f);
-            //    return cameraPosition;
-            //}
+                if (Math.Abs(distanceNeededToMoveX) < Math.Abs(distanceToMoveX))
+                {
+                    positionToReturn.X = targetPosition.X;
+                }
+                else
+                {
+                    positionToReturn.X = camera.Position.X + distanceToMoveX;
+                }
+
+                // Now do the y direction.
+                var distanceNeededToMoveY = targetPosition.Y - camera.Position.Y;
+                var distanceToMoveY = cameraVelocity * elapsed;
+
+                if (distanceNeededToMoveY < 0)
+                {
+                    distanceToMoveY = -distanceToMoveY;
+                }
+
+                if (Math.Abs(distanceNeededToMoveY) < Math.Abs(distanceToMoveY))
+                {
+                    positionToReturn.Y = targetPosition.Y;
+                }
+                else
+                {
+                    positionToReturn.Y = camera.Position.Y + distanceToMoveY;
+                }
+
+                if (positionToReturn == targetPosition)
+                {
+                    // we've reached or overlapped the target positon. Just hard track the target.
+                    smoothMoveCameraToTarget = false;
+                    cameraVelocity = minCameraVelocity;
+                }
+                else
+                {
+                    // increase speed by a percentage.
+                    cameraVelocity += cameraAcceleration * elapsed;
+                    cameraVelocity = Math.Min(cameraVelocity, maxCameraVelocity);
+                }
+                
+                camera.Position = positionToReturn;
+
+                // Kind of weird, but another check if the camera made it to it's target. We consider it there if the x or y position didn't move because the 
+                // camera blocked it from being at the extact target. This might happen if the camera is too close to the edge of the level or if it's locked
+                // because you are fighting a boss.
+                var xWasSetToTargetOrBlocked = camera.Position.X == targetPosition.X || camera.Position.X != positionToReturn.X;
+                var yWasSetToTargetOrBlocked = camera.Position.Y == targetPosition.Y || camera.Position.Y != positionToReturn.Y;
+                if (xWasSetToTargetOrBlocked && yWasSetToTargetOrBlocked)
+                {
+                    smoothMoveCameraToTarget = false;
+                    cameraVelocity = minCameraVelocity;
+                }
+            }
         }
 
         public void AddUnlockedDoor(string doorName)

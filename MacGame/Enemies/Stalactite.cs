@@ -142,6 +142,18 @@ namespace MacGame.Enemies
                     EffectsManager.SmallEnemyPop(this.WorldLocation);
                     _state = StalactiteState.Dead;
                 }
+
+                // Why not, attack the enemies too
+                foreach (var enemy in Game1.CurrentLevel.Enemies)
+                {
+                    if (enemy.Alive && enemy.Enabled && enemy.CanBeHitWithWeapons)
+                    {
+                        if (enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                        {
+                            enemy.TakeHit(this, 1, this.velocity);
+                        }
+                    }
+                }
             }
         }
 

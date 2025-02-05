@@ -1872,12 +1872,12 @@ namespace MacGame
             if (IsInMineCart && this.Velocity.X > 0)
             {
                 // Track behind the player
-                targetPosition = this.WorldLocation + new Vector2(150, 0);
+                targetPosition = this.WorldLocation + new Vector2(80, 0);
             }
             else if (IsInMineCart && this.Velocity.X < 0)
             {
                 // Track in front of the player
-                targetPosition = this.WorldLocation + new Vector2(-150, 0);
+                targetPosition = this.WorldLocation + new Vector2(-80, 0);
             }
 
             if (!smoothMoveCameraToTarget)

@@ -268,6 +268,19 @@ namespace MacGame
             }
         }
 
+        /// <summary>
+        /// A half size collision rectangle to check collisions with Cannons or other
+        /// objects where a point can be missed, but the regular collision rect is too big.
+        /// </summary>
+        public Rectangle SmallerCollisionRectangle
+        {
+            get
+            {
+                var collisionRect = this.CollisionRectangle;
+                return new Rectangle(collisionRect.X + 8, collisionRect.Y + 8, collisionRect.Width - 16, collisionRect.Height - 16);
+            }
+        }
+
         Texture2D textures;
 
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)

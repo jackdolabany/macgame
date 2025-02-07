@@ -200,6 +200,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World2Blowfish.tmx
 
+#begin Maps/World2BombMaze.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2BombMaze.tmx
+
 #begin Maps/World2FrogHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

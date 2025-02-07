@@ -130,7 +130,7 @@ namespace MacGame
                 delayAutoShotTimer -= elapsed;
             }
 
-            if (_player.CanEnterCannon && isCooledOff && !HasCannonballInside && this.CollisionRectangle.Intersects(_player.CollisionRectangle))
+            if (_player.CanEnterCannon && isCooledOff && !HasCannonballInside && this.CollisionRectangle.Contains(_player.SmallerCollisionRectangle))
             {
                 _player.EnterCannon(this);
 

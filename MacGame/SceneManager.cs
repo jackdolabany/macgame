@@ -505,6 +505,12 @@ namespace MacGame
                                 level.GameObjects.Add(field);
                                 layerDepthObjects[z].Add(field);
                             }
+                            else if (loadClass == "WaterBomb")
+                            {
+                                var bomb = new WaterBomb(contentManager, x, y, player);
+                                level.GameObjects.Add(bomb);
+                                layerDepthObjects[z].Add(bomb);
+                            }
                         }
                     }
                 }
@@ -560,6 +566,7 @@ namespace MacGame
                 var gameObjects = layerDepthObjects[layer].OrderBy(o => {
                     if (o is Door) return 1;
                     if (o is BlockingPiston) return 1;
+                    if (o is WaterBomb) return 1;
                     if (o is Npc) return 2;
                     if (o is Platform) return 3;
                     if (o is Player) return 4;

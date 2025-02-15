@@ -685,6 +685,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="297">
+  <properties>
+   <property name="LoadClass" value="WaterBomb"/>
+  </properties>
+ </tile>
  <tile id="298">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -718,6 +723,11 @@
  <tile id="308">
   <properties>
    <property name="LoadClass" value="Enemy.Ghost2"/>
+  </properties>
+ </tile>
+ <tile id="313">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="314">

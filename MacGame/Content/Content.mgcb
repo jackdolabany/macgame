@@ -366,6 +366,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/DracDeath.wav
 
+#begin SoundEffects/Electric.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Electric.wav
+
 #begin SoundEffects/Explosion.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -635,6 +641,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Textures.png
+
+#begin Textures/Textures2.png
+/importer:TextureImporter
+/processor:SmallTileBorderImageProcessor
+/processorParam:ColorKeyColor=255,255,255,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Textures2.png
 
 #begin Textures/TitleScreen.png
 /importer:TextureImporter

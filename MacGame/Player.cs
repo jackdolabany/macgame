@@ -26,7 +26,13 @@ namespace MacGame
         /// <summary>
         /// Set Mac to this state for some kind of custom programming for cut scenes or whatever.
         /// </summary>
-        NPC
+        NPC,
+
+        /// <summary>
+        /// Mac will be idle for a little bit while he's disabling the water bombs which are only
+        /// on the TMNT like water bomb level.
+        /// </summary>
+        DisablingWaterBomb
     }
 
     public class Player : GameObject
@@ -65,6 +71,7 @@ namespace MacGame
         private bool IsFalling => _state == MacState.Falling;
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
+        private bool IsDisablingWaterBomb => _state == MacState.DisablingWaterBomb;
 
         IPickupObject? pickedUpObject;
 
@@ -345,6 +352,11 @@ namespace MacGame
             swim.FrameLength = 0.25f;
             animations.Add(swim);
 
+            var disableWaterBomb = new AnimationStrip(textures, Helpers.GetTileRect(7, 0), 2, "disableWaterBomb");
+            disableWaterBomb.LoopAnimation = true;
+            disableWaterBomb.FrameLength = 0.25f;
+            animations.Add(disableWaterBomb);
+
             Enabled = true;
 
             // This gets set later when the level loads.
@@ -496,6 +508,10 @@ namespace MacGame
             {
                 HandleShotOutOfCannonInputs(elapsed);
             }
+            else if (IsDisablingWaterBomb)
+            {
+                // Do nothing, a timer will release mac from this state.
+            }
             else if (IsInWater)
             {
                 HandleWaterInputs(elapsed);
@@ -544,7 +560,6 @@ namespace MacGame
             }
 
             base.Update(gameTime, elapsed);
-
 
             // The minecart flips if it hits a wall.
             if (IsInMineCart)
@@ -1974,6 +1989,25 @@ namespace MacGame
             if (!doors.Contains(doorName))
             {
                 doors.Add(doorName);
+            }
+        }
+
+        public void StartDisableWaterBomb(WaterBomb waterBomb)
+        {
+            var state = this._state;
+            if (state != MacState.DisablingWaterBomb)
+            {
+                this.WorldLocation = waterBomb.WorldCenter + new Vector2(0, 16);
+                animations.Play("disableWaterBomb");
+                _state = MacState.DisablingWaterBomb;
+                this.Velocity = Vector2.Zero;
+                SmoothMoveCameraToTarget();
+                TimerManager.AddNewTimer(2f, () =>
+                {
+                    animations.Play("idle");
+                    waterBomb.Disable();
+                    _state = state;
+                });
             }
         }
     }

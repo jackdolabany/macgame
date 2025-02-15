@@ -182,6 +182,8 @@ namespace MacGame
             LoadSound("Grow");
             LoadSound("Crackle");
             LoadSound("Fall");
+            LoadSound("Electric");
+
 
             seiMinecart = Sounds["Minecart"].CreateInstance();
 

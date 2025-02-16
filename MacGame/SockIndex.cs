@@ -45,6 +45,7 @@ namespace MacGame
                     new SockInfo { Name = "BlowfishBossSock", Hint = "I heard a mad puffer fish is trying to start a sock collection. They don't even have feet." },
                     new SockInfo { Name = "FlappySock", Hint = "Deep in a cave nearby is a magical door to magical land where you can fly like a fish." },
                     new SockInfo { Name = "RaceSock", Hint = "If you're having trouble beating the frog in a race, just cheat. He won't notice." },
+                    new SockInfo { Name = "BombSock", Hint = "Take a leap of faith to the East. But danger awaits!" },
                 }
             },{
                 3,

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TileEngine;
 
 namespace MacGame
@@ -38,6 +39,8 @@ namespace MacGame
 
         BombState _state;
 
+        public bool IsDisabled => _state == BombState.Disabled;
+
         public WaterBomb(ContentManager content, int cellX, int cellY, Player player) : base()
         {
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
@@ -56,7 +59,7 @@ namespace MacGame
 
             SetCenteredCollisionRectangle(8, 16);
 
-            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize, (cellY + 2) * TileMap.TileSize);
+            this.WorldLocation = new Vector2(cellX * TileMap.TileSize + (TileMap.TileSize / 2), (cellY + 2) * TileMap.TileSize);
             Enabled = true;
 
             IsAffectedByGravity = false;
@@ -66,19 +69,28 @@ namespace MacGame
 
             _player = player;
 
-            // Change once NPC enables this.
-            _state = BombState.Active;
+            _state = BombState.NotYetEnabled;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (_state == BombState.Active && _player.CollisionRectangle.Contains(this.CollisionCenter))
+            if (_state == BombState.Active && !_player.IsInSub && _player.CollisionRectangle.Contains(this.CollisionCenter))
             {
                 _player.StartDisableWaterBomb(this);
                 _state = BombState.Disabling;
             }
 
+            if (_state == BombState.Disabling)
+            {
+                _player.WorldLocation = this.WorldCenter + new Vector2(0, 16);
+            }
+
             base.Update(gameTime, elapsed);
+        }
+
+        public void Activate()
+        {
+            _state = BombState.Active;
         }
 
         /// <summary>

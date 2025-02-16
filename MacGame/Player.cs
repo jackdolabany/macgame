@@ -769,12 +769,9 @@ namespace MacGame
                 }
                 invincibleTimeRemaining = 1.5f;
                 SoundManager.PlaySound("TakeHit");
-                var hitBackBoost = new Vector2(100, -200);
-                if (CollisionCenter.X < enemy.CollisionCenter.X)
-                {
-                    hitBackBoost.X *= -1;
-                }
-                this.velocity = hitBackBoost;
+
+                var hitBackBoost = enemy.GetHitBackBoost(this);
+                this.Velocity = hitBackBoost;
             }
         }
 
@@ -1997,7 +1994,6 @@ namespace MacGame
             var state = this._state;
             if (state != MacState.DisablingWaterBomb)
             {
-                this.WorldLocation = waterBomb.WorldCenter + new Vector2(0, 16);
                 animations.Play("disableWaterBomb");
                 _state = MacState.DisablingWaterBomb;
                 this.Velocity = Vector2.Zero;

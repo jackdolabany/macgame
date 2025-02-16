@@ -75,6 +75,18 @@ namespace MacGame
 
         public RevealBlockManager RevealBlockManager;
 
+        /// <summary>
+        /// Set this to start a countdown where a bomb goes off.
+        /// </summary>
+        public float BombTimer;
+        private float _bombFadeToWhiteTimer;
+        private float _bombFadeToWhiteTimerGoal = 1f;
+        private float _bombFadeToBlackTimer;
+        private float _bombFadeToBlackTimerGoal = 1f;
+        private int _playToneWhenSecondsRemaining = 10;
+        public bool AllBombsDisabled = false;
+        private bool _isBlownUp = false;
+
         public Level(Player player, TileMap map, Camera camera)
         {
             Player = player;
@@ -182,12 +194,15 @@ namespace MacGame
                 Door? doorToEnter = null;
                 Npc? npcToTalkTo = null;
 
-                foreach (var door in Doors)
+                if (BombTimer == 0) // No escape if the bomb is counting down.
                 {
-                    if (door.Enabled && door.CollisionRectangle.Contains(Player.WorldCenter))
+                    foreach (var door in Doors)
                     {
-                        doorToEnter = door;
-                        break;
+                        if (door.Enabled && door.CollisionRectangle.Contains(Player.WorldCenter))
+                        {
+                            doorToEnter = door;
+                            break;
+                        }
                     }
                 }
                 foreach (var npc in Npcs)
@@ -243,6 +258,83 @@ namespace MacGame
                     }
                 }
             }
+
+            if (BombTimer > 0)
+            {
+                var wasOverNextSecondForTone = BombTimer > _playToneWhenSecondsRemaining;
+
+                BombTimer -= elapsed;
+
+                if (wasOverNextSecondForTone && _playToneWhenSecondsRemaining > 0 && BombTimer < _playToneWhenSecondsRemaining)
+                {
+                    SoundManager.PlaySound("MenuChoice");
+                    _playToneWhenSecondsRemaining -= 1;
+                }
+
+                if (BombTimer <= 0)
+                {
+                    _isBlownUp = true;
+                    _bombFadeToWhiteTimer = 0;
+
+                    SoundManager.PlaySound("Explosion");
+
+                    // Kill player
+                    Player.Kill();
+
+                    foreach(var enemy in Enemies)
+                    {
+                        enemy.Kill();
+                    }
+                }
+
+                // Check if the bombs are disabled
+                var allBombsDisabled = true;
+                foreach (var gameObject in this.GameObjects)
+                {
+                    if (gameObject is WaterBomb)
+                    {
+                        var waterBomb = (WaterBomb)gameObject;
+                        if (!waterBomb.IsDisabled)
+                        {
+                            allBombsDisabled = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (allBombsDisabled && Player.Health > 0)
+                {
+                    BombTimer = 0;
+                    this.AllBombsDisabled = true;
+                    _isBlownUp = false;
+                }
+            }
+
+            if (_isBlownUp && _bombFadeToWhiteTimer < _bombFadeToWhiteTimerGoal)
+            {
+                _bombFadeToWhiteTimer += elapsed;
+            }
+
+            if (_isBlownUp && _bombFadeToWhiteTimer >= _bombFadeToWhiteTimerGoal && _bombFadeToBlackTimer < _bombFadeToBlackTimerGoal)
+            {
+                _bombFadeToBlackTimer += elapsed;
+            }
+
+        }
+
+        public void EnableBomb()
+        {
+            BombTimer = (float)new TimeSpan(0, 2, 20).TotalSeconds;
+
+            foreach (var gameObject in this.GameObjects)
+            {
+                if (gameObject is WaterBomb)
+                {
+                    var waterBomb = (WaterBomb)gameObject;
+                    waterBomb.Activate();
+                }
+            }
+
         }
 
         public void DisplayIntroText()
@@ -614,6 +706,17 @@ namespace MacGame
             }
 
             Player.Draw(spriteBatch);
+
+            if (_isBlownUp)
+            {
+                // Figure out how much to fade to white based on the bomb fade to white timer
+                Color fadeToWhite = Color.White * (1 - ((_bombFadeToWhiteTimerGoal - _bombFadeToWhiteTimer) / _bombFadeToWhiteTimerGoal));
+                spriteBatch.Draw(Game1.TileTextures, Camera.ViewPort, Game1.WhiteSourceRect, fadeToWhite, 0f, Vector2.Zero, SpriteEffects.None, 0.0002f);
+
+                // Figure out how much to fade to white based on the bomb fade to white timer
+                Color fadeToBlack = Color.Black * (1 - ((_bombFadeToBlackTimerGoal - _bombFadeToBlackTimer) / _bombFadeToBlackTimerGoal));
+                spriteBatch.Draw(Game1.TileTextures, Camera.ViewPort, Game1.WhiteSourceRect, fadeToBlack, 0f, Vector2.Zero, SpriteEffects.None, 0.0001f);
+            }
 
         }
     }

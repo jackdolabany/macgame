@@ -312,6 +312,11 @@
    <property name="LoadClass" value="Enemy.Urchin"/>
   </properties>
  </tile>
+ <tile id="111">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="112">
   <properties>
    <property name="LoadClass" value="Cannon"/>
@@ -690,36 +695,6 @@
    <property name="LoadClass" value="WaterBomb"/>
   </properties>
  </tile>
- <tile id="298">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="299">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="300">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="301">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="302">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="303">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
  <tile id="308">
   <properties>
    <property name="LoadClass" value="Enemy.Ghost2"/>
@@ -728,36 +703,6 @@
  <tile id="313">
   <properties>
    <property name="Hidden" value="1"/>
-  </properties>
- </tile>
- <tile id="314">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="315">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="316">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="317">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="318">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="319">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="320">

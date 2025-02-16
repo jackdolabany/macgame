@@ -110,6 +110,19 @@ namespace MacGame.Enemies
         }
 
         /// <summary>
+        ///  return a vector of how hard to hit the player after contact.
+        /// </summary>
+        public virtual Vector2 GetHitBackBoost(Player player)
+        {
+            var hitBackBoost = new Vector2(100, -200);
+            if (player.CollisionCenter.X < CollisionCenter.X)
+            {
+                hitBackBoost.X *= -1;
+            }
+            return hitBackBoost;
+        }
+
+        /// <summary>
         /// Waypoints are relative to the level upper left of the level and in units of Tiles. 
         /// </summary>
         protected void GoToWaypoint(float speed, Waypoint wayPoint)

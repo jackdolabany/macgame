@@ -49,6 +49,9 @@ namespace MacGame.Items
             WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
         }
 
+        /// <summary>
+        /// Called after the level is set up.
+        /// </summary>
         public void CheckIfAlreadyCollected(int levelNumber)
         {
             if (Game1.StorageState.Levels[levelNumber].CollectedSocks.Contains(Name))
@@ -56,6 +59,11 @@ namespace MacGame.Items
                 AlreadyCollected = true;
                 Color = Color.White * 0.5f;
             }
+        }
+
+        public override void PlayCollectedSound()
+        {
+            // Do nothing.
         }
 
         public override void WhenCollected(Player player)

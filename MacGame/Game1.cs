@@ -235,6 +235,8 @@ namespace MacGame
         /// </summary>
         public static LevelState LevelState { get; set; }
 
+        private static Vector2 _timerOrigin = Vector2.Zero;
+
         public static void ThrowDebugException(string message)
         {
             if (Game1.IS_DEBUG)
@@ -1088,6 +1090,18 @@ namespace MacGame
             {
                 var blueKeySourceRect = Helpers.GetTileRect(15, 4);
                 spriteBatch.Draw(TileTextures, keyLocation, blueKeySourceRect, Color.White);
+            }
+
+            if (CurrentLevel.BombTimer > 0)
+            {
+                var inputString = TimeSpan.FromSeconds(CurrentLevel.BombTimer).ToString(@"mm\:ss\:ff");
+                if (_timerOrigin == Vector2.Zero)
+                {
+                    var size = Font.MeasureString(inputString);
+                    _timerOrigin = new Vector2(size.X / 2, size.Y / 2); 
+                }
+                
+                spriteBatch.DrawString(Font, inputString, new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION - 32), Color.White, 0f, _timerOrigin, FontScale, SpriteEffects.None, 0.5f);
             }
         }
 

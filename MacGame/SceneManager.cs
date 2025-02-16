@@ -516,6 +516,33 @@ namespace MacGame
                 }
             }
 
+            // Seaweeds have a list of adjacent seaweeds so they can all electrify together.
+            // Organize them into groups.
+            var processedIntoGroups = new List<ElectricSeaweed>();
+
+
+            var allSeaweeds = level.Enemies
+                .Where(e => e is ElectricSeaweed)
+                .Select(e => (ElectricSeaweed)e);
+
+            var locationsToSeaweed = allSeaweeds.ToDictionary(es => new Vector2(es.X, es.Y), es => es);
+
+            foreach (var seaweed in allSeaweeds)
+            {
+                if (seaweed.AdjacentSeaweeds == null)
+                {
+                    // Recursively scan for adjacent seaweed
+                    var group = new HashSet<ElectricSeaweed>();
+                    FindAdjacentSeaweed(seaweed, group, locationsToSeaweed);
+
+                    // Put them all in the group
+                    foreach (var esw in group)
+                    {
+                        esw.AdjacentSeaweeds = group;
+                    }
+                }
+            }
+
             // Scan for groups of moving blocks.
             foreach (var obj in map.ObjectModifiers)
             {
@@ -593,6 +620,41 @@ namespace MacGame
             level.Map.PlayerDrawDepth = player.DrawDepth;
 
             return level;
+        }
+
+        private void FindAdjacentSeaweed(ElectricSeaweed currentSeaweed, HashSet<ElectricSeaweed> group, Dictionary<Vector2, ElectricSeaweed> locationsToSeaweeds)
+        {
+            if (group.Contains(currentSeaweed)) return;
+
+            group.Add(currentSeaweed);
+
+            // search above
+            var aboveKey = new Vector2(currentSeaweed.X, currentSeaweed.Y - 1);
+            if (locationsToSeaweeds.ContainsKey(aboveKey))
+            {
+                FindAdjacentSeaweed(locationsToSeaweeds[aboveKey], group, locationsToSeaweeds);
+            }
+
+            // search below
+            var belowKey = new Vector2(currentSeaweed.X, currentSeaweed.Y + 1);
+            if (locationsToSeaweeds.ContainsKey(belowKey))
+            {
+                FindAdjacentSeaweed(locationsToSeaweeds[belowKey], group, locationsToSeaweeds);
+            }
+
+            // Search Left
+            var leftKey = new Vector2(currentSeaweed.X - 1, currentSeaweed.Y);
+            if (locationsToSeaweeds.ContainsKey(leftKey))
+            {
+                FindAdjacentSeaweed(locationsToSeaweeds[leftKey], group, locationsToSeaweeds);
+            }
+
+            // Search Right
+            var rightKey = new Vector2(currentSeaweed.X + 1, currentSeaweed.Y);
+            if (locationsToSeaweeds.ContainsKey(rightKey))
+            {
+                FindAdjacentSeaweed(locationsToSeaweeds[rightKey], group, locationsToSeaweeds);
+            }
         }
 
     }

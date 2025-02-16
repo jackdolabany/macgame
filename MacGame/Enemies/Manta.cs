@@ -73,7 +73,7 @@ namespace MacGame.Enemies
             {
                 case MantaState.SwimUp:
                     this.velocity = new Vector2(0, -speed);
-                    if (this.WorldLocation.Y < startLocation.Y - 100)
+                    if (this.WorldLocation.Y < startLocation.Y - 100 || OnCeiling)
                     {
                         this.State = MantaState.IdleAtTop;
                         idleTimer = 2f;

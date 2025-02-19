@@ -44,7 +44,7 @@ namespace MacGame.Npcs
             gameChoices.Add(new ConversationChoice("Yes", () =>
             {
                 Game1.CurrentLevel.EnableBomb();
-                ConversationManager.AddMessage("Great! I've rigged this whole place with explosives and we're all going to blow up if you don't disarm them. Good luck!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("Great! I've rigged this whole place with explosives and we're all gonna blow if you don't disarm them. Good luck!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }));
             gameChoices.Add(new ConversationChoice("No", () =>
             {

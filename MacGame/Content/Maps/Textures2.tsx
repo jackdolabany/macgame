@@ -41,4 +41,24 @@
    <property name="LoadClass" value="Enemy.ElectricSeaweedLeftBottom"/>
   </properties>
  </tile>
+ <tile id="160">
+  <properties>
+   <property name="LoadClass" value="Npc.BrownChicken"/>
+  </properties>
+ </tile>
+ <tile id="162">
+  <properties>
+   <property name="LoadClass" value="Npc.BlackBird"/>
+  </properties>
+ </tile>
+ <tile id="176">
+  <properties>
+   <property name="LoadClass" value="Npc.Daisy"/>
+  </properties>
+ </tile>
+ <tile id="178">
+  <properties>
+   <property name="LoadClass" value="Npc.Snake"/>
+  </properties>
+ </tile>
 </tileset>

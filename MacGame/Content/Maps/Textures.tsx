@@ -540,6 +540,11 @@
    <property name="LoadClass" value="Npc.Toadie"/>
   </properties>
  </tile>
+ <tile id="217">
+  <properties>
+   <property name="LoadClass" value="Npc.Raccoon"/>
+  </properties>
+ </tile>
  <tile id="218">
   <properties>
    <property name="LoadClass" value="Platform.BreakingPlatform"/>
@@ -824,6 +829,11 @@
  <tile id="369">
   <properties>
    <property name="LoadClass" value="Enemy.Dracula"/>
+  </properties>
+ </tile>
+ <tile id="374">
+  <properties>
+   <property name="LoadClass" value="Npc.Beaver"/>
   </properties>
  </tile>
  <tile id="380">

@@ -43,7 +43,6 @@ namespace MacGame
                 Game.GoToHub(true);
             });
 
-
             Func<string> GetFullScreenText = () => Game.IsFullScreen() ? "Windowed" : "Full Screen";
 
             toggleFullScreen = AddOption(GetFullScreenText(), (a, b) => {

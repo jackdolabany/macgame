@@ -492,7 +492,7 @@ namespace MacGame
             MenuManager.ClearMenus();
             ConversationManager.Clear();
 
-            TransitionToState(GameState.Playing, TransitionType.Instant);
+            TransitionToStateInstantFromBlack(GameState.Playing);
 
             pauseMenu.SetupTitle("Paused");
 
@@ -540,7 +540,7 @@ namespace MacGame
             Player.CurrentItem = null;
             MenuManager.ClearMenus();
             ConversationManager.Clear();
-            TransitionToState(GameState.Playing);
+            TransitionToStateInstantFromBlack(GameState.Playing);
             CurrentLevel = sceneManager.LoadLevel(CurrentLevel.Name, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
         }
@@ -577,17 +577,31 @@ namespace MacGame
                 IsFading = false;
                 return;
             }
-
-            IsFading = transitionType == TransitionType.SlowFade || transitionType == TransitionType.FastFade;
-            if (this.transitionToState != transitionToState)
+            else
             {
-                this.transitionToState = transitionToState;
-                this.transitionType = transitionType;
-                if (IsFading)
+                // Not instant.
+                IsFading = transitionType == TransitionType.SlowFade || transitionType == TransitionType.FastFade;
+                if (this.transitionToState != transitionToState)
                 {
-                    transitionTimer = totalTransitionTime;
+                    this.transitionToState = transitionToState;
+                    this.transitionType = transitionType;
+                    if (IsFading)
+                    {
+                        transitionTimer = totalTransitionTime;
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Instantly blacks the screen and then fades the scene in.
+        /// </summary>
+        public void TransitionToStateInstantFromBlack(GameState transitionToState)
+        {
+            IsFading = true;
+            this.transitionToState = transitionToState;
+            CurrentGameState = transitionToState;
+            transitionTimer = totalTransitionTime;
         }
 
         /// <summary>

@@ -3,9 +3,6 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Linq;
-using TileEngine;
 
 namespace MacGame.Npcs
 {
@@ -31,31 +28,9 @@ namespace MacGame.Npcs
 
         public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(6, 0);
 
-        /// <summary>
-        /// The dog gives you hints to where the next sock is.
-        /// </summary>
         public override void InitiateConversation()
         {
-
-            var levelNumber = Game1.CurrentLevel.LevelNumber;
-
-            var sockInfos = SockIndex.LevelNumberToSocks[levelNumber];
-
-            var collectedSocks = Game1.StorageState.Levels[levelNumber].CollectedSocks;
-
-            // He'll say the hint for first sock with a hint that you don't have.
-            foreach (var sockInfo in sockInfos)
-            {
-                var hintText = sockInfo.Hint;
-                
-                if (!collectedSocks.Contains(sockInfo.Name))
-                {
-                    ConversationManager.AddMessage(hintText, ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                    return;
-                }
-            }
-
-            ConversationManager.AddMessage("Nice work collecting socks. Don't skip chest day.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("Don't skip chest day.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

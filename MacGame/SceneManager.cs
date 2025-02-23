@@ -44,6 +44,11 @@ namespace MacGame
 
             level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
 
+            if (map.Properties.ContainsKey("CameraXOffset"))
+            {
+                level.CameraXOffset = int.Parse(map.Properties["CameraXOffset"]);
+            }
+
             if (level.LevelNumber == 4)
             {
                 Game1.Gravity = Game1.MoonGravity;
@@ -495,6 +500,10 @@ namespace MacGame
                                         if (obj.Properties.ContainsKey("GroupName"))
                                         {
                                             bb.GroupName = obj.Properties["GroupName"];
+                                        }
+                                        if (obj.Properties.ContainsKey("OverrideSave"))
+                                        {
+                                            bb.OverrideSave = true;
                                         }
                                     }
                                 }

@@ -14,6 +14,11 @@ namespace MacGame.Enemies
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
+        /// <summary>
+        /// Don't do anything until you've been seen.
+        /// </summary>
+        private bool _hasBeenSeen = false;
+
         private int _honkCount = 0;
 
         public enum GooseState
@@ -150,11 +155,6 @@ namespace MacGame.Enemies
         /// </summary>
         private SpringBoard SpringBoard;
         Vector2 springBoardInitialLocation;
-
-        /// <summary>
-        /// After death the Goose will reveal the sock.
-        /// </summary>
-        private Sock Sock;
 
         private bool isInitialized = false;
 
@@ -316,36 +316,30 @@ namespace MacGame.Enemies
 
         private void Initialize()
         {
-            // Find a bunch of stuff we expect in the map.
-            foreach (var item in Game1.CurrentLevel.Items)
-            {
-                if (item is Sock)
-                {
-                    Sock = item as Sock;
-                }
-            }
-
-            if (Sock == null)
-            {
-                throw new Exception("You need a sock in the level!");
-            }
-
-            Sock.Enabled = false;
-
+            // Find stuff we expect in the map.
             foreach (var platform in Game1.CurrentLevel.Platforms)
             {
                 if (platform is MovingPlatform)
                 {
                     MovingPlatforms.Add(platform as MovingPlatform);
+                    platform.Enabled = false;
                 }
                 if (platform is BreakingPlatform)
                 {
                     BreakingPlatforms.Add(platform as BreakingPlatform);
+                    platform.Enabled = false;
                 }
             }
 
             SpringBoard = Game1.CurrentLevel.SpringBoards.Single();
             springBoardInitialLocation = SpringBoard.WorldLocation;
+            SpringBoard.Enabled = false;
+
+            foreach (var gameObject in Game1.CurrentLevel.GameObjects)
+            {
+
+            }
+
             isInitialized = true;
         }
 
@@ -373,12 +367,24 @@ namespace MacGame.Enemies
             {
                 platform.Enabled = attackPhase == AttackPhase.Phase1;
             }
-            
+
             foreach (var platform in BreakingPlatforms)
             {
                 if (attackPhase != AttackPhase.Phase2 || brickDelayTimer > 0f)
                 {
                     platform.Enabled = false;
+                }
+            }
+
+            if (!_hasBeenSeen)
+            {
+                if (Game1.Camera.IsPointVisible(new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Center.Y)))
+                {
+                    _hasBeenSeen = true;
+                }
+                else
+                {
+                    return;
                 }
             }
 
@@ -520,14 +526,8 @@ namespace MacGame.Enemies
                 if (this.CollisionRectangle.Top > (Game1.Camera.WorldRectangle.Bottom + 200))
                 {
                     state = GooseState.Dead;
-                    Sock.FadeIn();
+                    Game1.CurrentLevel.BreakBricks("GooseBricks");
                 }
-            }
-
-            if (state == GooseState.Dead)
-            {
-                // TODO: Wait for some time and then send Mac back where he came from. 
-                // Once you figure out what that is.
             }
 
             Game1.DrawBossHealth = true;

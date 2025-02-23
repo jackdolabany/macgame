@@ -1892,7 +1892,7 @@ namespace MacGame
 
         public void SetCameraTarget(Camera camera, float elapsed)
         {
-            var targetPosition = this.WorldLocation;
+            var targetPosition = this.WorldLocation + new Vector2(Game1.CurrentLevel.CameraXOffset, 0);
 
             if (IsInMineCart && this.Velocity.X > 0)
             {

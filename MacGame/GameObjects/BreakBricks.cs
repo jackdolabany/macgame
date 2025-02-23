@@ -23,6 +23,12 @@ namespace MacGame
 
         public string GroupName { get; set; }
 
+        /// <summary>
+        /// Normal behavior is to save the state of these when they break. For bosses or other things you
+        /// might want it to reset every time. Set the OverrideSave property to "1" in the map to set this.
+        /// </summary>
+        public bool OverrideSave { get; set; } = false;
+
         public BreakBrick(ContentManager content, int cellX, int cellY, Player player, bool isBroken) : base()
         {
             _cellX = cellX;
@@ -70,7 +76,10 @@ namespace MacGame
 
             SoundManager.PlaySound("Break");
 
-            Game1.StorageState.AddUnblockedMapSquare(Game1.CurrentLevel.LevelNumber, Game1.CurrentLevel.Name, _cellX, _cellY);
+            if (!OverrideSave)
+            {
+                Game1.StorageState.AddUnblockedMapSquare(Game1.CurrentLevel.LevelNumber, Game1.CurrentLevel.Name, _cellX, _cellY);
+            }
         }
 
     }

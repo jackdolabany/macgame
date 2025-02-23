@@ -29,6 +29,13 @@ namespace MacGame
         public string Description = "";
 
         /// <summary>
+        /// Set a property on the map to change this. Some levels might want to default to having the Camera
+        /// offset to the left or right a bit. For example a big stationary boss on the left or an auto scrolling
+        /// level.
+        /// </summary>
+        public int CameraXOffset = 0;
+
+        /// <summary>
         /// True if this map represents a room in the main hub world. As opposed to a level looking for a sock.
         /// </summary>
         public bool IsHubWorld
@@ -611,24 +618,7 @@ namespace MacGame
                     TimerManager.AddNewTimer(2f, () => button.MoveUpNoAction());
                     break;
                 case "BreakBricks":
-                    
-                    foreach (var gameObject in GameObjects)
-                    {
-                        if (gameObject is BreakBrick)
-                        {
-                            var bb = (BreakBrick)gameObject;
-                            if (bb.GroupName == args)
-                            {
-                                if (bb.IsBroken)
-                                {
-                                    // They've already been broken. Don't do anything.
-                                    return;
-                                }
-                                bb.Break();
-                            }
-                        }
-                    }
-                    SoundManager.PlaySound("Explosion");
+                    BreakBricks(args);
                     break;
                 default:
                     if (Game1.IS_DEBUG)
@@ -637,6 +627,27 @@ namespace MacGame
                     }
                     break;
             }
+        }
+
+        public void BreakBricks(string brickGroupName)
+        {
+            foreach (var gameObject in GameObjects)
+            {
+                if (gameObject is BreakBrick)
+                {
+                    var bb = (BreakBrick)gameObject;
+                    if (bb.GroupName == brickGroupName)
+                    {
+                        if (bb.IsBroken)
+                        {
+                            // They've already been broken. Don't do anything.
+                            return;
+                        }
+                        bb.Break();
+                    }
+                }
+            }
+            SoundManager.PlaySound("Explosion");
         }
 
         public int GetTileHightForWaterHeight(WaterHeight height)

@@ -30,8 +30,9 @@
   </data>
  </layer>
  <objectgroup id="4" name="Object Layer 1">
-  <object id="1" name="FirstWorldDoor" x="104.5" y="72.5" width="17.75" height="25.5">
+  <object id="1" name="FirstWorldDoor" x="107.773" y="74.1364" width="17.75" height="25.5">
    <properties>
+    <property name="GoToDoor" value="HubDoor"/>
     <property name="GoToMap" value="World1"/>
     <property name="IsToSubworld" value="1"/>
     <property name="SocksNeeded" value="0"/>
@@ -39,6 +40,7 @@
   </object>
   <object id="2" name="SecondWorldDoor" x="138.273" y="69.9545" width="17.75" height="30">
    <properties>
+    <property name="GoToDoor" value="HubDoor"/>
     <property name="GoToMap" value="World2"/>
     <property name="IsToSubworld" value="1"/>
     <property name="SocksNeeded" value="2"/>
@@ -46,6 +48,7 @@
   </object>
   <object id="4" name="GooseBossDoor" x="298.586" y="73.4416" width="17.75" height="30">
    <properties>
+    <property name="GoToDoor" value="Entrance"/>
     <property name="GoToMap" value="World2GooseChamber"/>
     <property name="SocksNeeded" value="0"/>
    </properties>

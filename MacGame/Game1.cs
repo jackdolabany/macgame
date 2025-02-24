@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World2GooseChamber";
+        public const string StartingWorld = "IntroLevel";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -418,6 +418,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
             StorageManager.Initialize(TileTextures, this);
             EffectsManager.Initialize(Content);
+            ConsoleManager.Initialize(Content, Player);
 
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
@@ -676,6 +677,8 @@ namespace MacGame
                     EffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
                 }
+
+                ConsoleManager.Update(elapsed);
             }
             else if (_gameState == GameState.GotSock)
             {
@@ -784,7 +787,7 @@ namespace MacGame
                 CreditsScreen.Update(elapsed);
             }
 
-            if (Game1.IS_DEBUG)
+            if (Game1.IS_DEBUG && !ConsoleManager.ShowConsole)
             {
                 KeyboardState keyState = Keyboard.GetState();
                 if (keyState.IsKeyDown(Keys.I))
@@ -874,8 +877,15 @@ namespace MacGame
                     DrawHud(spriteBatch);
 
                     ConversationManager.Draw(spriteBatch);
-                    
+
                     spriteBatch.End();
+
+                    if (ConsoleManager.ShowConsole)
+                    {
+                        spriteBatch.Begin();
+                        ConsoleManager.Draw(spriteBatch);
+                        spriteBatch.End();
+                    }
 
                     //// Test draw the processed textures
                     //spriteBatch.Begin(SpriteSortMode.Deferred,

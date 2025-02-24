@@ -127,7 +127,7 @@ namespace MacGame.Enemies
         /// </summary>
         protected void GoToWaypoint(float speed, Waypoint wayPoint)
         {
-            GoToLocation(speed, wayPoint.Location);
+            GoToLocation(speed, wayPoint.CenterLocation);
         }
 
         protected void GoToLocation(float speed, Vector2 location)
@@ -150,7 +150,7 @@ namespace MacGame.Enemies
         /// </summary>
         protected bool IsAtWaypoint(Waypoint wayPoint)
         {
-            var vectorToLocation = wayPoint.Location - CollisionCenter;
+            var vectorToLocation = wayPoint.CenterLocation - CollisionCenter;
 
             return vectorToLocation.Length() <= 5f;
         }

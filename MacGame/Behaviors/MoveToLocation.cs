@@ -8,10 +8,24 @@ namespace MacGame.Behaviors
     /// <summary>
     /// A behavior for an NPC to just move to a waypoint. This class assumes the NPC can 
     /// walk, climb, jump, and be idle. And should have animations with those names.
+    /// 
+    /// This is not for NPCs that don't collide with the level.
     /// </summary>
     public class MoveToLocation : Behavior
     {
-        public Vector2 TargetLocation { get; set; }
+        private Vector2 _targetLocation;
+        public Vector2 TargetLocation 
+        { 
+            get
+            {
+                return _targetLocation;
+            }
+            set
+            {
+                _targetLocation = value;
+            }
+        }
+
         public float MoveSpeed { get; set; }
 
         /// <summary>
@@ -67,40 +81,44 @@ namespace MacGame.Behaviors
             var tileInFront = Game1.CurrentMap?.GetMapSquareAtPixel(gameObject.WorldCenter + inFrontOfCenter);
             var tileAtFrontBelow = Game1.CurrentMap?.GetMapSquareAtPixel(gameObject.WorldLocation + inFrontBelow);
 
-            if (TargetLocation.X >= gameObject.CollisionRectangle.Right)
+            if (IsAtLocation(gameObject))
             {
-                gameObject.Velocity = new Vector2(MoveSpeed, gameObject.Velocity.Y);
-
-                if (gameObject.OnGround && animations.CurrentAnimationName != _walkAnimationName)
-                {
-                    animations.Play(_walkAnimationName);
-                }
-
-                if (isJumping)
-                {
-                    gameObject.Velocity = new Vector2(JumpMoveSpeed, gameObject.Velocity.Y);
-                }
-
-                gameObject.Flipped = false;
-            }
-            else if (TargetLocation.X <= gameObject.CollisionRectangle.Left)
-            {
-                gameObject.Velocity = new Vector2(-MoveSpeed, gameObject.Velocity.Y);
-                if (gameObject.OnGround && animations.CurrentAnimationName != _walkAnimationName)
-                {
-                    animations.Play(_walkAnimationName);
-                }
-
-                if (isJumping)
-                {
-                    gameObject.Velocity = new Vector2(-JumpMoveSpeed, gameObject.Velocity.Y);
-                }
-
-                gameObject.Flipped = true;
+                gameObject.Velocity = new Vector2(0, gameObject.Velocity.Y);
             }
             else
             {
-                gameObject.Velocity = new Vector2(0, gameObject.Velocity.Y);
+
+                if (TargetLocation.X >= gameObject.WorldLocation.X)
+                {
+                    gameObject.Velocity = new Vector2(MoveSpeed, gameObject.Velocity.Y);
+
+                    if (gameObject.OnGround && animations.CurrentAnimationName != _walkAnimationName)
+                    {
+                        animations.Play(_walkAnimationName);
+                    }
+
+                    if (isJumping)
+                    {
+                        gameObject.Velocity = new Vector2(JumpMoveSpeed, gameObject.Velocity.Y);
+                    }
+
+                    gameObject.Flipped = false;
+                }
+                else if (TargetLocation.X <= gameObject.WorldLocation.X)
+                {
+                    gameObject.Velocity = new Vector2(-MoveSpeed, gameObject.Velocity.Y);
+                    if (gameObject.OnGround && animations.CurrentAnimationName != _walkAnimationName)
+                    {
+                        animations.Play(_walkAnimationName);
+                    }
+
+                    if (isJumping)
+                    {
+                        gameObject.Velocity = new Vector2(-JumpMoveSpeed, gameObject.Velocity.Y);
+                    }
+
+                    gameObject.Flipped = true;
+                }
             }
 
             var tileAtHead = Game1.CurrentMap?.GetMapSquareAtPixel(gameObject.WorldCenter.X.ToInt(), gameObject.CollisionRectangle.Top);
@@ -183,7 +201,12 @@ namespace MacGame.Behaviors
                 animations.Play(_idleAnimationName);
             }
 
-            _isAtLocation = Vector2.Distance(gameObject.CollisionCenter, TargetLocation) < 10;
+            _isAtLocation = IsAtLocation(gameObject);
+        }
+
+        private bool IsAtLocation(GameObject gameObject)
+        {
+            return Vector2.Distance(gameObject.WorldLocation, TargetLocation) < 10;
         }
 
         public bool IsAtLocation()

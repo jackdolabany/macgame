@@ -175,10 +175,10 @@ namespace MacGame.Enemies
             var pointToStartFrom = this.WorldLocation;
             while (levelWaypoints.Any())
             {
-                var closestWaypoint = levelWaypoints.OrderBy(w => Vector2.Distance(w.Location, pointToStartFrom)).First();
+                var closestWaypoint = levelWaypoints.OrderBy(w => Vector2.Distance(w.CenterLocation, pointToStartFrom)).First();
                 this.waypoints.Add(closestWaypoint);
                 levelWaypoints.Remove(closestWaypoint);
-                pointToStartFrom = closestWaypoint.Location;
+                pointToStartFrom = closestWaypoint.CenterLocation;
             }
             nextWaypoint = waypoints.First();
 

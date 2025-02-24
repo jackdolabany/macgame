@@ -80,10 +80,13 @@ namespace MacGame.Npcs
             {
                 _moveToLocation.Update(this, gameTime, elapsed);
 
-                if (!_didInitiateIntroConveration 
-                    && _moveToLocation.IsAtLocation() 
+                var ottisIsAtLocation = _moveToLocation.IsAtLocation();
+                var macIsAtLocation = Game1.Player.IsAtLocation();
+
+                if (!_didInitiateIntroConveration
+                    && ottisIsAtLocation
                     && this.animations.CurrentAnimationName == "idle"
-                    && Game1.Player.IsAtLocation())
+                    && macIsAtLocation)
                 {
                     _didInitiateIntroConveration = true;
 
@@ -150,7 +153,6 @@ namespace MacGame.Npcs
                             // Ottis
                             ConversationManager.AddMessage("Oh snap, don't want to get sued.", this.ConversationSourceRectangle, ConversationManager.ImagePosition.Right, completeAction: showMoon);
                         });
-
 
                     };
 

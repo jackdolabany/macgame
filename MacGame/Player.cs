@@ -488,41 +488,44 @@ namespace MacGame
                 SoundManager.StopMinecart();
             }
 
-            if (IsInMineCart)
+            if (!ConsoleManager.ShowConsole)
             {
-                HandleMineCartInputs(elapsed);
-            }
-            else if (IsInSub)
-            {
-                HandleSubInputs(elapsed);
-            }
-            else if (IsKnockedDown)
-            {
-                HandleKnockedDownInputs(elapsed);
-            }
-            else if (IsInCannon)
-            {
-                HandleCannonInputs(elapsed);
-            }
-            else if (IsJustShotOutOfCannon)
-            {
-                HandleShotOutOfCannonInputs(elapsed);
-            }
-            else if (IsDisablingWaterBomb)
-            {
-                // Do nothing, a timer will release mac from this state.
-            }
-            else if (IsInWater)
-            {
-                HandleWaterInputs(elapsed);
-            }
-            else if (IsNpcMode)
-            {
-                _moveToLocation.Update(this, gameTime, elapsed);
-            }
-            else
-            {
-                HandleInputs(elapsed);
+                if (IsInMineCart)
+                {
+                    HandleMineCartInputs(elapsed);
+                }
+                else if (IsInSub)
+                {
+                    HandleSubInputs(elapsed);
+                }
+                else if (IsKnockedDown)
+                {
+                    HandleKnockedDownInputs(elapsed);
+                }
+                else if (IsInCannon)
+                {
+                    HandleCannonInputs(elapsed);
+                }
+                else if (IsJustShotOutOfCannon)
+                {
+                    HandleShotOutOfCannonInputs(elapsed);
+                }
+                else if (IsDisablingWaterBomb)
+                {
+                    // Do nothing, a timer will release mac from this state.
+                }
+                else if (IsInWater)
+                {
+                    HandleWaterInputs(elapsed);
+                }
+                else if (IsNpcMode)
+                {
+                    _moveToLocation.Update(this, gameTime, elapsed);
+                }
+                else
+                {
+                    HandleInputs(elapsed);
+                }
             }
 
             if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)

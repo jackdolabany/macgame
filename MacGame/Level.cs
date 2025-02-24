@@ -367,9 +367,9 @@ namespace MacGame
             // Find the one waypoint expected in this map.
             var waypoint = Waypoints.Single();
 
-            Player.GoToLocation(waypoint.Location);
+            Player.GoToLocation(waypoint.BottomCenterLocation);
             var ottis = (Ottie)Npcs.Single(npc => npc is Ottie);
-            ottis.GoToLocation(new Vector2(waypoint.Location.X + 2 * Game1.TileSize, waypoint.Location.Y));
+            ottis.GoToLocation(new Vector2(waypoint.BottomCenterLocation.X + 2 * Game1.TileSize, waypoint.BottomCenterLocation.Y));
         }
 
         Dictionary<Vector2, WaterWave> waterWaves;

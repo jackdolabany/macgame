@@ -185,15 +185,15 @@ namespace MacGame.Npcs
 
             var waypoints = Game1.CurrentLevel.Waypoints.ToList();
 
-            Vector2 pointToStartFrom = this.CollisionCenter;
+            Vector2 pointToStartFrom = this.WorldLocation;
 
             // Order the waypoints by distance from the frog and then distance to each other.
             while (waypoints.Any())
             {
-                var closestWaypoint = waypoints.OrderBy(w => Vector2.Distance(w.Location, pointToStartFrom)).First();
+                var closestWaypoint = waypoints.OrderBy(w => Vector2.Distance(w.BottomCenterLocation, pointToStartFrom)).First();
                 RacePath.Waypoints.Add(closestWaypoint);
                 waypoints.Remove(closestWaypoint);
-                pointToStartFrom = closestWaypoint.Location;
+                pointToStartFrom = closestWaypoint.BottomCenterLocation;
             }
 
             if (_raceVictoryZone == Rectangle.Empty)
@@ -229,14 +229,14 @@ namespace MacGame.Npcs
                     var nextWaypoint = RacePath.Waypoints.First();
 
                     // As you hit waypoints look for the next one. Until the last one, we'll go to that until we stop moving.
-                    if (Vector2.Distance(this.WorldCenter, nextWaypoint.Location) <= Game1.TileSize && RacePath.Waypoints.Count > 1)
+                    if (Vector2.Distance(this.WorldCenter, nextWaypoint.BottomCenterLocation) <= Game1.TileSize && RacePath.Waypoints.Count > 1)
                     {
                         // Remove the waypoints as we hit them.
                         RacePath.Waypoints.Remove(nextWaypoint);
                         nextWaypoint = RacePath.Waypoints.First();
                     }
 
-                    _moveToLocation.TargetLocation = nextWaypoint.Location;
+                    _moveToLocation.TargetLocation = nextWaypoint.BottomCenterLocation;
                     _moveToLocation.Update(this, gameTime, elapsed);
                 }
 
@@ -561,7 +561,7 @@ namespace MacGame.Npcs
                 // Draw the waypoints for debugging
                 foreach (var waypoint in Game1.CurrentLevel.Waypoints)
                 {
-                    spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)waypoint.Location.X - 2, (int)waypoint.Location.Y - 2, 4, 4), Game1.WhiteSourceRect, Color.Red);
+                    spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)waypoint.BottomCenterLocation.X - 2, (int)waypoint.BottomCenterLocation.Y - 2, 4, 4), Game1.WhiteSourceRect, Color.Red);
                 }
             }
 

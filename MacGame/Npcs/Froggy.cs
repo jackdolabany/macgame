@@ -80,7 +80,7 @@ namespace MacGame.Npcs
 
             Enabled = true;
 
-            _moveToLocation = new MoveToLocation(Vector2.Zero, slowSpeed, fastSpeed, "idle", "walk", "jump", "climb");
+            _moveToLocation = new MoveToLocation(this, slowSpeed, fastSpeed, "idle", "walk", "jump", "climb");
 
             _startLocation = this.WorldLocation;
             _startCollisionRect = this.CollisionRectangle;
@@ -178,6 +178,8 @@ namespace MacGame.Npcs
             }
         }
 
+        public override Vector2 Gravity => base.Gravity * 0.5f;
+
         public void InitializeRacePath()
         {
 
@@ -199,7 +201,7 @@ namespace MacGame.Npcs
             if (_raceVictoryZone == Rectangle.Empty)
             {
                 // You need to add a rectangle GameObject to the map with the
-                // name "RaceVictoryZone". Forggy's final waypoint should be inside it.
+                // name "RaceVictoryZone". Froggy's final waypoint should be inside it.
                 throw new Exception("Race victory zone wasn't set.");
             }
         }
@@ -229,7 +231,7 @@ namespace MacGame.Npcs
                     var nextWaypoint = RacePath.Waypoints.First();
 
                     // As you hit waypoints look for the next one. Until the last one, we'll go to that until we stop moving.
-                    if (Vector2.Distance(this.WorldCenter, nextWaypoint.BottomCenterLocation) <= Game1.TileSize && RacePath.Waypoints.Count > 1)
+                    if (MoveToLocation.IsAtLocation(this.WorldLocation, nextWaypoint.BottomCenterLocation) && RacePath.Waypoints.Count > 1)
                     {
                         // Remove the waypoints as we hit them.
                         RacePath.Waypoints.Remove(nextWaypoint);

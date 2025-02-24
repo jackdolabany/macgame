@@ -89,8 +89,6 @@ namespace MacGame
         private bool isInJumpFromGround = false;
         float jumpButtonHeldDownTimer = 0f;
         const float maxJumpButtonHeldDownTime = 0.5f;
-        public Vector2 NormalGravity;
-        public Vector2 JumpGravity;
 
         public bool IsInWater = false;
         public bool IsJumpingOutOfWater = false;
@@ -398,7 +396,7 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
 
-            _moveToLocation = new MoveToLocation(Vector2.Zero, 150, 150, "idle", "run", "jump", "climbLadder");
+            _moveToLocation = new MoveToLocation(this, 150, 150, "idle", "run", "jump", "climbLadder");
         }
 
         private void SmoothMoveCameraToTarget(int initialVelocity = 0)

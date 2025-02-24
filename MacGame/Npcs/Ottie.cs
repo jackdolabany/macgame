@@ -68,7 +68,7 @@ namespace MacGame.Npcs
 
             animations.Play("idle");
 
-            _moveToLocation = new MoveToLocation(Vector2.Zero, 100, 100, "idle", "walk", "walk", "walk");
+            _moveToLocation = new MoveToLocation(this, 100, 100, "idle", "walk", "walk", "walk");
 
         }
 

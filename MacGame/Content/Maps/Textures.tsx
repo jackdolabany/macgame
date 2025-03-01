@@ -146,6 +146,11 @@
    <property name="LoadClass" value="Platform.StaticPlatform"/>
   </properties>
  </tile>
+ <tile id="65">
+  <properties>
+   <property name="LoadClass" value="Item.HeartSpinner"/>
+  </properties>
+ </tile>
  <tile id="68">
   <properties>
    <property name="Ladder" value="1"/>

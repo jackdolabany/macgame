@@ -34,6 +34,11 @@ namespace MacGame.Enemies
         private Sock Sock;
         private bool _isInitialized = false;
 
+        /// <summary>
+        /// Don't move until you are seen.
+        /// </summary>
+        private bool _wasSeen = false;
+
         public enum SizeTarget
         {
             Small,
@@ -197,6 +202,17 @@ namespace MacGame.Enemies
                 Initialize();
             }
 
+            // Don't do anything until you are seen.
+            if (!_wasSeen && camera.IsPointVisible(this.CollisionCenter))
+            {
+                _wasSeen = true;
+            }
+
+            if (!_wasSeen)
+            {
+                return;
+            }
+
             if (bigFishAnimationDisplay.Scale < 0.3f)
             {
                 smallFishAnimationDisplay.DrawDepth = frontDrawDepth;
@@ -227,11 +243,14 @@ namespace MacGame.Enemies
 
                 if (sizeTarget == SizeTarget.Small)
                 {
-                    var growGoal = _hasGrown ? 5f : 10f;
-                    changeSizeTimer += elapsed;
-                    if (changeSizeTimer > growGoal)
+                    if (Health < MaxHealth) // If they've been hit, they'll grow after a while.
                     {
-                        Grow();
+                        var growGoal = _hasGrown ? 5f : 10f;
+                        changeSizeTimer += elapsed;
+                        if (changeSizeTimer > growGoal)
+                        {
+                            Grow();
+                        }
                     }
                 }
 
@@ -338,6 +357,9 @@ namespace MacGame.Enemies
                     this.Kill();
                     state = FishState.Dead;
                     Sock.FadeIn();
+
+                    // break these bricks so that Mac can leave.
+                    Game1.CurrentLevel.BreakBricks("Puff");
                 }
             }
 
@@ -345,8 +367,6 @@ namespace MacGame.Enemies
             {
                 // Take them to wherever you need to take them. Once we figure out where that is.
             }
-
-
 
             //bigFishAnimationDisplay.Scale = 0.1f;
             //bigFishAnimationDisplay.DrawDepth = frontDrawDepth;
@@ -357,6 +377,12 @@ namespace MacGame.Enemies
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
             if (IsTempInvincibleFromBeingHit) return;
+
+            if (Health == MaxHealth)
+            {
+                // Grow on his first hit
+                Grow();
+            }
 
             Health -= damage;
 

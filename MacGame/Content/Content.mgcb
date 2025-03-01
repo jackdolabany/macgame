@@ -145,6 +145,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World1.tmx
 
+#begin Maps/World1DaisyHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1DaisyHouse.tmx
+
 #begin Maps/World1FirstRedHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -220,6 +225,21 @@
 /processor:PassThroughProcessor
 /build:Maps/World2MineCart.tmx
 
+#begin Maps/World2MollyHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2MollyHouse.tmx
+
+#begin Maps/World2MouseHouse.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2MouseHouse.tmx
+
+#begin Maps/World2MouseHouseBackRoom.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2MouseHouseBackRoom.tmx
+
 #begin Maps/World2RedHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -230,15 +250,15 @@
 /processor:PassThroughProcessor
 /build:Maps/World2SmallPurpleHouse.tmx
 
+#begin Maps/World2TopHouse2.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World2TopHouse2.tmx
+
 #begin Maps/World2YellowHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/World2YellowHouse.tmx
-
-#begin Maps/World2YellowHouseBackRoom.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/World2YellowHouseBackRoom.tmx
 
 #begin Music/BossFight.mp3
 /importer:Mp3Importer

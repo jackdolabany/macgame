@@ -441,12 +441,7 @@
  </tile>
  <tile id="152">
   <properties>
-   <property name="BlockPlayer" value="SlopeUp"/>
-  </properties>
- </tile>
- <tile id="153">
-  <properties>
-   <property name="BlockPlayer" value="SlopeDown"/>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="155">

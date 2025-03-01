@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,9 +13,25 @@ namespace MacGame
 
         public bool Enabled = true;
 
+        /// <summary>
+        /// You can check this to see if they executed combos of moves
+        /// </summary>
+        public Queue<InputAction> PreviousUniqueActions = new Queue<InputAction>();
+
         public virtual void ReadInputs()
         {
             if (!Enabled) return;
+
+            // Enqueue the current action just before we mark it as the previous action.
+            if (CurrentAction.HasAction && !CurrentAction.Equals(PreviousAction))
+            {
+                PreviousUniqueActions.Enqueue(CurrentAction);
+
+                while (PreviousUniqueActions.Count > 20)
+                {
+                    PreviousUniqueActions.Dequeue();
+                }
+            }
 
             PreviousAction = CurrentAction;
             CurrentAction = new InputAction();
@@ -90,8 +107,6 @@ namespace MacGame
 
     }
 
-
-
     public struct InputAction
     {
         public bool up;
@@ -103,5 +118,26 @@ namespace MacGame
         public bool pause;
         public bool acceptMenu;
         public bool declineMenu;
+
+        public bool HasAction
+        {
+            get
+            {
+                return up || down || left || right || jump || action || pause || acceptMenu || declineMenu;
+            }
+        }
+
+        public bool Equals(InputAction inputAction)
+        {
+            return up == inputAction.up &&
+                down == inputAction.down &&
+                left == inputAction.left &&
+                right == inputAction.right &&
+                jump == inputAction.jump &&
+                action == inputAction.action &&
+                pause == inputAction.pause &&
+                acceptMenu == inputAction.acceptMenu &&
+                declineMenu == inputAction.declineMenu;
+        }
     }
 }

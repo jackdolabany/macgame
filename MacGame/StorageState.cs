@@ -28,6 +28,9 @@ namespace MacGame
 
         public bool HasBeatenIntroLevel { get; set; } = false;
 
+        public bool HasDancedForDaisy { get; set; } = false;
+
+
         /// <param name="saveSlot">1 through 3</param>
         public StorageState(int saveSlot)
         {
@@ -64,6 +67,7 @@ namespace MacGame
             clone.Levels = this.Levels.ToDictionary(kvp => kvp.Key, kvp => (LevelStorageState)kvp.Value.Clone());
             clone.HasSeenIntroText = this.HasSeenIntroText;
             clone.HasBeatenIntroLevel = this.HasBeatenIntroLevel;
+            clone.HasDancedForDaisy = this.HasDancedForDaisy;
             return clone;
         }
 

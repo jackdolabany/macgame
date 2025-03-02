@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework;
@@ -16,14 +17,16 @@ namespace MacGame
         public static bool ShowConsole = false;
         static Player player;
         static ContentManager contentManager;
+        static Game1 game;
 
-        public static void Initialize(ContentManager contentManager, Player player)
+        public static void Initialize(ContentManager contentManager, Player player, Game1 currentGame)
         {
             ConsoleManager.contentManager = contentManager;
             ConsoleManager.player = player;
             Message.Capacity = 200;
             Message.AppendLine("Welcome to the Console. If you know the secret keys you can type them here and do some magical things. Oh boy!");
             Message.Append(" >> ");
+            game = currentGame;
         }
 
         public static void Update(float elapsed)
@@ -141,16 +144,19 @@ namespace MacGame
             {
                 ShowConsole = false;
             }
-            if (input.StartsWith("level "))
+            if (input.StartsWith("goto "))
             {
-                throw new NotImplementedException();
-                //string levelNumber = input.Substring("level ".Length);
-                //int level = 0;
-                //if (int.TryParse(levelNumber, out level))
-                //{
-                //    LevelManager.LoadLevel(level);
-                //}
-                //return "Level " + level + " Loaded Bro";
+                
+                string mapName = input.Substring("goto ".Length);
+
+                // check if it exists
+                if (!File.Exists($@"Content\Maps\{mapName}.xnb"))
+                {
+                    return $"Map {mapName} not found.";
+                }
+
+                game.GoToLevel(mapName);
+                return "Mape " + mapName + " Loaded Bro";
             }
             if (input == "fuckyou" || input == "fuck you")
             {
@@ -213,8 +219,18 @@ namespace MacGame
                         }
                     }
                 }
-                return "Done! You have every sock.";
-
+            }
+            if (input.StartsWith("breakbricks"))
+            {
+                foreach (var gameObject in Game1.CurrentLevel.GameObjects)
+                {
+                    if (gameObject is BreakBrick)
+                    {
+                        var bb = (BreakBrick)gameObject;
+                        bb.Break();
+                    }
+                }
+                return "broked";
             }
             return "Message Not Recognized";
         }

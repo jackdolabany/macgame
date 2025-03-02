@@ -17,6 +17,10 @@ namespace MacGame
 
     public static class Helpers
     {
+        public static bool EqualsIgnoreCase(this string firstString, string secondString)
+        {
+            return firstString.Equals(secondString, StringComparison.InvariantCultureIgnoreCase);
+        }
 
         /// <summary>
         /// Gets a rectangle for tile sprites. The tile sprite processor adds a 1px border around

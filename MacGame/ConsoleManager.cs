@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Reflection.Emit;
 using System.Text;
 using System.Xml.Linq;
+using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,14 +19,16 @@ namespace MacGame
         public static bool ShowConsole = false;
         static Player player;
         static ContentManager contentManager;
+        static Game1 game;
 
-        public static void Initialize(ContentManager contentManager, Player player)
+        public static void Initialize(ContentManager contentManager, Player player, Game1 currentGame)
         {
             ConsoleManager.contentManager = contentManager;
             ConsoleManager.player = player;
             Message.Capacity = 200;
             Message.AppendLine("Welcome to the Console. If you know the secret keys you can type them here and do some magical things. Oh boy!");
             Message.Append(" >> ");
+            game = currentGame;
         }
 
         public static void Update(float elapsed)
@@ -127,6 +132,60 @@ namespace MacGame
                 //ShowConsole = false;
                 //return "You are a golden god";
             }
+            if (input.StartsWith("get"))
+            {
+                var thingToGet = input.Substring("get ".Length).ToLowerInvariant();
+                switch (thingToGet)
+                {
+                    case "keys":
+                        var redKey = new RedKey(contentManager, 0, 0, player, Game1.Camera);
+                        redKey.WhenCollected(player);
+                        var greenKey = new GreenKey(contentManager, 0, 0, player, Game1.Camera);
+                        greenKey.WhenCollected(player);
+                        var blueKey = new BlueKey(contentManager, 0, 0, player, Game1.Camera);
+                        blueKey.WhenCollected(player);
+                        return "You got keys!";
+                    case "redkey":
+                    case "red key":
+                        var rk = new RedKey(contentManager, 0, 0, player, Game1.Camera);
+                        rk.WhenCollected(player);
+                        return "you got the red key";
+                    case "greenkey":
+                    case "green key":
+                        var gk = new GreenKey(contentManager, 0, 0, player, Game1.Camera);
+                        gk.WhenCollected(player);
+                        return "you got the green key";
+                    case "bluekey":
+                    case "blue key":
+                        var bk = new BlueKey(contentManager, 0, 0, player, Game1.Camera);
+                        bk.WhenCollected(player);
+                        return "you got the blue key";
+                    default:
+                        return "I don't know what that is.";
+                }
+            }
+            if (input.StartsWith("water"))
+            {
+                var height = input.Substring("water ".Length).ToLowerInvariant();
+                switch(height)
+                {
+                    case "1":
+                    case "low":
+                        Game1.CurrentLevel.SetWaterHeight(WaterHeight.Low);
+                        return "Water is low";
+                    case "2":
+                    case "med":
+                    case "medium":
+                        Game1.CurrentLevel.SetWaterHeight(WaterHeight.Medium);
+                        return "Water is medium";
+                    case "3":
+                    case "high":
+                        Game1.CurrentLevel.SetWaterHeight(WaterHeight.High);
+                        return "Water is high";
+                    default:
+                        return "I don't know what that is.";
+                }
+            }
             if (input == "fullhealth")
             {
                 player.Health = Player.MaxHealth;
@@ -141,16 +200,19 @@ namespace MacGame
             {
                 ShowConsole = false;
             }
-            if (input.StartsWith("level "))
+            if (input.StartsWith("goto "))
             {
-                throw new NotImplementedException();
-                //string levelNumber = input.Substring("level ".Length);
-                //int level = 0;
-                //if (int.TryParse(levelNumber, out level))
-                //{
-                //    LevelManager.LoadLevel(level);
-                //}
-                //return "Level " + level + " Loaded Bro";
+                
+                string mapName = input.Substring("goto ".Length);
+
+                // check if it exists
+                if (!File.Exists($@"Content\Maps\{mapName}.xnb"))
+                {
+                    return $"Map {mapName} not found.";
+                }
+
+                game.GoToLevel(mapName);
+                return "Mape " + mapName + " Loaded Bro";
             }
             if (input == "fuckyou" || input == "fuck you")
             {
@@ -213,8 +275,18 @@ namespace MacGame
                         }
                     }
                 }
-                return "Done! You have every sock.";
-
+            }
+            if (input.StartsWith("breakbricks"))
+            {
+                foreach (var gameObject in Game1.CurrentLevel.GameObjects)
+                {
+                    if (gameObject is BreakBrick)
+                    {
+                        var bb = (BreakBrick)gameObject;
+                        bb.Break();
+                    }
+                }
+                return "broked";
             }
             return "Message Not Recognized";
         }

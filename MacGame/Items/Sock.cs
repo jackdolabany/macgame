@@ -12,6 +12,10 @@ namespace MacGame.Items
     {
         public string Name { get; set; }
 
+        /// <summary>
+        /// Whether or not the sock was collected when the map was loaded. This is used to show a transparent sock.
+        /// Not accurate if you just collected it on the same map. Use IsCollected for that.
+        /// </summary>
         public bool AlreadyCollected { get; set; } = false;
         
         const float fadeInTimerGoal = 3f;
@@ -61,6 +65,17 @@ namespace MacGame.Items
             }
         }
 
+        /// <summary>
+        /// True if you already collected this sock on the current map.
+        /// </summary>
+        public bool IsCollected
+        {
+            get
+            {
+                return Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].CollectedSocks.Contains(Name);
+            }
+        }
+
         public override void PlayCollectedSound()
         {
             // Do nothing.
@@ -96,14 +111,17 @@ namespace MacGame.Items
 
             if (AlreadyCollected)
             {
-                // They're enabled but not collectible if they are already collected. They're kind of of in a ghos tmode.
+                // They're enabled but not collectible if they are already collected. They're kind of of in a ghost mode.
                 Enabled = true;
             }
 
             if (fadeInTimer < fadeInTimerGoal)
             {
                 fadeInTimer += elapsed;
-                this.DisplayComponent.TintColor = Color * (fadeInTimer / fadeInTimerGoal);
+                // showly fade in
+                this.DisplayComponent.TintColor = Color.Lerp(Color.Transparent, Color, fadeInTimer / fadeInTimerGoal);
+
+
             }
             else
             {
@@ -117,6 +135,7 @@ namespace MacGame.Items
         {
             Enabled = true;
             fadeInTimer = 0f;
+            this.DisplayComponent.TintColor = Color.Transparent;
             SoundManager.PlaySound("SockReveal");
             blockFromCollectingTime = fadeInTimerGoal + 0.5f;
         }

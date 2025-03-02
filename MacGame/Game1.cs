@@ -418,7 +418,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
             StorageManager.Initialize(TileTextures, this);
             EffectsManager.Initialize(Content);
-            ConsoleManager.Initialize(Content, Player);
+            ConsoleManager.Initialize(Content, Player, this);
 
             pauseMenu = new PauseMenu(this);
             mainMenu = new MainMenu(this);
@@ -523,7 +523,7 @@ namespace MacGame
             }
         }
 
-        public void StartNewGame()
+        private void StartNewGame()
         {
             MenuManager.ClearMenus();
             ConversationManager.Clear();
@@ -543,6 +543,17 @@ namespace MacGame
             ConversationManager.Clear();
             TransitionToStateInstantFromBlack(GameState.Playing);
             CurrentLevel = sceneManager.LoadLevel(CurrentLevel.Name, Content, Player, Camera);
+            Camera.Map = CurrentLevel.Map;
+        }
+
+        public void GoToLevel(string mapName)
+        {
+            Player.ResetStateForLevelTransition(true);
+            Player.CurrentItem = null;
+            MenuManager.ClearMenus();
+            ConversationManager.Clear();
+            TransitionToStateInstantFromBlack(GameState.Playing);
+            CurrentLevel = sceneManager.LoadLevel(mapName, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
         }
 

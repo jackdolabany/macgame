@@ -23,13 +23,8 @@
  <objectgroup id="4" name="Objects">
   <object id="1" name="Door" x="28.6364" y="36.4545" width="16.7273" height="22.6364">
    <properties>
-    <property name="GoToDoor" value="World1DaisyHouseDoor"/>
+    <property name="GoToDoor" value="DaisyHouseDoor"/>
     <property name="GoToMap" value="World1"/>
-   </properties>
-  </object>
-  <object id="2" x="51.9235" y="44.371" width="16.2379" height="14.161">
-   <properties>
-    <property name="Convo" value="Me:I absolutely hate molly!"/>
    </properties>
   </object>
  </objectgroup>

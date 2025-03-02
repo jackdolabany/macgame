@@ -46,6 +46,7 @@ namespace MacGame
                     new SockInfo { Name = "FlappySock", Hint = "Deep in a cave nearby is a magical door to magical land where you can fly like a fish." },
                     new SockInfo { Name = "RaceSock", Hint = "If you're having trouble beating the frog in a race, just cheat. He won't notice." },
                     new SockInfo { Name = "BombSock", Hint = "Take a leap of faith to the East. But danger awaits!" },
+                    new SockInfo { Name = "MollySock", Hint = "I heard Molly the cat found one of the socks. I'm not sure what you'd have to do to get it from her." },
                 }
             },{
                 3,

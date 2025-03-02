@@ -191,7 +191,7 @@
     <property name="Convo" value="Me:This is the Tree Top Village. If you don't like it you can leaf."/>
    </properties>
   </object>
-  <object id="39" name="ChickenText" x="1028.75" y="763.88" width="15.875" height="15.875">
+  <object id="39" name="SnakeText" x="1028.75" y="763.88" width="15.875" height="15.875">
    <properties>
     <property name="Convo" value="Me:The guy in the red house can give you tips"/>
    </properties>

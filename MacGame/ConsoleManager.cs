@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Reflection.Emit;
 using System.Text;
 using System.Xml.Linq;
+using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -129,6 +131,60 @@ namespace MacGame
                 //}
                 //ShowConsole = false;
                 //return "You are a golden god";
+            }
+            if (input.StartsWith("get"))
+            {
+                var thingToGet = input.Substring("get ".Length).ToLowerInvariant();
+                switch (thingToGet)
+                {
+                    case "keys":
+                        var redKey = new RedKey(contentManager, 0, 0, player, Game1.Camera);
+                        redKey.WhenCollected(player);
+                        var greenKey = new GreenKey(contentManager, 0, 0, player, Game1.Camera);
+                        greenKey.WhenCollected(player);
+                        var blueKey = new BlueKey(contentManager, 0, 0, player, Game1.Camera);
+                        blueKey.WhenCollected(player);
+                        return "You got keys!";
+                    case "redkey":
+                    case "red key":
+                        var rk = new RedKey(contentManager, 0, 0, player, Game1.Camera);
+                        rk.WhenCollected(player);
+                        return "you got the red key";
+                    case "greenkey":
+                    case "green key":
+                        var gk = new GreenKey(contentManager, 0, 0, player, Game1.Camera);
+                        gk.WhenCollected(player);
+                        return "you got the green key";
+                    case "bluekey":
+                    case "blue key":
+                        var bk = new BlueKey(contentManager, 0, 0, player, Game1.Camera);
+                        bk.WhenCollected(player);
+                        return "you got the blue key";
+                    default:
+                        return "I don't know what that is.";
+                }
+            }
+            if (input.StartsWith("water"))
+            {
+                var height = input.Substring("water ".Length).ToLowerInvariant();
+                switch(height)
+                {
+                    case "1":
+                    case "low":
+                        Game1.CurrentLevel.SetWaterHeight(WaterHeight.Low);
+                        return "Water is low";
+                    case "2":
+                    case "med":
+                    case "medium":
+                        Game1.CurrentLevel.SetWaterHeight(WaterHeight.Medium);
+                        return "Water is medium";
+                    case "3":
+                    case "high":
+                        Game1.CurrentLevel.SetWaterHeight(WaterHeight.High);
+                        return "Water is high";
+                    default:
+                        return "I don't know what that is.";
+                }
             }
             if (input == "fullhealth")
             {

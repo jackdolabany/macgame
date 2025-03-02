@@ -350,7 +350,7 @@ namespace MacGame
             {
                 Game1.StorageState.HasSeenIntroText = true;
                 ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
-                ConversationManager.AddMessage("Oh no! My human forgot me in the yard. I'll have to find my way home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
+                ConversationManager.AddMessage("Crikey! My human forgot me in the yard. I'll have to find my way home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
             }
         }
 

@@ -284,7 +284,8 @@ namespace MacGame
         /// </summary>
         protected void SetCenteredCollisionRectangle(int width, int height)
         {
-            this.CollisionRectangle = new Rectangle(-width * Game1.TileScale / 2, -height * Game1.TileScale, width * Game1.TileScale, height * Game1.TileScale);
+            var rect = new Rectangle(-width * Game1.TileScale / 2, -height * Game1.TileScale, width * Game1.TileScale, height * Game1.TileScale);
+            this.CollisionRectangle = rect;
         }
 
         public bool HasCollisionRectangle

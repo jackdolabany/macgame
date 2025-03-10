@@ -7,10 +7,10 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class FlameCannon : Enemy
+    public abstract class FlameCannonBase : Enemy
     {
 
-        private AnimationDisplay _animations;
+        protected AnimationDisplay _animations;
 
         float idleTimer = 0f;
         float flameTimer = 0f;
@@ -18,16 +18,23 @@ namespace MacGame.Enemies
         // True when the flame is coming out.
         bool isOn = false;
 
-        Rectangle _collisionRectangle;
-        Rectangle _smallCollisionRectangle;
+        bool soundPlayed = false;
 
-        public FlameCannon(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        protected abstract Rectangle GetPotImageSourceRectangle();
+        protected abstract Rectangle _smallCollisionRectangle { get; }
+        protected abstract Rectangle _collisionRectangle { get; }
+
+        protected float Rotation { get; set; }
+
+        
+
+        public FlameCannonBase(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             var textures2 = content.Load<Texture2D>(@"Textures\Textures2");
             var bigTextures = content.Load<Texture2D>(@"Textures\BigTextures");
 
-            var potImage = new StaticImageDisplay(textures2, Helpers.GetTileRect(1, 0));
+            var potImage = new StaticImageDisplay(textures2, GetPotImageSourceRectangle());
             
             _animations = new AnimationDisplay();
             var start = new AnimationStrip(bigTextures, Helpers.GetBigTileRect(11, 0), 3, "start");
@@ -65,9 +72,6 @@ namespace MacGame.Enemies
 
             _animations.Offset += new Vector2(0, -Game1.TileSize);
 
-            _collisionRectangle = new Rectangle(-12, -82, 24, 56);
-            _smallCollisionRectangle = new Rectangle(-12, -42, 24, 16);
-
             CollisionRectangle = Rectangle.Empty;
         }
 
@@ -103,6 +107,13 @@ namespace MacGame.Enemies
                     else
                     {
                         CollisionRectangle = _collisionRectangle;
+
+                        if (!soundPlayed && Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+                        {
+                            SoundManager.PlaySlowFlame();
+                            soundPlayed = true;
+                        }
+
                     }
 
                     if (_animations.CurrentAnimation.FinishedPlaying)
@@ -134,6 +145,7 @@ namespace MacGame.Enemies
                         flameTimer = 0f;
                         isOn = false;
                         CollisionRectangle = Rectangle.Empty;
+                        soundPlayed = false;
                     }
                 }
 
@@ -145,5 +157,72 @@ namespace MacGame.Enemies
         {
             base.Draw(spriteBatch);
         }
+    }
+
+    public class FlameCannonUp : FlameCannonBase
+    {
+        public FlameCannonUp(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+            : base(content, cellX, cellY, player, camera)
+        {
+        }
+
+        protected override Rectangle GetPotImageSourceRectangle()
+        {
+            return Helpers.GetTileRect(1, 0);
+        }
+        protected override Rectangle _collisionRectangle => new Rectangle(-12, -82, 24, 56);
+        protected override Rectangle _smallCollisionRectangle => new Rectangle(-12, -42, 24, 16);
+    }
+
+    public class FlameCannonDown : FlameCannonBase
+    {
+        public FlameCannonDown(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+            : base(content, cellX, cellY, player, camera)
+        {
+            _animations.Rotation = MathHelper.Pi;
+            _animations.Offset = new Vector2(-4, 64);
+        }
+
+        protected override Rectangle GetPotImageSourceRectangle()
+        {
+            return Helpers.GetTileRect(2, 0);
+        }
+        protected override Rectangle _collisionRectangle => new Rectangle(-12, 0, 24, 56);
+        protected override Rectangle _smallCollisionRectangle => new Rectangle(-12, 0, 24, 16);
+    }
+
+    public class FlameCannonLeft : FlameCannonBase
+    {
+        public FlameCannonLeft(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+            : base(content, cellX, cellY, player, camera)
+        {
+            _animations.Rotation = MathHelper.Pi + MathHelper.PiOver2;
+            _animations.Offset = new Vector2(-48, 16);
+        }
+
+        protected override Rectangle GetPotImageSourceRectangle()
+        {
+            return Helpers.GetTileRect(1, 1);
+        }
+
+        protected override Rectangle _collisionRectangle => new Rectangle(-70, -26, 56, 24);
+        protected override Rectangle _smallCollisionRectangle => new Rectangle(-32, -26, 16, 24);
+    }
+
+    public class FlameCannonRight : FlameCannonBase
+    {
+        public FlameCannonRight(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+            : base(content, cellX, cellY, player, camera)
+        {
+            _animations.Rotation = MathHelper.PiOver2;
+            _animations.Offset = new Vector2(48, 16);
+        }
+
+        protected override Rectangle GetPotImageSourceRectangle()
+        {
+            return Helpers.GetTileRect(2, 1);
+        }
+        protected override Rectangle _collisionRectangle => new Rectangle(16, -28, 56, 24);
+        protected override Rectangle _smallCollisionRectangle => new Rectangle(16, -28, 16, 24);
     }
 }

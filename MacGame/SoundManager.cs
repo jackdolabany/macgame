@@ -10,6 +10,7 @@ namespace MacGame
     public static class SoundManager
     {
         private static SoundEffectInstance seiMinecart;
+        private static SoundEffectInstance seiSlowFlame;
 
         public static Dictionary<string, SoundEffect> Sounds { get; set; }
         public static Dictionary<string, Song> Songs { get; set; }
@@ -183,9 +184,11 @@ namespace MacGame
             LoadSound("Crackle");
             LoadSound("Fall");
             LoadSound("Electric");
+            LoadSound("SlowFlame");
 
 
             seiMinecart = Sounds["Minecart"].CreateInstance();
+            seiSlowFlame = Sounds["SlowFlame"].CreateInstance();
 
             // Music.
             LoadSong("Stage1");
@@ -221,6 +224,17 @@ namespace MacGame
         public static void PlayMinecartJump()
         {
             SoundManager.PlaySound("Jump");
+        }
+
+        /// <summary>
+        /// Plays this sound effect, but at most one time.
+        /// </summary>
+        public static void PlaySlowFlame()
+        {
+            if (seiSlowFlame.State != SoundState.Playing)
+            {
+                seiSlowFlame.Play();
+            }
         }
 
         /// <summary>

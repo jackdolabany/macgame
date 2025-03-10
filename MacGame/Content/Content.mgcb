@@ -566,6 +566,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/Shrink.wav
 
+#begin SoundEffects/SlowFlame.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/SlowFlame.wav
+
 #begin SoundEffects/SockCollected.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

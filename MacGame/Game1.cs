@@ -448,7 +448,6 @@ namespace MacGame
             gotASockMenu = new AlertBoxMenu(this, "You got a Sock!", (a, b) =>
             {
                 MenuManager.ClearMenus();
-
                 StorageManager.TrySaveGame();
                 TransitionToState(GameState.Playing, TransitionType.Instant);
             });

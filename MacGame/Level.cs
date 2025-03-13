@@ -648,6 +648,7 @@ namespace MacGame
                 }
             }
             SoundManager.PlaySound("Explosion");
+            StorageManager.TrySaveGame();
         }
 
         public int GetTileHightForWaterHeight(WaterHeight height)

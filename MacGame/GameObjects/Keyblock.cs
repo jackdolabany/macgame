@@ -70,6 +70,7 @@ namespace MacGame
                     SoundManager.PlaySound("Unlock");
 
                     Game1.StorageState.AddUnblockedMapSquare(Game1.CurrentLevel.LevelNumber, Game1.CurrentLevel.Name, _cellX, _cellY);
+                    StorageManager.TrySaveGame();
                 }
             }
         }

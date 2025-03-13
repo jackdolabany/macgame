@@ -100,6 +100,7 @@ namespace MacGame.Npcs
                         // You did the dance!
                         SoundManager.PlaySound("Reveal");
                         Game1.StorageState.HasDancedForDaisy = true;
+                        StorageManager.TrySaveGame();
                     }
                 }
             }

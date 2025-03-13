@@ -161,8 +161,16 @@ namespace MacGame
                                 level.Enemies.Add(enemy);
                                 layerDepthObjects[z].Add(enemy);
 
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize , y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
+                                    {
+                                        enemy.ConsumeProperties(obj.Properties);
+                                    }
+                                }
+
                                 // Enemies might add extra enemies for projectiles and such.
-                                foreach(var e in enemy.ExtraEnemiesToAddAfterConstructor)
+                                foreach (var e in enemy.ExtraEnemiesToAddAfterConstructor)
                                 {
                                     level.Enemies.Add(e);
                                     layerDepthObjects[z].Add(e);

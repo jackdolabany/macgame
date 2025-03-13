@@ -4,7 +4,7 @@
  <tile id="1">
   <properties>
    <property name="BlockPlayer" value="1"/>
-   <property name="LoadClass" value="Enemy.FlameCannon"/>
+   <property name="LoadClass" value="Enemy.FlameCannonUp"/>
   </properties>
  </tile>
  <tile id="2">
@@ -16,7 +16,7 @@
  <tile id="17">
   <properties>
    <property name="BlockPlayer" value="1"/>
-   <property name="LoadClass" value="Enemy.FlameCannonRight"/>
+   <property name="LoadClass" value="Enemy.FlameCannonLeft"/>
   </properties>
  </tile>
  <tile id="18">

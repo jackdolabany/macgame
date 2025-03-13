@@ -289,5 +289,13 @@ namespace MacGame.Enemies
         {
             ExtraEnemiesToAddAfterConstructor.Add(enemy);
         }
+
+        /// <summary>
+        /// Override this to handle custom properties from object modifiers in the Tiled maps.
+        /// </summary>
+        public virtual void ConsumeProperties(Dictionary<string, string> properties)
+        {
+            // Do nothing by default.
+        }
     }
 }

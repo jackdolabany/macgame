@@ -189,6 +189,7 @@ namespace MacGame
 
             seiMinecart = Sounds["Minecart"].CreateInstance();
             seiSlowFlame = Sounds["SlowFlame"].CreateInstance();
+            seiSlowFlame.Volume = 0.5f;
 
             // Music.
             LoadSong("Stage1");

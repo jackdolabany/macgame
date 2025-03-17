@@ -172,15 +172,18 @@ namespace MacGame
                     case "1":
                     case "low":
                         Game1.CurrentLevel.SetWaterHeight(WaterHeight.Low);
+                        Hide();
                         return "Water is low";
                     case "2":
                     case "med":
                     case "medium":
                         Game1.CurrentLevel.SetWaterHeight(WaterHeight.Medium);
+                        Hide();
                         return "Water is medium";
                     case "3":
                     case "high":
                         Game1.CurrentLevel.SetWaterHeight(WaterHeight.High);
+                        Hide();
                         return "Water is high";
                     default:
                         return "I don't know what that is.";
@@ -289,6 +292,11 @@ namespace MacGame
                 return "broked";
             }
             return "Message Not Recognized";
+        }
+
+        public static void Hide()
+        {
+            TimerManager.AddNewTimer(0.25f, () => { ShowConsole = false; });
         }
 
         public static void Draw(SpriteBatch spriteBatch)

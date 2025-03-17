@@ -36,7 +36,7 @@ namespace MacGame.Doors
 
         public override string LockMessage()
         {
-            return $"You need the blue key to unlock this door.";
+            return $"You need the blue key.";
         }
     }
 }

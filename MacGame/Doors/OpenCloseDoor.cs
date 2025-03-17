@@ -139,7 +139,7 @@ namespace MacGame.Doors
 
         public virtual string LockMessage()
         {
-            return $"You need {SocksNeeded} socks to unlock this door.";
+            return $"You need {SocksNeeded} socks.";
         }
 
         private void Unlock()

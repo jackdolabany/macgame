@@ -274,7 +274,7 @@
   </object>
   <object id="73" name="SubChicken1" x="1603.6" y="1316.1" width="17.4545" height="16.5151">
    <properties>
-    <property name="Convo" value="Me:We haven't found anything down here;Me:Except a stupid sock!"/>
+    <property name="Convo" value="Me:it's a maze down there, we haven't found any treasure.;Me:Just a stupid sock!"/>
    </properties>
   </object>
   <object id="74" name="AboveTown" x="997.879" y="870.485" width="12.5455" height="20.1818">

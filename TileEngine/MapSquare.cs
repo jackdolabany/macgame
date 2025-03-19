@@ -105,7 +105,6 @@ namespace TileEngine
             if (IsSand)
             {
                 IsSand = false;
-                Passable = true;
                 wasSand = true;
 
                 for (int i = 0; i < LayerTiles.Length; i++)
@@ -124,7 +123,6 @@ namespace TileEngine
             if(wasSand)
             {
                 IsSand = true;
-                Passable = false;
                 wasSand = false;
 
                 for (int i = 0; i < LayerTiles.Length; i++)

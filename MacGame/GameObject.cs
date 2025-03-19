@@ -614,10 +614,23 @@ namespace MacGame
                                 slopeCheck = collisionTop >= tileBottom;
                             }
 
-                            if (!cell.Passable && slopeCheck || (isEnemyTileColliding && !cell.EnemyPassable))
+                            // Sand in the game is funny. It only collides when you are falling. But we do check
+                            // cells that may start slightly above your feet to help with walking into slopes. So make sure
+                            // we only check sand that was below you.
+                            var collideWithSandCell = isFalling && cell.IsSand;
+                            if (collideWithSandCell)
+                            {
+                                // Don't check sand if it was below you on the previous frame
+                                if (WorldLocation.Y > (TileMap.TileSize * y))
+                                {
+                                    collideWithSandCell = false;
+                                }
+                            }
+
+                            if ((!cell.Passable && slopeCheck) || (isEnemyTileColliding && !cell.EnemyPassable) || collideWithSandCell)
                             {
                                 // There was a collision with a non-slope tile, place the object to the edge of the tile.
-                                if (yToMove > 0)
+                                if (isFalling)
                                 {
                                     // Moving down
                                     var bottomY = this.worldLocation.Y + collisionRectangle.Y + collisionRectangle.Height;
@@ -645,7 +658,7 @@ namespace MacGame
                                     }
 
                                 }
-                                else if (yToMove < 0)
+                                else
                                 {
                                     // Moving up.
                                     float collisionTop = this.WorldLocation.Y + this.collisionRectangle.Y;

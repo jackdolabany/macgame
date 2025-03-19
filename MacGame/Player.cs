@@ -82,9 +82,8 @@ namespace MacGame
         // Can't pick up Item. Use this so Mac can't insta pick up an item he just dropped or kicked.
         float pickUpAgainTimer = 0;
 
-        // Track if the player jumped off of sand or ice so that we can maintain the adjusted
+        // Track if the player jumped off of ice so that we can maintain the adjusted
         // movement speed through the jump.
-        private bool isInJumpFromSand = false;
         private bool isInJumpFromIce = false;
         private bool isInJumpFromGround = false;
         float jumpButtonHeldDownTimer = 0f;
@@ -782,7 +781,6 @@ namespace MacGame
             float jumpBoost;
 
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
-            var isSand = mapSquareBelow != null && mapSquareBelow.IsSand || (!OnGround && isInJumpFromSand);
             var isIce = mapSquareBelow != null && mapSquareBelow.IsIce || (!OnGround && isInJumpFromIce);
             
             var environmentMaxWalkSpeed = maxSpeed;
@@ -791,13 +789,7 @@ namespace MacGame
             friction = 1.5f;
             jumpBoost = 390;
 
-            if (isSand)
-            {
-                friction *= 2;
-                jumpBoost *= 0.6f;
-                environmentMaxWalkSpeed /= 2;
-            }
-            else if (isIce)
+            if (isIce)
             {
                 friction /= 2f;
                 environmentMaxWalkSpeed *= 1.25f;
@@ -983,7 +975,6 @@ namespace MacGame
             if (OnGround || IsClimbingLadder || IsClimbingVine)
             {
                 PoisonPlatforms.Clear();
-                isInJumpFromSand = false;
                 isInJumpFromIce = false;
                 isInJumpFromGround = false;
                 jumpButtonHeldDownTimer = 0f;
@@ -1023,11 +1014,7 @@ namespace MacGame
                 this.velocity.Y -= jumpBoost;
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
-                if (isSand)
-                {
-                    isInJumpFromSand = true;
-                }
-                else if (isIce)
+                if (isIce)
                 {
                     isInJumpFromIce = true;
                 }

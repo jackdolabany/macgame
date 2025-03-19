@@ -203,19 +203,16 @@
  </tile>
  <tile id="84">
   <properties>
-   <property name="BlockPlayer" value="1"/>
    <property name="Sand" value="1"/>
   </properties>
  </tile>
  <tile id="85">
   <properties>
-   <property name="BlockPlayer" value="1"/>
    <property name="Sand" value="1"/>
   </properties>
  </tile>
  <tile id="86">
   <properties>
-   <property name="BlockPlayer" value="1"/>
    <property name="Sand" value="1"/>
   </properties>
  </tile>

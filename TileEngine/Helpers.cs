@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using System.Threading;
 using System.Reflection;
 using TileEngine;
+using System.Runtime.CompilerServices;
 
 namespace TileEngine
 {
@@ -13,6 +14,17 @@ namespace TileEngine
     /// </summary>
     public static class Helpers
     {
+
+        public static bool IsTrue(this string? str)
+        {
+            return !IsFalse(str);
+        }
+
+        public static bool IsFalse(this string? str)
+        {
+            var isFalse = string.IsNullOrWhiteSpace(str) || str == "0" || str.Equals("false", StringComparison.InvariantCultureIgnoreCase);
+            return isFalse;
+        }
 
         /// <summary>
         /// Gets a rectangle for tile sprites. The tile sprite processor adds a 1px border around

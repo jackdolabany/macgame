@@ -114,12 +114,12 @@ namespace MacGame.Enemies
 
             if (properties.ContainsKey("Reverse"))
             {
-                Reverse = true;
+                Reverse = properties["Reverse"].IsTrue();
             }
 
             if (properties.ContainsKey("Offset"))
             {
-                IsOffset = true;
+                IsOffset = properties["Offset"].IsTrue();
             }
         }
     }

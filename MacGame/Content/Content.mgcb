@@ -145,6 +145,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World1.tmx
 
+#begin Maps/World1CatBoss.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1CatBoss.tmx
+
 #begin Maps/World1DaisyHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

@@ -12,8 +12,6 @@ namespace MacGame.Enemies
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         private float speed = 30;
-        private float walkTimer = 0f;
-        private const float maxWalkTime = 3f;
 
         public Ant(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -56,13 +54,15 @@ namespace MacGame.Enemies
                 }
             }
 
-            walkTimer += elapsed;
-            if (walkTimer >= maxWalkTime)
+            if (velocity.X > 0 && OnRightWall)
             {
-                Flipped = !Flipped;
-                walkTimer = 0;
+                Flipped = true;
             }
-
+            else if (velocity.X < 0 && OnLeftWall)
+            {
+                Flipped = false;
+            }
+                
             base.Update(gameTime, elapsed);
 
         }

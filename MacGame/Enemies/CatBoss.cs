@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -26,6 +27,8 @@ namespace MacGame.Enemies
         float deathSqueaksTimer = 0f;
 
         float dyingTimer = 0f;
+
+        private bool _isInitialzied = false;
 
         /// <summary>
         /// These are the attack phases for the cat.
@@ -145,21 +148,21 @@ namespace MacGame.Enemies
             }
         }
 
-        public override void Kill()
+        private void Initialize()
         {
-            Enabled = false;
-            base.Kill();
-
-            // TODO: Final boss, just for now.
-            TimerManager.AddNewTimer(2f, () =>
-            {
-                GlobalEvents.FireFinalBossComplete();
-            });
-            
+            // Lock the camera from panning to the right until the boss is defeated.
+            // this way you don't scroll over and see the sock too early.
+            Game1.Camera.MaxX = (int)Game1.Camera.Position.X;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            if (!_isInitialzied)
+            {
+                _isInitialzied = true;
+                Initialize();
+            }
 
             base.Update(gameTime, elapsed);
 
@@ -278,6 +281,13 @@ namespace MacGame.Enemies
 
                     this.Kill();
                     state = CatState.Dead;
+                    Enabled = false;
+                    TimerManager.AddNewTimer(2f, () => 
+                    { 
+                        Game1.CurrentLevel.BreakBricks("Bricks");
+                        Game1.Camera.ClearRestrictions();
+                        Player.SmoothMoveCameraToTarget();
+                    });
                  
                 }
             }

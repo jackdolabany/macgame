@@ -398,7 +398,7 @@ namespace MacGame
             _moveToLocation = new MoveToLocation(this, 150, 150, "idle", "run", "jump", "climbLadder");
         }
 
-        private void SmoothMoveCameraToTarget(int initialVelocity = 0)
+        public void SmoothMoveCameraToTarget(int initialVelocity = 0)
         {
             smoothMoveCameraToTarget = true;
             cameraVelocity = initialVelocity;
@@ -1369,16 +1369,6 @@ namespace MacGame
             if (animations.CurrentAnimationName != nextAnimation)
             {
                 animations.Play(nextAnimation);
-            }
-
-            if (!Game1.Camera.CanScrollLeft)
-            {
-                // If you aren't allowed to scroll left (boss fight) your left movement becomes blocked by the camera
-                if (this.CollisionRectangle.Left < Game1.Camera.ViewPort.Left && this.velocity.X < 0)
-                {
-                    this.velocity.X = 0;
-                    this.worldLocation.X = Game1.Camera.ViewPort.Left + (CollisionRectangle.Width / 2) - 1;
-                }
             }
 
         }

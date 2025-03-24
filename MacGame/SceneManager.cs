@@ -25,7 +25,7 @@ namespace MacGame
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
             TimerManager.Clear();
-            Game1.Camera.CanScrollLeft = true;
+            Game1.Camera.ClearRestrictions();
 
             // Music is annoying for testing.
             if (!Game1.IS_DEBUG)
@@ -511,7 +511,7 @@ namespace MacGame
                                         }
                                         if (obj.Properties.ContainsKey("OverrideSave"))
                                         {
-                                            bb.OverrideSave = true;
+                                            bb.OverrideSave = obj.Properties["OverrideSave"].ToBoolean();
                                         }
                                     }
                                 }

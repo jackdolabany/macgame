@@ -116,6 +116,12 @@
    <property name="LoadClass" value="Box"/>
   </properties>
  </tile>
+ <tile id="48">
+  <properties>
+   <property name="BlockEnemy" value="1"/>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="56">
   <properties>
    <property name="LoadClass" value="Enemy.Bird"/>

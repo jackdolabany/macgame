@@ -15,12 +15,12 @@ namespace TileEngine
     public static class Helpers
     {
 
-        public static bool IsTrue(this string? str)
+        public static bool ToBoolean(this string? str)
         {
-            return !IsFalse(str);
+            return !str.IsFalse();
         }
 
-        public static bool IsFalse(this string? str)
+        private static bool IsFalse(this string? str)
         {
             var isFalse = string.IsNullOrWhiteSpace(str) || str == "0" || str.Equals("false", StringComparison.InvariantCultureIgnoreCase);
             return isFalse;

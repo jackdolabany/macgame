@@ -9,6 +9,16 @@ namespace MacGame
 {
     /// <summary>
     /// BreakBricks block the map until you break them by triggering something with a button.
+    /// 
+    /// Place BreakBrick tiles on the map. Put an object rectangle over them and give it the GroupName property.
+    /// GroupName: Bricks1
+    /// OverrideSave: 1 - Optional, use this property to make it so the brick doesn't save its state when it breaks. For example, for when you beat a boss.
+    /// 
+    /// From code call: Game1.CurrentLevel.BreakBricks("Bricks1");
+    /// 
+    /// or from a button add the properties
+    /// DownAction: BreakBricks
+    /// Args: Bricks1
     /// </summary>
     public class BreakBrick : GameObject
     {

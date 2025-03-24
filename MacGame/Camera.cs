@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using TileEngine;
 
 namespace MacGame
@@ -11,8 +12,10 @@ namespace MacGame
         public Matrix Transform; // Matrix Transform
         public float Rotation; // Camera Rotation
 
-        // Change this for a boss fight so the player can't escape.
-        public bool CanScrollLeft = true;
+        public int? MinX { get; set; } = null;
+        public int? MaxX { get; set; } = null;
+        public int? MinY { get; set; } = null;
+        public int? MaxY { get; set; } = null;
 
         private TileMap _map;
         public TileMap Map
@@ -44,6 +47,14 @@ namespace MacGame
         public Camera()
         {
             Velocity = 120f;
+        }
+
+        public void ClearRestrictions()
+        {
+            MaxX = null;
+            MinX = null;
+            MaxY = null;
+            MinY = null;
         }
 
         public Vector2 ParallaxScale = new Vector2(0.75f, 0.75f);
@@ -106,12 +117,25 @@ namespace MacGame
                         WorldRectangle.Height - (ViewHeight / 2));
                 }
 
-                position = new Vector2(x, y);
-
-                if (!CanScrollLeft && position.X < previousX)
+                // Clamp the camera by the Max/Min X and Y values.
+                if (MaxX.HasValue)
                 {
-                    position.X = previousX;
+                    x = Math.Min(x, MaxX.Value);
                 }
+                if (MinX.HasValue)
+                {
+                    x = Math.Max(x, MinX.Value);
+                }
+                if (MaxY.HasValue)
+                {
+                    y = Math.Min(y, MaxY.Value);
+                }
+                if (MinY.HasValue)
+                {
+                    y = Math.Max(y, MinY.Value);
+                }
+
+                position = new Vector2(x, y);
 
             }
         }

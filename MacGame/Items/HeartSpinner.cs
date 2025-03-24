@@ -54,8 +54,6 @@ namespace MacGame.Items
       
             IsInChest = false;
 
-            WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
-
         }
 
         public override void Update(GameTime gameTime, float elapsed)

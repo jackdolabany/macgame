@@ -703,6 +703,12 @@
    <property name="LoadClass" value="WaterBomb"/>
   </properties>
  </tile>
+ <tile id="298">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+   <property name="LoadClass" value="BreakSnow"/>
+  </properties>
+ </tile>
  <tile id="308">
   <properties>
    <property name="LoadClass" value="Enemy.Ghost2"/>
@@ -711,6 +717,12 @@
  <tile id="313">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="314">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+   <property name="LoadClass" value="BreakRock"/>
   </properties>
  </tile>
  <tile id="320">

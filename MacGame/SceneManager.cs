@@ -528,6 +528,18 @@ namespace MacGame
                                 level.GameObjects.Add(bomb);
                                 layerDepthObjects[z].Add(bomb);
                             }
+                            else if (loadClass == "BreakSnow")
+                            {
+                                var bs = new BreakSnow(contentManager, x, y, player);
+                                level.GameObjects.Add(bs);
+                                layerDepthObjects[z].Add(bs);
+                            }
+                            else if (loadClass == "BreakRock")
+                            {
+                                var br = new BreakRock(contentManager, x, y, player);
+                                level.GameObjects.Add(br);
+                                layerDepthObjects[z].Add(br);
+                            }
                         }
                     }
                 }

@@ -795,7 +795,7 @@ namespace MacGame
                 environmentMaxWalkSpeed *= 1.25f;
             }
 
-            // If they aren't running max walk speed is cut in half.
+            // If they aren't running max walk speed is cut down.
             if (!InputManager.CurrentAction.action && (onGround || IsClimbingLadder))
             {
                 environmentMaxWalkSpeed /= 3;
@@ -807,7 +807,13 @@ namespace MacGame
                 acceleration /= 2;
             }
 
-            const float airMovementSpeed = 250f;
+            float airMovementSpeed = 250f;
+
+            // If they aren't running cut the air move speed.
+            if (!InputManager.CurrentAction.action)
+            {
+                airMovementSpeed /= 3;
+            }
 
             // Walk Right
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !IsClimbingVine)

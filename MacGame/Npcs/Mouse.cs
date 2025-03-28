@@ -27,7 +27,7 @@ namespace MacGame.Npcs
             animations.Play("idle");
 
             choices = new List<ConversationChoice>();
-            choices.Add(new ConversationChoice("take my tacos", () => {
+            choices.Add(new ConversationChoice("Yes", () => {
                 if (Game1.Player.Tacos >= Game1.TacosNeeded)
                 {
                     Game1.Player.Tacos = 0;
@@ -40,7 +40,7 @@ namespace MacGame.Npcs
                     ConversationManager.AddMessage($"Are you kidding me? My hunger is insatiable! I could eat {Game1.TacosNeeded} tacos! If you have less than {Game1.TacosNeeded} tacos don't even talk to me.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                 }
             }));
-            choices.Add(new ConversationChoice("sounds rough", () => {
+            choices.Add(new ConversationChoice("Nope", () => {
                 ConversationManager.AddMessage("I could live without tacos, but what's the point?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }));
         }
@@ -84,7 +84,7 @@ namespace MacGame.Npcs
                 ConversationManager.AddMessage("I'm sick of cheese. I need tacos!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                 if (Game1.Player.Tacos > 0)
                 {
-                    ConversationManager.AddMessage("", PlayerConversationRectangle, ConversationManager.ImagePosition.Left, choices);
+                    ConversationManager.AddMessage("Give tacos?", PlayerConversationRectangle, ConversationManager.ImagePosition.Left, choices);
                 }
             }
         }

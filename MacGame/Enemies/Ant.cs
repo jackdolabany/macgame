@@ -44,9 +44,30 @@ namespace MacGame.Enemies
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-
             if (Alive)
             {
+                // Flip if you hit a wall
+                if (!Flipped && velocity.X >= 0 && OnRightWall)
+                {
+                    Flipped = true;
+                }
+                else if (Flipped && velocity.X <= 0 && OnLeftWall)
+                {
+                    Flipped = false;
+                }
+
+                // Turn around if you walk towards an edge
+                var edgePixel = new Vector2(this.Flipped ?
+                    CollisionRectangle.Left + 8:
+                    CollisionRectangle.Right - 8,
+                    CollisionRectangle.Bottom + 4);
+
+                var edgeCell = Game1.CurrentMap.GetMapSquareAtPixel(edgePixel);
+                if (edgeCell != null && edgeCell.Passable)
+                {
+                    Flip();
+                }
+            
                 velocity.X = speed;
                 if (Flipped)
                 {
@@ -54,15 +75,6 @@ namespace MacGame.Enemies
                 }
             }
 
-            if (velocity.X > 0 && OnRightWall)
-            {
-                Flipped = true;
-            }
-            else if (velocity.X < 0 && OnLeftWall)
-            {
-                Flipped = false;
-            }
-                
             base.Update(gameTime, elapsed);
 
         }

@@ -55,7 +55,7 @@ namespace MacGame
         {
             base.Update(gameTime, elapsed);
 
-            if (!_isBroken && !_isBroken)
+            if (!_isBroken && !_isBreaking)
             {
                 // Check if player is above.
                 var aboveCollisionRectangle = new Rectangle(CollisionRectangle.X, CollisionRectangle.Y - 1, CollisionRectangle.Width, 1);

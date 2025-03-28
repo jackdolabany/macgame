@@ -399,6 +399,11 @@ namespace MacGame
                                             {
                                                 cannon.IsSuperShot = true;
                                             }
+                                            if (obj.Properties.ContainsKey("DefaultDirection"))
+                                            {
+                                                var direction = Enum.Parse<EightWayRotationDirection>(obj.Properties["DefaultDirection"]);
+                                                cannon.DefaultDirection = new EightWayRotation(direction);
+                                            }
                                         }
                                     }
                                 }

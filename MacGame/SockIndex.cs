@@ -30,6 +30,7 @@ namespace MacGame
                     new SockInfo { Name = "RaceSock", Hint = "Boy that Froggy sure is fast! And annoying." },
                     new SockInfo { Name = "WingWorldSock", Hint = "There is a sock accessible to those who fly like birds. Wings boy! They're found in caves!" },
                     new SockInfo { Name = "CatBossSock", Hint = "There's a terrbile beast locked up. Defeat her and get the treasure." },
+                    new SockInfo { Name = "CannonSock2", Hint = "I dropped a sock in a cannon once and it blasted off somewhere. Try to find it." },
                 }
             },
             {

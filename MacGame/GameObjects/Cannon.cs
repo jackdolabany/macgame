@@ -8,7 +8,15 @@ using TileEngine;
 
 namespace MacGame
 {
-
+    /// <summary>
+    /// Cannons auto rotate and you can shoot out of them in any direction.
+    /// 
+    /// Tweak with these properties
+    /// 
+    /// AutoShoot: DownRight - Set this to an 8 way direction to automatically shoot in that direction.
+    /// SuperShot: 1 - Set this to 1 and Mac will shoot continuously until he hits a wall or another cannon.
+    /// DefaultDirection: Down - Set this to an 8 way direction for the idle state to be something other than Up.
+    /// </summary>
     public class Cannon : GameObject
     {
 
@@ -17,6 +25,11 @@ namespace MacGame
         protected Player _player;
 
         bool isCooledOff = true;
+
+        /// <summary>
+        /// When this is set the player can't re-enter the cannon. This way they don't
+        /// go right back into the cannon they shot out of.
+        /// </summary>
         float cooldownTimer = 0.0f;
 
         /// <summary>
@@ -24,8 +37,24 @@ namespace MacGame
         /// </summary>
         public bool IsRotating { get; set; }
 
-        float rotationTime = 0.35f;
         float rotateTimer = 0f;
+
+        public float RotateTimerGoal
+        {
+            get
+            {
+                if (AutoShootDirection == null)
+                {
+                    return 0.35f;
+                }
+                else
+                {
+                    return 0.15f;
+                }
+            }
+        }
+
+        public EightWayRotation DefaultDirection { get; set; } = new EightWayRotation(EightWayRotationDirection.Up);
 
         EightWayRotation RotationDirection = new EightWayRotation(EightWayRotationDirection.Up);
 
@@ -59,11 +88,6 @@ namespace MacGame
             set
             {
                 _autoShootDirection = value;
-                if (value != null)
-                {
-                    // Speed it up if it's auto rotating.
-                    rotationTime /= 2;
-                }
             } 
         }
 
@@ -93,6 +117,8 @@ namespace MacGame
             }
         }
 
+        private bool _isInitialized = false;
+
         /// <summary>
         /// The cannon will automatically shoot after some time if it has a cannon ball in it.
         /// </summary>
@@ -115,10 +141,22 @@ namespace MacGame
             IsRotating = true;
 
             DisplayComponent.Offset += new Vector2(0, Game1.TileSize / 2);
+            
+        }
+
+        private void Initialize()
+        {
+            RotationDirection = DefaultDirection;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            if (!_isInitialized)
+            {
+                Initialize();
+                _isInitialized = true;
+            }
 
             if (inputDelayTimer > 0)
             {
@@ -130,7 +168,7 @@ namespace MacGame
                 delayAutoShotTimer -= elapsed;
             }
 
-            if (_player.CanEnterCannon && isCooledOff && !HasCannonballInside && this.CollisionRectangle.Contains(_player.SmallerCollisionRectangle))
+            if (_player.CanEnterCannon && isCooledOff && !HasCannonballInside && this.CollisionRectangle.Intersects(_player.SmallerCollisionRectangle))
             {
                 _player.EnterCannon(this);
 
@@ -162,7 +200,7 @@ namespace MacGame
             EightWayRotation? rotateTarget = null;
             if (!HasPlayerInside && !HasCannonballInside)
             {
-                rotateTarget = new EightWayRotation(EightWayRotationDirection.Up);
+                rotateTarget = DefaultDirection;
             }
             else if (AutoShootDirection != null)
             {
@@ -174,9 +212,9 @@ namespace MacGame
             if (rotate || (rotateTarget.HasValue && rotateTarget.Value.Direction != this.RotationDirection.Direction))
             {
                 rotateTimer += elapsed;
-                if (rotateTimer >= rotationTime)
+                if (rotateTimer >= RotateTimerGoal)
                 {
-                    rotateTimer -= rotationTime;
+                    rotateTimer -= RotateTimerGoal;
 
                     // Rotate the fastest way, clockwise or counterclockwise.
                     var isRotationClockwise = true;

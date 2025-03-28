@@ -41,7 +41,6 @@ namespace MacGame.Platforms
             const int tileHeight = 12;
 
             var sourcerect = Helpers.GetTileRect(10, 14);
-            sourcerect.Height = tileHeight;
 
             this.DisplayComponent = new StaticImageDisplay(content.Load<Texture2D>(@"Textures/Textures"), sourcerect);
             this.CollisionRectangle = new Rectangle(-(Game1.TileSize / 2), -tileHeight, Game1.TileSize, tileHeight);

@@ -17,7 +17,7 @@ namespace MacGame
     {
 
         public const string StartingWorld = "World1";
-        private const bool startAtTitleScreen = true;
+        private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;

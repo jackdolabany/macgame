@@ -190,6 +190,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World1Snow.tmx
 
+#begin Maps/World1WaterWorld.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World1WaterWorld.tmx
+
 #begin Maps/World1YellowHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

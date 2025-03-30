@@ -15,7 +15,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World4Spaceship1";
+        public const string StartingWorld = "GrokTest";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -82,6 +82,8 @@ namespace MacGame
         public static string BossName = "";
 
         private static SceneManager sceneManager;
+
+        public static BackgroundEffectsManager BackgroundEffectsManager;
 
         private static Level _level;
         public static Level CurrentLevel
@@ -418,6 +420,8 @@ namespace MacGame
             Camera.ViewPortWidth = Game1.GAME_X_RESOLUTION;
             Camera.ViewPortHeight = Game1.GAME_Y_RESOLUTION;
 
+            BackgroundEffectsManager = new BackgroundEffectsManager();
+
             SoundManager.Initialize(Content);
             StorageManager.Initialize(TileTextures, this);
             EffectsManager.Initialize(Content);
@@ -689,6 +693,7 @@ namespace MacGame
                 {
                     CurrentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
+                    BackgroundEffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
                 }
 
@@ -896,6 +901,7 @@ namespace MacGame
                     CutsceneManager.Draw(spriteBatch);
 
                     EffectsManager.Draw(spriteBatch);
+                    BackgroundEffectsManager.Draw(spriteBatch);
 
                     spriteBatch.End();
 

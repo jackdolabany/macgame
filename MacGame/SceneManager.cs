@@ -26,6 +26,7 @@ namespace MacGame
         {
             TimerManager.Clear();
             Game1.Camera.ClearRestrictions();
+            Game1.BackgroundEffectsManager.Reset();
 
             // Music is annoying for testing.
             if (!Game1.IS_DEBUG)
@@ -76,6 +77,7 @@ namespace MacGame
                 {
                     level.AutoScrollSpeed = new Vector2(100, 0);
                     player.EnterSpaceship();
+                    Game1.BackgroundEffectsManager.ShowStars();
                 }
             }
 
@@ -126,7 +128,6 @@ namespace MacGame
 
                     for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
                     {
-
                         if (mapSquare.IsWater)
                         {
                             if (mapSquare.LayerTiles[z].WaterType == WaterType.AnimatingTopOfWater 

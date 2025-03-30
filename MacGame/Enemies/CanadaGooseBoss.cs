@@ -250,17 +250,6 @@ namespace MacGame.Enemies
             idleHeadLocation = worldLocation + new Vector2(16, -176);
 
             springTimer = maxSpringTimer;
-
-            // TODO: Sounds
-            /*
-             Getting hit
-            dying
-            honking
-            ball bouncing
-            ball hitting the wall
-            springboard breaking
-            explosions
-             */
         }
 
         /// <summary>
@@ -334,11 +323,6 @@ namespace MacGame.Enemies
             SpringBoard = Game1.CurrentLevel.SpringBoards.Single();
             springBoardInitialLocation = SpringBoard.WorldLocation;
             SpringBoard.Enabled = false;
-
-            foreach (var gameObject in Game1.CurrentLevel.GameObjects)
-            {
-
-            }
 
             isInitialized = true;
         }

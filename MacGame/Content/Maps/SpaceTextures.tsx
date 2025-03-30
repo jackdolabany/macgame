@@ -46,4 +46,24 @@
    <property name="LoadClass" value="Enemy.EnemyShip6"/>
   </properties>
  </tile>
+ <tile id="50">
+  <properties>
+   <property name="LoadClass" value="Enemy.OurTypeOfBoss"/>
+  </properties>
+ </tile>
+ <tile id="51">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="66">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="67">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
 </tileset>

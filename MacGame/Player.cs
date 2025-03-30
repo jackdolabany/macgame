@@ -180,6 +180,8 @@ namespace MacGame
         private float spaceshipShotCooldownTimer = 0f;
         private const float spaceshipShotCooldownTime = 0.15f;
         Vector2 gunOffset = new Vector2(0, 12);
+        public CircularBuffer<ShipFire> ShipFires;
+        float shipFireTimer = 0f;
 
         public Item? CurrentItem = null;
 
@@ -415,6 +417,11 @@ namespace MacGame
             {
                 Shots.AddObject(new SpaceshipShot(content, 0, 0, this, Game1.Camera));
             }
+            ShipFires = new CircularBuffer<ShipFire>(10);
+            for (int i = 0; i < 10; i++)
+            {
+                ShipFires.SetItem(i, new ShipFire(spaceTextures));
+            }
 
             _shovel = new MacShovel(this, textures);
 
@@ -439,6 +446,11 @@ namespace MacGame
             for (int i = 0; i < Bubbles.Length; i++)
             {
                 Bubbles.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            }
+
+            for (int i = 0; i < ShipFires.Length; i++)
+            {
+                ShipFires.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             }
         }
 
@@ -646,11 +658,23 @@ namespace MacGame
                 }
             }
 
-            foreach (var shot in Shots.RawList)
+            if (IsInSpaceShip)
             {
-                if (shot.Enabled)
+                foreach (var shot in Shots.RawList)
                 {
-                    shot.Update(gameTime, elapsed);
+                    if (shot.Enabled)
+                    {
+                        shot.Update(gameTime, elapsed);
+                    }
+                }
+
+                for (int i = 0; i < ShipFires.Length; i++)
+                {
+                    var fire = ShipFires.GetItem(i);
+                    if (fire.Enabled)
+                    {
+                        fire.Update(gameTime, elapsed);
+                    }
                 }
             }
 
@@ -675,6 +699,7 @@ namespace MacGame
             animations.PlayIfNotAlreadyPlaying("spaceShip");
             this.IsAbleToMoveOutsideOfWorld = false;
             this.IsAbleToSurviveOutsideOfWorld = true;
+            this.isTileColliding = false;
 
             IsAffectedByGravity = false;
             Flipped = false;
@@ -760,44 +785,72 @@ namespace MacGame
                         shot.Velocity *= -1;
                     }
                     spaceshipShotCooldownTimer = 0;
-                    SoundManager.PlaySound("Shoot");
+                    SoundManager.PlaySound("Shoot", 0.2f, -0.2f);
                 }
             }
 
-            // TODO: Fire from back of ship.
-            //float bubbleTimerGoal = 0.5f;
+            float fireTimerGoal = 0.1f;
 
             //// Slow bubbles if you're not moving.
             //if (velocity == Vector2.Zero)
             //{
-            //    bubbleTimerGoal = 1.8f;
+            //    fireTimerGoal = 1.8f;
             //}
 
-            //// Make a bubble every so often.
-            //if (bubbleTimer < bubbleTimerGoal)
-            //{
-            //    if (isInWater)
-            //    {
-            //        bubbleTimer += elapsed;
-            //    }
-            //}
-            //else
-            //{
-            //    bubbleTimer = 0f;
-            //    var bubble = Bubbles.GetNextObject();
-            //    bubble.Reset();
-            //    bubble.WorldLocation = this.WorldLocation + new Vector2(-32 * (Flipped ? -1 : 1), 8);
-            //    bubble.Velocity = new Vector2(-50, -50);
-            //    if (velocity.X != 0)
-            //    {
-            //        bubble.Velocity *= new Vector2(1.5f, 1);
-            //    }
+            // Make a rocket flame every so often.
+            if (shipFireTimer < fireTimerGoal)
+            {
+                shipFireTimer += elapsed;
+            }
+            else
+            {
+                shipFireTimer = 0f;
+                var fire = ShipFires.GetNextObject();
+                fire.Reset();
+                fire.WorldLocation = this.WorldLocation + new Vector2(-12, 0);
+                fire.Velocity = new Vector2(-0, 0);
+            }
 
-            //    if (Flipped)
-            //    {
-            //        bubble.Velocity *= new Vector2(-1, 1);
-            //    }
-            //}
+            // When you're the ship you can fly through solid objects but
+            // the corners of your collision rectangle will cause you to take a hit.
+            
+            // Check top left
+            var topLeftPixel = new Vector2(this.CollisionRectangle.Left, this.CollisionRectangle.Top);
+            var topLeftMapSquare = Game1.CurrentMap.GetMapSquareAtPixel(topLeftPixel);
+            if (topLeftMapSquare != null && !topLeftMapSquare.Passable)
+            {
+                TakeHit(1, Vector2.Zero);
+            }
+            else
+            {
+                // Check top right
+                var topRightPixel = new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Top);
+                var topRightMapSquare = Game1.CurrentMap.GetMapSquareAtPixel(topRightPixel);
+                if (topRightMapSquare != null && !topRightMapSquare.Passable)
+                {
+                    TakeHit(1, Vector2.Zero);
+                }
+                else
+                {
+                    // Check bottom left
+                    var bottomLeftPixel = new Vector2(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom);
+                    var bottomLeftMapSquare = Game1.CurrentMap.GetMapSquareAtPixel(bottomLeftPixel);
+                    if (bottomLeftMapSquare != null && !bottomLeftMapSquare.Passable)
+                    {
+                        TakeHit(1, Vector2.Zero);
+                    }
+                    else
+                    {
+                        // Check bottom right
+                        var bottomRightPixel = new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Bottom);
+                        var bottomRightMapSquare = Game1.CurrentMap.GetMapSquareAtPixel(bottomRightPixel);
+                        if (bottomRightMapSquare != null && !bottomRightMapSquare.Passable)
+                        {
+                            TakeHit(1, Vector2.Zero);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -931,12 +984,17 @@ namespace MacGame
 
         public void TakeHit(Enemy enemy)
         {
+            TakeHit(enemy.Attack, enemy.GetHitBackBoost(this));
+        }
+
+        public void TakeHit(int attack, Vector2 hitBackBoost)
+        {
             if (IsInvincible) return;
             if (Health <= 0) return;
-            if (enemy.Attack == 0) return;
+            if (attack == 0) return;
 
             // player takes a hit.
-            Health -= enemy.Attack;
+            Health -= attack;
             if (Health <= 0)
             {
                 Kill();
@@ -950,7 +1008,6 @@ namespace MacGame
                 invincibleTimeRemaining = 1.5f;
                 SoundManager.PlaySound("TakeHit");
 
-                var hitBackBoost = enemy.GetHitBackBoost(this);
                 this.Velocity = hitBackBoost;
             }
         }
@@ -2055,6 +2112,13 @@ namespace MacGame
                     if (shot.Enabled)
                     {
                         shot.Draw(spriteBatch);
+                    }
+                }
+                for (int i = 0; i < ShipFires.Length; i++)
+                {
+                    if (ShipFires.GetItem(i).Enabled)
+                    {
+                        ShipFires.GetItem(i).Draw(spriteBatch);
                     }
                 }
             }

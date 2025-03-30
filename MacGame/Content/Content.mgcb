@@ -65,6 +65,11 @@
 /processor:PassThroughProcessor
 /build:Maps/Dracula.tmx
 
+#begin Maps/GrokTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/GrokTest.tmx
+
 #begin Maps/HubWorld.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

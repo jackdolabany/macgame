@@ -179,7 +179,7 @@ namespace MacGame
         public ObjectPool<SpaceshipShot> Shots;
         private float spaceshipShotCooldownTimer = 0f;
         private const float spaceshipShotCooldownTime = 0.15f;
-        Vector2 gunOffset = new Vector2(0, 16);
+        Vector2 gunOffset = new Vector2(0, 12);
 
         public Item? CurrentItem = null;
 
@@ -681,7 +681,15 @@ namespace MacGame
 
             float moveSpeed = 200f;
 
-            Velocity = Game1.CurrentLevel.AutoScrollSpeed;
+            // This checks if the level is still actively scrolling. It would stop at the end.
+            if (Game1.Camera.WorldRectangle.Right > Game1.Camera.ViewPort.Right)
+            {
+                Velocity = Game1.CurrentLevel.AutoScrollSpeed;
+            }
+            else
+            {
+                Velocity = Vector2.Zero;
+            }
 
             Vector2 moveVelocity = Vector2.Zero;
 

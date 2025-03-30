@@ -5,7 +5,6 @@ using MacGame.Platforms;
 using System;
 using System.Collections.Generic;
 using TileEngine;
-using MacGame.Items;
 using System.Linq;
 
 namespace MacGame
@@ -16,7 +15,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World4SpaceShip1";
+        public const string StartingWorld = "HubWorld";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 

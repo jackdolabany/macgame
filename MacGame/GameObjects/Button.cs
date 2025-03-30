@@ -92,7 +92,7 @@ namespace MacGame
             down.FrameLength = 0.14f;
             animations.Add(down);
 
-            this.SetCenteredCollisionRectangle(8, 4);
+            this.SetWorldLocationCollisionRectangle(8, 4);
 
             if (isUp)
             {

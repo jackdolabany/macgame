@@ -28,7 +28,7 @@ namespace MacGame.Enemies
             CanBeJumpedOn = false;
             Health = 100000;
 
-            SetCenteredCollisionRectangle(8, 6);
+            SetWorldLocationCollisionRectangle(8, 6);
            
             this.Enabled = false;
             this.Dead = true;

@@ -21,7 +21,7 @@ namespace MacGame.Npcs
             idle.FrameLength = 0.5f;
             animations.Add(idle);
 
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
 
             Behavior = new JustIdle("idle");
         }

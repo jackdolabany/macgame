@@ -40,7 +40,7 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             Enabled = true;
 
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
 
             ad.Offset += new Vector2(0, 16);
         }

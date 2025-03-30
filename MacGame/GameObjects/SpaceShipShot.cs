@@ -21,8 +21,8 @@ namespace MacGame.Items
             DisplayComponent = image;
             image.Source = Helpers.GetTileRect(0, 1);
             
-            CollisionRectangle = new Rectangle(-4, -20, 8, 8);
-           
+            SetCenteredCollisionRectangle(8, 8, 2, 2);
+
             IsAffectedByGravity = false;
             isTileColliding = false;
             // These are true because the update method gets them when they're off camera.

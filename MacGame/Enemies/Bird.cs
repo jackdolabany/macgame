@@ -40,7 +40,7 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
-            SetCenteredCollisionRectangle(6, 6);
+            SetWorldLocationCollisionRectangle(6, 6);
 
             tileLocation = WorldLocation;
             Enabled = false;

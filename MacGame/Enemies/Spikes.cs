@@ -25,7 +25,7 @@ namespace MacGame.Enemies
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
 
-            SetCenteredCollisionRectangle(4, 4);
+            SetWorldLocationCollisionRectangle(4, 4);
 
             // Shift it up a bit since we want it actualled centered and not centered on the bottom middle pixel.
             this.CollisionRectangle = new Rectangle(this.collisionRectangle.X, this.collisionRectangle.Y - 8, this.collisionRectangle.Width, this.collisionRectangle.Height);

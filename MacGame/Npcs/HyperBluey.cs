@@ -31,7 +31,7 @@ namespace MacGame.Npcs
             walk.FrameLength = 0.2f;
             animations.Add(walk);
 
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
            
             Behavior = new WalkRandomlyBehavior("idle", "walk");
         }

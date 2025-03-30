@@ -20,7 +20,7 @@ namespace MacGame.Doors
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
 
-            SetCenteredCollisionRectangle(8, 16);
+            SetWorldLocationCollisionRectangle(8, 16);
 
             _player = player;
         }

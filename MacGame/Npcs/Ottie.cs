@@ -62,7 +62,7 @@ namespace MacGame.Npcs
 
             Enabled = true;
 
-            SetCenteredCollisionRectangle(6, 14);
+            SetWorldLocationCollisionRectangle(6, 14);
             IsAffectedByGravity = false;
             IsAbleToSurviveOutsideOfWorld = true;
 

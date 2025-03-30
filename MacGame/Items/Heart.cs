@@ -13,7 +13,7 @@ namespace MacGame.Items
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
             image.Source = Helpers.GetTileRect(1, 2);
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
         }
 
         public override void WhenCollected(Player player)

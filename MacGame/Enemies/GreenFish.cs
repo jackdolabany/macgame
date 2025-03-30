@@ -36,7 +36,7 @@ namespace MacGame.Enemies
             Health = 1;
             IsAffectedByGravity = false;
 
-            SetCenteredCollisionRectangle(6, 5);
+            SetWorldLocationCollisionRectangle(6, 5);
 
             var startLocationX = WorldLocation.X;
             minXLocation = startLocationX - maxTravelDistance / 2;

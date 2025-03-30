@@ -55,7 +55,7 @@ namespace MacGame.Enemies
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
 
-            SetCenteredCollisionRectangle(6, 8);
+            SetWorldLocationCollisionRectangle(6, 8);
         }
 
         private void Initialize()

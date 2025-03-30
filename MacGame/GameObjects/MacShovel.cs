@@ -49,7 +49,7 @@ namespace MacGame
             DisplayComponent = image;
             Enabled = false;
 
-            this.SetCenteredCollisionRectangle(8, 8);
+            this.SetWorldLocationCollisionRectangle(8, 8);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

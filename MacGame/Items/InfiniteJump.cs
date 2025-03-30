@@ -15,7 +15,7 @@ namespace MacGame.Items
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
             image.Source = Helpers.GetTileRect(11, 0);
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
             _player = player;
             IsReenabledOnceOffScreen = true;
         }

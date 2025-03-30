@@ -48,7 +48,7 @@ namespace MacGame.Enemies
             Health = 1;
             IsAffectedByGravity = false;
 
-            SetCenteredCollisionRectangle(6, 5);
+            SetWorldLocationCollisionRectangle(6, 5);
             
             // Shift it up a bit.
             this.CollisionRectangle = new Rectangle(this.collisionRectangle.X, this.collisionRectangle.Y - 12, this.collisionRectangle.Width, this.collisionRectangle.Height);

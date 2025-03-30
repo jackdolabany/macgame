@@ -38,7 +38,7 @@ namespace MacGame.Enemies
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
-            SetCenteredCollisionRectangle(6, 6);
+            SetWorldLocationCollisionRectangle(6, 6);
 
             TimeRemaining = WickTime;
         }

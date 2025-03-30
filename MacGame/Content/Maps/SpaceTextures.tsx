@@ -6,4 +6,44 @@
    <property name="PlayerStart" value="1"/>
   </properties>
  </tile>
+ <tile id="2">
+  <properties>
+   <property name="LoadClass" value="Enemy.EnemyShip"/>
+  </properties>
+ </tile>
+ <tile id="3">
+  <properties>
+   <property name="LoadClass" value="Enemy.AlienShip"/>
+  </properties>
+ </tile>
+ <tile id="18">
+  <properties>
+   <property name="LoadClass" value="Enemy.Saucer"/>
+  </properties>
+ </tile>
+ <tile id="20">
+  <properties>
+   <property name="LoadClass" value="Enemy.EnemyShip2"/>
+  </properties>
+ </tile>
+ <tile id="34">
+  <properties>
+   <property name="LoadClass" value="Enemy.EnemyShip3"/>
+  </properties>
+ </tile>
+ <tile id="35">
+  <properties>
+   <property name="LoadClass" value="Enemy.EnemyShip4"/>
+  </properties>
+ </tile>
+ <tile id="36">
+  <properties>
+   <property name="LoadClass" value="Enemy.EnemyShip5"/>
+  </properties>
+ </tile>
+ <tile id="49">
+  <properties>
+   <property name="LoadClass" value="Enemy.EnemyShip6"/>
+  </properties>
+ </tile>
 </tileset>

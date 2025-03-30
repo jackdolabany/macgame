@@ -30,7 +30,7 @@ namespace MacGame
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;
 
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
 
             var ad = new AnimationDisplay();
             this.DisplayComponent = ad;

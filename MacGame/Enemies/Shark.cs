@@ -38,7 +38,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
 
             // TODO: Play here, get r id of it
-            SetCenteredCollisionRectangle(14, 6);
+            SetWorldLocationCollisionRectangle(14, 6);
             collisionRectangle.Y -= 4 * Game1.TileScale;
 
             var startLocationX = WorldLocation.X;

@@ -95,7 +95,7 @@ namespace MacGame.Enemies
             CanBeJumpedOn = true;
             CanBeHitWithWeapons = true;
 
-            SetCenteredCollisionRectangle(8, 20);
+            SetWorldLocationCollisionRectangle(8, 20);
 
             // we'll set the collision rectangle to empty so that the player can walk through the boss
             // And reset it after you talk to drac

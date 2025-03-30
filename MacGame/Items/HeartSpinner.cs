@@ -50,7 +50,7 @@ namespace MacGame.Items
 
             animations.Play("idle");
 
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
       
             IsInChest = false;
 

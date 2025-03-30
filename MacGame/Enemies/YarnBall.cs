@@ -31,7 +31,7 @@ namespace MacGame.Enemies
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
 
-            SetCenteredCollisionRectangle(7, 7);
+            SetWorldLocationCollisionRectangle(7, 7);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

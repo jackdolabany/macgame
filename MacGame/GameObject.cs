@@ -282,9 +282,24 @@ namespace MacGame
         /// world location of the bottom center of the GameObject.
         /// Enter Width and Height in units of the original art, they'll be scaled from 8 pixel to 32 pixel tiles.
         /// </summary>
-        protected void SetCenteredCollisionRectangle(int width, int height)
+        protected void SetWorldLocationCollisionRectangle(int width, int height)
         {
             var rect = new Rectangle(-width * Game1.TileScale / 2, -height * Game1.TileScale, width * Game1.TileScale, height * Game1.TileScale);
+            this.CollisionRectangle = rect;
+        }
+
+        /// <summary>
+        /// Creates a collision Rectangle centered in the middle of the passed in wdith and height.
+        /// This goes by the size of the original art so 8 x 8 tiles by default. This method will multipy by the 
+        /// scaler.
+        /// </summary>
+        protected void SetCenteredCollisionRectangle(int totalWidth, int totalHeight, int rectWidth, int rectHeight)
+        {
+            var rect = new Rectangle(
+                -rectWidth * Game1.TileScale / 2, 
+                (-totalHeight - rectHeight) / 2 * Game1.TileScale, 
+                rectWidth * Game1.TileScale, 
+                rectHeight * Game1.TileScale);
             this.CollisionRectangle = rect;
         }
 

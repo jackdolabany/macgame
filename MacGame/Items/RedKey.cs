@@ -18,7 +18,7 @@ namespace MacGame.Items
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
             image.Source = Helpers.GetTileRect(13, 4);
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
             _player = player;
             IsInChest = false;
         }

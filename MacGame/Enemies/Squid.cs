@@ -34,7 +34,7 @@ namespace MacGame.Enemies
             Health = 2;
             IsAffectedByGravity = false;
 
-            SetCenteredCollisionRectangle(6, 6);
+            SetWorldLocationCollisionRectangle(6, 6);
 
             idleTimer = 1.5f;
 

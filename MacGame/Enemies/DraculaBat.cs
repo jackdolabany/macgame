@@ -35,7 +35,7 @@ namespace MacGame.Enemies
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
 
-            SetCenteredCollisionRectangle(7, 7);
+            SetWorldLocationCollisionRectangle(7, 7);
             this.CollisionRectangle = new Rectangle(this.collisionRectangle.X, this.collisionRectangle.Y, this.collisionRectangle.Width, this.collisionRectangle.Height - 8);
 
             this.Enabled = false;

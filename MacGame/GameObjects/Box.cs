@@ -24,7 +24,7 @@ namespace MacGame
 
             IsAffectedByGravity = true;
 
-            this.SetCenteredCollisionRectangle(8, 8);
+            this.SetWorldLocationCollisionRectangle(8, 8);
         }
 
         public bool DoesCollideWithObject(GameObject obj)

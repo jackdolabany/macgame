@@ -51,7 +51,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             isEnemyTileColliding = false;
 
-            SetCenteredCollisionRectangle(10, 14);
+            SetWorldLocationCollisionRectangle(10, 14);
 
             startLocation = WorldLocation; 
 

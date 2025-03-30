@@ -35,7 +35,7 @@ namespace MacGame.Enemies
             Health = 1;
             IsAffectedByGravity = true;
 
-            SetCenteredCollisionRectangle(8, 5);
+            SetWorldLocationCollisionRectangle(8, 5);
 
             startLocationX = WorldLocation.X;
         }

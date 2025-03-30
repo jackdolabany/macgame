@@ -27,7 +27,7 @@ namespace MacGame.Npcs
             disappear.FrameLength = 0.2f;
             animations.Add(disappear);
 
-            SetCenteredCollisionRectangle(10, 16);
+            SetWorldLocationCollisionRectangle(10, 16);
 
             Enabled = true;
             animations.Play("idle");

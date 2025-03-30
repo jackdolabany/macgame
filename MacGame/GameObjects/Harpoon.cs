@@ -20,7 +20,7 @@ namespace MacGame.Items
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
             image.Source = Helpers.GetTileRect(15, 14);
-            SetCenteredCollisionRectangle(8, 2);
+            SetWorldLocationCollisionRectangle(8, 2);
             IsAffectedByGravity = false;
             isTileColliding = false;
             _player = player;

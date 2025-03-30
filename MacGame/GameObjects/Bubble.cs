@@ -39,7 +39,7 @@ namespace MacGame
 
             Enabled = false;
 
-            SetCenteredCollisionRectangle(4, 4);
+            SetWorldLocationCollisionRectangle(4, 4);
             this.collisionRectangle.Y -= 8;
         }
 

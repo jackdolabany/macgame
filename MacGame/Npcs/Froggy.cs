@@ -110,7 +110,7 @@ namespace MacGame.Npcs
 
             animations.Play("idle");
 
-            SetCenteredCollisionRectangle(5, 7);
+            SetWorldLocationCollisionRectangle(5, 7);
 
             raceChoices = new List<ConversationChoice>();
             raceChoices.Add(new ConversationChoice("Yes", () =>

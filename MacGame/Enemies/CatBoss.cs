@@ -102,7 +102,7 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
-            SetCenteredCollisionRectangle(14, 14);
+            SetWorldLocationCollisionRectangle(14, 14);
 
             // Cat has yarn balls.
             for (int i = 0; i < yarnBalls.Length; i++)

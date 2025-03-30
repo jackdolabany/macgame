@@ -24,7 +24,7 @@ namespace MacGame
 
             IsAffectedByGravity = false;
 
-            this.SetCenteredCollisionRectangle(8, 8);
+            this.SetWorldLocationCollisionRectangle(8, 8);
 
             this.DisplayComponent = new AnimationDisplay();
 

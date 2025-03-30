@@ -80,6 +80,7 @@ namespace MacGame.Enemies
         }
 
         private float _invincibleFlashTimer = 0;
+        protected float InvincibleTimeAfterBeingHit { get; set; } = 0.75f;
 
         public Vector2 GetPlayerDirection(Player player)
         {
@@ -179,7 +180,7 @@ namespace MacGame.Enemies
                 PlayTakeHitSound();
                 if (!IsTempInvincibleFromBeingHit)
                 {
-                    InvincibleTimer += 0.75f;
+                    InvincibleTimer += InvincibleTimeAfterBeingHit;
                 }
             }
         }

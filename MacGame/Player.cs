@@ -77,7 +77,7 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
         private bool IsDisablingWaterBomb => _state == MacState.DisablingWaterBomb;
-        private bool IsSpaceShip => _state == MacState.SpaceShip;
+        private bool IsInSpaceShip => _state == MacState.SpaceShip;
 
         IPickupObject? pickedUpObject;
 
@@ -385,7 +385,7 @@ namespace MacGame
 
             this.IsAffectedByPlatforms = true;
 
-            SetCenteredCollisionRectangle(5, 6);
+            SetWorldLocationCollisionRectangle(5, 6);
             normalCollisionRectangle = this.collisionRectangle;
 
             InputManager = inputManager;
@@ -543,7 +543,7 @@ namespace MacGame
                 {
                     _moveToLocation.Update(this, gameTime, elapsed);
                 }
-                else if (IsSpaceShip)
+                else if (IsInSpaceShip)
                 {
                     HandleSpaceshipInputs(elapsed);
                 }
@@ -553,7 +553,7 @@ namespace MacGame
                 }
             }
 
-            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom && !IsSpaceShip)
+            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom && !IsInSpaceShip)
             {
                 // player fell down a bottomless pit
                 Kill();
@@ -734,7 +734,7 @@ namespace MacGame
                 spaceshipShotCooldownTimer += elapsed;
             }
 
-            if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && spaceshipShotCooldownTimer >= spaceshipShotCooldownTime)
+            if (InputManager.CurrentAction.action && spaceshipShotCooldownTimer >= spaceshipShotCooldownTime)
             {
                 var shot = Shots.TryGetObject();
                 if (shot != null)
@@ -843,7 +843,7 @@ namespace MacGame
 
         public bool JumpedOnEnemyRectangle(Rectangle rectangle)
         {
-            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart || IsInSub)
+            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart || IsInSub || IsInSpaceShip)
             {
                 return false;
             }
@@ -903,7 +903,7 @@ namespace MacGame
                         }
                     }
                 }
-                if (IsSpaceShip)
+                if (IsInSpaceShip)
                 {
                     foreach (var shot in Shots.RawList)
                     {
@@ -1966,7 +1966,7 @@ namespace MacGame
         public void Kill()
         {
 
-            if (IsInSub || IsSpaceShip)
+            if (IsInSub || IsInSpaceShip)
             {
                 EffectsManager.AddExplosion(this.WorldCenter);
             }
@@ -2040,7 +2040,7 @@ namespace MacGame
                 spriteBatch.Draw(textures, position, Helpers.GetTileRect(1, 0), Color.White, 0f, Vector2.Zero, 1f, effect, depth);
             }
 
-            if (IsSpaceShip)
+            if (IsInSpaceShip)
             {
                 foreach (var shot in Shots.RawList)
                 {

@@ -41,7 +41,7 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
-            SetCenteredCollisionRectangle(14, 14);
+            SetWorldLocationCollisionRectangle(14, 14);
         }
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)

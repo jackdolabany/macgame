@@ -44,7 +44,7 @@ namespace MacGame.Items
 
             animations.Play("spin");
 
-            SetCenteredCollisionRectangle(14, 12);
+            SetWorldLocationCollisionRectangle(14, 12);
             // Move it up slightly
             this.collisionRectangle.Y -= 8;
 

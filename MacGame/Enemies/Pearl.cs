@@ -28,7 +28,7 @@ namespace MacGame.Enemies
 
             IsAbleToSurviveOutsideOfWorld = false;
 
-            SetCenteredCollisionRectangle(4, 4);
+            SetWorldLocationCollisionRectangle(4, 4);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

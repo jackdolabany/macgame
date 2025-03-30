@@ -57,7 +57,7 @@ namespace MacGame
             disabled.LoopAnimation = false;
             ad.Add(disabled);
 
-            SetCenteredCollisionRectangle(8, 16);
+            SetWorldLocationCollisionRectangle(8, 16);
 
             this.WorldLocation = new Vector2(cellX * TileMap.TileSize + (TileMap.TileSize / 2), (cellY + 2) * TileMap.TileSize);
             Enabled = true;

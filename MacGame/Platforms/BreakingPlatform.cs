@@ -37,7 +37,7 @@ namespace MacGame.Platforms
             reform.Name = "reform";
             animations.Add(reform);
 
-            SetCenteredCollisionRectangle(8, 8);
+            SetWorldLocationCollisionRectangle(8, 8);
 
         }
 

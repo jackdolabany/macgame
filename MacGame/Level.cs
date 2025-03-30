@@ -60,6 +60,8 @@ namespace MacGame
         public List<Door> Doors;
         public List<Waypoint> Waypoints;
 
+        public Vector2 AutoScrollSpeed { get; set; }
+
         /// <summary>
         /// These objects collide with other objects and block the way. They're checked when we check collisions deep inside GameObject.
         /// </summary>
@@ -150,7 +152,19 @@ namespace MacGame
                 sb.Update(gameTime, elapsed);
             }
 
-            Player.SetCameraTarget(Camera, elapsed);
+            if (AutoScrollSpeed != Vector2.Zero)
+            {
+                Camera.Position += AutoScrollSpeed * elapsed;
+
+                if (AutoScrollSpeed.Y == 0)
+                {
+                    Camera.Position = new Vector2(Camera.Position.X, Player.WorldCenter.Y);
+                }
+            }
+            else
+            {
+                Player.SetCameraTarget(Camera, elapsed);
+            }
 
             foreach (var enemy in Enemies)
             {

@@ -71,7 +71,7 @@ namespace MacGame.DisplayComponents
             {
                 spriteBatch.Draw(
                     drawObject.Texture,
-                    drawObject.Position.ToIntegerVector(),
+                    drawObject.Position,
                     drawObject.SourceRectangle,
                     TintColor,
                     Rotation,

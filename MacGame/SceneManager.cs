@@ -69,6 +69,16 @@ namespace MacGame
             var isNewLevel = level.LevelNumber != priorLevelNumber;
             player.ResetStateForLevelTransition(isNewLevel);
 
+            if (map.Properties.ContainsKey("IsSpace"))
+            {
+                var isSpace = map.Properties["IsSpace"].ToBoolean();
+                if (isSpace)
+                {
+                    level.AutoScrollSpeed = new Vector2(100, 0);
+                    player.EnterSpaceship();
+                }
+            }
+
             // Make sure this exists for each level.
             if (!Game1.StorageState.Levels.ContainsKey(level.LevelNumber))
             {

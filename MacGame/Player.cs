@@ -32,7 +32,12 @@ namespace MacGame
         /// Mac will be idle for a little bit while he's disabling the water bombs which are only
         /// on the TMNT like water bomb level.
         /// </summary>
-        DisablingWaterBomb
+        DisablingWaterBomb,
+
+        /// <summary>
+        /// Mac is a space ship in shooting levels.
+        /// </summary>
+        SpaceShip,
     }
 
     public class Player : GameObject
@@ -72,6 +77,7 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
         private bool IsDisablingWaterBomb => _state == MacState.DisablingWaterBomb;
+        private bool IsSpaceShip => _state == MacState.SpaceShip;
 
         IPickupObject? pickedUpObject;
 
@@ -169,6 +175,11 @@ namespace MacGame
 
         public CircularBuffer<Bubble> Bubbles;
         float bubbleTimer = 0;
+
+        public ObjectPool<SpaceshipShot> Shots;
+        private float spaceshipShotCooldownTimer = 0f;
+        private const float spaceshipShotCooldownTime = 0.15f;
+        Vector2 gunOffset = new Vector2(0, 16);
 
         public Item? CurrentItem = null;
 
@@ -294,6 +305,7 @@ namespace MacGame
 
             textures = content.Load<Texture2D>(@"Textures\Textures");
             var bigTextures = content.Load<Texture2D>(@"Textures\BigTextures");
+            var spaceTextures = content.Load<Texture2D>(@"Textures\SpaceTextures");
 
             var idle = new AnimationStrip(textures, Helpers.GetTileRect(1, 0), 1, "idle");
             idle.LoopAnimation = true;
@@ -354,6 +366,11 @@ namespace MacGame
             disableWaterBomb.FrameLength = 0.25f;
             animations.Add(disableWaterBomb);
 
+            var spaceShip = new AnimationStrip(spaceTextures, Helpers.GetTileRect(1, 0), 1, "spaceShip");
+            spaceShip.LoopAnimation = false;
+            spaceShip.FrameLength = 1f;
+            animations.Add(spaceShip);
+
             Enabled = true;
 
             // This gets set later when the level loads.
@@ -393,6 +410,12 @@ namespace MacGame
                 Bubbles.SetItem(i, new Bubble(textures));
             }
 
+            Shots = new ObjectPool<SpaceshipShot>(10);
+            for (int i = 0; i < 10; i++)
+            {
+                Shots.AddObject(new SpaceshipShot(content, 0, 0, this, Game1.Camera));
+            }
+
             _shovel = new MacShovel(this, textures);
 
             _moveToLocation = new MoveToLocation(this, 150, 150, "idle", "run", "jump", "climbLadder");
@@ -411,7 +434,8 @@ namespace MacGame
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
-            
+            this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
+
             for (int i = 0; i < Bubbles.Length; i++)
             {
                 Bubbles.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
@@ -519,13 +543,17 @@ namespace MacGame
                 {
                     _moveToLocation.Update(this, gameTime, elapsed);
                 }
+                else if (IsSpaceShip)
+                {
+                    HandleSpaceshipInputs(elapsed);
+                }
                 else
                 {
-                    HandleInputs(elapsed);
+                    HandleRegularInputs(elapsed);
                 }
             }
 
-            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom)
+            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom && !IsSpaceShip)
             {
                 // player fell down a bottomless pit
                 Kill();
@@ -618,6 +646,14 @@ namespace MacGame
                 }
             }
 
+            foreach (var shot in Shots.RawList)
+            {
+                if (shot.Enabled)
+                {
+                    shot.Update(gameTime, elapsed);
+                }
+            }
+
             // When climbing a vine, to make it look more natural, offset the sprite from the CollisionRectangle a bit.
             if (IsClimbingVine)
             {
@@ -632,6 +668,128 @@ namespace MacGame
             {
                 this.animations.Offset = Vector2.Zero;
             }
+        }
+
+        private void HandleSpaceshipInputs(float elapsed)
+        {
+            animations.PlayIfNotAlreadyPlaying("spaceShip");
+            this.IsAbleToMoveOutsideOfWorld = false;
+            this.IsAbleToSurviveOutsideOfWorld = true;
+
+            IsAffectedByGravity = false;
+            Flipped = false;
+
+            float moveSpeed = 200f;
+
+            Velocity = Game1.CurrentLevel.AutoScrollSpeed;
+
+            Vector2 moveVelocity = Vector2.Zero;
+
+            if (InputManager.CurrentAction.up)
+            {
+                moveVelocity.Y += -1;
+            }
+            else if (InputManager.CurrentAction.down)
+            {
+                moveVelocity.Y += 1;
+            }
+            if (InputManager.CurrentAction.left)
+            {
+                moveVelocity.X += -1;
+            }
+            else if (InputManager.CurrentAction.right)
+            {
+                moveVelocity.X += 1;
+            }
+
+            // we don't want diagonals to be faster than straight.
+            if (moveVelocity != Vector2.Zero)
+            {
+                moveVelocity.Normalize();
+                moveVelocity *= moveSpeed;
+                this.Velocity += moveVelocity;
+            }
+
+            // Don't let the player move outside the camera
+            if (this.WorldLocation.X - 16 < Game1.Camera.ViewPort.Left)
+            {
+                this.worldLocation.X = Game1.Camera.ViewPort.Left + 16;
+            }
+            else if (this.WorldLocation.X + 16 > Game1.Camera.ViewPort.Right)
+            {
+                this.worldLocation.X = Game1.Camera.ViewPort.Right - 16;
+            }
+            if (this.WorldLocation.Y - 32 < Game1.Camera.ViewPort.Top)
+            {
+                this.worldLocation.Y = Game1.Camera.ViewPort.Top + 32;
+            }
+            else if (this.WorldLocation.Y > Game1.Camera.ViewPort.Bottom)
+            {
+                this.worldLocation.Y = Game1.Camera.ViewPort.Bottom;
+            }
+
+            // Shooting
+            if (spaceshipShotCooldownTimer < spaceshipShotCooldownTime)
+            {
+                spaceshipShotCooldownTimer += elapsed;
+            }
+
+            if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && spaceshipShotCooldownTimer >= spaceshipShotCooldownTime)
+            {
+                var shot = Shots.TryGetObject();
+                if (shot != null)
+                {
+                    shot.Enabled = true;
+                    shot.WorldLocation = this.WorldLocation + gunOffset;
+                    
+                    // This will make the bullet alternate from the top of the ship to the bottom as if
+                    // both guns are producing shots.
+                    gunOffset *= -1;
+
+                    shot.Velocity = new Vector2(500, 0);
+                    if (Flipped)
+                    {
+                        shot.Velocity *= -1;
+                    }
+                    spaceshipShotCooldownTimer = 0;
+                    SoundManager.PlaySound("Shoot");
+                }
+            }
+
+            // TODO: Fire from back of ship.
+            //float bubbleTimerGoal = 0.5f;
+
+            //// Slow bubbles if you're not moving.
+            //if (velocity == Vector2.Zero)
+            //{
+            //    bubbleTimerGoal = 1.8f;
+            //}
+
+            //// Make a bubble every so often.
+            //if (bubbleTimer < bubbleTimerGoal)
+            //{
+            //    if (isInWater)
+            //    {
+            //        bubbleTimer += elapsed;
+            //    }
+            //}
+            //else
+            //{
+            //    bubbleTimer = 0f;
+            //    var bubble = Bubbles.GetNextObject();
+            //    bubble.Reset();
+            //    bubble.WorldLocation = this.WorldLocation + new Vector2(-32 * (Flipped ? -1 : 1), 8);
+            //    bubble.Velocity = new Vector2(-50, -50);
+            //    if (velocity.X != 0)
+            //    {
+            //        bubble.Velocity *= new Vector2(1.5f, 1);
+            //    }
+
+            //    if (Flipped)
+            //    {
+            //        bubble.Velocity *= new Vector2(-1, 1);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -745,6 +903,20 @@ namespace MacGame
                         }
                     }
                 }
+                if (IsSpaceShip)
+                {
+                    foreach (var shot in Shots.RawList)
+                    {
+                        if (shot.Enabled)
+                        {
+                            if (shot.CollisionRectangle.Intersects(enemy.CollisionRectangle))
+                            {
+                                shot.Break();
+                                enemy.TakeHit(shot, 1, Vector2.Zero);
+                            }
+                        }
+                    }
+                }
             }
 
         }
@@ -775,7 +947,7 @@ namespace MacGame
             }
         }
 
-        private void HandleInputs(float elapsed)
+        private void HandleRegularInputs(float elapsed)
         {
             float friction;
             float jumpBoost;
@@ -923,6 +1095,7 @@ namespace MacGame
                 // No moving left or right on the ladder unless you are not going up or down.
                 this.velocity.X = 0;
             }
+
             this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsJustShotOutOfCannon && !IsInCannon;
 
             // Stop moving while climbing if you aren't pressing up or down.
@@ -1471,7 +1644,7 @@ namespace MacGame
                 this.Velocity = tempVelocity;
             }
 
-            // Mac throws an apple if he has them.
+            // Shoot harpoons.
             if (harpoonCooldownTimer < harpoonCooldownTime)
             {
                 harpoonCooldownTimer += elapsed;
@@ -1552,6 +1725,13 @@ namespace MacGame
             {
                 _state = MacState.Idle;
             }); 
+        }
+
+        public void EnterSpaceship()
+        {
+            _state = MacState.SpaceShip;
+            this.IsAffectedByGravity = false;
+            animations.Play("spaceShip");
         }
 
         /// <summary>
@@ -1786,7 +1966,7 @@ namespace MacGame
         public void Kill()
         {
 
-            if (IsInSub)
+            if (IsInSub || IsSpaceShip)
             {
                 EffectsManager.AddExplosion(this.WorldCenter);
             }
@@ -1858,6 +2038,17 @@ namespace MacGame
                 var depth = this.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
                 var effect = this.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                 spriteBatch.Draw(textures, position, Helpers.GetTileRect(1, 0), Color.White, 0f, Vector2.Zero, 1f, effect, depth);
+            }
+
+            if (IsSpaceShip)
+            {
+                foreach (var shot in Shots.RawList)
+                {
+                    if (shot.Enabled)
+                    {
+                        shot.Draw(spriteBatch);
+                    }
+                }
             }
 
             base.Draw(spriteBatch);

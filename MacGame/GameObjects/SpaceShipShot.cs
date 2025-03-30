@@ -8,21 +8,26 @@ using TileEngine;
 namespace MacGame.Items
 {
     /// <summary>
-    /// Shot from Mac's submarine.
+    /// Shot from Mac's spaceship.
     /// </summary>
-    public class Harpoon : GameObject
+    public class SpaceshipShot : GameObject
     {
         private Player _player;
 
-        public Harpoon(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public SpaceshipShot(ContentManager content, int cellX, int cellY, Player player, Camera camera)
         {
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
+            var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
             var image = new StaticImageDisplay(textures);
             DisplayComponent = image;
-            image.Source = Helpers.GetTileRect(15, 14);
-            SetCenteredCollisionRectangle(8, 2);
+            image.Source = Helpers.GetTileRect(0, 1);
+            
+            CollisionRectangle = new Rectangle(-4, -20, 8, 8);
+           
             IsAffectedByGravity = false;
             isTileColliding = false;
+            // These are true because the update method gets them when they're off camera.
+            IsAbleToMoveOutsideOfWorld = true;
+            IsAbleToSurviveOutsideOfWorld = true;
             _player = player;
         }
 
@@ -32,10 +37,10 @@ namespace MacGame.Items
             {
                 if (!Game1.Camera.IsObjectVisible(this.CollisionRectangle))
                 {
-                    ReturnHarpoon();
+                    ReturnShot();
                 }
 
-                var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldLocation);
+                var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
                 if (mapSquare != null && !mapSquare.Passable)
                 {
                     this.Break();
@@ -53,15 +58,15 @@ namespace MacGame.Items
             base.Draw(spriteBatch);
         }
 
-        private void ReturnHarpoon()
+        private void ReturnShot()
         {
             this.Enabled = false;
-            _player.Harpoons.ReturnObject(this);
+            _player.Shots.ReturnObject(this);
         }
 
         public void Break()
         {
-            ReturnHarpoon();
+            ReturnShot();
             EffectsManager.SmallEnemyPop(this.WorldCenter);
             SoundManager.PlaySound("Break");
         }

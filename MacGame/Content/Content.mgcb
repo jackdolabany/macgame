@@ -270,6 +270,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World2YellowHouse.tmx
 
+#begin Maps/World4SpaceShip1.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4SpaceShip1.tmx
+
 #begin Music/BossFight.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
@@ -677,6 +682,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/ReallyBigTextures.png
+
+#begin Textures/SpaceTextures.png
+/importer:TextureImporter
+/processor:SmallTileBorderImageProcessor
+/processorParam:ColorKeyColor=255,255,255,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/SpaceTextures.png
 
 #begin Textures/Textures.png
 /importer:TextureImporter

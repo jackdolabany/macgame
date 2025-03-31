@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame.Enemies
 {
+    /// <summary>
+    /// Sort of looks like the first boss from R-Type, but that's just a coincidence.
+    /// </summary>
     public class OurTypeOfBoss : Enemy
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
@@ -24,9 +27,12 @@ namespace MacGame.Enemies
 
         private Player _player;
 
-        private int MaxHealth = 6;
+        private int MaxHealth = 50;
 
         private bool isInitialized = false;
+
+        private OurTypeOfBossHead _head;
+        private List<OurTypeOfBossTailPiece> _tailPieces = new List<OurTypeOfBossTailPiece>();
 
         public OurTypeOfBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -70,17 +76,32 @@ namespace MacGame.Enemies
             Health = MaxHealth;
 
             IsAffectedByGravity = false;
-        }
 
-    
+            SetWorldLocationCollisionRectangle(8, 8);
+
+            _head = new OurTypeOfBossHead(content, cellX, cellY, player, camera);
+            _head.WorldLocation = this.WorldCenter + new Vector2(16, 40);
+            Vector2 initialTailSpot = this.WorldLocation + new Vector2(-20, 0);
+            for (int i = 0; i < 15; i++)
+            {
+                var tailPiece = new OurTypeOfBossTailPiece(content, cellX, cellY, player, camera);
+                _tailPieces.Add(tailPiece);
+                tailPiece.WorldLocation = initialTailSpot;
+                initialTailSpot.X -= Game1.TileSize / 2;
+            }
+        }
 
         private void Initialize()
         {
-           
+            _head.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+
+            for (int i = 0; i < _tailPieces.Count; i++)
+            {
+                _tailPieces[i].SetDrawDepth(this.DrawDepth + ((i + 1) * Game1.MIN_DRAW_INCREMENT));
+            }
+
             isInitialized = true;
         }
-
-      
 
         public override void Update(GameTime gameTime, float elapsed)
         {
@@ -114,12 +135,27 @@ namespace MacGame.Enemies
             Game1.BossHealth = Health;
             Game1.BossName = "Grok";
 
+            // Update head and tail
+            _head.Update(gameTime, elapsed);
+            foreach (var tailPiece in _tailPieces)
+            {
+                tailPiece.Update(gameTime, elapsed);
+            }
+
             base.Update(gameTime, elapsed);
 
         }
 
-     
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            // draw head and tail
+            _head.Draw(spriteBatch);
+            foreach (var tailPiece in _tailPieces)
+            {
+                tailPiece.Draw(spriteBatch);
+            }
 
-      
+            base.Draw(spriteBatch);
+        }
     }
 }

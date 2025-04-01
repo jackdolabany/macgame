@@ -77,7 +77,6 @@ namespace MacGame
                 {
                     level.AutoScrollSpeed = new Vector2(100, 0);
                     player.EnterSpaceship();
-                    Game1.BackgroundEffectsManager.ShowStars();
                 }
             }
 
@@ -101,6 +100,22 @@ namespace MacGame
 
             // We'll need him later to fully set up his race.
             Froggy? froggy = null;
+
+            // Check layer properties
+            for (int i = 0; i < map.Layers.Count; i++)
+            {
+                var layer = map.Layers[i];
+                foreach (var property in layer.Properties)
+                {
+                    if (property.name == "Starfield" && property.value.ToBoolean())
+                    {
+                        // Layers in the raw map are reversed
+                        var layerIndex = map.Layers.Count - i;
+                        var depth = map.GetLayerDrawDepth(layerIndex);
+                        Game1.BackgroundEffectsManager.ShowStars(depth + Game1.MIN_DRAW_INCREMENT);
+                    }
+                }
+            }
 
             // Do y direction first and count backwards. This is important because we want to add game objects bottom
             // to top. This helps the drawdepth code so that items above are always in front so you can stack objects that

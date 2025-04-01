@@ -293,6 +293,10 @@ namespace MacGame
         /// This goes by the size of the original art so 8 x 8 tiles by default. This method will multipy by the 
         /// scaler.
         /// </summary>
+        /// <param name="totalWidth">The total width of the object in pixels of the original art.</param>
+        /// <param name="totalHeight">The total height of the object in pixels of the original art.</param>
+        /// <param name="rectWidth">The Width of the collision rectangle in pixels of the original art.</param>
+        /// <param name="rectHeight">The Height of the collision rectangle in pixels of the original art.</param>
         protected void SetCenteredCollisionRectangle(int totalWidth, int totalHeight, int rectWidth, int rectHeight)
         {
             var rect = new Rectangle(

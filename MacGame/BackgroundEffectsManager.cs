@@ -10,6 +10,8 @@ namespace MacGame
 {
     /// <summary>
     /// Handles background effects like rain, snow, or stars in space.
+    /// 
+    /// Give a layer the property "Starfield: 1" to show stars in front of that layer.
     /// </summary>
     public class BackgroundEffectsManager
     {
@@ -18,6 +20,7 @@ namespace MacGame
 
         private bool _isShowingStars = false;
         private bool _isInitialized = false;
+        private float _drawDepth;
 
         public BackgroundEffectsManager()
         {
@@ -37,9 +40,10 @@ namespace MacGame
             _isInitialized = false;
         }
 
-        public void ShowStars()
+        public void ShowStars(float drawDepth)
         {
             _isShowingStars = true;
+            _drawDepth = drawDepth;
         }
 
         public void Initialize()
@@ -55,6 +59,7 @@ namespace MacGame
                 // Set the x coordinate to a random value on screen to start.
                 var randomX = Game1.Randy.Next(Game1.Camera.ViewPort.X, Game1.Camera.ViewPort.Right);
                 star.Position = new Vector2(randomX, star.Position.Y);
+                star.DrawDepth = _drawDepth;
             }
         }
 

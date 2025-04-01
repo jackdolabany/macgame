@@ -16,6 +16,8 @@ namespace MacGame
         public Vector2 Position { get; set; }
         public float Transparency { get; set; }
         public Vector2 Velocity { get; set; }
+
+        public float DrawDepth { get; set; }
         public void Update(float elapsed, GameTime gameTime)
         {
             Position += Velocity * elapsed;
@@ -23,7 +25,7 @@ namespace MacGame
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Game1.TileTextures, new Rectangle(Position.X.ToInt(), Position.Y.ToInt(), 4, 4), Game1.WhiteSourceRect, Color.White * Transparency, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            spriteBatch.Draw(Game1.TileTextures, new Rectangle(Position.X.ToInt(), Position.Y.ToInt(), 4, 4), Game1.WhiteSourceRect, Color.White * Transparency, 0f, Vector2.Zero, SpriteEffects.None, DrawDepth);
         }
     }
 }

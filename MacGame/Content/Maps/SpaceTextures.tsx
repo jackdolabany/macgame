@@ -66,4 +66,14 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="81">
+  <properties>
+   <property name="LoadClass" value="Item.ShotPowerup"/>
+  </properties>
+ </tile>
+ <tile id="82">
+  <properties>
+   <property name="LoadClass" value="Item.ShotPowerup"/>
+  </properties>
+ </tile>
 </tileset>

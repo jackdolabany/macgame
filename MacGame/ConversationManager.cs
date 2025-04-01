@@ -365,10 +365,10 @@ namespace MacGame
                     bool isSelected = i == currentMessage.selectedChoice;
                     if (isSelected)
                     {
-                        spriteBatch.DrawString(Game1.Font, ChoicePointerString, location, Game1.SoftWhite, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
+                        spriteBatch.DrawString(Game1.Font, ChoicePointerString, location, Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
                     }
                     
-                    spriteBatch.DrawString(Game1.Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Game1.SoftWhite, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
+                    spriteBatch.DrawString(Game1.Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
                     location.Y += wordHeight;
                 }
             }
@@ -460,7 +460,7 @@ namespace MacGame
                     lineToDraw = currentLine.Substring(0, (int)MathHelper.Min(maxLetters - previousLinesLetterCount, currentLine.Length));
                 }
                 previousLinesLetterCount += currentLine.Length;
-                spriteBatch.DrawString(Font, lineToDraw, drawLocation, Game1.SoftWhite, 0f, Vector2.Zero, scale, SpriteEffects.None, depth);
+                spriteBatch.DrawString(Font, lineToDraw, drawLocation, Pallette.White, 0f, Vector2.Zero, scale, SpriteEffects.None, depth);
                 drawLocation.Y += wordHeight + 4;
                 if (previousLinesLetterCount > maxLetters)
                 {

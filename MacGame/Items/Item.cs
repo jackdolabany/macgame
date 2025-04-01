@@ -73,14 +73,6 @@ namespace MacGame.Items
             SoundManager.PlaySound("PowerUp");
         }
 
-        /// <summary>
-        /// Store the original tint for when we make it flash.
-        /// </summary>
-        private Color originalTint;
-        private float flashTimer = 0;
-        private const float flashDuration = 0.3f;
-        private bool isFlashingInvisible = false;
-
         public override void Update(GameTime gameTime, float elapsed)
         {
 

@@ -15,7 +15,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "GrokTest";
+        public const string StartingWorld = "World4SpaceShip1";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -41,12 +41,12 @@ namespace MacGame
 
         public static bool DrawAllCollisionRects = false;
 
-        public static Color SoftWhite = new Color(255, 241, 232);
-
         /// <summary>
         /// 8 x 8 Tiles
         /// </summary>
         public static Texture2D TileTextures;
+
+        public static Texture2D SpaceTextures;
 
         /// <summary>
         /// 16 x 16 tiles
@@ -386,6 +386,7 @@ namespace MacGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             TileTextures = Content.Load<Texture2D>(@"Textures\Textures");
+            SpaceTextures = Content.Load<Texture2D>(@"Textures\SpaceTextures");
             BigTileTextures = Content.Load<Texture2D>(@"Textures\BigTextures");
             ReallyBigTileTextures = Content.Load<Texture2D>(@"Textures\ReallyBigTextures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
@@ -546,6 +547,7 @@ namespace MacGame
         {
             Player.ResetStateForLevelTransition(true);
             Player.CurrentItem = null;
+            
             MenuManager.ClearMenus();
             ConversationManager.Clear();
             TransitionToStateInstantFromBlack(GameState.Playing);
@@ -964,7 +966,7 @@ namespace MacGame
 
                    // Draw the copyright cirlced C thing.
                     spriteBatch.Draw(TileTextures, new Rectangle(102, GAME_Y_RESOLUTION - 46, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
-                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(138, GAME_Y_RESOLUTION - 46), Game1.SoftWhite, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(138, GAME_Y_RESOLUTION - 46), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
                     spriteBatch.End();
                     break;
 
@@ -1118,7 +1120,7 @@ namespace MacGame
             // Draw the player's current item
             if (Player.CurrentItem != null)
             {
-                spriteBatch.Draw(TileTextures, new Rectangle(8, TileSize + 20, TileSize, TileSize), Player.CurrentItem.ItemIcon.Source, Color.White);
+                spriteBatch.Draw(Player.CurrentItem.ItemIcon.Texture, new Rectangle(8, TileSize + 20, TileSize, TileSize), Player.CurrentItem.ItemIcon.Source, Color.White);
             }
 
             // Draw the number of tacos in the HUD for regular levels, or draw the socks for the Hub level.
@@ -1167,6 +1169,38 @@ namespace MacGame
                 }
                 
                 spriteBatch.DrawString(Font, inputString, new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION - 32), Color.White, 0f, _timerOrigin, FontScale, SpriteEffects.None, 0.5f);
+            }
+
+            if (Player.ShotPower == ShotPower.Charge)
+            {
+                // Draw the charge meter
+                var leftBoundSource = Helpers.GetTileRect(1, 6);
+                var barSource = Helpers.GetTileRect(2, 6);
+                var rightBoundSource = Helpers.GetTileRect(3, 6);
+                int barwidth = 5;
+                int chargeLocationX = Game1.GAME_X_RESOLUTION / 2 - ((barwidth + 2) * Game1.TileSize / 2);
+                int chargeLocationY = Game1.GAME_Y_RESOLUTION - 32;
+                spriteBatch.Draw(SpaceTextures,  new Rectangle(chargeLocationX, chargeLocationY, Game1.TileSize, Game1.TileSize), leftBoundSource, Color.White);
+
+                for (int i = 0; i < barwidth; i++)
+                {
+                    chargeLocationX += Game1.TileSize;
+                    spriteBatch.Draw(SpaceTextures, new Rectangle(chargeLocationX, chargeLocationY, Game1.TileSize, Game1.TileSize), barSource, Color.White);
+                }
+
+                chargeLocationX += Game1.TileSize;
+                spriteBatch.Draw(SpaceTextures, new Rectangle(chargeLocationX, chargeLocationY, Game1.TileSize, Game1.TileSize), rightBoundSource, Color.White);
+
+                // Draw the blue bar charging up. 
+                var totalLines = 8 * barwidth;
+                var linesToDraw = (int)(Player.chargePercentage * totalLines);
+
+                chargeLocationX = Game1.GAME_X_RESOLUTION / 2 - ((barwidth + 2) * Game1.TileSize / 2) + Game1.TileSize;
+                for (int i = 0; i < linesToDraw; i++)
+                {
+                    spriteBatch.Draw(TileTextures, new Rectangle(chargeLocationX, chargeLocationY + 12, 4, 8), WhiteSourceRect, Pallette.LightBlue);
+                    chargeLocationX += 4;
+                }
             }
         }
 

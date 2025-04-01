@@ -40,11 +40,23 @@ namespace MacGame
         SpaceShip,
     }
 
+    /// <summary>
+    /// How strong Mac's shot is in his spaceship.
+    /// </summary>
+    public enum ShotPower
+    {
+        Single,
+        Double,
+        Charge
+    }
+
     public class Player : GameObject
     {
         AnimationDisplay animations;
 
         public const int MaxHealth = 5;
+
+        public ShotPower ShotPower { get; private set; } = ShotPower.Single; 
 
         public int Health { get; set; } = MaxHealth;
 
@@ -178,7 +190,41 @@ namespace MacGame
 
         public ObjectPool<SpaceshipShot> Shots;
         private float spaceshipShotCooldownTimer = 0f;
-        private const float spaceshipShotCooldownTime = 0.15f;
+
+        ChargedSpaceshipShot chargedShot;
+
+        /// <summary>
+        /// If you have the charge shot powerup the shot will charge up when you aren't shooting.
+        /// </summary>
+        private float chargeShotTimer = 0f;
+        private const float chargeShotTimerGoal = 1.5f;
+
+        public float chargePercentage
+        {
+            get
+            {
+                return chargeShotTimer / chargeShotTimerGoal;
+            }
+        }
+
+        /// <summary>
+        /// Controls how fast you can shoot.
+        /// </summary>
+        private float spaceshipShotCooldownTime
+        {
+            get
+            {
+                if (ShotPower == ShotPower.Single)
+                {
+                    return 0.3f;
+                }
+                else
+                {
+                    return 0.15f;
+                }
+            }
+        }
+
         Vector2 gunOffset = new Vector2(0, 12);
         public CircularBuffer<ShipFire> ShipFires;
         float shipFireTimer = 0f;
@@ -417,6 +463,7 @@ namespace MacGame
             {
                 Shots.AddObject(new SpaceshipShot(content, 0, 0, this, Game1.Camera));
             }
+            chargedShot = new ChargedSpaceshipShot(content, 0, 0, this, Game1.Camera);
             ShipFires = new CircularBuffer<ShipFire>(10);
             for (int i = 0; i < 10; i++)
             {
@@ -442,7 +489,7 @@ namespace MacGame
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
-
+            chargedShot.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             for (int i = 0; i < Bubbles.Length; i++)
             {
                 Bubbles.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
@@ -467,6 +514,18 @@ namespace MacGame
         public bool IsAtLocation()
         {
             return _moveToLocation.IsAtLocation();
+        }
+
+        public void HandleShotPowerupCollected()
+        {
+            if (ShotPower == ShotPower.Single)
+            {
+                ShotPower = ShotPower.Double;
+            }
+            else if (ShotPower == ShotPower.Double)
+            {
+                ShotPower = ShotPower.Charge;
+            }
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -668,6 +727,8 @@ namespace MacGame
                     }
                 }
 
+                chargedShot.Update(gameTime, elapsed);
+
                 for (int i = 0; i < ShipFires.Length; i++)
                 {
                     var fire = ShipFires.GetItem(i);
@@ -706,15 +767,27 @@ namespace MacGame
 
             float moveSpeed = 200f;
 
-            // This checks if the level is still actively scrolling. It would stop at the end.
-            if (Game1.Camera.WorldRectangle.Right > Game1.Camera.ViewPort.Right)
+            bool isScrolledAllTheWayOver = false;
+
+            // We scrolled all the way to the right.
+            if (Game1.CurrentLevel.AutoScrollSpeed.X > 0 && Game1.Camera.ViewPort.Right >= Game1.Camera.WorldRectangle.Right)
             {
-                Velocity = Game1.CurrentLevel.AutoScrollSpeed;
+                isScrolledAllTheWayOver = true;
             }
-            else
+
+            // Can't scroll left anymore
+            if (Game1.CurrentLevel.AutoScrollSpeed.X < 0 && Game1.Camera.ViewPort.Left <= 0)
             {
-                Velocity = Vector2.Zero;
+                isScrolledAllTheWayOver = true;
             }
+
+            Vector2 initialSpeed = Vector2.Zero;
+            if (!isScrolledAllTheWayOver)
+            {
+                initialSpeed = Game1.CurrentLevel.AutoScrollSpeed;
+            }
+
+            this.Velocity = initialSpeed;
 
             Vector2 moveVelocity = Vector2.Zero;
 
@@ -769,33 +842,57 @@ namespace MacGame
 
             if (InputManager.CurrentAction.action && spaceshipShotCooldownTimer >= spaceshipShotCooldownTime)
             {
-                var shot = Shots.TryGetObject();
-                if (shot != null)
-                {
-                    shot.Enabled = true;
-                    shot.WorldLocation = this.WorldLocation + gunOffset;
-                    
-                    // This will make the bullet alternate from the top of the ship to the bottom as if
-                    // both guns are producing shots.
-                    gunOffset *= -1;
 
-                    shot.Velocity = new Vector2(500, 0);
-                    if (Flipped)
-                    {
-                        shot.Velocity *= -1;
-                    }
+                if (ShotPower == ShotPower.Charge && chargeShotTimer >= chargeShotTimerGoal)
+                {
+                    // Handle charge shot
+                    chargedShot.Enabled = true;
+                    chargedShot.WorldLocation = this.WorldLocation + new Vector2(-20, 16);
+                    chargedShot.Velocity = new Vector2(500, 0);
                     spaceshipShotCooldownTimer = 0;
+                    chargeShotTimer = 0;
                     SoundManager.PlaySound("Shoot", 0.2f, -0.2f);
+                }
+                else
+                {
+                    
+                    var shot = Shots.TryGetObject();
+                    if (shot != null)
+                    {
+                        shot.Enabled = true;
+
+                        Vector2 offset = Vector2.Zero;
+
+                        if (ShotPower != ShotPower.Single)
+                        {
+                            offset = gunOffset;
+
+                            // This will make the bullet alternate from the top of the ship to the bottom as if
+                            // both guns are producing shots.
+                            gunOffset *= -1;
+                        }
+
+                        shot.WorldLocation = this.WorldLocation + offset;
+
+                        shot.Velocity = new Vector2(500, 0);
+                        if (Flipped)
+                        {
+                            shot.Velocity *= -1;
+                        }
+                        spaceshipShotCooldownTimer = 0;
+                        chargeShotTimer = 0;
+                        SoundManager.PlaySound("Shoot", 0.2f, -0.2f);
+                    }
                 }
             }
 
-            float fireTimerGoal = 0.1f;
+            // Shot charges if you have charge shot and you aren't shooting.
+            if (ShotPower == ShotPower.Charge && !InputManager.CurrentAction.action)
+            {
+                chargeShotTimer = Math.Min(chargeShotTimerGoal, chargeShotTimer + elapsed);
+            }
 
-            //// Slow bubbles if you're not moving.
-            //if (velocity == Vector2.Zero)
-            //{
-            //    fireTimerGoal = 1.8f;
-            //}
+            float fireTimerGoal = 0.1f;
 
             // Make a rocket flame every so often.
             if (shipFireTimer < fireTimerGoal)
@@ -807,8 +904,9 @@ namespace MacGame
                 shipFireTimer = 0f;
                 var fire = ShipFires.GetNextObject();
                 fire.Reset();
+                fire.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
                 fire.WorldLocation = this.WorldLocation + new Vector2(-12, 0);
-                fire.Velocity = new Vector2(-0, 0);
+                fire.Velocity = initialSpeed + new Vector2(-120, 0);
             }
 
             // When you're the ship you can fly through solid objects but
@@ -865,7 +963,6 @@ namespace MacGame
                 CurrentItem = null;
                 Tacos = 0;
             }
-
             Enabled = true;
             Velocity = Vector2.Zero;
             IsInMineCart = false;
@@ -883,7 +980,7 @@ namespace MacGame
             this.IsInvisible = false;
             this.IsJustShotOutOfCannon = false;
             this.PlatformThatThisIsOn = null;
-
+            ShotPower = ShotPower.Single;
         }
 
         /// <summary>
@@ -974,6 +1071,27 @@ namespace MacGame
                             {
                                 shot.Break();
                                 enemy.TakeHit(shot, 1, Vector2.Zero);
+                            }
+                        }
+                    }
+
+                    if (chargedShot.Enabled)
+                    {
+                        if (chargedShot.CollisionRectangle.Intersects(enemy.CollisionRectangle))
+                        {
+                            var alreadyHit = false;
+                            foreach(var alreadyHitEnemy in chargedShot.EnemiesHit)
+                            {
+                                if (alreadyHitEnemy == enemy)
+                                {
+                                    alreadyHit = true;
+                                    break;
+                                }
+                            }
+                            if (!alreadyHit)
+                            {
+                                chargedShot.EnemiesHit.Add(enemy);
+                                enemy.TakeHit(chargedShot, 20, Vector2.Zero);
                             }
                         }
                     }
@@ -2114,6 +2232,7 @@ namespace MacGame
                         shot.Draw(spriteBatch);
                     }
                 }
+                chargedShot.Draw(spriteBatch);
                 for (int i = 0; i < ShipFires.Length; i++)
                 {
                     if (ShipFires.GetItem(i).Enabled)

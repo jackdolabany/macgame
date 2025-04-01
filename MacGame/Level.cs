@@ -156,10 +156,12 @@ namespace MacGame
             {
                 Camera.Position += AutoScrollSpeed * elapsed;
 
+                // Just scrolling left or right
                 if (AutoScrollSpeed.Y == 0)
                 {
                     Camera.Position = new Vector2(Camera.Position.X, Player.WorldCenter.Y);
                 }
+
             }
             else
             {

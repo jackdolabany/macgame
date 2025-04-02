@@ -135,6 +135,14 @@ namespace MacGame.Enemies
             Game1.BossHealth = Health;
             Game1.BossName = "Grok";
 
+            // Move the tail pieces up and down in a sign wave
+            for (int i = 0; i < _tailPieces.Count; i++)
+            {
+                var yPositionOffset = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds + i) * 15;
+                _tailPieces[i].WorldLocation = new Vector2(_tailPieces[i].WorldLocation.X, this.WorldLocation.Y + yPositionOffset);
+            }
+
+
             // Update head and tail
             _head.Update(gameTime, elapsed);
             foreach (var tailPiece in _tailPieces)

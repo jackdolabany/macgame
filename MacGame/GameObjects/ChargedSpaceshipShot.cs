@@ -28,7 +28,7 @@ namespace MacGame.Items
             DisplayComponent = image;
             image.Source = Helpers.GetBigTileRect(4, 11);
             
-            SetCenteredCollisionRectangle(16, 16, 16, 10);
+            SetCenteredCollisionRectangle(16, 16, 16, 8);
 
             IsAffectedByGravity = false;
             isTileColliding = false;

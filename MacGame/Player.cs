@@ -225,7 +225,7 @@ namespace MacGame
             }
         }
 
-        Vector2 gunOffset = new Vector2(0, 12);
+        Vector2 gunOffset = new Vector2(0, 8);
         public CircularBuffer<ShipFire> ShipFires;
         float shipFireTimer = 0f;
 
@@ -414,7 +414,7 @@ namespace MacGame
             disableWaterBomb.FrameLength = 0.25f;
             animations.Add(disableWaterBomb);
 
-            var spaceShip = new AnimationStrip(spaceTextures, Helpers.GetTileRect(1, 0), 1, "spaceShip");
+            var spaceShip = new AnimationStrip(spaceTextures, Helpers.GetTileRect(5, 2), 1, "spaceShip");
             spaceShip.LoopAnimation = false;
             spaceShip.FrameLength = 1f;
             animations.Add(spaceShip);
@@ -1915,6 +1915,7 @@ namespace MacGame
             _state = MacState.SpaceShip;
             this.IsAffectedByGravity = false;
             animations.Play("spaceShip");
+            SetCenteredCollisionRectangle(8, 8, 5, 5);
         }
 
         /// <summary>

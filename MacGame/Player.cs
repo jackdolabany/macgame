@@ -963,6 +963,8 @@ namespace MacGame
                 CurrentItem = null;
                 Tacos = 0;
             }
+
+            isTileColliding = true;
             Enabled = true;
             Velocity = Vector2.Zero;
             IsInMineCart = false;

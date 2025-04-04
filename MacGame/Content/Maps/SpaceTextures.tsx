@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.11.0" name="SpaceTextures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/SpaceTextures.png" width="128" height="288"/>
- <tile id="1">
-  <properties>
-   <property name="PlayerStart" value="1"/>
-  </properties>
- </tile>
  <tile id="2">
   <properties>
    <property name="LoadClass" value="Enemy.EnemyShip"/>
@@ -39,6 +34,11 @@
  <tile id="36">
   <properties>
    <property name="LoadClass" value="Enemy.EnemyShip5"/>
+  </properties>
+ </tile>
+ <tile id="37">
+  <properties>
+   <property name="PlayerStart" value="1"/>
   </properties>
  </tile>
  <tile id="49">

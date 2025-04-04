@@ -677,6 +677,9 @@ namespace MacGame
             player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + (Game1.TileSize / 2), ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
             camera.Map = level.Map;
 
+            // Start the camera on the player. This would reset auto scrolling levels.
+            camera.Position = player.WorldLocation;
+
             level.Map.PlayerDrawDepth = player.DrawDepth;
 
             return level;

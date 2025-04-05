@@ -126,12 +126,12 @@ namespace MacGame.Enemies
         /// <summary>
         /// Waypoints are relative to the level upper left of the level and in units of Tiles. 
         /// </summary>
-        protected void GoToWaypoint(float speed, Waypoint wayPoint)
+        public void GoToWaypoint(float speed, Waypoint wayPoint)
         {
             GoToLocation(speed, wayPoint.CenterLocation);
         }
 
-        protected void GoToLocation(float speed, Vector2 location)
+        public void GoToLocation(float speed, Vector2 location)
         {
             var vectorToLocation = location - CollisionCenter;
 
@@ -149,7 +149,7 @@ namespace MacGame.Enemies
         /// <summary>
         /// Returns if you are within a tile of the waypoint. This may blow up if you are moving too fast.
         /// </summary>
-        protected bool IsAtWaypoint(Waypoint wayPoint)
+        public bool IsAtWaypoint(Waypoint wayPoint)
         {
             var vectorToLocation = wayPoint.CenterLocation - CollisionCenter;
 

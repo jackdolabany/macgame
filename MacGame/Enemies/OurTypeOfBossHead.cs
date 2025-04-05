@@ -27,9 +27,12 @@ namespace MacGame.Enemies
 
         float speed = 30f;
 
-        public OurTypeOfBossHead(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        OurTypeOfBoss _boss;
+
+        public OurTypeOfBossHead(ContentManager content, int cellX, int cellY, Player player, Camera camera, OurTypeOfBoss boss)
             : base(content, cellX, cellY, player, camera)
         {
+            _boss = boss;
 
             isEnemyTileColliding = false;
             IsAbleToMoveOutsideOfWorld = true;
@@ -38,8 +41,8 @@ namespace MacGame.Enemies
             IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
-            CanBeHitWithWeapons = false;
-            CanBeJumpedOn = true;
+            CanBeHitWithWeapons = true;
+            CanBeJumpedOn = false;
 
             DisplayComponent = new AnimationDisplay();
 
@@ -62,6 +65,8 @@ namespace MacGame.Enemies
             Health = 1;
 
             IsAffectedByGravity = false;
+
+            SetCenteredCollisionRectangle(16, 16, 14, 11);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -113,6 +118,12 @@ namespace MacGame.Enemies
             }
 
             base.Update(gameTime, elapsed);
+        }
+
+        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        {
+            // hitting the head really hits the boss.
+            _boss.TakeHit(attacker, damage, force);
         }
     }
 }

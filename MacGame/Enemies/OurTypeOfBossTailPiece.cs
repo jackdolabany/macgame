@@ -24,8 +24,8 @@ namespace MacGame.Enemies
             IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
-            CanBeHitWithWeapons = false;
-            CanBeJumpedOn = true;
+            CanBeHitWithWeapons = true;
+            CanBeJumpedOn = false;
 
             DisplayComponent = new AnimationDisplay();
 
@@ -35,9 +35,14 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = false;
             Attack = 1;
-            Health = 1;
+            Health = 1000;
+
 
             IsAffectedByGravity = false;
+
+            SetCenteredCollisionRectangle(8, 8, 8, 8);
+
+            InvincibleTimeAfterBeingHit = 0f;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

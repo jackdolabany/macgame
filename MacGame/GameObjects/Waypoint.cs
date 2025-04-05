@@ -18,6 +18,11 @@ namespace MacGame
             BottomCenterLocation = new Vector2(CenterLocation.X, CenterLocation.Y + (Game1.TileSize / 2));
         }
 
+        public Waypoint(Vector2 location)
+        {
+            CenterLocation = location;
+            BottomCenterLocation = new Vector2(CenterLocation.X, CenterLocation.Y + (Game1.TileSize / 2));
+        }
 
         public Vector2 BottomCenterLocation { get; set; }
 

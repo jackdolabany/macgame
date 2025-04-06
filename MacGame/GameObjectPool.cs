@@ -33,34 +33,6 @@ namespace MacGame
             base.ReturnObject(obj);
         }
 
-        public void Update(GameTime gameTime, float elapsed)
-        {
-            for (int i = 0; i < this.objects.Count; i++)
-            {
-                if (objects[i].Enabled)
-                {
-                    objects[i].Update(gameTime, elapsed);
-
-                    // Return it if the update statement disabled it
-                    if (!objects[i].Enabled)
-                    {
-                        ReturnObject(objects[i]);
-                    }
-                }
-            }
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            for (int i = 0; i < this.objects.Count; i++)
-            {
-                if (objects[i].Enabled)
-                {
-                    objects[i].Draw(spriteBatch);
-                }
-            }
-        }
-
     }
 
 }

@@ -27,7 +27,7 @@ namespace MacGame.Enemies
 
         private Player _player;
 
-        private int MaxHealth = 50;
+        private int MaxHealth = 100;
 
         private bool isInitialized = false;
 
@@ -45,6 +45,12 @@ namespace MacGame.Enemies
 
         List<Rectangle> collisionRectangles = new List<Rectangle>();
 
+        List<SpaceEyeball> spaceEyeballs = new List<SpaceEyeball>();
+        List<SpaceMouth> spaceMouths = new List<SpaceMouth>();
+
+        float sendEnemyTimer = 0f;
+        float sendEnemyTimerGoal = 1f;
+
         public OurTypeOfBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -59,7 +65,7 @@ namespace MacGame.Enemies
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = true;
-
+            
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\MegaTextures");
@@ -93,7 +99,7 @@ namespace MacGame.Enemies
             _head = new OurTypeOfBossHead(content, cellX, cellY, player, camera, this);
             _head.WorldLocation = this.WorldCenter + new Vector2(16, 40);
             Vector2 initialTailSpot = this.WorldLocation + new Vector2(-40, 0);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 12; i++)
             {
                 var tailPiece = new OurTypeOfBossTailPiece(content, cellX, cellY, player, camera);
                 _tailPieces.Add(tailPiece);
@@ -111,7 +117,31 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.AddRange(_tailPieces);
             ExtraEnemiesToAddAfterConstructor.Add(_head);
 
-            InvincibleTimeAfterBeingHit = 0.1f;
+            InvincibleTimeAfterBeingHit = 0f;
+            
+            // Hack, but the last tail pieces moves around and the other pieces kind of follow but wave around and such, 
+            // so they can't help but get out of sync a bit. And for that reason we hide the last tail piece and make it not
+            // collide. It makes the tail look smoother.
+            _tailPieces.Last().CollisionRectangle = new Rectangle();
+            _tailPieces.Last().Attack = 0;
+            _tailPieces.Last().DisplayComponent = new NoDisplay();
+
+            // He'll randomly send some mouths and eyeballs at you too.
+            for (int i = 0; i < 10; i++)
+            {
+                var eyeball = new SpaceEyeball(content, cellX, cellY, player, camera);
+                eyeball.Enabled = false;
+                spaceEyeballs.Add(eyeball);
+                AddEnemyInConstructor(eyeball);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                var mouth = new SpaceMouth(content, cellX, cellY, player, camera);
+                mouth.Enabled = false;
+                spaceMouths.Add(mouth);
+                AddEnemyInConstructor(mouth);
+            }
         }
 
         private void Initialize()
@@ -192,7 +222,7 @@ namespace MacGame.Enemies
             // Lerp the tail pieces between the first and loast locations
             for (int i = 1; i < _tailPieces.Count - 1; i++)
             {
-                float percentage = (float)(i ) / (float)(_tailPieces.Count - 1);  
+                float percentage = (float)(i) / (float)(_tailPieces.Count - 1);  
                 Vector2 location = Vector2.Lerp(_tailPieces.First().WorldLocation, _tailPieces.Last().WorldLocation, percentage);
                 _tailPieces[i].WorldLocation = location;
             }
@@ -209,25 +239,21 @@ namespace MacGame.Enemies
             }
 
             // Then wag the center pieces up more than the end pieces
-            for (int i = 1; i < _tailPieces.Count - 1; i++)
+            for (int i = 0; i < _tailPieces.Count - 1; i++)
             {
                 // how close is it to the center piece, get a number 0 to 1
                 var centerIndex = _tailPieces.Count / 2;
                 var distanceFromCenter = Math.Abs(centerIndex - i);
                 var percentage = 1 - ((float)distanceFromCenter / (float)(centerIndex));
 
+                // This smooths out the curve of the tail.
+                percentage = (float)Math.Sin(percentage * MathHelper.PiOver2);
+
                 // convert the percentage into a smooth curve using half of a sin wave
                 //var offset = (float)Math.Sin(percentage * MathHelper.PiOver2);
 
                 _tailPieces[i].WorldLocation = new Vector2(_tailPieces[i].WorldLocation.X, _tailPieces[i].WorldLocation.Y + percentage * middleOffset);
             }
-
-            //// Move the tail pieces up and down in a sign wave
-            //for (int i = 0; i < _tailPieces.Count; i++)
-            //{
-            //    var yPositionOffset = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds + (i / 2f)) * 15;
-            //    _tailPieces[i].WorldLocation = new Vector2(_tailPieces[i].WorldLocation.X, this.WorldLocation.Y + yPositionOffset);
-            //}
 
             // Check custom rectangle collisions
             foreach (var rect in collisionRectangles)
@@ -251,6 +277,59 @@ namespace MacGame.Enemies
             foreach (var tailPiece in _tailPieces)
             {
                 tailPiece.Update(gameTime, elapsed);
+            }
+
+            sendEnemyTimer += elapsed;
+            if (sendEnemyTimer >= sendEnemyTimerGoal)
+            {
+                sendEnemyTimer = 0;
+
+                var randomY = this.WorldLocation.Y + Game1.Randy.Next(-200, 0);
+
+                if (Game1.Randy.NextBool())
+                {
+                    // Search for a disabled eyeball to reuse.
+                    foreach (var eyeBall in spaceEyeballs)
+                    {
+                        if (!eyeBall.Enabled)
+                        {
+                            eyeBall.Reset();
+                            eyeBall.WorldLocation = new Vector2(this.camera.ViewPort.Right + 100, randomY);
+                            break;
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    // Search for a disabled mouth to reuse.
+                    foreach (var mouth in spaceMouths)
+                    {
+                        if (!mouth.Enabled)
+                        {
+                            mouth.Reset();
+                            mouth.WorldLocation = new Vector2(this.camera.ViewPort.Right + 100, randomY);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Disable eyes and mouths as they go off the left side of the screen or die.
+            foreach (var eyeBall in spaceEyeballs)
+            {
+                if (eyeBall.CollisionRectangle.Right + 10 < camera.ViewPort.Left)
+                {
+                    eyeBall.Enabled = false;
+                }
+            }
+
+            foreach (var mouth in spaceMouths)
+            {
+                if (mouth.Enabled && mouth.CollisionRectangle.Right + 10 < camera.ViewPort.Left)
+                {
+                    mouth.Enabled = false;
+                }
             }
 
             base.Update(gameTime, elapsed);

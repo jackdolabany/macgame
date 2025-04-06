@@ -66,6 +66,8 @@ namespace MacGame.Enemies
 
             IsAffectedByGravity = false;
 
+            InvincibleTimeAfterBeingHit = 0.1f;
+
             SetCenteredCollisionRectangle(16, 16, 14, 11);
         }
 
@@ -124,6 +126,7 @@ namespace MacGame.Enemies
         {
             // hitting the head really hits the boss.
             _boss.TakeHit(attacker, damage, force);
+            InvincibleTimer += InvincibleTimeAfterBeingHit;
         }
     }
 }

@@ -56,6 +56,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="53">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpaceEyeball"/>
+  </properties>
+ </tile>
  <tile id="66">
   <properties>
    <property name="Hidden" value="1"/>
@@ -64,6 +69,11 @@
  <tile id="67">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="69">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpaceMouth"/>
   </properties>
  </tile>
  <tile id="81">

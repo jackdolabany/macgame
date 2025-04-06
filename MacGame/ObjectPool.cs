@@ -20,7 +20,7 @@ namespace MacGame
             return objects.IndexOf(obj);
         }
 
-        public ObjectPool(int poolSize)
+        public ObjectPool(int poolSize = 0)
         {
             this.objects = new List<T>(poolSize);
             this.availableQueue = new Queue<T>(poolSize);

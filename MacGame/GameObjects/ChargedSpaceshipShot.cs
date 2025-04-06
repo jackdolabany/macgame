@@ -21,6 +21,14 @@ namespace MacGame.Items
         /// </summary>
         public List<Enemy> EnemiesHit = new List<Enemy>();
 
+        public int Strength 
+        { 
+            get
+            {
+                return 10;
+            } 
+        }
+
         public ChargedSpaceshipShot(ContentManager content, int cellX, int cellY, Player player, Camera camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
@@ -52,6 +60,12 @@ namespace MacGame.Items
 
             base.Update(gameTime, elapsed);
 
+        }
+
+        public void Reset()
+        {
+            EnemiesHit.Clear();
+            this.Enabled = true;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

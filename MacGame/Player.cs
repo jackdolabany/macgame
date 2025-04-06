@@ -846,7 +846,7 @@ namespace MacGame
                 if (ShotPower == ShotPower.Charge && chargeShotTimer >= chargeShotTimerGoal)
                 {
                     // Handle charge shot
-                    chargedShot.Enabled = true;
+                    chargedShot.Reset();
                     chargedShot.WorldLocation = this.WorldLocation + new Vector2(-20, 16);
                     chargedShot.Velocity = new Vector2(500, 0);
                     spaceshipShotCooldownTimer = 0;
@@ -1093,7 +1093,7 @@ namespace MacGame
                             if (!alreadyHit)
                             {
                                 chargedShot.EnemiesHit.Add(enemy);
-                                enemy.TakeHit(chargedShot, 20, Vector2.Zero);
+                                enemy.TakeHit(chargedShot, chargedShot.Strength, Vector2.Zero);
                             }
                         }
                     }

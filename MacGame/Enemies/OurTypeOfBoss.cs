@@ -7,9 +7,28 @@ using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using static MacGame.Enemies.Blowfish;
 
 namespace MacGame.Enemies
 {
+    public enum OurTypeOfBossState
+    {
+        /// <summary>
+        /// Don't do anything until you've been seen.
+        /// </summary>
+        Unseen,
+        Alive,
+        /// <summary>
+        /// Dying is two states, first his tail starts blowing up like a bomb towards the body.
+        /// </summary>
+        DyingTailBlowingUp,
+        /// <summary>
+        /// Second state of dying afer the tail is blown up and the whole body starts exploding.
+        /// </summary>
+        DyingBodyBlowingUp,
+        Dead
+    }
+
     /// <summary>
     /// Sort of looks like the first boss from R-Type, but that's just a coincidence.
     /// </summary>
@@ -17,10 +36,7 @@ namespace MacGame.Enemies
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        /// <summary>
-        /// Don't do anything until you've been seen.
-        /// </summary>
-        private bool _hasBeenSeen = false;
+        OurTypeOfBossState _state = OurTypeOfBossState.Unseen;
 
         float openAndCloseMouthTimer = 0;
         float openAndCloseMouthTimerGoal = 2.5f;
@@ -28,6 +44,7 @@ namespace MacGame.Enemies
         private Player _player;
 
         private int MaxHealth = 100;
+        //private int MaxHealth = 3;
 
         private bool isInitialized = false;
 
@@ -50,6 +67,19 @@ namespace MacGame.Enemies
 
         float sendEnemyTimer = 0f;
         float sendEnemyTimerGoal = 1f;
+
+        OurTypeOfBossShot _shot;
+        float shotTimer = 0f;
+        float shotTimerGoal = 4f;
+        private float explosionTimer;
+        private Rectangle explosionRectangle;
+        private float dyingTimer;
+        private float dyingTimerGoal = 4f;
+
+        /// <summary>
+        /// After death reveal the sock.
+        /// </summary>
+        private Sock Sock;
 
         public OurTypeOfBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -142,6 +172,10 @@ namespace MacGame.Enemies
                 spaceMouths.Add(mouth);
                 AddEnemyInConstructor(mouth);
             }
+
+            _shot = new OurTypeOfBossShot(content, cellX, cellY, player, camera);
+            _shot.Enabled = false;
+            AddEnemyInConstructor(_shot);
         }
 
         private void Initialize()
@@ -159,6 +193,23 @@ namespace MacGame.Enemies
             collisionRectangles.Add(new Rectangle((int)this.worldLocation.X - 8, (int)this.worldLocation.Y - 200, 100, 200));
             collisionRectangles.Add(new Rectangle((int)this.worldLocation.X - 100, (int)this.worldLocation.Y - 220, 125, 50));
             collisionRectangles.Add(new Rectangle((int)this.worldLocation.X - 75, (int)this.worldLocation.Y - 250, 100, 30));
+
+            explosionRectangle = new Rectangle((int)this.worldLocation.X - 100, (int)this.worldLocation.Y - 250, 200, 250);
+
+            foreach (var item in Game1.CurrentLevel.Items)
+            {
+                if (item is Sock)
+                {
+                    Sock = (Sock)item;
+                }
+            }
+
+            if (Sock == null)
+            {
+                throw new Exception("You need a sock in the level!");
+            }
+
+            Sock.Enabled = false;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -169,11 +220,11 @@ namespace MacGame.Enemies
                 Initialize();
             }
 
-            if (!_hasBeenSeen)
+            if (_state == OurTypeOfBossState.Unseen)
             {
                 if (Game1.Camera.IsPointVisible(new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Center.Y)))
                 {
-                    _hasBeenSeen = true;
+                    _state = OurTypeOfBossState.Alive;
                 }
                 else
                 {
@@ -181,171 +232,218 @@ namespace MacGame.Enemies
                 }
             }
 
-            openAndCloseMouthTimer += elapsed;
-            if (openAndCloseMouthTimer > openAndCloseMouthTimerGoal)
-            {
-                openAndCloseMouthTimer = 0;
-                animations.Play("openMouth").FollowedBy("closeMouth");
-            }
-
             Game1.DrawBossHealth = true;
             Game1.MaxBossHealth = MaxHealth;
             Game1.BossHealth = Health;
             Game1.BossName = "Grok";
 
-            _tailPieces.Last().GoToWaypoint(30, nextTailWaypoint);
-            if (_tailPieces.Last().IsAtWaypoint(nextTailWaypoint))
+            if (_state == OurTypeOfBossState.Alive)
             {
-                if (nextTailWaypoint == tailStart)
+                openAndCloseMouthTimer += elapsed;
+                if (openAndCloseMouthTimer > openAndCloseMouthTimerGoal)
                 {
-                    isWaypointComingFromStart = true;
-                    nextTailWaypoint = tailMidway;
+                    openAndCloseMouthTimer = 0;
+                    animations.Play("openMouth").FollowedBy("closeMouth");
                 }
-                else if (nextTailWaypoint == tailMidway)
+
+                _tailPieces.Last().GoToWaypoint(30, nextTailWaypoint);
+                if (_tailPieces.Last().IsAtWaypoint(nextTailWaypoint))
                 {
-                    if (isWaypointComingFromStart)
+                    if (nextTailWaypoint == tailStart)
                     {
-                        nextTailWaypoint = tailEnd;
+                        isWaypointComingFromStart = true;
+                        nextTailWaypoint = tailMidway;
+                    }
+                    else if (nextTailWaypoint == tailMidway)
+                    {
+                        if (isWaypointComingFromStart)
+                        {
+                            nextTailWaypoint = tailEnd;
+                        }
+                        else
+                        {
+                            nextTailWaypoint = tailStart;
+                        }
                     }
                     else
                     {
-                        nextTailWaypoint = tailStart;
+                        isWaypointComingFromStart = false;
+                        nextTailWaypoint = tailMidway;
                     }
                 }
-                else
+
+                // Lerp the tail pieces between the first and loast locations
+                for (int i = 1; i < _tailPieces.Count - 1; i++)
                 {
-                    isWaypointComingFromStart = false;
-                    nextTailWaypoint = tailMidway;
-                }
-            }
-
-            // Lerp the tail pieces between the first and loast locations
-            for (int i = 1; i < _tailPieces.Count - 1; i++)
-            {
-                float percentage = (float)(i) / (float)(_tailPieces.Count - 1);  
-                Vector2 location = Vector2.Lerp(_tailPieces.First().WorldLocation, _tailPieces.Last().WorldLocation, percentage);
-                _tailPieces[i].WorldLocation = location;
-            }
-
-
-            middleOffset += elapsed * offsetMoveSpeed;
-            if (middleOffset > maxMiddleOffset && offsetMoveSpeed > 0)
-            {
-                offsetMoveSpeed *= -1;
-            }
-            else if (middleOffset < -maxMiddleOffset && offsetMoveSpeed < 0)
-            {
-                offsetMoveSpeed *= -1;
-            }
-
-            // Then wag the center pieces up more than the end pieces
-            for (int i = 0; i < _tailPieces.Count - 1; i++)
-            {
-                // how close is it to the center piece, get a number 0 to 1
-                var centerIndex = _tailPieces.Count / 2;
-                var distanceFromCenter = Math.Abs(centerIndex - i);
-                var percentage = 1 - ((float)distanceFromCenter / (float)(centerIndex));
-
-                // This smooths out the curve of the tail.
-                percentage = (float)Math.Sin(percentage * MathHelper.PiOver2);
-
-                // convert the percentage into a smooth curve using half of a sin wave
-                //var offset = (float)Math.Sin(percentage * MathHelper.PiOver2);
-
-                _tailPieces[i].WorldLocation = new Vector2(_tailPieces[i].WorldLocation.X, _tailPieces[i].WorldLocation.Y + percentage * middleOffset);
-            }
-
-            // Check custom rectangle collisions
-            foreach (var rect in collisionRectangles)
-            {
-                if (rect.Intersects(_player.CollisionRectangle))
-                {
-                    _player.TakeHit(this);
+                    float percentage = (float)(i) / (float)(_tailPieces.Count - 1);
+                    Vector2 location = Vector2.Lerp(_tailPieces.First().WorldLocation, _tailPieces.Last().WorldLocation, percentage);
+                    _tailPieces[i].WorldLocation = location;
                 }
 
-                foreach (var shot in _player.Shots.RawList)
+
+                middleOffset += elapsed * offsetMoveSpeed;
+                if (middleOffset > maxMiddleOffset && offsetMoveSpeed > 0)
                 {
-                    if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
+                    offsetMoveSpeed *= -1;
+                }
+                else if (middleOffset < -maxMiddleOffset && offsetMoveSpeed < 0)
+                {
+                    offsetMoveSpeed *= -1;
+                }
+
+                // Then wag the center pieces up more than the end pieces
+                for (int i = 0; i < _tailPieces.Count - 1; i++)
+                {
+                    // how close is it to the center piece, get a number 0 to 1
+                    var centerIndex = _tailPieces.Count / 2;
+                    var distanceFromCenter = Math.Abs(centerIndex - i);
+                    var percentage = 1 - ((float)distanceFromCenter / (float)(centerIndex));
+
+                    // This smooths out the curve of the tail.
+                    percentage = (float)Math.Sin(percentage * MathHelper.PiOver2);
+
+                    // convert the percentage into a smooth curve using half of a sin wave
+                    //var offset = (float)Math.Sin(percentage * MathHelper.PiOver2);
+
+                    _tailPieces[i].WorldLocation = new Vector2(_tailPieces[i].WorldLocation.X, _tailPieces[i].WorldLocation.Y + percentage * middleOffset);
+                }
+
+                // Check custom rectangle collisions
+                foreach (var rect in collisionRectangles)
+                {
+                    if (rect.Intersects(_player.CollisionRectangle))
                     {
-                        shot.Break();
+                        _player.TakeHit(this);
                     }
-                }
-            }
 
-            // Update head and tail
-            _head.Update(gameTime, elapsed);
-            foreach (var tailPiece in _tailPieces)
-            {
-                tailPiece.Update(gameTime, elapsed);
-            }
-
-            sendEnemyTimer += elapsed;
-            if (sendEnemyTimer >= sendEnemyTimerGoal)
-            {
-                sendEnemyTimer = 0;
-
-                var randomY = this.WorldLocation.Y + Game1.Randy.Next(-200, 0);
-
-                if (Game1.Randy.NextBool())
-                {
-                    // Search for a disabled eyeball to reuse.
-                    foreach (var eyeBall in spaceEyeballs)
+                    foreach (var shot in _player.Shots.RawList)
                     {
-                        if (!eyeBall.Enabled)
+                        if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
                         {
-                            eyeBall.Reset();
-                            eyeBall.WorldLocation = new Vector2(this.camera.ViewPort.Right + 100, randomY);
-                            break;
-                        }
-                    }
-                    
-                }
-                else
-                {
-                    // Search for a disabled mouth to reuse.
-                    foreach (var mouth in spaceMouths)
-                    {
-                        if (!mouth.Enabled)
-                        {
-                            mouth.Reset();
-                            mouth.WorldLocation = new Vector2(this.camera.ViewPort.Right + 100, randomY);
-                            break;
+                            shot.Break();
                         }
                     }
                 }
-            }
 
-            // Disable eyes and mouths as they go off the left side of the screen or die.
-            foreach (var eyeBall in spaceEyeballs)
-            {
-                if (eyeBall.CollisionRectangle.Right + 10 < camera.ViewPort.Left)
+                // Update head and tail
+                _head.Update(gameTime, elapsed);
+                foreach (var tailPiece in _tailPieces)
                 {
-                    eyeBall.Enabled = false;
+                    tailPiece.Update(gameTime, elapsed);
                 }
-            }
 
-            foreach (var mouth in spaceMouths)
-            {
-                if (mouth.Enabled && mouth.CollisionRectangle.Right + 10 < camera.ViewPort.Left)
+                sendEnemyTimer += elapsed;
+                if (sendEnemyTimer >= sendEnemyTimerGoal)
                 {
-                    mouth.Enabled = false;
+                    sendEnemyTimer = 0;
+
+                    var randomY = this.WorldLocation.Y + Game1.Randy.Next(-200, 32);
+
+                    if (Game1.Randy.NextBool())
+                    {
+                        // Search for a disabled eyeball to reuse.
+                        foreach (var eyeBall in spaceEyeballs)
+                        {
+                            if (!eyeBall.Enabled)
+                            {
+                                eyeBall.Reset();
+                                eyeBall.WorldLocation = new Vector2(this.camera.ViewPort.Right + 100, randomY);
+                                break;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        // Search for a disabled mouth to reuse.
+                        foreach (var mouth in spaceMouths)
+                        {
+                            if (!mouth.Enabled)
+                            {
+                                mouth.Reset();
+                                mouth.WorldLocation = new Vector2(this.camera.ViewPort.Right + 100, randomY);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Disable eyes and mouths as they go off the left side of the screen or die.
+                foreach (var eyeBall in spaceEyeballs)
+                {
+                    if (eyeBall.CollisionRectangle.Right + 10 < camera.ViewPort.Left)
+                    {
+                        eyeBall.Enabled = false;
+                    }
+                }
+
+                foreach (var mouth in spaceMouths)
+                {
+                    if (mouth.Enabled && mouth.CollisionRectangle.Right + 10 < camera.ViewPort.Left)
+                    {
+                        mouth.Enabled = false;
+                    }
+                }
+
+                // Shoot every so often
+                shotTimer += elapsed;
+                if (shotTimer >= shotTimerGoal)
+                {
+                    shotTimer = 0;
+                    // Search for a disabled shot to reuse.
+                    _shot.WorldLocation = this.WorldLocation + new Vector2(-78, -158);
+                    _shot.Enabled = true;
+                    // Shoot towards the player
+                    var direction = _player.CollisionCenter - _shot.CollisionCenter;
+                    direction.Normalize();
+                    _shot.Velocity = direction * 300;
                 }
             }
 
             base.Update(gameTime, elapsed);
 
+            if (_state == OurTypeOfBossState.DyingBodyBlowingUp)
+            {
+                // random explosions
+                explosionTimer += elapsed;
+                if (explosionTimer >= 0.13f)
+                {
+                    explosionTimer = 0f;
+                    // Get a random location over this collision rectangle
+                    var randomX = Game1.Randy.Next(explosionRectangle.Width);
+                    var randomY = Game1.Randy.Next(explosionRectangle.Height);
+
+                    var randomLocation = new Vector2(explosionRectangle.X + randomX, explosionRectangle.Y + randomY);
+                    EffectsManager.AddExplosion(randomLocation);
+                }
+
+                dyingTimer += elapsed;
+
+                var deadPercentage = dyingTimer / dyingTimerGoal;
+                DisplayComponent.TintColor = Color.Lerp(Color.White, Color.Transparent, deadPercentage);
+
+                if (dyingTimer >= dyingTimerGoal)
+                {
+                    this.Kill();
+                    _head.Kill();
+                    _state = OurTypeOfBossState.Dead;
+
+                    TimerManager.AddNewTimer(1f, () => { Sock.FadeIn(); });
+
+                    // break these bricks so that Mac can leave.
+                    Game1.CurrentLevel.BreakBricks("Puff");
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             // draw head and tail
-            _head.Draw(spriteBatch);
-            foreach (var tailPiece in _tailPieces)
-            {
-                tailPiece.Draw(spriteBatch);
-            }
-
-        
+            //_head.Draw(spriteBatch);
+            //foreach (var tailPiece in _tailPieces)
+            //{
+            //    tailPiece.Draw(spriteBatch);
+            //}
 
             // Draw Collision Rectangle in reddish
             if (DrawCollisionRect || Game1.DrawAllCollisionRects)
@@ -356,11 +454,47 @@ namespace MacGame.Enemies
                 {
                     spriteBatch.Draw(Game1.TileTextures, rectangle, Game1.WhiteSourceRect, color);
                 }
-
                 
             }
 
             base.Draw(spriteBatch);
+        }
+
+        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        {
+            Health -= damage;
+
+            SoundManager.PlaySound("HitEnemy2");
+
+            if (Health <= 0)
+            {
+                _state = OurTypeOfBossState.DyingTailBlowingUp;
+
+                // Blow up the tail like a wick on a bomb.
+                float tailExplosionTime = 0.2f;
+                for (int i = _tailPieces.Count - 1; i >= 0; i--)
+                {
+                    var tailPiece = _tailPieces[i];
+                    TimerManager.AddNewTimer(tailExplosionTime, () => { tailPiece.Kill(); });
+                    tailExplosionTime += 0.2f;
+                }
+
+                TimerManager.AddNewTimer(tailExplosionTime, () => _state = OurTypeOfBossState.DyingBodyBlowingUp);
+
+                _head.Kill();
+
+                foreach(var eyeball in spaceEyeballs)
+                {
+                    eyeball.Kill();
+                }
+
+                foreach (var mouth in spaceMouths)
+                {
+                    mouth.Kill();
+                }
+
+                _shot.Kill();
+            }
         }
     }
 }

@@ -52,12 +52,20 @@ namespace MacGame
                     new SockInfo { Name = "BombSock", Hint = "Take a leap of faith to the East. But danger awaits!" },
                     new SockInfo { Name = "MollySock", Hint = "I heard Molly the cat found one of the socks. I'm not sure what you'd have to do to get it from her." },
                 }
-            },{
+            },
+            {
                 3,
                 new List<SockInfo>
                 {
                     new SockInfo { Name = "DraculaSock", Hint = "To resurrect Dracula you must find his 3 remains." },
                     new SockInfo { Name = "QuadcopterSock", Hint = "Fight the drone wars you must." },
+                }
+            },
+            {
+                4,
+                new List<SockInfo>
+                {
+                    new SockInfo { Name = "GrokSock", Hint = "Grok." },
                 }
             },
         };

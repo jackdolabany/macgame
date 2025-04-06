@@ -128,5 +128,11 @@ namespace MacGame.Enemies
             _boss.TakeHit(attacker, damage, force);
             InvincibleTimer += InvincibleTimeAfterBeingHit;
         }
+
+        public override void Kill()
+        {
+            base.Kill();
+            this.Enabled = false;
+        }
     }
 }

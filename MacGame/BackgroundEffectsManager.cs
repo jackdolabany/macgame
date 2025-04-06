@@ -73,7 +73,7 @@ namespace MacGame
 
             // Give it a random velocity but moving to the left
             
-            star.Velocity = new Vector2(-Game1.Randy.Next(5, 11) * 20 , 0);
+            star.Velocity = new Vector2(-Game1.Randy.Next(5, 11) * 1 , 0);
 
         }
 

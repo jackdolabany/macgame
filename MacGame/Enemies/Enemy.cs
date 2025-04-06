@@ -199,6 +199,8 @@ namespace MacGame.Enemies
         {
             Dead = true;
             PlayDeathSound();
+            EffectsManager.AddExplosion(this.CollisionCenter);
+            Enabled = false;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

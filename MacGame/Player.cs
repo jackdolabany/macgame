@@ -216,7 +216,7 @@ namespace MacGame
             {
                 if (ShotPower == ShotPower.Single)
                 {
-                    return 0.3f;
+                    return 0.225f;
                 }
                 else
                 {
@@ -1030,7 +1030,7 @@ namespace MacGame
                 if (enemy.CanBeJumpedOn && JumpedOnEnemyRectangle(enemy.CollisionRectangle))
                 {
                     // If the player was above the enemy, the enemy was jumped on and takes a hit.
-                    enemy.TakeHit(this,1, Vector2.Zero);
+                    enemy.TakeHit(this, 1, Vector2.Zero);
                     velocity.Y = -450;
                 }
                 else if (enemy.Attack > 0)
@@ -1125,6 +1125,20 @@ namespace MacGame
                 {
                     CurrentItem = null;
                 }
+
+                if (IsInSpaceShip)
+                {
+                    if (ShotPower == ShotPower.Charge)
+                    {
+                        ShotPower = ShotPower.Double;
+                    }
+                    else if (ShotPower == ShotPower.Double)
+                    {
+                        ShotPower = ShotPower.Single;
+                        CurrentItem = null;
+                    }
+                }
+
                 invincibleTimeRemaining = 1.5f;
                 SoundManager.PlaySound("TakeHit");
 

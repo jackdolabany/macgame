@@ -25,7 +25,7 @@ namespace MacGame.Items
         { 
             get
             {
-                return 10;
+                return 6;
             } 
         }
 

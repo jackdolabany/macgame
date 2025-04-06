@@ -43,9 +43,30 @@ namespace MacGame.Items
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (Enabled && _player.ShotPower == ShotPower.Double)
+            // When the player has this render as the powerup the player has.
+            // This shows up in the HUD for the player.
+            if (_player.CurrentItem == this)
             {
-                ((StaticImageDisplay)DisplayComponent).Source = secondPowerupSource;
+                if (_player.ShotPower == ShotPower.Double)
+                {
+                    ((StaticImageDisplay)DisplayComponent).Source = firstPowerupSource;
+                }
+                else if (_player.ShotPower == ShotPower.Charge)
+                {
+                    ((StaticImageDisplay)DisplayComponent).Source = secondPowerupSource;
+                }
+            }
+            else if (Enabled)
+            {
+                // Otherwise this is floating for the player to collect, render as the next powerup.
+                if (_player.ShotPower == ShotPower.Single)
+                {
+                    ((StaticImageDisplay)DisplayComponent).Source = firstPowerupSource;
+                }
+                else
+                {
+                    ((StaticImageDisplay)DisplayComponent).Source = secondPowerupSource;
+                }
             }
 
             base.Update(gameTime, elapsed);

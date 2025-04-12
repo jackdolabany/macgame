@@ -7,30 +7,28 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class EnemyShip2 : EnemyShipBase
+    public abstract class EnemyShipBase : Enemy
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        private float speed = 40;
+        private float speed = 30;
 
-        public EnemyShip2(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public EnemyShipBase(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            DisplayComponent = new AnimationDisplay();
-
-            var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
-            var fly = new AnimationStrip(textures, Helpers.GetTileRect(4, 1), 1, "fly");
-            fly.LoopAnimation = true;
-            fly.FrameLength = 0.14f;
-            animations.Add(fly);
-
-            animations.Play("fly");
-
+            isEnemyTileColliding = false;
             Attack = 1;
-            Health = 5;
+            Health = 1;
+            IsAffectedByGravity = false;
+            Flipped = true;
+            InvincibleTimeAfterBeingHit = 0.1f;
+        }
 
-            SetCenteredCollisionRectangle(8, 8, 8, 8);
+        public override void Kill()
+        {
+            EffectsManager.AddExplosion(WorldCenter);
+            base.Kill();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

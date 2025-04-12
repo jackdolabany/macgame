@@ -45,6 +45,12 @@ namespace MacGame.Enemies
             InvincibleTimeAfterBeingHit = 0f;
         }
 
+        public override void Kill()
+        {
+            EffectsManager.AddExplosion(this.CollisionCenter);
+            base.Kill();
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             base.Update(gameTime, elapsed);

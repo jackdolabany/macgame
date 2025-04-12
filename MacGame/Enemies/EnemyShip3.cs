@@ -7,7 +7,7 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class EnemyShip3 : Enemy
+    public class EnemyShip3 : EnemyShipBase
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
@@ -27,24 +27,11 @@ namespace MacGame.Enemies
 
             animations.Play("fly");
 
-            isEnemyTileColliding = false;
             Attack = 1;
             Health = 3;
-            IsAffectedByGravity = false;
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            Flipped = true;
-
-            InvincibleTimeAfterBeingHit = 0.1f;
-        }
-
-        public override void Kill()
-        {
-            EffectsManager.AddExplosion(WorldCenter);
-
-            Enabled = false;
-            base.Kill();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

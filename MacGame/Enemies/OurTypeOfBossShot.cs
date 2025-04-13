@@ -52,7 +52,7 @@ namespace MacGame.Enemies
 
             IsAffectedByGravity = false;
 
-            SetCenteredCollisionRectangle(8, 8, 8, 8);
+            SetCenteredCollisionRectangle(8, 8, 6, 6);
 
             InvincibleTimeAfterBeingHit = 0f;
         }

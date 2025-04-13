@@ -1,4 +1,5 @@
 ﻿using System;
+using MacGame.Behaviors;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -11,8 +12,6 @@ namespace MacGame.Enemies
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
-
-        private float speed = 200;
 
         /// <summary>
         /// Small and fast.
@@ -35,22 +34,7 @@ namespace MacGame.Enemies
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-        }
-
-
-        public override void Update(GameTime gameTime, float elapsed)
-        {
-
-            if (!camera.IsWayOffscreen(this.CollisionRectangle))
-            {
-                velocity.X = -speed;
-            }
-            else
-            {
-                velocity = Vector2.Zero;
-            }
-
-            base.Update(gameTime, elapsed);
+            Behavior = new EnemyShipBehavior(200, camera);
 
         }
     }

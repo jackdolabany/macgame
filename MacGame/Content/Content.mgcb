@@ -346,6 +346,18 @@
 /processorParam:Quality=Best
 /build:SoundEffects/CatBossShoot.wav
 
+#begin SoundEffects/ChargedShot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ChargedShot.wav
+
+#begin SoundEffects/Charging.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Charging.wav
+
 #begin SoundEffects/ChestOpen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -429,6 +441,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Fire.wav
+
+#begin SoundEffects/FullyCharged.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/FullyCharged.wav
 
 #begin SoundEffects/GooseBallBounce.wav
 /importer:WavImporter

@@ -11,6 +11,8 @@ namespace MacGame
     {
         private static SoundEffectInstance seiMinecart;
         private static SoundEffectInstance seiSlowFlame;
+        private static SoundEffectInstance seiCharging;
+        private static SoundEffectInstance seiFullyCharged;
 
         public static Dictionary<string, SoundEffect> Sounds { get; set; }
         public static Dictionary<string, Song> Songs { get; set; }
@@ -185,17 +187,64 @@ namespace MacGame
             LoadSound("Fall");
             LoadSound("Electric");
             LoadSound("SlowFlame");
+            LoadSound("ChargedShot");
 
+            // Charging the ship's mega laser.
+            LoadSound("Charging");
+            LoadSound("FullyCharged");
 
             seiMinecart = Sounds["Minecart"].CreateInstance();
             seiSlowFlame = Sounds["SlowFlame"].CreateInstance();
             seiSlowFlame.Volume = 0.5f;
+
+            seiCharging = Sounds["Charging"].CreateInstance();
+            seiFullyCharged = Sounds["FullyCharged"].CreateInstance();
 
             // Music.
             LoadSong("Stage1");
             LoadSong("BossFight");
 
             MusicVolume = 0.1f;
+        }
+
+
+        public static void PlayCharging()
+        {
+            if (seiCharging.State != SoundState.Playing)
+            {
+                seiCharging.Volume = 0.5f;
+                seiCharging.Play();
+            }
+        }
+
+        public static void StopCharging()
+        {
+            if (seiCharging.State == SoundState.Playing)
+            {
+                seiCharging.Stop();
+            }
+        }
+
+        public static void PlayFullyCharged()
+        {
+            if (seiFullyCharged.State != SoundState.Playing)
+            {
+                seiFullyCharged.Volume = 0.15f;
+
+                // Vary the pitch slightly so it doesn't sound so droning.
+                var randomFloat = (float)(Game1.Randy.NextFloat() * 0.4 - 0.2);
+
+                seiFullyCharged.Pitch = randomFloat;
+                seiFullyCharged.Play();
+            }
+        }
+
+        public static void StopFullyCharged()
+        {
+            if (seiFullyCharged.State == SoundState.Playing)
+            {
+                seiFullyCharged.Stop();
+            }
         }
 
         public static void PlayMinecart()

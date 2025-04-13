@@ -124,9 +124,13 @@ namespace MacGame.Enemies
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            // hitting the head really hits the boss.
-            _boss.TakeHit(attacker, damage, force);
-            InvincibleTimer += InvincibleTimeAfterBeingHit;
+            // Only take hits if you're on screen. Otherwise you might be attacked from across the map.
+            if (camera.IsObjectVisible(this.CollisionRectangle))
+            {
+                // hitting the head really hits the boss.
+                _boss.TakeHit(attacker, damage, force);
+                InvincibleTimer += InvincibleTimeAfterBeingHit;
+            }
         }
 
         public override void Kill()

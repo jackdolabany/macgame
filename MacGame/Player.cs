@@ -193,11 +193,16 @@ namespace MacGame
 
         ChargedSpaceshipShot chargedShot;
 
+        // When shot is fully charged the ship will alternate between being white or not.
+        bool isShipWhite = false;
+        float shipFlashingWhiteTimer = 0f;
+        float shipFlashingWhiteTimerGoal = 0.1f;
+
         /// <summary>
         /// If you have the charge shot powerup the shot will charge up when you aren't shooting.
         /// </summary>
         private float chargeShotTimer = 0f;
-        private const float chargeShotTimerGoal = 1.5f;
+        private const float chargeShotTimerGoal = 1.85f;
 
         public float chargePercentage
         {
@@ -418,6 +423,12 @@ namespace MacGame
             spaceShip.LoopAnimation = false;
             spaceShip.FrameLength = 1f;
             animations.Add(spaceShip);
+
+            // Ship will flash white when the shot is fully charged.
+            var spaceShipWhite = new AnimationStrip(spaceTextures, Helpers.GetTileRect(5, 0), 1, "spaceShipWhite");
+            spaceShipWhite.LoopAnimation = false;
+            spaceShipWhite.FrameLength = 1f;
+            animations.Add(spaceShipWhite);
 
             Enabled = true;
 
@@ -757,7 +768,14 @@ namespace MacGame
 
         private void HandleSpaceshipInputs(float elapsed)
         {
-            animations.PlayIfNotAlreadyPlaying("spaceShip");
+            if (isShipWhite)
+            {
+                animations.PlayIfNotAlreadyPlaying("spaceShipWhite");
+            }
+            else
+            {
+                animations.PlayIfNotAlreadyPlaying("spaceShip");
+            }
             this.IsAbleToMoveOutsideOfWorld = false;
             this.IsAbleToSurviveOutsideOfWorld = true;
             this.isTileColliding = false;
@@ -851,7 +869,7 @@ namespace MacGame
                     chargedShot.Velocity = new Vector2(500, 0);
                     spaceshipShotCooldownTimer = 0;
                     chargeShotTimer = 0;
-                    SoundManager.PlaySound("Shoot", 0.2f, -0.2f);
+                    SoundManager.PlaySound("ChargedShot", 0.2f, -0.2f);
                 }
                 else
                 {
@@ -890,6 +908,30 @@ namespace MacGame
             if (ShotPower == ShotPower.Charge && !InputManager.CurrentAction.action)
             {
                 chargeShotTimer = Math.Min(chargeShotTimerGoal, chargeShotTimer + elapsed);
+
+
+                if (chargeShotTimer >= chargeShotTimerGoal)
+                {
+                    SoundManager.StopCharging();
+                    SoundManager.PlayFullyCharged();
+                    shipFlashingWhiteTimer += elapsed;
+                    if (shipFlashingWhiteTimer >= shipFlashingWhiteTimerGoal)
+                    {
+                        isShipWhite = !isShipWhite;
+                        shipFlashingWhiteTimer = 0f;
+                    }
+                }
+                else if (chargeShotTimer >= (chargeShotTimerGoal * 0.3) && chargeShotTimer <= (chargeShotTimerGoal * 0.7f))
+                {
+                    SoundManager.PlayCharging();
+                }
+           
+            }
+            else
+            {
+                SoundManager.StopCharging();
+                SoundManager.StopFullyCharged();
+                isShipWhite = false;
             }
 
             float fireTimerGoal = 0.1f;
@@ -983,6 +1025,10 @@ namespace MacGame
             this.IsJustShotOutOfCannon = false;
             this.PlatformThatThisIsOn = null;
             ShotPower = ShotPower.Single;
+
+            SoundManager.StopMinecart(); 
+            SoundManager.StopCharging();
+            SoundManager.StopFullyCharged();
         }
 
         /// <summary>
@@ -2187,6 +2233,8 @@ namespace MacGame
             }
 
             SoundManager.StopMinecart();
+            SoundManager.StopCharging();
+            SoundManager.StopFullyCharged();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

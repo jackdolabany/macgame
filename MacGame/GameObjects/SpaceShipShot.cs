@@ -67,7 +67,7 @@ namespace MacGame.Items
         public void Break()
         {
             ReturnShot();
-            EffectsManager.SmallEnemyPop(this.WorldCenter);
+            EffectsManager.EnemyPop(this.CollisionCenter, 4, Color.White, 120f);
             SoundManager.PlaySound("Break");
         }
     }

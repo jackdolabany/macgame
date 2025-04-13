@@ -222,7 +222,9 @@ namespace MacGame.Enemies
 
             if (_state == OurTypeOfBossState.Unseen)
             {
-                if (Game1.Camera.IsPointVisible(new Vector2(this.CollisionRectangle.Right, this.CollisionRectangle.Center.Y)))
+                // Go by the last tail piece because it'll be the first thing visible.
+                var lastTailPiece = _tailPieces.Last();
+                if (Game1.Camera.IsPointVisible(new Vector2(lastTailPiece.CollisionRectangle.Left - 10, lastTailPiece.CollisionRectangle.Center.Y)))
                 {
                     _state = OurTypeOfBossState.Alive;
                 }

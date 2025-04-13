@@ -1,4 +1,5 @@
 ﻿using System;
+using MacGame.Behaviors;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -7,12 +8,10 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class AlienShip : Enemy
+    public class AlienShip : EnemyShipBase
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
-
-        private float speed = 30;
 
         public AlienShip(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -27,40 +26,12 @@ namespace MacGame.Enemies
 
             animations.Play("fly");
 
-            isEnemyTileColliding = false;
             Attack = 1;
             Health = 3;
-            IsAffectedByGravity = false;
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            Flipped = true;
-
-            InvincibleTimeAfterBeingHit = 0.1f;
-        }
-
-        public override void Kill()
-        {
-            EffectsManager.AddExplosion(WorldCenter);
-
-            Enabled = false;
-            base.Kill();
-        }
-
-        public override void Update(GameTime gameTime, float elapsed)
-        {
-
-            if (!camera.IsWayOffscreen(this.CollisionRectangle))
-            {
-                velocity.X = -speed;
-            }
-            else
-            {
-                velocity = Vector2.Zero;
-            }
-
-            base.Update(gameTime, elapsed);
-
+            Behavior = new EnemyShipBehavior(30, camera);
         }
     }
 }

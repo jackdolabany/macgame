@@ -681,6 +681,11 @@ namespace Squared.Tiled
             }
             tileMap.Layers = new List<TileEngine.Layer>();
 
+            // Track x, y coordinates that are unblocking collisions. Normally colliding tiles block non
+            // colliding tiles, but there's a special tile/property that would supercede that and make normally 
+            // impassable tiles passable.
+            HashSet<Tuple<int, int>> unblocked = new HashSet<Tuple<int, int>>();
+
             // Need to work in reverse to travers the layers from front to back.
             for (int z = this.Layers.Count() - 1; z >= 0; z--)
             {
@@ -742,7 +747,7 @@ namespace Squared.Tiled
                             tileMap.MapCells[x][y].IsDestroyMinecart = true;
                         }
                         
-                        if (tileInfo.properties.ContainsKey("BlockPlayer"))
+                        if (tileInfo.properties.ContainsKey("BlockPlayer") && !unblocked.Contains(new Tuple<int, int>(x, y)))
                         {
                             tileMap.MapCells[x][y].Passable = false;
 
@@ -759,6 +764,14 @@ namespace Squared.Tiled
                             {
                                 tileMap.MapCells[x][y].LeftHeight = 8 * tileScale;
                                 tileMap.MapCells[x][y].RightHeight = 0 * tileScale;
+                            }
+                            else if (tileInfo.properties["BlockPlayer"] == "Unblock")
+                            {
+                                // This is a special setting that actually unblocks you.
+                                tileMap.MapCells[x][y].Passable = true;
+                                tileMap.MapCells[x][y].LeftHeight = 0;
+                                tileMap.MapCells[x][y].RightHeight = 0;
+                                unblocked.Add(new Tuple<int, int>(x, y));
                             }
                             else
                             {

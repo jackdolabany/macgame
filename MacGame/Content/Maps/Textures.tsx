@@ -360,6 +360,12 @@
    <property name="Water" value="3"/>
   </properties>
  </tile>
+ <tile id="122">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="123">
   <properties>
    <property name="Hidden" value="1"/>
@@ -400,6 +406,12 @@
  <tile id="136">
   <properties>
    <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="138">
+  <properties>
+   <property name="BlockPlayer" value="Unblock"/>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="139">

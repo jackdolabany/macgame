@@ -115,7 +115,7 @@ namespace MacGame
         // other side of a vine, or snapping to other objects.
         private bool smoothMoveCameraToTarget = false;
         float maxCameraVelocity = 3000;
-        const float minCameraVelocity = 0;
+        const float minCameraVelocity = 200;
         float cameraAcceleration = 600f; 
         private float cameraVelocity = minCameraVelocity;
 
@@ -2325,6 +2325,12 @@ namespace MacGame
         {
             var targetPosition = this.WorldLocation + new Vector2(Game1.CurrentLevel.CameraXOffset, 0);
 
+            if (!IsInSpaceShip)
+            {
+                // Track just above the player so we see more up than down.
+                targetPosition.Y -= Game1.TileSize * 1;
+            }
+
             if (IsInMineCart && this.Velocity.X > 0)
             {
                 // Track behind the player
@@ -2393,7 +2399,7 @@ namespace MacGame
                 {
                     // increase speed by a percentage.
                     cameraVelocity += cameraAcceleration * elapsed;
-                    cameraVelocity = Math.Min(cameraVelocity, maxCameraVelocity);
+                    cameraVelocity = Math.Max(Math.Min(cameraVelocity, maxCameraVelocity), minCameraVelocity);
                 }
                 
                 camera.Position = positionToReturn;

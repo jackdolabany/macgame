@@ -76,8 +76,8 @@ namespace TileEngine
         /// </summary>
         public static int ToInt(this float number)
         {
-            return (int)Math.Round(number);
-            //return (int)number;
+            //return (int)Math.Round(number);
+            return (int)number;
         }
     }
 }

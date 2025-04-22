@@ -730,7 +730,10 @@ namespace MacGame
 
             foreach (var gameObject in GameObjects)
             {
-                gameObject.Draw(spriteBatch);
+                if (!Camera.IsWayOffscreen(gameObject.CollisionRectangle))
+                {
+                    gameObject.Draw(spriteBatch);
+                }
             }
 
             Player.Draw(spriteBatch);

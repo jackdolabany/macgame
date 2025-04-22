@@ -12,6 +12,7 @@ using MacGame.Items;
 using MacGame.Npcs;
 using System.Data;
 using MacGame.Doors;
+using MacGame.GameObjects;
 
 namespace MacGame
 {
@@ -570,6 +571,26 @@ namespace MacGame
                                 var br = new BreakRock(contentManager, x, y, player);
                                 level.GameObjects.Add(br);
                                 layerDepthObjects[z].Add(br);
+                            }
+                            else if (loadClass == "CrystalSwitch")
+                            {
+                                var cs = new CrystalSwitch(contentManager, x, y, player);
+                                level.GameObjects.Add(cs);
+                                layerDepthObjects[z].Add(cs);
+                            }
+                            else if (loadClass == "OrangeCrystalBlock" || loadClass == "BlueCrystalBlock")
+                            {
+                                CrystalBlock cb;
+                                if (loadClass == "OrangeCrystalBlock")
+                                {
+                                    cb = new OrangeCrystalBlock(contentManager, x, y);
+                                }
+                                else
+                                {
+                                    cb = new BlueCrystalBlock(contentManager, x, y);
+                                }
+                                level.GameObjects.Add(cb);
+                                layerDepthObjects[z].Add(cb);
                             }
                         }
                     }

@@ -37,7 +37,7 @@ namespace MacGame
         {
 
             // Fricton
-            if (OnGround)
+            if (OnGround && Velocity.X != 0)
             {
                 this.velocity.X -= (this.velocity.X * Friction * elapsed);
                 if (Math.Abs(this.velocity.X) < 15f)

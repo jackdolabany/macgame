@@ -30,5 +30,10 @@ namespace MacGame
             base.Update(gameTime, elapsed);
         }
 
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+        }
+
     }
 }

@@ -138,7 +138,6 @@ namespace MacGame
             }
 
             // Should we allow enemies too?
-
             if (cooldownTimer <= 0
                 && isColliding
                 && animations.CurrentAnimationName == "up")

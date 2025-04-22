@@ -1049,6 +1049,16 @@
    <property name="LoadClass" value="BlueKeyblock"/>
   </properties>
  </tile>
+ <tile id="444">
+  <properties>
+   <property name="LoadClass" value="CrystalSwitch"/>
+  </properties>
+ </tile>
+ <tile id="445">
+  <properties>
+   <property name="LoadClass" value="CrystalSwitch"/>
+  </properties>
+ </tile>
  <tile id="448">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -1092,6 +1102,16 @@
  <tile id="456">
   <properties>
    <property name="LoadClass" value="Enemy.SpikesDownLeft"/>
+  </properties>
+ </tile>
+ <tile id="460">
+  <properties>
+   <property name="LoadClass" value="OrangeCrystalBlock"/>
+  </properties>
+ </tile>
+ <tile id="461">
+  <properties>
+   <property name="LoadClass" value="BlueCrystalBlock"/>
   </properties>
  </tile>
  <tile id="464">
@@ -1165,6 +1185,96 @@
   </properties>
  </tile>
  <tile id="498">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="512">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="513">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="514">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="515">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="516">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="517">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="528">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="529">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="530">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="531">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="532">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="533">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="544">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="545">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="546">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="560">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="561">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="562">
   <properties>
    <property name="BlockPlayer" value="1"/>
   </properties>

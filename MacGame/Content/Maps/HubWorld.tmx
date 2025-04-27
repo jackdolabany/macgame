@@ -55,7 +55,8 @@
   </object>
   <object id="22" name="ThirdWorldDoor" x="172.75" y="76.25" width="15.5" height="22.25">
    <properties>
-    <property name="GoToMap" value="TestWorld3"/>
+    <property name="GoToDoor" value="HubDoor"/>
+    <property name="GoToMap" value="World3"/>
     <property name="IsToSubworld" value="1"/>
     <property name="SocksNeeded" value="4"/>
    </properties>

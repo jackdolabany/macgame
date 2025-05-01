@@ -55,6 +55,11 @@
 /processorParam:TextureFormat=Color
 /build:Fonts/NesFontCaps.png
 
+#begin Maps/CarBoss.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/CarBoss.tmx
+
 #begin Maps/CollisionWorld.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

@@ -13,6 +13,11 @@
    <property name="LoadClass" value="Enemy.FlameCannonDown"/>
   </properties>
  </tile>
+ <tile id="6">
+  <properties>
+   <property name="LoadClass" value="Enemy.CarBoss"/>
+  </properties>
+ </tile>
  <tile id="17">
   <properties>
    <property name="BlockPlayer" value="1"/>

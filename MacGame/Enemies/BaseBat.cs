@@ -18,7 +18,7 @@ namespace MacGame.Enemies
 
         private float speed = 40;
         private float startLocationX;
-        private float maxTravelDistance = 12;
+        private float maxTravelDistance = 12 * Game1.TileScale;
         
         public BaseBat(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)

@@ -7,7 +7,11 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class Bat : Enemy
+    /// <summary>
+    /// Base colors to handle blue and black bats. Why? Because they're in dark environments
+    /// and this makes them visible in both background types.
+    /// </summary>
+    public abstract class BaseBat : Enemy
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
@@ -15,14 +19,14 @@ namespace MacGame.Enemies
         private float speed = 40;
         private float startLocationX;
         private float maxTravelDistance = 12;
-
-        public Bat(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        
+        public BaseBat(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var fly = new AnimationStrip(textures, Helpers.GetTileRect(0, 8), 2, "fly");
+            var fly = new AnimationStrip(textures, GetTextureRectangle(), 2, "fly");
             fly.LoopAnimation = true;
             fly.FrameLength = 0.14f;
             animations.Add(fly);
@@ -73,5 +77,7 @@ namespace MacGame.Enemies
             base.Update(gameTime, elapsed);
 
         }
+
+        protected abstract Rectangle GetTextureRectangle();
     }
 }

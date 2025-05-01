@@ -383,7 +383,7 @@
  </tile>
  <tile id="128">
   <properties>
-   <property name="LoadClass" value="Enemy.Bat"/>
+   <property name="LoadClass" value="Enemy.BlackBat"/>
   </properties>
  </tile>
  <tile id="131">
@@ -862,6 +862,11 @@
  <tile id="369">
   <properties>
    <property name="LoadClass" value="Enemy.Dracula"/>
+  </properties>
+ </tile>
+ <tile id="371">
+  <properties>
+   <property name="LoadClass" value="Enemy.BlueBat"/>
   </properties>
  </tile>
  <tile id="374">

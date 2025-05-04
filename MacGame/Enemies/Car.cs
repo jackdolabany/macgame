@@ -63,6 +63,7 @@ namespace MacGame.Enemies
             DisplayComponent = deadCar;
             _blueSmoke.Enabled = true;
             _orangeSmoke.Enabled = true;
+            Game1.LevelState.JobState = JobState.CarDestroyed;
         }
 
         public override void PlayDeathSound()
@@ -91,6 +92,10 @@ namespace MacGame.Enemies
             if (Health < 4 && Health > 0)
             {
                 DisplayComponent = beatUpCar;
+                if (Game1.LevelState.JobState == JobState.Accepted)
+                {
+                    Game1.LevelState.JobState = JobState.CarDamaged;
+                }
             }
 
             _blueSmoke.Update(gameTime, elapsed);

@@ -95,4 +95,14 @@
    <property name="LoadClass" value="Npc.Snake"/>
   </properties>
  </tile>
+ <tile id="192">
+  <properties>
+   <property name="LoadClass" value="Npc.RobbieTheCat"/>
+  </properties>
+ </tile>
+ <tile id="194">
+  <properties>
+   <property name="LoadClass" value="Npc.PaulyTheSnake"/>
+  </properties>
+ </tile>
 </tileset>

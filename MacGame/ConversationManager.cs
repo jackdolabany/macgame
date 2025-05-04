@@ -536,7 +536,7 @@ namespace MacGame
 
     public class ConversationChoice
     {
-        public ConversationChoice(string text, System.Action action)
+        public ConversationChoice(string text, System.Action? action)
         {
             this.Text = text;
             this.Event = action;
@@ -546,7 +546,7 @@ namespace MacGame
         }
         public float Width { get; private set; }
         public string Text { get; private set; }
-        public System.Action Event { get; set; }
+        public System.Action? Event { get; set; }
     }
 
     public class ConversationMessage

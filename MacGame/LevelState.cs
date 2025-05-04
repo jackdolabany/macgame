@@ -4,6 +4,19 @@ using System.Collections.Generic;
 
 namespace MacGame
 {
+
+    /// <summary>
+    /// The state of the job you do for the mob.
+    /// </summary>
+    public enum JobState
+    {
+        NotAccepted,
+        Accepted,
+        CarDamaged,
+        CarDestroyed,
+        SockCollected
+    }
+
     /// <summary>
     /// This class holds non-savable state that needs to be kept for a level. While traversing different map files within a level this state is maintained. It's 
     /// only when you go back to the hub or enter a new level that this state would be reset.
@@ -24,6 +37,11 @@ namespace MacGame
         public static Dictionary<string, List<Vector2>> MapNameToCollectedTacos = new Dictionary<string, List<Vector2>>();
 
         public WaterHeight WaterHeight { get; set; } = WaterHeight.High;
+
+        /// <summary>
+        /// Only for level 3 where you accept a job from the mob.
+        /// </summary>
+        public JobState JobState { get; set; } = JobState.NotAccepted;
 
         public void Reset()
         {

@@ -15,7 +15,7 @@
  </tile>
  <tile id="6">
   <properties>
-   <property name="LoadClass" value="Enemy.CarBoss"/>
+   <property name="LoadClass" value="Enemy.Car"/>
   </properties>
  </tile>
  <tile id="17">

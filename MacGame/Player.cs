@@ -1073,7 +1073,10 @@ namespace MacGame
             // Check body collisions
             if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
             {
-                if (enemy.CanBeJumpedOn && JumpedOnEnemyRectangle(enemy.CollisionRectangle))
+                // Make sure you're moving towards the enemy, or they're moving towards you.
+                var isMovingDown = ((this.velocity.Y - enemy.Velocity.Y) > 0);
+
+                if (isMovingDown && enemy.CanBeJumpedOn && JumpedOnEnemyRectangle(enemy.CollisionRectangle))
                 {
                     // If the player was above the enemy, the enemy was jumped on and takes a hit.
                     enemy.TakeHit(this, 1, Vector2.Zero);
@@ -2310,7 +2313,7 @@ namespace MacGame
             base.Draw(spriteBatch);
 
         }
-
+        
         public bool IsFacingRight()
         {
             return !this.Flipped;

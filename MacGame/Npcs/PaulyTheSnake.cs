@@ -20,6 +20,7 @@ namespace MacGame.Npcs
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
         private bool _isInitialized = false;
         Sock sock;
+        Car car;
 
         public PaulyTheSnake(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -39,7 +40,6 @@ namespace MacGame.Npcs
 
         private void Initialize()
         {
-            // Disable the Car sock for now.
             foreach (var item in Game1.CurrentLevel.Items)
             {
                 if (item is Sock && ((Sock)item).Name == "CarSock")
@@ -47,6 +47,7 @@ namespace MacGame.Npcs
                     sock = item as Sock;
                     if (!sock.IsCollected)
                     {
+                        // disable if not collected.
                         sock.Enabled = false;
                     }
                 }
@@ -56,6 +57,21 @@ namespace MacGame.Npcs
             {
                 throw new Exception("Expected a sock named CarSock on this map.");
             }
+
+            // Find the car.
+            foreach (var enemy in Game1.CurrentLevel.Enemies)
+            {
+                if (enemy is Car)
+                {
+                    car = enemy as Car;
+                }
+            }
+
+            if (car == null)
+            {
+                throw new Exception("Expected a car on this map.");
+            }
+
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -85,6 +101,7 @@ namespace MacGame.Npcs
                     {
                         Game1.LevelState.JobState = JobState.Accepted;
                         ConversationManager.AddMessage("Robby the cat owes us some money. We need you to send him a message. Capisce?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                        car.Enabled = true;
                     });
 
                     var declineJob = new ConversationChoice("No", () =>

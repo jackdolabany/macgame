@@ -75,6 +75,8 @@ namespace MacGame.Npcs
                 throw new Exception("Expected a car on this map.");
             }
 
+            car.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+
             switch(Game1.LevelState.JobState)
             {
                 case JobState.NotAccepted:

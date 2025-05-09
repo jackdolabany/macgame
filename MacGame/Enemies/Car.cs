@@ -77,6 +77,20 @@ namespace MacGame.Enemies
             _blueSmoke.WorldLocation = this.WorldLocation + new Vector2(20, -20);
             _orangeSmoke.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
             _orangeSmoke.WorldLocation = this.WorldLocation + new Vector2(-20, -25);
+
+            if (Game1.LevelState.JobState == JobState.CarDamaged)
+            {
+                DisplayComponent = beatUpCar;
+                Health = 4;
+            }
+            else if (Game1.LevelState.JobState == JobState.CarDestroyed)
+            {
+                DisplayComponent = deadCar;
+                _blueSmoke.Enabled = true;
+                _orangeSmoke.Enabled = true;
+                Health = 0;
+                Alive = false;
+            }
         }
 
         public override void Update(GameTime gameTime, float elapsed)

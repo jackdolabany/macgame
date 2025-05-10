@@ -242,7 +242,7 @@ namespace MacGame
                 }
             }
 
-            if (_player.CannonYouAreIn == this && AutoShootDirection.HasValue && AutoShootDirection.Value.Direction == this.RotationDirection.Direction && delayAutoShotTimer <= 0f)
+            if ((HasPlayerInside || HasCannonballInside) && AutoShootDirection.HasValue && AutoShootDirection.Value.Direction == this.RotationDirection.Direction && delayAutoShotTimer <= 0f)
             {
                 Shoot();
             }
@@ -292,7 +292,7 @@ namespace MacGame
             if (HasCannonballInside)
             {
                 _shootCannonballTimer += elapsed;
-                if (_shootCannonballTimer > 10f)
+                if (_shootCannonballTimer > 30f)
                 {
                     Shoot();
                 }

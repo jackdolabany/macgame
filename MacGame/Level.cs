@@ -647,6 +647,7 @@ namespace MacGame
 
         public void BreakBricks(string brickGroupName)
         {
+            var shouldSave = false;
             foreach (var gameObject in GameObjects)
             {
                 if (gameObject is BreakBrick)
@@ -660,11 +661,21 @@ namespace MacGame
                             return;
                         }
                         bb.Break();
+                        
+                        if (!bb.OverrideSave)
+                        {
+                            shouldSave = true;
+                        }
+
                     }
                 }
             }
             SoundManager.PlaySound("Explosion");
-            StorageManager.TrySaveGame();
+            
+            if (shouldSave)
+            {
+                StorageManager.TrySaveGame();
+            }
         }
 
         public int GetTileHightForWaterHeight(WaterHeight height)

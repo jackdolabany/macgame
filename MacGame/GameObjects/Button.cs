@@ -195,7 +195,7 @@ namespace MacGame
 
         public void MoveUpNoAction()
         {
-            animations.Play("up");
+             animations.Play("up");
         }
 
         public void MoveDownNoAction()

@@ -68,6 +68,11 @@ namespace MacGame.Enemies
         public List<Bomb> Bombs = new List<Bomb>();
         float bombTimer = 0f;
 
+        /// <summary>
+        /// Once this boss is dead and you have the sock we'll count this down and then exit the map.
+        /// </summary>
+        private float leaveLevelTimer = 4f;
+
         public QuadcopterBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -471,6 +476,15 @@ namespace MacGame.Enemies
             if (state == QuadState.Dead)
             {
                 // Take them to wherever you need to take them. Once we figure out where that is.
+                if (this.Sock.IsCollected)
+                {
+                    leaveLevelTimer -= elapsed;
+                    if (leaveLevelTimer <= 0)
+                    {
+                        // Leave the level.
+                        GlobalEvents.FireDoorEntered(null, "World3", "QuadcopterBossDoor", "");
+                    }
+                }
             }
 
         }

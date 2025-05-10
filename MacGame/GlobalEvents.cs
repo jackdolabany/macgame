@@ -47,7 +47,7 @@ namespace MacGame
             }
         }
 
-        public static void FireDoorEntered(Object sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered)
+        public static void FireDoorEntered(Object? sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered)
         {
             var evt = DoorEntered;
             if (evt != null)

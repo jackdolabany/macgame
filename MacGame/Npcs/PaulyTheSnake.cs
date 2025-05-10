@@ -7,8 +7,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using TileEngine;
 
 namespace MacGame.Npcs
 {
@@ -80,6 +78,13 @@ namespace MacGame.Npcs
             {
                 Initialize();
                 _isInitialized = true;
+            }
+
+            // Check if the sock was collected.
+            if (Game1.LevelState.JobState != JobState.SockCollected && sock.IsCollected)
+            {
+                car.SetToBike();
+                Game1.LevelState.JobState = JobState.SockCollected;
             }
 
             base.Update(gameTime, elapsed);

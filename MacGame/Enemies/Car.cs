@@ -19,6 +19,7 @@ namespace MacGame.Enemies
         StaticImageDisplay normalCar;
         StaticImageDisplay beatUpCar;
         StaticImageDisplay deadCar;
+        StaticImageDisplay bike;
 
         private bool _isInitialized = false;
         private BlueSmoke _blueSmoke;
@@ -34,6 +35,7 @@ namespace MacGame.Enemies
             normalCar = new StaticImageDisplay(reallyBigTexture, Helpers.GetReallyBigTileRect(4, 2));
             beatUpCar = new StaticImageDisplay(reallyBigTexture, Helpers.GetReallyBigTileRect(5, 2));
             deadCar = new StaticImageDisplay(reallyBigTexture, Helpers.GetReallyBigTileRect(6, 2));
+            bike = new StaticImageDisplay(reallyBigTexture, Helpers.GetReallyBigTileRect(4, 3));
 
             DisplayComponent = normalCar;
 
@@ -48,7 +50,7 @@ namespace MacGame.Enemies
 
             SetWorldLocationCollisionRectangle(18, 12);
 
-            // TODO Set up smoke puffs
+            // Set up smoke puffs
             _blueSmoke = new BlueSmoke(content);
             _blueSmoke.Enabled = false;
 
@@ -77,6 +79,14 @@ namespace MacGame.Enemies
             _blueSmoke.WorldLocation = this.WorldLocation + new Vector2(20, -20);
             _orangeSmoke.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
             _orangeSmoke.WorldLocation = this.WorldLocation + new Vector2(-20, -25);
+        }
+
+        public void SetToBike()
+        {
+            DisplayComponent = bike;
+            _blueSmoke.Enabled = false;
+            _orangeSmoke.Enabled = false;
+            CollisionRectangle = Rectangle.Empty;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

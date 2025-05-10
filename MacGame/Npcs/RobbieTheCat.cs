@@ -92,7 +92,7 @@ namespace MacGame.Npcs
                     car.Enabled = true;
                     break;
                 case JobState.SockCollected:
-                    car.Enabled = false;
+                    car.SetToBike();
                     break;
                 default:
                     break;

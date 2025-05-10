@@ -133,7 +133,15 @@ namespace MacGame.Npcs
                     {
                         sock.FadeIn();
                     };
-                    ConversationManager.AddMessage("Wow kid. We just wanted you to remind him. You didn't have to destroy his car. That's actually really messed up. Take this and stay away from us", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, null, showSock);
+
+                    if (sock.Enabled)
+                    {
+                        ConversationManager.AddMessage("We didn't see nuthin'", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    }
+                    else
+                    {
+                        ConversationManager.AddMessage("Wow kid. We just wanted you to remind him. You didn't have to destroy his car. That's actually really messed up. Take this and stay away from us", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, null, showSock);
+                    }
                     break;
                 case JobState.SockCollected:
                     ConversationManager.AddMessage("We didn't see nuthin'", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);

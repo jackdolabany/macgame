@@ -627,7 +627,6 @@ namespace MacGame
                             if (cannon.Name == args)
                             {
                                 cannon.Shoot();
-                                break;
                             }
                         }
                     }

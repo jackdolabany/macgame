@@ -58,38 +58,65 @@ namespace MacGame
                 }
             }
 
-            if (CanSmashBreakBricks)
-            {
-                // Check for collisions with breakbricks. We'll use a collision rectangle slightly larger than normal.
-                var collisionRectangle = new Rectangle(this.CollisionRectangle.X - 8, this.CollisionRectangle.Y - 8, this.CollisionRectangle.Width + 16, this.CollisionRectangle.Height + 16);
-                foreach (var gameObject in Game1.CurrentLevel.GameObjects)
-                {
-                    if (gameObject is BreakBrick)
-                    {
-                        var breakBrick = (BreakBrick)gameObject;
-                        if (breakBrick.Enabled && breakBrick.CollisionRectangle.Intersects(collisionRectangle))
-                        {
-                            Game1.CurrentLevel.BreakBricks(breakBrick.GroupName);
-                            break;
-                        }
-                    }
-                }
-
-                if (IsPickedUp || OnGround || this.Velocity == Vector2.Zero)
-                {
-                    CanSmashBreakBricks = false;
-                }
-
-            }
-
             base.Update(gameTime, elapsed);
 
             if (OnLeftWall || OnGround || OnRightWall || OnCeiling)
             {
                 IsShootingOutOfCannon = false;
             }
+
+
+
+            if (CanSmashBreakBricks)
+            {
+                if (OnLeftWall)
+                {
+                    var toTheLeft = this.CollisionRectangle;
+                    toTheLeft.X -= toTheLeft.Width;
+                    SmashAnyBricks(toTheLeft);
+                }
+                if (OnRightWall)
+                {
+                    var toTheRight = this.CollisionRectangle;
+                    toTheRight.X += toTheRight.Width;
+                    SmashAnyBricks(toTheRight);
+                }
+                if (OnCeiling)
+                {
+                    var above = this.CollisionRectangle;
+                    above.Y -= above.Height;
+                    SmashAnyBricks(above);
+                }
+                if (OnGround)
+                {
+                    var below = this.CollisionRectangle;
+                    below.Y += below.Height;
+                    SmashAnyBricks(below);
+                }
+            }
+
+            if (IsPickedUp || CannonHoldingMe != null || this.Velocity.Length() < 100)
+            {
+                CanSmashBreakBricks = false;
+            }
+
         }
 
+        public void SmashAnyBricks(Rectangle collisionRectangle)
+        {
+            //var collisionRectangle = new Rectangle(this.CollisionRectangle.X - 8, this.CollisionRectangle.Y - 8, this.CollisionRectangle.Width + 16, this.CollisionRectangle.Height + 16);
+            foreach (var gameObject in Game1.CurrentLevel.GameObjects)
+            {
+                if (gameObject is BreakBrick)
+                {
+                    var breakBrick = (BreakBrick)gameObject;
+                    if (breakBrick.Enabled && breakBrick.CollisionRectangle.Intersects(collisionRectangle))
+                    {
+                        Game1.CurrentLevel.BreakBricks(breakBrick.GroupName);
+                    }
+                }
+            }
+        }
 
         public void ShootOutOfCannon(Vector2 velocity)
         {

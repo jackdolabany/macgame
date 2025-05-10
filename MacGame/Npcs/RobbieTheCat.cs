@@ -117,7 +117,7 @@ namespace MacGame.Npcs
                     ConversationManager.AddMessage("I can't believe you wrecked my ride!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     break;
                 case JobState.SockCollected:
-                    ConversationManager.AddMessage("You're right. My bike is better for the environment anyway.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    ConversationManager.AddMessage("I get your point now, that gas guzzler was bad for the environment. I'm loving my new bike, thanks Mac!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     break;
 
                 default:

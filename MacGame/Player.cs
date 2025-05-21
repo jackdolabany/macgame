@@ -1369,7 +1369,10 @@ namespace MacGame
                 // Also make sure Mac's collision rect isn't blocked from going down by other solid tiles.
                 // Otherwise he may do a weird vibrating thing trying to climb down to ladder with a solid wall next to the top tile.
                 var tileAtBottomLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.WorldLocation.Y.ToInt());
-                var tileAtBottomRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, this.WorldLocation.Y.ToInt());
+                
+                // Need to subtract 1 here. Rectangles are problematic for collision detection. If the width is 10 the left and right pixels will be
+                // 10 and 20. But pixels 10 through 20 are 11 pixels. 10 through 19 would be 10.
+                var tileAtBottomRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right - 1, this.WorldLocation.Y.ToInt());
 
                 var canGoDown = ((tileAtBottomLeft == null || tileAtBottomLeft.Passable) && (tileAtBottomRight == null || tileAtBottomRight.Passable));
                 if (canGoDown)
@@ -1386,7 +1389,7 @@ namespace MacGame
             if (IsClimbingLadder && OnCeiling && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
             {
                 var blockTopLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.CollisionRectangle.Top - 4);
-                var blockTopRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right, this.CollisionRectangle.Top - 4);
+                var blockTopRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right - 1, this.CollisionRectangle.Top - 4);
                 
                 if (blockTopLeft != null && !blockTopLeft.Passable && blockTopRight != null && blockTopRight.Passable)
                 {
@@ -1511,7 +1514,7 @@ namespace MacGame
                 Vector2 vineTile;
                 if (!Flipped)
                 {
-                    vineTile = Game1.CurrentMap.GetCellByPixel(new Vector2(this.CollisionRectangle.Right, this.CollisionCenter.Y));
+                    vineTile = Game1.CurrentMap.GetCellByPixel(new Vector2(this.CollisionRectangle.Right - 1, this.CollisionCenter.Y));
                 }
                 else
                 {

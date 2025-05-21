@@ -22,7 +22,7 @@ namespace MacGame
                     new SockInfo { Name = "TreeCannonSock", Hint = "There's a stronger than normal cannon between the trees." },
                     new SockInfo { Name = "TreeSock", Hint = "Looking for adventure? Try to climb all the way up the tree." },
                     new SockInfo { Name = "CannonSock", Hint = "Up, left, up, up, left, up, up, boom" },
-                    new SockInfo { Name = "SandSock", Hint = "There's a legend about a lonely traffic cone" },
+                    new SockInfo { Name = "SandSock", Hint = "There's a legend about a lonely traffic cone. But really I just used it to cover some sand." },
                     new SockInfo { Name = "IceSock", Hint = "There's something special if you can trek through icy mountains." },
                     new SockInfo { Name = "SandTopSock", Hint = "Deep in the caves is a room with so much sand, it'll make you puke." },
                     new SockInfo { Name = "MinecartSock", Hint = "I heard there's still something shiny down in the old mine." },

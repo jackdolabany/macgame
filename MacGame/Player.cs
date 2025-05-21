@@ -2038,7 +2038,7 @@ namespace MacGame
 
             this.IsJustShotOutOfCannon = true;
 
-            // A regular cannon fires Mac for half a second. A supershot leaves
+            // A regular cannon fires Mac for fraction of a second. A supershot leaves
             // him in the air until he hits something.
             if (cannon.IsSuperShot)
             {
@@ -2066,11 +2066,6 @@ namespace MacGame
             {
                 this.CannonYouAreIn.Shoot();
                 this.IsJustShotOutOfCannon = true;
-
-                TimerManager.AddNewTimer(0.5f, () =>
-                {
-                    IsJustShotOutOfCannon = false;
-                });
             }
         }
 

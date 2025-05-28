@@ -29,6 +29,10 @@ namespace MacGame.Items
         /// </summary>
         float blockFromCollectingTime = 0f;
 
+        private bool _isInitialized = false;
+
+        private AnimationDisplay _animationDisplay => (AnimationDisplay)DisplayComponent;
+
         public Sock(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
@@ -41,6 +45,10 @@ namespace MacGame.Items
             spin.Oscillate = false;
             spin.FrameLength = 0.33f;
             animations.Add(spin);
+
+            var idle = new AnimationStrip(textures, Helpers.GetBigTileRect(3, 6), 1, "idle");
+            idle.LoopAnimation = false;
+            animations.Add(idle);
 
             animations.Play("spin");
 
@@ -81,11 +89,26 @@ namespace MacGame.Items
             // Do nothing.
         }
 
+        /// <summary>
+        /// After the music plays and the "you got a sock!" alert menu pops up, call this to make the sock go away.
+        /// </summary>
+        public void HideSock()
+        {
+            this.Enabled = false;
+            EffectsManager.EnemyPop(this.CollisionCenter, 10, Color.White, 200);
+        }
+
+        // Call this to stop the sock from spinning
+        public void StopSpinning()
+        {
+            _animationDisplay.Play("idle");
+        }
+
         public override void WhenCollected(Player player)
         {
             if (!Enabled || AlreadyCollected) return;
 
-            this.Enabled = false;
+            AlreadyCollected = true;
 
             // Add this sock if they don't already have it.
             var levelState = Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber];
@@ -97,6 +120,12 @@ namespace MacGame.Items
 
             player.Health = Player.MaxHealth;
 
+            // Show the sock up front once it's collected
+            this.DisplayComponent.DrawDepth = TileMap.FRONTMOST_DRAW_DEPTH;
+
+            // Speed it up
+            _animationDisplay.CurrentAnimation!.FrameLength /= 4;
+
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
             GlobalEvents.FireSockCollected(this, EventArgs.Empty);
         }
@@ -104,15 +133,20 @@ namespace MacGame.Items
         public override void Update(GameTime gameTime, float elapsed)
         {
 
+            if (!_isInitialized)
+            {
+                _isInitialized = true;
+
+                if (AlreadyCollected)
+                {
+                    // They're enabled but not collectible if they are already collected. They're kind of of in a ghost mode.
+                    Enabled = true;
+                }
+            }
+
             if (blockFromCollectingTime > 0)
             {
                 blockFromCollectingTime -= elapsed;
-            }
-
-            if (AlreadyCollected)
-            {
-                // They're enabled but not collectible if they are already collected. They're kind of of in a ghost mode.
-                Enabled = true;
             }
 
             if (fadeInTimer < fadeInTimerGoal)
@@ -120,8 +154,6 @@ namespace MacGame.Items
                 fadeInTimer += elapsed;
                 // showly fade in
                 this.DisplayComponent.TintColor = Color.Lerp(Color.Transparent, Color, fadeInTimer / fadeInTimerGoal);
-
-
             }
             else
             {

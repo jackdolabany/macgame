@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using TileEngine;
 using System.Linq;
+using MacGame.Items;
 
 namespace MacGame
 {
@@ -15,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World1";
+        public const string StartingWorld = "World3GhostHouse";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -101,6 +102,12 @@ namespace MacGame
                 _level = value;
             }
         }
+
+        /// <summary>
+        /// This will be populated while the music is playing and you just collected a sock. It'll go back to null
+        /// after you dismiss the menu.
+        /// </summary>
+        private Sock? collectedSock = null;
 
         /// <summary>
         /// putting this here so it can easily be seen.
@@ -307,6 +314,7 @@ namespace MacGame
 
         private void OnSockCollected(object? sender, EventArgs e)
         {
+            collectedSock = sender as Sock;
             pauseForSockTimer = 3f;
             SoundManager.PlaySound("SockCollected", 0.4f);
             TransitionToState(GameState.GotSock, TransitionType.Instant);
@@ -456,6 +464,11 @@ namespace MacGame
 
             gotASockMenu = new AlertBoxMenu(this, "You got a Sock!", (a, b) =>
             {
+                if (collectedSock != null)
+                {
+                    collectedSock.HideSock();
+                    collectedSock = null;
+                }
                 MenuManager.ClearMenus();
                 StorageManager.TrySaveGame();
                 TransitionToState(GameState.Playing, TransitionType.Instant);
@@ -703,11 +716,22 @@ namespace MacGame
             }
             else if (_gameState == GameState.GotSock)
             {
+
+                // Just update the socks
+                foreach (var item in CurrentLevel.Items)
+                {
+                    if (item is Sock)
+                    {
+                        item.Update(gameTime, elapsed);
+                    }
+                }
+
                 if (pauseForSockTimer > 0)
                 {
                     pauseForSockTimer -= elapsed;
                     if (pauseForSockTimer <= 0)
                     {
+                        collectedSock?.StopSpinning();
                         MenuManager.AddMenu(gotASockMenu);
                     }
                 }

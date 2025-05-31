@@ -323,5 +323,15 @@ namespace MacGame
         {
             return TileEngine.Helpers.ToInt(number);
         }
+
+        public static int ToCeiling(this float number)
+        {
+            return (int)Math.Ceiling(number);
+        }
+
+        public static int Round(this float number)
+        {
+            return (int)Math.Round(number);
+        }
     }
 }

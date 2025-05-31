@@ -262,16 +262,16 @@ namespace MacGame
             if (DisplayComponent == null)
             {
                 return new Rectangle(
-                  position.X.ToInt() + collisionRectangle.X,
-                  position.Y.ToInt() + collisionRectangle.Y,
+                  position.X.Round() + collisionRectangle.X,
+                  position.Y.Round() + collisionRectangle.Y,
                   collisionRectangle.Width,
                   collisionRectangle.Height);
             }
             else
             {
                 return new Rectangle(
-                  (position.X - DisplayComponent.RotationAndDrawOrigin.X).ToInt() + collisionRectangle.X,
-                  (position.Y - DisplayComponent.RotationAndDrawOrigin.Y).ToInt() + collisionRectangle.Y,
+                  (position.X - DisplayComponent.RotationAndDrawOrigin.X).Round() + collisionRectangle.X,
+                  (position.Y - DisplayComponent.RotationAndDrawOrigin.Y).Round() + collisionRectangle.Y,
                   collisionRectangle.Width,
                   collisionRectangle.Height);
             }
@@ -345,8 +345,8 @@ namespace MacGame
             // the closest obstacle and how far they want to move.
 
             // Loop as many cells as we need top to bottom.
-            var topCell = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Top);
-            var bottomCell = Game1.CurrentMap.GetCellByPixelY(currentPositionRect.Bottom - 1);
+            var topCell = Game1.CurrentMap.GetCellByPixelY(Math.Min(currentPositionRect.Top, afterMoveRect.Top));
+            var bottomCell = Game1.CurrentMap.GetCellByPixelY(Math.Max(currentPositionRect.Bottom - 1, afterMoveRect.Bottom - 1));
 
             // How many should we check left or right?
             int startCellX;
@@ -569,10 +569,25 @@ namespace MacGame
             // Regular tile collision
             if (!onSlope)
             {
+
+                int leftPixel;
+                if (moveAmount.X > 0)
+                {
+                    // The default favors the left by rounding down. If horizontal detection let them move to the right,
+                    // evena  fraction of a pixel, we should consider them there, and so let's favor the right most pixel and use Ceiling.  
+                    leftPixel = newPosition.X.ToCeiling() + collisionRectangle.X;
+                }
+                else
+                {
+                    leftPixel = (int)(newPosition.X + collisionRectangle.X);
+                }
+
+                var rightPixel = leftPixel + collisionRectangle.Width - 1;
+
                 // Regular tile collision
                 // Loop as many x cells as we need left to right.
-                var leftCell = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Left);
-                var rightCell = Game1.CurrentMap.GetCellByPixelX(afterMoveRect.Right - 1);
+                var leftCell = Game1.CurrentMap.GetCellByPixelX(leftPixel);
+                var rightCell = Game1.CurrentMap.GetCellByPixelX(rightPixel);
 
                 // How many should we check top or bottom?
                 int startCellY;

@@ -13,6 +13,16 @@ using TileEngine;
 
 namespace MacGame
 {
+    /// <summary>
+    /// Decorate the buttons with DownAction, UpAction, and Args.
+    /// 
+    /// Actions can be
+    ///   HighWater/MedWater/LowWater - no args, move water high/med/low. This only applies on World 2 where water can go up and down.
+    ///   CloseBlockingPiston - Args are the name of the Door. Close a blocking piston door.
+    ///   OpenBlockingPiston - Args are the name of the Door. Open a blocking piston door.
+    ///   ShootCannon - Shoots a cannon, which might have a cannon ball. Args are the name of the cannon.
+    ///   BreakBricks - Break a series of BreakBricks. The args are the GroupName property of the BreakBricks.
+    /// </summary>
     public class Button : GameObject
     {
 

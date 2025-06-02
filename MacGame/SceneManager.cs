@@ -190,7 +190,7 @@ namespace MacGame
 
                                 foreach (var obj in map.ObjectModifiers)
                                 {
-                                    if (obj.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize , y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
+                                    if (obj.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize, y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
                                     {
                                         enemy.ConsumeProperties(obj.Properties);
                                     }
@@ -591,6 +591,35 @@ namespace MacGame
                                 }
                                 level.GameObjects.Add(cb);
                                 layerDepthObjects[z].Add(cb);
+                            }
+                            else if (loadClass == "BlockPlayerField")
+                            {
+                                var field = new BlockPlayerField(contentManager, x, y, player);
+                                level.GameObjects.Add(field);
+                                layerDepthObjects[z].Add(field);
+                            }
+                            else if (loadClass == "GhostBlock")
+                            {
+                                var ghostBlock = new GhostBlock(contentManager, x, y);
+                                level.GameObjects.Add(ghostBlock);
+                                layerDepthObjects[z].Add(ghostBlock);
+
+                                // BlockingPiston modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(ghostBlock.CollisionRectangle))
+                                    {
+                                        ghostBlock.Name = obj.Name;
+                                    }
+                                }
+
+                                if (Game1.IS_DEBUG)
+                                {
+                                    if (string.IsNullOrEmpty(ghostBlock.Name))
+                                    {
+                                        throw new Exception("GhostBlock must have a name set in the map editor.");
+                                    }
+                                }
                             }
                         }
                     }

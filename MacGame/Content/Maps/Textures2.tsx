@@ -45,6 +45,21 @@
    <property name="LoadClass" value="Enemy.ElectricSeaweedDownBottom"/>
   </properties>
  </tile>
+ <tile id="36">
+  <properties>
+   <property name="LoadClass" value="BlockPlayerField"/>
+  </properties>
+ </tile>
+ <tile id="37">
+  <properties>
+   <property name="LoadClass" value="BlockPlayerField"/>
+  </properties>
+ </tile>
+ <tile id="38">
+  <properties>
+   <property name="LoadClass" value="BlockPlayerField"/>
+  </properties>
+ </tile>
  <tile id="48">
   <properties>
    <property name="LoadClass" value="Enemy.ElectricSeaweedUpBottom"/>

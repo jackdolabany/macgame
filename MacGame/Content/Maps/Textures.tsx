@@ -1119,6 +1119,11 @@
    <property name="LoadClass" value="BlueCrystalBlock"/>
   </properties>
  </tile>
+ <tile id="462">
+  <properties>
+   <property name="LoadClass" value="GhostBlock"/>
+  </properties>
+ </tile>
  <tile id="464">
   <properties>
    <property name="BlockPlayer" value="1"/>
@@ -1142,6 +1147,11 @@
  <tile id="472">
   <properties>
    <property name="LoadClass" value="Enemy.SpikesLeft"/>
+  </properties>
+ </tile>
+ <tile id="478">
+  <properties>
+   <property name="LoadClass" value="GhostBlock"/>
   </properties>
  </tile>
  <tile id="480">

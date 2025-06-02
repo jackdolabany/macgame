@@ -635,12 +635,24 @@ namespace MacGame
                 case "BreakBricks":
                     BreakBricks(args);
                     break;
+                case "SolidifyGhostBlock":
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is GhostBlock)
+                        {
+                            var ghostBlock = (GhostBlock)gameObject;
+                            if (ghostBlock.Name == args)
+                            {
+                                ghostBlock.Solid();
+                            }
+                        }
+                    }
+                    break;
                 default:
                     if (Game1.IS_DEBUG)
                     {
                         throw new Exception($"Unknown button action: {action}");
                     }
-                    break;
             }
         }
 

@@ -61,13 +61,14 @@ namespace MacGame
                     new SockInfo { Name = "QuadcopterSock", Hint = "Fight the drone wars you must." },
                     new SockInfo { Name = "CarSock", Hint = "Pauly the snake can make you an offer you shouldn't refuse." },
                     new SockInfo { Name = "Wallsock", Hint = "A while ago I stashed a sock in the walls." },
+                    new SockInfo { Name = "BasementSock", Hint = "A while ago I stashed a sock in the basement." },
                 }
             },
             {
                 4,
                 new List<SockInfo>
                 {
-                    new SockInfo { Name = "GrokSock", Hint = "Grok." },
+                    new SockInfo { Name = "GrokSock", Hint = "Grok steal sock." },
                 }
             },
         };

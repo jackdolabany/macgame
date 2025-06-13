@@ -315,6 +315,26 @@
 /processor:PassThroughProcessor
 /build:Maps/World3GhostHouse.tmx
 
+#begin Maps/World3GhostHouseDoor1.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World3GhostHouseDoor1.tmx
+
+#begin Maps/World3GhostHouseDoor2.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World3GhostHouseDoor2.tmx
+
+#begin Maps/World3GhostHouseDoor3.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World3GhostHouseDoor3.tmx
+
+#begin Maps/World3GhostHouseDoor4.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World3GhostHouseDoor4.tmx
+
 #begin Maps/World4SpaceShip1.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

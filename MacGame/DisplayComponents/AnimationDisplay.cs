@@ -60,7 +60,6 @@ namespace MacGame.DisplayComponents
 
             var center = GetWorldCenter(ref position);
             
-
             var drawPosition = center - new Vector2(drawObject.SourceRectangle.Width / 2, drawObject.SourceRectangle.Height / 2) * Scale;
 
             drawObject.Position = RotateAroundOrigin(drawPosition, GetWorldCenter(ref position), Rotation);

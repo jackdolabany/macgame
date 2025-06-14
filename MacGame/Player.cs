@@ -2402,7 +2402,7 @@ namespace MacGame
                     cameraVelocity += cameraAcceleration * elapsed;
                     cameraVelocity = Math.Max(Math.Min(cameraVelocity, maxCameraVelocity), minCameraVelocity);
                 }
-                
+
                 camera.Position = positionToReturn;
 
                 // Kind of weird, but another check if the camera made it to it's target. We consider it there if the x or y position didn't move because the 
@@ -2416,6 +2416,7 @@ namespace MacGame
                     cameraVelocity = minCameraVelocity;
                 }
             }
+
         }
 
         public void AddUnlockedDoor(string doorName)

@@ -80,6 +80,21 @@
    <property name="LoadClass" value="Enemy.ElectricSeaweedRightTop"/>
   </properties>
  </tile>
+ <tile id="68">
+  <properties>
+   <property name="LoadClass" value="Platform.GhostPlatform2"/>
+  </properties>
+ </tile>
+ <tile id="69">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="70">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="82">
   <properties>
    <property name="LoadClass" value="Enemy.ElectricSeaweedLeftTop"/>
@@ -88,6 +103,21 @@
  <tile id="83">
   <properties>
    <property name="LoadClass" value="Enemy.ElectricSeaweedLeftBottom"/>
+  </properties>
+ </tile>
+ <tile id="84">
+  <properties>
+   <property name="LoadClass" value="Platform.GhostPlatform1"/>
+  </properties>
+ </tile>
+ <tile id="85">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="86">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="160">

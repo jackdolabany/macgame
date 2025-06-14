@@ -630,7 +630,6 @@ namespace MacGame
             // Organize them into groups.
             var processedIntoGroups = new List<ElectricSeaweed>();
 
-
             var allSeaweeds = level.Enemies
                 .Where(e => e is ElectricSeaweed)
                 .Select(e => (ElectricSeaweed)e);

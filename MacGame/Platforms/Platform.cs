@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TileEngine;
 
 namespace MacGame.Platforms
@@ -33,15 +34,26 @@ namespace MacGame.Platforms
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            PreviousLocation = this.WorldLocation;
-
+           
             base.Update(gameTime, elapsed);
 
+            var player = Game1.Player;
+
             // Move the player if he was on this platform
-            if (Game1.Player.PlatformThatThisIsOn == this)
+            if (player.PlatformThatThisIsOn == this)
             {
-                Game1.Player.WorldLocation += this.WorldLocation - PreviousLocation;
-            }
+                //if (player.Velocity.X == 0)
+                //{
+                //    // Align the sub pixel x position offset the the player and platform.
+                //    var wholeNumberLocation = (int)player.WorldLocation.X;
+                //    var platformFraction = this.worldLocation.X - (float)Math.Truncate(this.WorldLocation.X);
+                //    player.WorldLocation = new Vector2(wholeNumberLocation + platformFraction, player.WorldLocation.Y);
+                //}
+
+                player.WorldLocation += this.WorldLocation - PreviousLocation;
+            } 
+            
+            PreviousLocation = this.WorldLocation;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

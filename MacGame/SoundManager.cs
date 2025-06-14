@@ -188,6 +188,7 @@ namespace MacGame
             LoadSound("Electric");
             LoadSound("SlowFlame");
             LoadSound("ChargedShot");
+            LoadSound("GhostSound");
 
             // Charging the ship's mega laser.
             LoadSound("Charging");

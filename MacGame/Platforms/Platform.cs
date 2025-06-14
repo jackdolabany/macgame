@@ -42,17 +42,22 @@ namespace MacGame.Platforms
             // Move the player if he was on this platform
             if (player.PlatformThatThisIsOn == this)
             {
-                //if (player.Velocity.X == 0)
-                //{
-                //    // Align the sub pixel x position offset the the player and platform.
-                //    var wholeNumberLocation = (int)player.WorldLocation.X;
-                //    var platformFraction = this.worldLocation.X - (float)Math.Truncate(this.WorldLocation.X);
-                //    player.WorldLocation = new Vector2(wholeNumberLocation + platformFraction, player.WorldLocation.Y);
-                //}
-
+                // Adjust the player to how the platform moved.
                 player.WorldLocation += this.WorldLocation - PreviousLocation;
-            } 
-            
+
+                // Jitter can occur on platforms. What if the player is at 10.0 and the platform is at 10.8
+                // If the platform moves 0.2 then it moved a pixel while the player still draws at the same spot.
+                // If the player isn't moving, adjust his sub pixel fraction to be the same as the platform.
+                // This may cause a slight snap when you stop but looks like smooth movement.
+                if (player.Velocity.X == 0)
+                {
+                    // Align the sub pixel x position offset the the player and platform.
+                    var wholeNumberLocation = (int)player.WorldLocation.X;
+                    var platformFraction = this.worldLocation.X - (float)Math.Truncate(this.WorldLocation.X);
+                    player.WorldLocation = new Vector2(wholeNumberLocation + platformFraction, player.WorldLocation.Y);
+                }
+            }
+
             PreviousLocation = this.WorldLocation;
         }
 

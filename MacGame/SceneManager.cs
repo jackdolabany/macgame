@@ -235,6 +235,16 @@ namespace MacGame
                                         }
                                     }
                                 }
+                                if (platform is GhostPlatform1)
+                                {
+                                    foreach (var obj in map.ObjectModifiers)
+                                    {
+                                        if (obj.GetScaledRectangle().Contains(platform.CollisionRectangle))
+                                        {
+                                            ((GhostPlatform1)platform).Name = obj.Name;
+                                        }
+                                    }
+                                }
                             }
                             else if (loadClass.StartsWith("Item."))
                             {

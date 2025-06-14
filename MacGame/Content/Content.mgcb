@@ -508,6 +508,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/FullyCharged.wav
 
+#begin SoundEffects/GhostSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/GhostSound.wav
+
 #begin SoundEffects/GooseBallBounce.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

@@ -648,6 +648,19 @@ namespace MacGame
                         }
                     }
                     break;
+                case "ResetGhostPlatform":
+                    foreach (var platform in Platforms)
+                    {
+                        if (platform is GhostPlatform1)
+                        {
+                            var ghostPlatform = (GhostPlatform1)platform;
+                            if (ghostPlatform.Name == args)
+                            {
+                                ghostPlatform.Reset();
+                            }
+                        }
+                    }
+                    break;
                 default:
                     if (Game1.IS_DEBUG)
                     {

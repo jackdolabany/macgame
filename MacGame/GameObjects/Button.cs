@@ -23,6 +23,7 @@ namespace MacGame
     ///   ShootCannon - Shoots a cannon, which might have a cannon ball. Args are the name of the cannon.
     ///   BreakBricks - Break a series of BreakBricks. The args are the GroupName property of the BreakBricks.
     ///   SolidifyGhostBlock - Makes an open Ghost Block become solid. The args are the Name of the GhostBlock.
+    ///   ResetGhostPlatform - Resets a ghost platform to its original position. The args are the Name of the GhostPlatform.
     /// </summary>
     public class Button : GameObject
     {

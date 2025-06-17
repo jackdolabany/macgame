@@ -651,10 +651,10 @@ namespace MacGame
                 case "ResetGhostPlatform":
                     foreach (var platform in Platforms)
                     {
-                        if (platform is GhostPlatform1)
+                        if (platform is GhostPlatformBase)
                         {
-                            var ghostPlatform = (GhostPlatform1)platform;
-                            if (ghostPlatform.Name == args)
+                            var ghostPlatform = (GhostPlatformBase)platform;
+                            if (ghostPlatform.Name == args || ghostPlatform.GroupName == args)
                             {
                                 ghostPlatform.Reset();
                             }

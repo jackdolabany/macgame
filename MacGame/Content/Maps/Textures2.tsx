@@ -82,7 +82,7 @@
  </tile>
  <tile id="68">
   <properties>
-   <property name="LoadClass" value="Platform.GhostPlatform2"/>
+   <property name="LoadClass" value="Platform.GhostPlatformControllable"/>
   </properties>
  </tile>
  <tile id="69">
@@ -93,6 +93,11 @@
  <tile id="70">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="71">
+  <properties>
+   <property name="LoadClass" value="GhostPlatformController"/>
   </properties>
  </tile>
  <tile id="82">
@@ -107,7 +112,7 @@
  </tile>
  <tile id="84">
   <properties>
-   <property name="LoadClass" value="Platform.GhostPlatform1"/>
+   <property name="LoadClass" value="Platform.GhostPlatformRidable"/>
   </properties>
  </tile>
  <tile id="85">

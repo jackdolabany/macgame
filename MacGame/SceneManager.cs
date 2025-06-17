@@ -235,13 +235,18 @@ namespace MacGame
                                         }
                                     }
                                 }
-                                if (platform is GhostPlatform1)
+                                if (platform is GhostPlatformBase)
                                 {
                                     foreach (var obj in map.ObjectModifiers)
                                     {
                                         if (obj.GetScaledRectangle().Contains(platform.CollisionRectangle))
                                         {
-                                            ((GhostPlatform1)platform).Name = obj.Name;
+                                            ((GhostPlatformBase)platform).Name = obj.Name;
+
+                                            if (obj.Properties.ContainsKey("GroupName"))
+                                            {
+                                                ((GhostPlatformBase)platform).GroupName = obj.Properties["GroupName"];
+                                            }
                                         }
                                     }
                                 }
@@ -630,6 +635,33 @@ namespace MacGame
                                         throw new Exception("GhostBlock must have a name set in the map editor.");
                                     }
                                 }
+                            }
+                            else if (loadClass == "GhostPlatformController")
+                            {
+                                var controller = new GhostPlatformController(contentManager, x, y, player);
+
+                                // BlockingPiston modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(controller.CollisionRectangle))
+                                    {
+                                        if (obj.Properties.ContainsKey("PlatformName"))
+                                        {
+                                            controller.PlatformName = obj.Properties["PlatformName"];
+                                        }
+                                    }
+                                }
+
+                                if (Game1.IS_DEBUG)
+                                {
+                                    if (string.IsNullOrEmpty(controller.PlatformName))
+                                    {
+                                        throw new Exception("GhostPlatformController must have a PlatformName set in the map editor.");
+                                    }
+                                }
+
+                                level.GameObjects.Add(controller);
+                                layerDepthObjects[z].Add(controller);
                             }
                         }
                     }

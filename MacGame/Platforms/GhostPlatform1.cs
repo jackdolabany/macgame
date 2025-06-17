@@ -33,28 +33,85 @@ namespace MacGame.Platforms
             this.startingLocation = this.WorldLocation;
         }
 
+        // Helpers to check collisions on corners
+        protected bool IsPointPassable(Vector2 point)
+        {
+            var cell = Game1.CurrentMap.GetMapSquareAtPixel((int)point.X, (int)point.Y);
+            return cell == null || cell.Passable;
+        }
+
+        public bool IsTopLeftOfPlayerPassable()
+        {
+            return IsPointPassable(new Vector2(Game1.Player.CollisionRectangle.Left - 2, Game1.Player.CollisionRectangle.Top - 2));
+        }
+
+        public bool IsTopRightOfPlayerPassable()
+        {
+            return IsPointPassable(new Vector2(Game1.Player.CollisionRectangle.Right + 2, Game1.Player.CollisionRectangle.Top - 2));
+        }
+
+        public bool IsBottomLeftOfPlayerPassable()
+        {
+            return IsPointPassable(new Vector2(Game1.Player.CollisionRectangle.Left - 2, Game1.Player.CollisionRectangle.Bottom + 2));
+        }
+
+        public bool IsBottomRightOfPlayerPassable()
+        {
+            return IsPointPassable(new Vector2(Game1.Player.CollisionRectangle.Right + 2, Game1.Player.CollisionRectangle.Bottom + 2));
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             var player = Game1.Player;
             // If the player is on this platform, set the velocity to move in the direction the player is facing.
             if (player.PlatformThatThisIsOn == this)
             {
+
                 if(player.IsFacingLeft())
                 {
-                    this.velocity.X = -Speed;
+                    // Move left if the player isn't touching a left wall.
+                    if (IsTopLeftOfPlayerPassable() && IsBottomLeftOfPlayerPassable())
+                    {
+                        this.velocity.X = -Speed;
+                    }
+                    else
+                    {
+                        this.velocity.X = 0;
+                    }
                 }
                 else
                 {
-                    this.velocity.X = Speed;
+                    if (IsTopRightOfPlayerPassable() && IsBottomRightOfPlayerPassable())
+                    {
+                        this.velocity.X = Speed;
+                    }
+                    else
+                    {
+                        this.velocity.X = 0;
+                    }
                 }
 
                 if (player.InputManager.CurrentAction.up)
                 {
-                    this.velocity.Y = -Speed;
+                    if (IsTopLeftOfPlayerPassable() && IsTopRightOfPlayerPassable())
+                    {
+                        this.velocity.Y = -Speed;
+                    }
+                    else
+                    {
+                        this.velocity.Y = 0;
+                    }
                 }
                 else if (player.InputManager.CurrentAction.down)
                 {
-                    this.velocity.Y = Speed;
+                    if (IsBottomLeftOfPlayerPassable() && IsBottomRightOfPlayerPassable())
+                    {
+                        this.velocity.Y = Speed;
+                    }
+                    else
+                    {
+                        this.velocity.Y = 0;
+                    }
                 }
                 else
                 {

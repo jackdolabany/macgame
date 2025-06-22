@@ -85,6 +85,8 @@ namespace MacGame.Platforms
             this.velocity = Vector2.Zero;
             this.Enabled = true;
 
+            Game1.Player.PlatformThatThisIsOn = null;
+
             if (needsReset)
             {
                 SoundManager.PlaySound("GhostSound");

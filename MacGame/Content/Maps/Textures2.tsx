@@ -35,6 +35,11 @@
    <property name="LoadClass" value="Enemy.FinalBoss"/>
   </properties>
  </tile>
+ <tile id="22">
+  <properties>
+   <property name="LoadClass" value="Enemy.Murderer"/>
+  </properties>
+ </tile>
  <tile id="32">
   <properties>
    <property name="LoadClass" value="Enemy.ElectricSeaweedUpTop"/>

@@ -105,30 +105,11 @@ namespace MacGame.Platforms
                     }
                 }
 
-
-                //if (player.InputManager.CurrentAction.down)
-                //{
                 if (!isJumpingAbovePlatform && player.PlatformThatThisIsOn == this && player.Velocity.Y >= 0 && IsBottomLeftOfPlayerPassable() && IsBottomRightOfPlayerPassable())
                 {
                     this.velocity.Y = Speed;
                 }
             }
-                    //else
-                    //{
-                    //    this.velocity.Y = 0;
-                    //}
-                //}
-                //else
-                //{
-                //    this.velocity.Y = 0;
-                //}
-            //}
-            //else
-            //{
-            //    this.Velocity = Vector2.Zero;
-            //}
-
-
 
             base.Update(gameTime, elapsed);
 

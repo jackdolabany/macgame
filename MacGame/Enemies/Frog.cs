@@ -31,7 +31,6 @@ namespace MacGame.Enemies
             jump.LoopAnimation = false;
             jump.FrameLength = 0.1f;
             jump.Oscillate = true;
-            jump.NextAnimation = "reverseJump";
             animations.Add(jump);
 
 
@@ -40,7 +39,6 @@ namespace MacGame.Enemies
             reverseJump.FrameLength = 0.1f;
             reverseJump.Oscillate = true;
             reverseJump.Reverse = true;
-            reverseJump.NextAnimation = "idle";
             animations.Add(reverseJump);
 
             isEnemyTileColliding = true;
@@ -73,7 +71,7 @@ namespace MacGame.Enemies
                 if (jumpTimer <= 0)
                 {
                     jumpTimer = 2;
-                    animations.Play("jump");
+                    animations.Play("jump").FollowedBy("reverseJump").FollowedBy("idle");
                     SoundManager.PlaySound("Jump", 0.5f, -0.2f);
                     velocity.Y -= 400;
                     velocity.X = 120;

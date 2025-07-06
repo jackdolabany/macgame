@@ -109,9 +109,6 @@ namespace MacGame.Enemies
             Attack = 1;
             Health = 10;
 
-            // TODO: No
-            Health = 1;
-
             IsAffectedByGravity = true;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
@@ -385,7 +382,7 @@ namespace MacGame.Enemies
             else
             {
                 _state = MurdererState.Dying;
-                animations.Play("face").FollowedBy("");
+                animations.Play("face");
                 _sickle.Enabled = false;
                 EffectsManager.SmallEnemyPop(_sickle.CollisionCenter);
                 SoundManager.PlaySound("MurdererDeath");

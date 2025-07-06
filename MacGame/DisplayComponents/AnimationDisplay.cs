@@ -17,6 +17,7 @@ namespace MacGame.DisplayComponents
         {
             drawObject = new DrawObject();
             CurrentAnimationName = "";
+            NextAnimationQueue = new Queue<string>();
         }
 
         public string CurrentAnimationName;
@@ -42,6 +43,11 @@ namespace MacGame.DisplayComponents
         {
             animations.Add(animation.Name, animation);
         }
+
+        /// <summary>
+        /// Add another animation if you want it to play after this one immediately.
+        /// </summary>
+        public Queue<string> NextAnimationQueue { get; private set; }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
@@ -91,9 +97,9 @@ namespace MacGame.DisplayComponents
             var anim = animations[CurrentAnimationName];
             if (anim.FinishedPlaying)
             {
-                if (!string.IsNullOrEmpty(anim.NextAnimation))
+                if (NextAnimationQueue.Count > 0)
                 {
-                    Play(anim.NextAnimation);
+                    Play(NextAnimationQueue.Dequeue());
                 }
             }
             else
@@ -119,13 +125,14 @@ namespace MacGame.DisplayComponents
               worldLocation.Y - animationToCheck.FrameHeight / 2f);
         }
 
-        public AnimationStrip? Play(string name, int startFrame)
+        public AnimationDisplay Play(string name, int startFrame)
         {
+
             if (name != null && animations.ContainsKey(name))
             {
                 CurrentAnimationName = name;
                 animations[name].Play(startFrame);
-                return animations[name];
+                return this;
             }
 
             if (Game1.IS_DEBUG)
@@ -133,22 +140,28 @@ namespace MacGame.DisplayComponents
                 throw new Exception("Animation not found: " + name);
             }
 
-            return null;
+            return this;
 
         }
 
-        public AnimationStrip? Play(string name)
+        public AnimationDisplay Play(string name)
         {
             return Play(name, 0);
         }
 
-        public AnimationStrip? PlayIfNotAlreadyPlaying(string name)
+        public AnimationDisplay PlayIfNotAlreadyPlaying(string name)
         {
             if (CurrentAnimationName != name)
             {
                 return Play(name, 0);
             }
-            return null;
+            return this;
+        }
+
+        public AnimationDisplay FollowedBy(string animationName)
+        {
+            NextAnimationQueue.Enqueue(animationName);
+            return this;
         }
 
         internal void StopPlaying()

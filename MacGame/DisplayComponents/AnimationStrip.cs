@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace MacGame.DisplayComponents
 {
@@ -25,11 +26,6 @@ namespace MacGame.DisplayComponents
         public Texture2D Texture { get; set; }
 
         public string Name { get; set; }
-
-        /// <summary>
-        /// Add another animation if you want it to play after this one immediately.
-        /// </summary>
-        public string NextAnimation { get; set; }
 
         public bool LoopAnimation { get; set; }
 
@@ -93,7 +89,6 @@ namespace MacGame.DisplayComponents
             FrameCount = frameCount;
             Name = name;
             FrameLength = 0.05f;
-            NextAnimation = "";
         }
 
         public AnimationStrip Play(int currentFrame)
@@ -107,12 +102,6 @@ namespace MacGame.DisplayComponents
         public AnimationStrip Play()
         {
             return Play(0);
-        }
-
-        public AnimationStrip FollowedBy(string animationName)
-        {
-            NextAnimation = animationName;
-            return this;
         }
 
         public void Update(float elapsed)
@@ -151,7 +140,6 @@ namespace MacGame.DisplayComponents
             clone.currentFrameIndex = currentFrameIndex;
             clone.FrameLength = FrameLength;
             clone.LoopAnimation = LoopAnimation;
-            clone.NextAnimation = NextAnimation;
             clone.Oscillate = Oscillate;
             clone.Reverse = Reverse;
             return clone;

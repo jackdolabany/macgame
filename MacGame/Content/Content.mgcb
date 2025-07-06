@@ -562,11 +562,23 @@
 /processorParam:Quality=Best
 /build:SoundEffects/HitEnemy2.wav
 
+#begin SoundEffects/Hurt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Hurt.wav
+
 #begin SoundEffects/Jump.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Jump.wav
+
+#begin SoundEffects/JumpQuick.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/JumpQuick.wav
 
 #begin SoundEffects/Kick.wav
 /importer:WavImporter
@@ -615,6 +627,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/MinecartLandMetal.wav
+
+#begin SoundEffects/MurdererDeath.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/MurdererDeath.wav
 
 #begin SoundEffects/OpenLockedDoor.wav
 /importer:WavImporter
@@ -669,6 +687,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Shrink.wav
+
+#begin SoundEffects/Sickle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/Sickle.wav
 
 #begin SoundEffects/SlowFlame.wav
 /importer:WavImporter

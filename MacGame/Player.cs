@@ -170,7 +170,7 @@ namespace MacGame
 
         public ObjectPool<Apple> Apples;
 
-        private bool HasApples
+        public bool HasApples
         {
             get
             {
@@ -454,6 +454,7 @@ namespace MacGame
             wings = new MacWings(this, textures);
 
             Apples = new ObjectPool<Apple>(2);
+            Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
             Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
 
@@ -1388,7 +1389,7 @@ namespace MacGame
             // this seems stupid but it helps a lot.
             if (IsClimbingLadder && OnCeiling && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
             {
-                var blockTopLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left, this.CollisionRectangle.Top - 4);
+                var blockTopLeft = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Left - 4, this.CollisionRectangle.Top - 4);
                 var blockTopRight = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionRectangle.Right - 1, this.CollisionRectangle.Top - 4);
                 
                 if (blockTopLeft != null && !blockTopLeft.Passable && blockTopRight != null && blockTopRight.Passable)
@@ -1728,9 +1729,10 @@ namespace MacGame
                 var apple = Apples.TryGetObject();
                 if (apple != null)
                 {
+                    SoundManager.PlaySound("Kick");
                     apple.Enabled = true;
                     apple.WorldLocation = this.WorldLocation;
-                    apple.Velocity = new Vector2(280, 0);
+                    apple.Velocity = new Vector2(400, 0);
                     if (Flipped)
                     {
                         apple.Velocity *= -1;

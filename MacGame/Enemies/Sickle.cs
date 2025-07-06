@@ -118,6 +118,7 @@ namespace MacGame.Enemies
 
         public void Toss(GameObject thrower, bool isToTheRight)
         {
+            SoundManager.PlaySound("Sickle");
             Enabled = true;
             initialTossLocation = thrower.CollisionCenter;
             animations.Play("toss");

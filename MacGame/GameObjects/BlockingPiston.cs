@@ -48,14 +48,13 @@ namespace MacGame
 
             Enabled = true;
 
-            // This is a button. It doesn't do anything.
             IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
             isEnemyTileColliding = false;
-            isTileColliding = true;
+            isTileColliding = false;
 
             DisplayComponent = new AnimationDisplay();
 

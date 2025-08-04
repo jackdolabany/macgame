@@ -663,6 +663,13 @@ namespace MacGame
                                 level.GameObjects.Add(controller);
                                 layerDepthObjects[z].Add(controller);
                             }
+                            else if (loadClass == "SpaceShip")
+                            {
+                                var spaceShip = new SpaceShip(contentManager, x, y, player);
+
+                                level.GameObjects.Add(spaceShip);
+                                layerDepthObjects[z].Add(spaceShip);
+                            }
                         }
                     }
                 }
@@ -740,11 +747,12 @@ namespace MacGame
 
             foreach (var layer in layerDepthObjects.Keys)
             {
-                // Highest number things end up in the back.
+                // Highest number things end up in the front.
                 var gameObjects = layerDepthObjects[layer].OrderBy(o => {
                     if (o is Door) return 1;
                     if (o is BlockingPiston) return 1;
                     if (o is WaterBomb) return 1;
+                    if (o is SpaceShip) return 1;
                     if (o is Npc) return 2;
                     if (o is Platform) return 3;
                     if (o is Player) return 4;

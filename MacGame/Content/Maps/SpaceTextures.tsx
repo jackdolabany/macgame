@@ -11,6 +11,11 @@
    <property name="LoadClass" value="Enemy.AlienShip"/>
   </properties>
  </tile>
+ <tile id="6">
+  <properties>
+   <property name="LoadClass" value="SpaceShip"/>
+  </properties>
+ </tile>
  <tile id="18">
   <properties>
    <property name="LoadClass" value="Enemy.Saucer"/>

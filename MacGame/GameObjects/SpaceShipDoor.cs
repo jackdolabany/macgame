@@ -19,12 +19,11 @@ namespace MacGame
 
         private Player _player;
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
+        private SpaceShip _spaceShip;
 
-        public SpaceShipDoor(ContentManager content, Vector2 spaceShipLocation, Player player) : base(content, 0, 0, player)
+        public SpaceShipDoor(ContentManager content, Vector2 spaceShipLocation, Player player, SpaceShip spaceShip) : base(content, 0, 0, player)
         {
-
-            // Adjust the position to the space ship
-            WorldLocation = spaceShipLocation + new Vector2(-4, -Game1.TileSize);
+            _spaceShip = spaceShip;
 
             this.CollisionRectangle = new Rectangle(-16, -Game1.TileSize, Game1.TileSize, Game1.TileSize);
 
@@ -53,18 +52,28 @@ namespace MacGame
             open.Reverse = true;
             animations.Add(open);
 
-            this.Enabled = false;
+            animations.TintColor = Color.Transparent;
         }
 
         public void CloseDoor()
         {
             animations.Play("close");
-            this.Enabled = true;
+            animations.TintColor = Color.White;
+        }
+
+        public bool IsClosed()
+        {
+            return animations.CurrentAnimation != null && animations.CurrentAnimation.Name == "close" && animations.CurrentAnimation.FinishedPlaying;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
             base.Update(gameTime, elapsed);
+        }
+
+        public override void PlayerTriedToOpen(Player player)
+        {
+            _spaceShip.TakeOff();
         }
 
         public override void PlayerSlidingOut()

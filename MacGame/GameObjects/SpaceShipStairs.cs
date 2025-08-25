@@ -28,10 +28,6 @@ namespace MacGame
 
         public SpaceShipStairs(ContentManager content, Vector2 spaceShipLocation, Player player)
         {
-
-            // Adjust relative to the ship
-            WorldLocation = spaceShipLocation + new Vector2(-4, 0);
-
             this.CollisionRectangle = new Rectangle(-1, -65, 34, 66);
 
             _player = player;
@@ -61,14 +57,16 @@ namespace MacGame
             animations.Add(raise);
 
             animations.Play("idle");
-
-            // Add a hidden platform at the top of ladders so you can climb to the top and stand on them.
-            //ladderPlatform = new LadderPlatform(content, -100000, -100000);
         }
 
         public void RaiseStairs()
         {
             animations.Play("raise");
+        }
+
+        public bool AreStairsRaised()
+        {
+            return animations.CurrentAnimation != null && animations.CurrentAnimation.Name == "raise" && animations.CurrentAnimation.FinishedPlaying;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

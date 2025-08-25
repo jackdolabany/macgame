@@ -727,6 +727,11 @@ namespace MacGame
             {
                 door.Update(gameTime, elapsed);
             }
+
+            foreach (var obj in GameObjects)
+            {
+                obj.Update(gameTime, elapsed);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle scaledViewPort)

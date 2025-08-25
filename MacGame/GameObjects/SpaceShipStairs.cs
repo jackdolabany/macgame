@@ -56,6 +56,11 @@ namespace MacGame
             raise.FrameLength = 0.1f;
             animations.Add(raise);
 
+            var lower = (AnimationStrip)raise.Clone();
+            lower.Reverse = true;
+            lower.Name = "lower";
+            animations.Add(lower);
+
             animations.Play("idle");
         }
 
@@ -64,9 +69,19 @@ namespace MacGame
             animations.Play("raise");
         }
 
+        public void LowerStairs()
+        {
+            animations.Play("lower");
+        }
+
         public bool AreStairsRaised()
         {
             return animations.CurrentAnimation != null && animations.CurrentAnimation.Name == "raise" && animations.CurrentAnimation.FinishedPlaying;
+        }
+
+        public bool AreStairsLowered()
+        {
+            return animations.CurrentAnimation != null && animations.CurrentAnimation.Name == "lower" && animations.CurrentAnimation.FinishedPlaying;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

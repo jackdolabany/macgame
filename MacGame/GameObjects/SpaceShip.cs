@@ -35,6 +35,8 @@ namespace MacGame
         float rocketTimer = 0;
         const float rocketTimerGoal = 0.1f;
 
+        float originalPlayerDrawDepth;
+
         public enum SpaceShipState
         {
             Idle,
@@ -94,6 +96,18 @@ namespace MacGame
             _door.CloseDoor();
 
             // Put the player inside the ship
+            originalPlayerDrawDepth = _player.DrawDepth;
+            _player.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+        }
+
+        public void OpenDoor()
+        {   
+            _state = SpaceShipState.DoorOpening;
+            _stairs.LowerStairs();
+            _door.OpenDoor();
+
+            // Put the player inside the ship
+            originalPlayerDrawDepth = _player.DrawDepth;
             _player.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
         }
 
@@ -125,8 +139,8 @@ namespace MacGame
             // Adjust the position to the space ship
             PositionChildren();
 
-            var leftRocketLocation = this.WorldLocation - new Vector2(-100, 0);
-            var rightRocketLocation = this.WorldLocation - new Vector2(100, 0);
+            var leftRocketLocation = this.WorldLocation - new Vector2(-28, 0);
+            var rightRocketLocation = this.WorldLocation - new Vector2(28, 0);
 
 
             switch (_state)
@@ -139,7 +153,7 @@ namespace MacGame
                         _state = SpaceShipState.TakingOff;
 
                         // Pretend Mac is inside the ship.
-                        _player.IsInvisible = true;
+                        _player.IsInvisibleAndCantMove = true;
                     }
                     break;
                 case SpaceShipState.TakingOff:
@@ -162,6 +176,15 @@ namespace MacGame
 
                     break;
                 case SpaceShipState.DoorOpening:
+
+                    if (_door.IsOpen() && !_stairs.AreStairsLowered())
+                    {
+                        _state = SpaceShipState.Idle;
+
+                        // Let Mac out of the ship.
+                        _player.IsInvisibleAndCantMove = false;
+                        _player.SetDrawDepth(originalPlayerDrawDepth);
+                    }
                     break;
             }
 

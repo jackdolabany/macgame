@@ -51,14 +51,16 @@ namespace MacGame
             open.Name = "open";
             open.Reverse = true;
             animations.Add(open);
-
-            animations.TintColor = Color.Transparent;
         }
 
         public void CloseDoor()
         {
             animations.Play("close");
-            animations.TintColor = Color.White;
+        }
+
+        public void OpenDoor()
+        {
+            animations.Play("open");
         }
 
         public bool IsClosed()
@@ -66,14 +68,34 @@ namespace MacGame
             return animations.CurrentAnimation != null && animations.CurrentAnimation.Name == "close" && animations.CurrentAnimation.FinishedPlaying;
         }
 
+        public bool IsOpen()
+        {
+            return animations.CurrentAnimation == null || (animations.CurrentAnimation.Name == "open" && animations.CurrentAnimation.FinishedPlaying);
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             base.Update(gameTime, elapsed);
+
+            if (IsOpen())
+            {
+                animations.TintColor = Color.Transparent;
+            }
+            else
+            {
+                animations.TintColor = Color.White;
+            }
         }
 
         public override void PlayerTriedToOpen(Player player)
         {
             _spaceShip.TakeOff();
+        }
+
+        public override void ComeOutOfThisDoor(Player player, bool isYeet = false)
+        {
+            base.ComeOutOfThisDoor(player, isYeet);
+            _spaceShip.OpenDoor();
         }
 
         public override void PlayerSlidingOut()

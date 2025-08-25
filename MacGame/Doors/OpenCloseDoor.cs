@@ -184,10 +184,10 @@ namespace MacGame.Doors
                 if (DoorAnimations.CurrentAnimation!.currentFrameIndex == 2 || DoorAnimations.CurrentAnimation!.FinishedPlaying)
                 {
                     // hide Mac because he just got shut in the door.
-                    if (!_player.IsInvisible)
+                    if (!_player.IsInvisibleAndCantMove)
                     {
                         SoundManager.PlaySound("DoorShut");
-                        _player.IsInvisible = true;
+                        _player.IsInvisibleAndCantMove = true;
                     }
 
                     if (pauseBeforeTransitionTimer > 0)
@@ -208,12 +208,12 @@ namespace MacGame.Doors
                 // are tossed out. It looks better, trust me.
                 if (!isYeet)
                 {
-                    _player.IsInvisible = DoorAnimations.CurrentAnimation.currentFrameIndex < 1;
+                    _player.IsInvisibleAndCantMove = DoorAnimations.CurrentAnimation.currentFrameIndex < 1;
                 }
 
                 if (DoorAnimations.animations[DoorAnimations.CurrentAnimationName].FinishedPlaying)
                 {
-                    _player.IsInvisible = false;
+                    _player.IsInvisibleAndCantMove = false;
                     State = DoorState.ExitClosing;
                     DoorAnimations.Play("close");
                     if (isYeet)
@@ -279,7 +279,7 @@ namespace MacGame.Doors
             DoorAnimations.Play("open");
             SoundManager.PlaySound("DoorOpen");
             State = DoorState.ExitOpening;
-            _player.IsInvisible = true;
+            _player.IsInvisibleAndCantMove = true;
             _player.PositionForSlideOutOfDoor(WorldLocation);
         }
 
@@ -290,7 +290,7 @@ namespace MacGame.Doors
             DoorAnimations.Play("open");
             SoundManager.PlaySound("DoorOpen");
             State = DoorState.ExitOpening;
-            player.IsInvisible = true;
+            player.IsInvisibleAndCantMove = true;
 
             // Door unlocks as you go through it.
             Unlock();

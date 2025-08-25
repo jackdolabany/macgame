@@ -250,7 +250,10 @@ namespace MacGame
         /// </summary>
         MacWings wings;
 
-        public bool IsInvisible { get; set; } = false;
+        /// <summary>
+        /// For things like doors that may need to make Mac temporarily invisible/disabled.
+        /// </summary>
+        public bool IsInvisibleAndCantMove { get; set; } = false;
 
         public override Vector2 Gravity
         {
@@ -1017,12 +1020,12 @@ namespace MacGame
             CollisionRectangle = normalCollisionRectangle;
             IsAffectedByGravity = true;
             
-            IsInvisible = false;
+            IsInvisibleAndCantMove = false;
             _state = MacState.Idle;
             this.IsInWater = false;
             IsJumpingOutOfWater = false;
             this.invincibleTimeRemaining = 0f;
-            this.IsInvisible = false;
+            this.IsInvisibleAndCantMove = false;
             this.IsJustShotOutOfCannon = false;
             this.PlatformThatThisIsOn = null;
             ShotPower = ShotPower.Single;
@@ -2242,7 +2245,7 @@ namespace MacGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (IsInvisible) return;
+            if (IsInvisibleAndCantMove) return;
 
             if (IsInCannon) return;
 

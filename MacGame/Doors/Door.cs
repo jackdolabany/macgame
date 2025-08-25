@@ -36,7 +36,7 @@ namespace MacGame.Doors
         {
             player.WorldLocation = this.WorldLocation;
             player.Velocity = Vector2.Zero;
-            player.IsInvisible = false;
+            player.IsInvisibleAndCantMove = false;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

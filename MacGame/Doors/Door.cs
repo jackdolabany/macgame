@@ -15,7 +15,7 @@ namespace MacGame.Doors
 
         protected Player _player;
 
-        public Door(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base()
+        public Door(ContentManager content, int cellX, int cellY, Player player) : base()
         {
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
             Enabled = true;

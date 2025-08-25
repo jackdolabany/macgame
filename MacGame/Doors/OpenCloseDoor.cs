@@ -62,8 +62,8 @@ namespace MacGame.Doors
         private AnimationDisplay DoorAnimations;
         private AnimationDisplay JailBarAnimations;
 
-        public OpenCloseDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera)
-            : base(content, cellX, cellY, player, camera)
+        public OpenCloseDoor(ContentManager content, int cellX, int cellY, Player player)
+            : base(content, cellX, cellY, player)
         {
             DoorAnimations = new AnimationDisplay();
             JailBarAnimations = new AnimationDisplay();

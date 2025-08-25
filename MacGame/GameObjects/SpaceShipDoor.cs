@@ -7,27 +7,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TileEngine;
+using MacGame.Doors;
 
 namespace MacGame
 {
     /// <summary>
     /// The door of the space ship that closes behind mac
     /// </summary>
-    public class SpaceShipDoor : GameObject
+    public class SpaceShipDoor : Door
     {
 
         private Player _player;
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        public SpaceShipDoor(ContentManager content, int cellX, int cellY, Player player)
+        public SpaceShipDoor(ContentManager content, Vector2 spaceShipLocation, Player player) : base(content, 0, 0, player)
         {
 
-            WorldLocation = new Vector2(cellX * TileMap.TileSize + (TileMap.TileSize / 2), (cellY + 1) * TileMap.TileSize);
-
             // Adjust the position to the space ship
-            WorldLocation = new Vector2(WorldLocation.X - 4, WorldLocation.Y + 4);
+            WorldLocation = spaceShipLocation + new Vector2(-4, -Game1.TileSize);
 
-            this.CollisionRectangle = new Rectangle(-1, -65, 34, 66);
+            this.CollisionRectangle = new Rectangle(-16, -Game1.TileSize, Game1.TileSize, Game1.TileSize);
 
             _player = player;
 
@@ -66,6 +65,11 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
             base.Update(gameTime, elapsed);
+        }
+
+        public override void PlayerSlidingOut()
+        {
+            // Do nothing.
         }
     }
 }

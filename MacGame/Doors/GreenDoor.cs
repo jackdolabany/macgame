@@ -13,8 +13,8 @@ namespace MacGame.Doors
     public class GreenDoor : OpenCloseDoor
     {
 
-        public GreenDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera)
-            : base(content, cellX, cellY, player, camera)
+        public GreenDoor(ContentManager content, int cellX, int cellY, Player player)
+            : base(content, cellX, cellY, player)
         {
 
         }

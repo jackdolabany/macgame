@@ -1,11 +1,14 @@
 ﻿using MacGame.DisplayComponents;
 using MacGame.Npcs;
+using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using TileEngine;
 
 namespace MacGame
@@ -19,13 +22,15 @@ namespace MacGame
         private Player _player;
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        public SpaceShipStairs(ContentManager content, int cellX, int cellY, Player player)
+        private bool isInitialized = false;
+
+        //LadderPlatform ladderPlatform;
+
+        public SpaceShipStairs(ContentManager content, Vector2 spaceShipLocation, Player player)
         {
 
-            WorldLocation = new Vector2(cellX * TileMap.TileSize + (Game1.TileSize / 2), (cellY + 1) * TileMap.TileSize);
-
             // Adjust relative to the ship
-            WorldLocation = new Vector2(WorldLocation.X - 4, WorldLocation.Y + 4);
+            WorldLocation = spaceShipLocation + new Vector2(-4, 0);
 
             this.CollisionRectangle = new Rectangle(-1, -65, 34, 66);
 
@@ -56,6 +61,9 @@ namespace MacGame
             animations.Add(raise);
 
             animations.Play("idle");
+
+            // Add a hidden platform at the top of ladders so you can climb to the top and stand on them.
+            //ladderPlatform = new LadderPlatform(content, -100000, -100000);
         }
 
         public void RaiseStairs()

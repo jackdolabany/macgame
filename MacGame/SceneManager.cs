@@ -313,7 +313,7 @@ namespace MacGame
                             {
                                 // Use reflection to load the items from the code
                                 Type t = Type.GetType(typeof(Door).Namespace + "." + loadClass);
-                                var door = (Door)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
+                                var door = (Door)Activator.CreateInstance(t, new object[] { contentManager, x, y, player });
                                 level.Doors.Add(door);
                                 layerDepthObjects[z].Add(door);
 
@@ -666,6 +666,19 @@ namespace MacGame
                             else if (loadClass == "SpaceShip")
                             {
                                 var spaceShip = new SpaceShip(contentManager, x, y, player);
+
+                                // Spaceship Modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(spaceShip.CollisionRectangle))
+                                    {
+                                        spaceShip.Name = obj.Name;
+                                        spaceShip.GoToMap = obj.Properties["GoToMap"];
+                                        spaceShip.GoToDoor = obj.Properties["GoToDoor"];
+                                    }
+                                }
+
+                                spaceShip.AddStuffToLevel(level, contentManager);
 
                                 level.GameObjects.Add(spaceShip);
                                 layerDepthObjects[z].Add(spaceShip);

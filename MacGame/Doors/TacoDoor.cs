@@ -13,8 +13,8 @@ namespace MacGame.Doors
     public class TacoDoor : OpenCloseDoor
     {
 
-        public TacoDoor(ContentManager content, int cellX, int cellY, Player player, Camera camera)
-            : base(content, cellX, cellY, player, camera)
+        public TacoDoor(ContentManager content, int cellX, int cellY, Player player)
+            : base(content, cellX, cellY, player)
         {
 
         }

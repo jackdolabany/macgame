@@ -89,11 +89,13 @@ namespace MacGame
             level.Platforms.Add(ladderPlatform);
         }
 
-        public void TakeOff()
+        public void StartTakeOff()
         {
             _state = SpaceShipState.DoorClosing;
             _stairs.RaiseStairs();
             _door.CloseDoor();
+
+            GlobalEvents.FireBeginDoorEnter(this, EventArgs.Empty);
 
             // Put the player inside the ship
             originalPlayerDrawDepth = _player.DrawDepth;

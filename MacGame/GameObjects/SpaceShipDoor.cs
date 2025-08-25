@@ -89,7 +89,7 @@ namespace MacGame
 
         public override void PlayerTriedToOpen(Player player)
         {
-            _spaceShip.TakeOff();
+            _spaceShip.StartTakeOff();
         }
 
         public override void ComeOutOfThisDoor(Player player, bool isYeet = false)

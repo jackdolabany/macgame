@@ -842,6 +842,7 @@ namespace MacGame
                 // This shouldn't update the player or enemies.
                 TimerManager.Update(elapsed);
                 CurrentLevel.PausedUpdate(gameTime, elapsed);
+                EffectsManager.Update(gameTime, elapsed);
             }
             else if (CurrentGameState == GameState.Credits)
             {

@@ -794,8 +794,8 @@ namespace MacGame
                     }
 
                     // fudge some numbers to account for rounding errors since we intermix floats and 
-                    // rectangles that round down to ints.
-                    const float fudgePixels = 2f;
+                    // rectangles that round down to ints. Plus the platform might be moving up.
+                    const float fudgePixels = 6f;
 
                     // Was the platform below the player before movement?
                     var wasPlatformBelowMe = platform.CollisionRectangle.X <= currentPositionRect.Right

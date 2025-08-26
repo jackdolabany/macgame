@@ -61,7 +61,7 @@ namespace MacGame
             platform.StopMoving();
 
             // Control the platform
-            if (_player.CollisionRectangle.Intersects(this.CollisionRectangle))
+            if (_player.OnGround && _player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
 
                 if (_player.InputManager.CurrentAction.left)

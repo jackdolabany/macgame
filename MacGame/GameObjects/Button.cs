@@ -1,4 +1,5 @@
 ﻿using MacGame.DisplayComponents;
+using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -137,6 +138,16 @@ namespace MacGame
                 {
                     var go = puo as PickupObject;
                     if (!go.IsPickedUp && go.Enabled && go.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    {
+                        isColliding = true;
+                    }
+                }
+
+                // Check ghost platforms
+                foreach (var platform in Game1.CurrentLevel.Platforms)
+                {
+                    var gp = platform as GhostPlatformBase;
+                    if (gp != null && gp.Enabled && gp.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
                         isColliding = true;
                     }

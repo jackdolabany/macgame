@@ -62,6 +62,7 @@ namespace MacGame
                     new SockInfo { Name = "CarSock", Hint = "Pauly the snake can make you an offer you shouldn't refuse." },
                     new SockInfo { Name = "Wallsock", Hint = "A while ago I stashed a sock in the walls." },
                     new SockInfo { Name = "BasementSock", Hint = "A while ago I stashed a sock in the basement." },
+                    new SockInfo { Name = "PlatformSock1", Hint = "Ride ghostly platforms to stinky sock treasures." },
                 }
             },
             {

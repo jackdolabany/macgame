@@ -800,7 +800,8 @@ namespace MacGame
                     // Was the platform below the player before movement?
                     var wasPlatformBelowMe = platform.CollisionRectangle.X <= currentPositionRect.Right
                         && platform.CollisionRectangle.Right >= currentPositionRect.Left
-                        && platform.CollisionRectangle.Top > (currentPositionRect.Bottom - fudgePixels);
+                        && platform.CollisionRectangle.Top > (currentPositionRect.Bottom - fudgePixels) // top was roughly below you
+                        && platform.CollisionRectangle.Top < (currentPositionRect.Bottom + (Game1.TileSize * 3)); // Make sure they're within 3 tiles
 
                     if (wasPlatformBelowMe)
                     {
@@ -831,6 +832,10 @@ namespace MacGame
                     }
 
                 }
+            }
+            else if (!isFalling)
+            {
+                PlatformThatThisIsOn = null;
             }
 
             // Check Spring Boards.
@@ -896,7 +901,7 @@ namespace MacGame
         }
 
         /// <summary>
-        /// Moves an object left/right/up/down to avoid colliding iwht other objects. Ignores velocity. This is for when an object wasn't tile 
+        /// Moves an object left/right/up/down to avoid colliding with other objects. Ignores velocity. This is for when an object wasn't tile 
         /// blocking but then becomes that way. We don't want it to wark into walls and such and will prefer to just make sure it's not colliding.
         /// </summary>
         protected void MoveToIgnoreCollisions()

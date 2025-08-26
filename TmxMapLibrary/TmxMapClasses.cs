@@ -791,10 +791,6 @@ namespace Squared.Tiled
                         {
                             tileMap.MapCells[x][y].EnemyPassable = false;
                         }
-                        if (tileInfo.properties.ContainsKey("BlockPlatform"))
-                        {
-                            tileMap.MapCells[x][y].PlatformPassable = false;
-                        }
                         
                         if (tileInfo.properties.ContainsKey("Sand"))
                         {

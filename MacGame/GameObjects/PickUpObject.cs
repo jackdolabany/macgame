@@ -1,4 +1,5 @@
 ﻿using MacGame.DisplayComponents;
+using MacGame.Enemies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -82,6 +83,12 @@ namespace MacGame
                     if (enemy.Enabled && enemy.Alive && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
                         enemy.TakeHit(this, 1, this.Velocity);
+                    }
+
+                    // Spikes destroy pick up objects.
+                    if (enemy is Spikes && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    {
+                        BreakAndReset();
                     }
                 }
             }

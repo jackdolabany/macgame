@@ -64,11 +64,11 @@ namespace MacGame
             if (_player.OnGround && _player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
 
-                if (_player.InputManager.CurrentAction.left)
+                if (_player.InputManager.CurrentAction.left && _player.OnLeftWall)
                 {
                     platform.MoveLeft();
                 }
-                else if (_player.InputManager.CurrentAction.right)
+                else if (_player.InputManager.CurrentAction.right && _player.OnRightWall)
                 {
                     platform.MoveRight();
                 }

@@ -885,7 +885,8 @@ namespace MacGame
                 }
             }
 
-            Landed = Landed && moveAmount.Y > 0;
+            // Make sure they were moving down, or a platform they landed on was moving up.
+            Landed = Landed && (moveAmount.Y > 0 || (PlatformThatThisIsOn != null && PlatformThatThisIsOn.Velocity.Y < 0));
 
             return moveAmount;
         }

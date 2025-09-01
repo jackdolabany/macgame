@@ -675,6 +675,13 @@ namespace MacGame
 
             base.Update(gameTime, elapsed);
 
+            if (Landed && PlatformThatThisIsOn != null)
+            {
+                // Since the platform will pull the player along with it, cut his velocity
+                // by the platform velocity as he lands on it.
+                this.velocity.X -= PlatformThatThisIsOn.Velocity.X;
+            }
+
             // The minecart flips if it hits a wall.
             if (IsInMineCart)
             {
@@ -1455,6 +1462,13 @@ namespace MacGame
                 isInJumpFromGround = true;
                 jumpButtonHeldDownTimer = maxJumpButtonHeldDownTime;
                 onGround = false;
+
+                if (PlatformThatThisIsOn != null)
+                {
+                    velocity.X += PlatformThatThisIsOn.Velocity.X;
+                    PlatformThatThisIsOn = null;
+                }
+
             }
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasWings && this.Velocity.Y >= 0)
             {

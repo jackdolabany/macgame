@@ -44,11 +44,15 @@ namespace MacGame
 
             // Right wing
             var rightWingEffect = areWingsFlappedDown ? SpriteEffects.FlipVertically : SpriteEffects.None;
-            spriteBatch.Draw(wingImage, (_player.WorldLocation + new Vector2(0, -32) + flapAdjust), wingSourceRect, Color.White, 0, Vector2.Zero, 1f, rightWingEffect, this.DrawDepth);
+            var rightWingLocation = (_player.WorldLocation + new Vector2(0, -32) + flapAdjust);
+            rightWingLocation = rightWingLocation.ToIntegerVector();
+            spriteBatch.Draw(wingImage, rightWingLocation, wingSourceRect, Color.White, 0, Vector2.Zero, 1f, rightWingEffect, this.DrawDepth);
             
             // Left wing
             var leftWingEffect = areWingsFlappedDown ? SpriteEffects.FlipVertically | SpriteEffects.FlipHorizontally : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(wingImage, (_player.WorldLocation + new Vector2(-32, -32) + flapAdjust), wingSourceRect, Color.White, 0, Vector2.Zero, 1f, leftWingEffect, this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            var leftWingLocation = (_player.WorldLocation + new Vector2(-32, -32) + flapAdjust);
+            leftWingLocation = leftWingLocation.ToIntegerVector();
+            spriteBatch.Draw(wingImage, leftWingLocation, wingSourceRect, Color.White, 0, Vector2.Zero, 1f, leftWingEffect, this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
 
         }
     }

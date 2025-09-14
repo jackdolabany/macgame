@@ -1520,8 +1520,8 @@ namespace MacGame
             // Climbing Vine
             var tileAtCenter = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
             var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
-
-            if (!IsClimbingVine && canClimbVines && isOverVine && (!OnGround || InputManager.CurrentAction.up) && pickedUpObject == null)
+            var autoGrabOnToLadder = !OnGround && !HasWings;
+            if (!IsClimbingVine && canClimbVines && isOverVine && (autoGrabOnToLadder || InputManager.CurrentAction.up) && pickedUpObject == null)
             {
                 _state = MacState.ClimbingVine;
             }

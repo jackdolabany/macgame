@@ -18,6 +18,11 @@
    <property name="LoadClass" value="Enemy.Car"/>
   </properties>
  </tile>
+ <tile id="8">
+  <properties>
+   <property name="LoadClass" value="DisappearBlock"/>
+  </properties>
+ </tile>
  <tile id="17">
   <properties>
    <property name="BlockPlayer" value="1"/>

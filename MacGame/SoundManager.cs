@@ -193,6 +193,8 @@ namespace MacGame
             LoadSound("MurdererDeath");
             LoadSound("Hurt");
             LoadSound("Sickle");
+            LoadSound("BlockAppear");
+
 
             // Charging the ship's mega laser.
             LoadSound("Charging");

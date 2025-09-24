@@ -376,6 +376,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/BatChirp.wav
 
+#begin SoundEffects/BlockAppear.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/BlockAppear.wav
+
 #begin SoundEffects/Bounce.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

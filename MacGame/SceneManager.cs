@@ -13,6 +13,7 @@ using MacGame.Npcs;
 using System.Data;
 using MacGame.Doors;
 using MacGame.GameObjects;
+using MacGame.DisappearBlocks;
 
 namespace MacGame
 {
@@ -371,6 +372,30 @@ namespace MacGame
                             else if (loadClass == "RevealBlock")
                             {
                                 level.RevealBlockManager.AddRawBlock(new RevealBlock(x, y, z));
+                            }
+                            else if (loadClass == "DisappearBlock")
+                            {
+                                var block = new DisappearBlock(contentManager, x, y);
+                                level.DisappearBlockManager.AddRawBlock(block);
+                                layerDepthObjects[z].Add(block);
+
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    if (obj.GetScaledRectangle().Contains(block.CollisionRectangle))
+                                    {
+                                        foreach (var prop in obj.Properties)
+                                        {
+                                            if (obj.Properties.ContainsKey("GroupName"))
+                                            {
+                                                block.GroupName = obj.Properties["GroupName"];
+                                            }
+                                            if (obj.Properties.ContainsKey("Series"))
+                                            {
+                                                block.Series = int.Parse(obj.Properties["Series"]);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             else if (loadClass == "Waypoint")
                             {
@@ -786,6 +811,7 @@ namespace MacGame
             }
 
             level.RevealBlockManager.OrganizeRawBlocksIntoGroups();
+            level.DisappearBlockManager.OrganizeRawBlocksIntoGroups();
             player.WorldLocation = new Vector2((level.Map.PlayerStart.X * TileMap.TileSize) + (Game1.TileSize / 2), ((level.Map.PlayerStart.Y + 1) * TileMap.TileSize));
             camera.Map = level.Map;
 

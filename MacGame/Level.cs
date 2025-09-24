@@ -11,6 +11,7 @@ using MacGame.Npcs;
 using System.Linq;
 using MacGame.Doors;
 using System.Diagnostics;
+using MacGame.DisappearBlocks;
 
 namespace MacGame
 {
@@ -83,6 +84,7 @@ namespace MacGame
         private static readonly Queue<Enemy> EnemiesToAdd = new Queue<Enemy>(20);
 
         public RevealBlockManager RevealBlockManager;
+        public DisappearBlockManager DisappearBlockManager;
 
         /// <summary>
         /// Set this to start a countdown where a bomb goes off.
@@ -109,6 +111,7 @@ namespace MacGame
             Npcs = new List<Npc>();
             Doors = new List<Door>();
             RevealBlockManager = new RevealBlockManager();
+            DisappearBlockManager = new DisappearBlockManager();
             Waypoints = new List<Waypoint>();
             PickupObjects = new List<IPickupObject>();
             CustomCollisionObjects = new List<ICustomCollisionObject>();
@@ -138,7 +141,7 @@ namespace MacGame
                 _isInitailized = true;
             }
             RevealBlockManager.Update(elapsed);
-
+            DisappearBlockManager.Update(gameTime, elapsed);
             // Important that platforms update before player and enemies.
             foreach (var p in Platforms)
             {
@@ -775,6 +778,8 @@ namespace MacGame
                     gameObject.Draw(spriteBatch);
                 }
             }
+
+            DisappearBlockManager.Draw(spriteBatch);
 
             Player.Draw(spriteBatch);
 

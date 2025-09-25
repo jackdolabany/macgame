@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,12 +19,18 @@ namespace MacGame.DisappearBlocks
         public float CollisionTime;
 
         public string GroupName = "";
-        public int nextSeriesToShow = 0;
-        public int maxSeries = 0;
+        public int nextSeriesToShow = 1;
+        public int maxSeries = 1;
+
+        // Be disabled for a time when you first come in screen.
+        private float disabledTimer = 0f;
+        private const float disabledTimerGoal = 3.0f;
 
         private const float TotalRevealTimerGoal = 3.0f;
         private const float ShowNextSeriesTimerGoal = 1.5f;
         private float showNextSeriesTimer = 0f;
+
+        private bool enabled = false;
 
         public DisappearBlockGroup(string groupName)
         {
@@ -71,34 +78,64 @@ namespace MacGame.DisappearBlocks
 
         public void Update(GameTime gameTime, float elapsed)
         {
+            var isOnScreen = Game1.Camera.IsObjectVisible(this.CollisionRectangle);
 
-            showNextSeriesTimer += elapsed;
-            if (showNextSeriesTimer > ShowNextSeriesTimerGoal)
+            if (enabled && !isOnScreen)
             {
-                showNextSeriesTimer = 0f;
-
-                // Show the next series
+                // Reset when we go off screen.
+                enabled = false;
+                disabledTimer = 0f;
+                nextSeriesToShow = 1;
                 foreach (var block in DisappearBlocks)
                 {
-                    if (block.Series == nextSeriesToShow)
-                    {
-                        SoundManager.PlaySound("BlockAppear", 0.5f);
-                        block.Appear(TotalRevealTimerGoal);
-                    }
+                    block.Disappear();
                 }
-
-                // Increment the series to show
-                nextSeriesToShow++;
-                if (nextSeriesToShow > maxSeries)
-                {
-                    nextSeriesToShow = 1;
-                }
-
             }
 
-            foreach (var block in DisappearBlocks)
+            if (!enabled && isOnScreen)
             {
-                block.Update(gameTime, elapsed);
+                disabledTimer += elapsed;
+                if (disabledTimer > disabledTimerGoal)
+                {
+                    // Enable the blocks
+                    enabled = true;
+                    foreach (var block in DisappearBlocks)
+                    {
+                        block.Disappear();
+                    }
+                }
+            }
+
+            if (enabled && isOnScreen)
+            {
+                showNextSeriesTimer += elapsed;
+                if (showNextSeriesTimer > ShowNextSeriesTimerGoal)
+                {
+                    showNextSeriesTimer = 0f;
+
+                    // Show the next series
+                    foreach (var block in DisappearBlocks)
+                    {
+                        if (block.Series == nextSeriesToShow)
+                        {
+                            SoundManager.PlaySound("BlockAppear", 0.3f, -0.2f);
+                            block.Appear(TotalRevealTimerGoal);
+                        }
+                    }
+
+                    // Increment the series to show
+                    nextSeriesToShow++;
+                    if (nextSeriesToShow > maxSeries)
+                    {
+                        nextSeriesToShow = 1;
+                    }
+
+                }
+
+                foreach (var block in DisappearBlocks)
+                {
+                    block.Update(gameTime, elapsed);
+                }
             }
         }
 

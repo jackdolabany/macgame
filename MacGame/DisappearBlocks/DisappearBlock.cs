@@ -31,7 +31,7 @@ namespace MacGame.DisappearBlocks
             CellX = cellX;
             CellY = cellY;
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
-            Enabled = true;
+            Enabled = false;
             CollisionRectangle = new Rectangle(-TileMap.TileSize / 2, -TileMap.TileSize, TileMap.TileSize, TileMap.TileSize);
 
             var animations = new AnimationDisplay();
@@ -44,7 +44,6 @@ namespace MacGame.DisappearBlocks
             idle.FrameLength = 0.1f;
             animations.Add(idle);
 
-            animations.Play("idle");
         }
 
         public bool IsColliding(Rectangle rectangleToTest)
@@ -60,6 +59,14 @@ namespace MacGame.DisappearBlocks
             cell.Passable = false;
             Enabled = true;
             animations.Play("idle");
+        }
+
+        public void Disappear()
+        {
+            _appearTimer = 0;
+            var cell = Game1.CurrentLevel.Map.GetMapSquareAtCell(CellX, CellY);
+            cell.Passable = true;
+            Enabled = false;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

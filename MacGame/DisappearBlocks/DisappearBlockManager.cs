@@ -35,6 +35,17 @@ namespace MacGame.DisappearBlocks
             // Organize into groups
             foreach (var block in RawBlocks)
             {
+
+                if (string.IsNullOrEmpty(block.GroupName))
+                {
+                    throw new Exception("No group name for disappearBlock!");
+                }
+
+                if (block.Series <= 0)
+                {
+                    throw new Exception("Series not expected to be 0");
+                }
+
                 if (!GroupNamesToGroups.ContainsKey(block.GroupName))
                 {
                     var group = new DisappearBlockGroup(block.GroupName);

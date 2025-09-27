@@ -389,6 +389,10 @@ namespace MacGame
                                             {
                                                 block.GroupName = obj.Properties["GroupName"];
                                             }
+                                            else if (obj.Properties.ContainsKey("Group"))
+                                            {
+                                                block.GroupName = obj.Properties["Group"];
+                                            }
                                             if (obj.Properties.ContainsKey("Series"))
                                             {
                                                 block.Series = int.Parse(obj.Properties["Series"]);

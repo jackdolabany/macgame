@@ -218,6 +218,18 @@ namespace MacGame
             return paddedViewPort.Intersects(bounds);
         }
 
+        public bool IsObjectVisible(Rectangle bounds, int padTiles)
+        {
+            var padding = padTiles * Game1.TileSize;
+            var paddedViewPort = new Rectangle(
+                ViewPort.X - padding,
+                ViewPort.Y - padding,
+                ViewPort.Width + padding + padding,
+                ViewPort.Height + padding + padding);
+
+            return paddedViewPort.Intersects(bounds);
+        }
+
         /// <summary>
         /// Makes sure the object isn't just off screen, but off by 100 pxiels
         /// </summary>

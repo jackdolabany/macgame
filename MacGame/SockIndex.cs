@@ -63,6 +63,7 @@ namespace MacGame
                     new SockInfo { Name = "Wallsock", Hint = "A while ago I stashed a sock in the walls." },
                     new SockInfo { Name = "BasementSock", Hint = "A while ago I stashed a sock in the basement." },
                     new SockInfo { Name = "PlatformSock1", Hint = "Ride ghostly platforms to stinky sock treasures." },
+                    new SockInfo { Name = "DisappearBlockSock", Hint = "Socks eventually appear where blocks disappear." },
                 }
             },
             {

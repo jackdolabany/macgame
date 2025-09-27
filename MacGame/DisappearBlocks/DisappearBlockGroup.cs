@@ -24,7 +24,7 @@ namespace MacGame.DisappearBlocks
 
         // Be disabled for a time when you first come in screen.
         private float disabledTimer = 0f;
-        private const float disabledTimerGoal = 3.0f;
+        private const float disabledTimerGoal = 2f;
 
         private const float TotalRevealTimerGoal = 3.0f;
         private const float ShowNextSeriesTimerGoal = 1.5f;
@@ -78,7 +78,10 @@ namespace MacGame.DisappearBlocks
 
         public void Update(GameTime gameTime, float elapsed)
         {
-            var isOnScreen = Game1.Camera.IsObjectVisible(this.CollisionRectangle);
+            // Track this so we don't play the sound 5 times if 5 blocks appear.
+            bool playedSoundThisUpdate = false;
+
+            var isOnScreen = Game1.Camera.IsObjectVisible(this.CollisionRectangle, 1);
 
             if (enabled && !isOnScreen)
             {
@@ -103,13 +106,17 @@ namespace MacGame.DisappearBlocks
                     {
                         block.Disappear();
                     }
+                    disabledTimer = 0f;
+
+                    // Show the first one right away since we already delayed some amount.
+                    showNextSeriesTimer = ShowNextSeriesTimerGoal;
                 }
             }
 
             if (enabled && isOnScreen)
             {
                 showNextSeriesTimer += elapsed;
-                if (showNextSeriesTimer > ShowNextSeriesTimerGoal)
+                if (showNextSeriesTimer >= ShowNextSeriesTimerGoal)
                 {
                     showNextSeriesTimer = 0f;
 
@@ -118,7 +125,11 @@ namespace MacGame.DisappearBlocks
                     {
                         if (block.Series == nextSeriesToShow)
                         {
-                            SoundManager.PlaySound("BlockAppear", 0.2f, -0.4f);
+                            if (!playedSoundThisUpdate)
+                            {
+                                SoundManager.PlaySound("BlockAppear", 0.2f, -0.4f);
+                                playedSoundThisUpdate = true;
+                            }
                             block.Appear(TotalRevealTimerGoal);
                         }
                     }

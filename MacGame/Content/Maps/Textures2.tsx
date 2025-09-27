@@ -18,7 +18,27 @@
    <property name="LoadClass" value="Enemy.Car"/>
   </properties>
  </tile>
+ <tile id="7">
+  <properties>
+   <property name="LoadClass" value="DisappearBlock"/>
+  </properties>
+ </tile>
  <tile id="8">
+  <properties>
+   <property name="LoadClass" value="DisappearBlock"/>
+  </properties>
+ </tile>
+ <tile id="9">
+  <properties>
+   <property name="LoadClass" value="DisappearBlock"/>
+  </properties>
+ </tile>
+ <tile id="10">
+  <properties>
+   <property name="LoadClass" value="DisappearBlock"/>
+  </properties>
+ </tile>
+ <tile id="11">
   <properties>
    <property name="LoadClass" value="DisappearBlock"/>
   </properties>

@@ -118,7 +118,7 @@ namespace MacGame.DisappearBlocks
                     {
                         if (block.Series == nextSeriesToShow)
                         {
-                            SoundManager.PlaySound("BlockAppear", 0.3f, -0.2f);
+                            SoundManager.PlaySound("BlockAppear", 0.2f, -0.4f);
                             block.Appear(TotalRevealTimerGoal);
                         }
                     }

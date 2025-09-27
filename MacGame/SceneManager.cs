@@ -233,6 +233,10 @@ namespace MacGame
                                             {
                                                 ((MovingPlatform)platform).Reverse();
                                             }
+                                            if (obj.Properties.ContainsKey("MoveBlocks"))
+                                            {
+                                                ((MovingPlatform)platform).MoveBlocks = int.Parse(obj.Properties["MoveBlocks"]);
+                                            }
                                         }
                                     }
                                 }

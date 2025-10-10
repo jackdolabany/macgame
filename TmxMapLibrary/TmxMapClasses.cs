@@ -686,7 +686,7 @@ namespace Squared.Tiled
             // impassable tiles passable.
             HashSet<Tuple<int, int>> unblocked = new HashSet<Tuple<int, int>>();
 
-            // Need to work in reverse to travers the layers from front to back.
+            // Need to work in reverse to traverse the layers from front to back.
             for (int z = this.Layers.Count() - 1; z >= 0; z--)
             {
                 var layer = this.Layers[z];

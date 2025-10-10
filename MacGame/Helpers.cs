@@ -313,10 +313,11 @@ namespace MacGame
 
         public static Rectangle GetScaledRectangle(this ObjectModifier om)
         {
-            return new Rectangle(om.Rectangle.X * Game1.TileScale,
+            var scaled = new Rectangle(om.Rectangle.X * Game1.TileScale,
                 om.Rectangle.Y * Game1.TileScale,
                 om.Rectangle.Width * Game1.TileScale,
                 om.Rectangle.Height * Game1.TileScale);
+            return scaled;
         }
 
         public static int ToInt(this float number)

@@ -47,6 +47,16 @@ namespace MacGame
 
             level.LevelNumber = int.Parse(map.Properties["LevelNumber"]);
 
+            if (map.Properties.ContainsKey("CustomRestartLevelName"))
+            {
+                level.CustomRestartLevelName = map.Properties["CustomRestartLevelName"];
+            }
+
+            if (map.Properties.ContainsKey("CustomRestartDoorName"))
+            {
+                level.CustomRestartDoorName = map.Properties["CustomRestartDoorName"];
+            }
+
             if (map.Properties.ContainsKey("CameraXOffset"))
             {
                 level.CameraXOffset = int.Parse(map.Properties["CameraXOffset"]);

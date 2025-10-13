@@ -16,12 +16,25 @@ using MacGame.DisappearBlocks;
 namespace MacGame
 {
     /// <summary>
-    /// Represents a level in the game with a map, and GameObjects, and any state variables as the game goes on. 
+    /// Represents a level in the game with a map, and GameObjects, and any state variables as the game goes on.
+    /// 
+    /// Map Properties:
+    ///   Description: Shown on pause menu.
+    ///   LevelNumber: Each level has a unique number. The intro is -1 and the hub world is 0.
+    ///   CustomRestartLevelName: Optional but set this and the game will restart at this level when the player dies.
+    ///   CustomRestartDoorName: The name of the door to restart at when the player dies or restarts through the pause menu.
+    ///   CameraXOffset: In case you want the camera offset a bit to the left or right. Like for minecart levels that go in one direction or auto scroll levels.
     /// </summary>
     public class Level
     {
 
         public string Name = "";
+
+        /// <summary>
+        /// Optional but set this and 
+        /// </summary>
+        public string CustomRestartLevelName = "";
+        public string CustomRestartDoorName = "";
 
         /// <summary>
         /// Each level has a unique number. The into is -1 and the hub world is 0.

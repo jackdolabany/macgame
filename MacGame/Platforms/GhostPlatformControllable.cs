@@ -10,6 +10,7 @@ namespace MacGame.Platforms
     /// </summary>
     public class GhostPlatformControllable : GhostPlatformBase
     {
+        protected override int Speed => 80;
 
         public GhostPlatformControllable(ContentManager content, int cellX, int cellY)
             : base(content, cellX, cellY, 4, 4)

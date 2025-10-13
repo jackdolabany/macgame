@@ -564,8 +564,33 @@ namespace MacGame
             MenuManager.ClearMenus();
             ConversationManager.Clear();
             TransitionToStateInstantFromBlack(GameState.Playing);
-            CurrentLevel = sceneManager.LoadLevel(CurrentLevel.Name, Content, Player, Camera);
+
+            string resetToMapName;
+            if (!string.IsNullOrWhiteSpace(CurrentLevel.CustomRestartLevelName))
+            {
+                resetToMapName = CurrentLevel.CustomRestartLevelName;
+            }
+            else
+            {
+                resetToMapName = CurrentLevel.Name;
+            }
+
+            string resetToDoorName = CurrentLevel.CustomRestartDoorName;
+
+            CurrentLevel = sceneManager.LoadLevel(resetToMapName, Content, Player, Camera);
             Camera.Map = CurrentLevel.Map;
+
+            if (!string.IsNullOrWhiteSpace(resetToDoorName))
+            {
+                foreach (var door in CurrentLevel.Doors)
+                {
+                    if (door.Name == resetToDoorName)
+                    {
+                        door.ComeOutOfThisDoor(Player);
+                        break;
+                    }
+                }
+            }
         }
 
         public void GoToLevel(string mapName)

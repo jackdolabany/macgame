@@ -11,7 +11,8 @@ namespace MacGame.Platforms
     public class GhostPlatformBase : Platform
     {
 
-        public int Speed = 40;
+        protected virtual int Speed => 40;
+
         private Vector2 startingLocation;
 
         public string Name { get; set; } = "";

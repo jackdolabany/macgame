@@ -231,7 +231,10 @@ namespace MacGame
                                         {
                                             if (obj.Properties.ContainsKey("Reverse"))
                                             {
-                                                ((MovingPlatform)platform).Reverse();
+                                                if (obj.Properties["Reverse"].ToBoolean())
+                                                {
+                                                    ((MovingPlatform)platform).Reverse();
+                                                }
                                             }
                                             if (obj.Properties.ContainsKey("MoveBlocks"))
                                             {

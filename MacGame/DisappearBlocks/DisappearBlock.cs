@@ -23,8 +23,21 @@ namespace MacGame.DisappearBlocks
         public string GroupName = "";
         public int CellX;
         public int CellY;
-        private bool _isInitialized = false;
         private float _appearTimer = 0;
+
+        private MapSquare _cell;
+
+        private MapSquare Cell
+        {
+            get
+            {
+                if (_cell == null)
+                {
+                    _cell = Game1.CurrentMap.GetMapSquareAtCell(CellX, CellY)!;
+                }
+                return _cell;
+            }
+        }
 
         public DisappearBlock(ContentManager content, int cellX, int cellY) : base()
         {
@@ -55,8 +68,7 @@ namespace MacGame.DisappearBlocks
         public void Appear(float appearTime)
         {
             _appearTimer = appearTime;
-            var cell = Game1.CurrentLevel.Map.GetMapSquareAtCell(CellX, CellY);
-            cell.Passable = false;
+            Cell.Passable = false;
             Enabled = true;
             animations.Play("idle");
         }
@@ -64,29 +76,18 @@ namespace MacGame.DisappearBlocks
         public void Disappear()
         {
             _appearTimer = 0;
-            var cell = Game1.CurrentLevel.Map.GetMapSquareAtCell(CellX, CellY);
-            cell.Passable = true;
+            Cell.Passable = true;
             Enabled = false;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-
-            if (!_isInitialized)
-            {
-                _isInitialized = true;
-                Game1.CurrentMap.GetMapSquareAtCell(CellX, CellY).Passable = false;
-            }
-
             if (_appearTimer > 0)
             {
                 _appearTimer -= elapsed;
                 if (_appearTimer <= 0)
                 {
-                    // Disappear
-                    var cell = Game1.CurrentLevel.Map.GetMapSquareAtCell(CellX, CellY);
-                    cell.Passable = true;
-                    Enabled = false;
+                    Disappear();
                 }
             }
 

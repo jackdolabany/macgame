@@ -16,7 +16,6 @@ namespace MacGame.DisappearBlocks
         /// before we need to do a more complex block by block collision test
         /// </summary>
         public Rectangle CollisionRectangle;
-        public float CollisionTime;
 
         public string GroupName = "";
         public int nextSeriesToShow = 1;

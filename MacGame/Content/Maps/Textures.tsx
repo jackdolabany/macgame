@@ -721,6 +721,11 @@
    <property name="LoadClass" value="BreakSnow"/>
   </properties>
  </tile>
+ <tile id="305">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="308">
   <properties>
    <property name="LoadClass" value="Enemy.Ghost2"/>
@@ -779,6 +784,16 @@
   </properties>
  </tile>
  <tile id="333">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="336">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="337">
   <properties>
    <property name="BlockPlayer" value="1"/>
   </properties>

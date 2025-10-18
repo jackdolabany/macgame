@@ -165,6 +165,21 @@
    <property name="LoadClass" value="Npc.BlackBird"/>
   </properties>
  </tile>
+ <tile id="164">
+  <properties>
+   <property name="LoadClass" value="Npc.Chick"/>
+  </properties>
+ </tile>
+ <tile id="166">
+  <properties>
+   <property name="LoadClass" value="Npc.Bunny"/>
+  </properties>
+ </tile>
+ <tile id="168">
+  <properties>
+   <property name="LoadClass" value="Npc.Penguin"/>
+  </properties>
+ </tile>
  <tile id="176">
   <properties>
    <property name="LoadClass" value="Npc.Daisy"/>
@@ -172,7 +187,22 @@
  </tile>
  <tile id="178">
   <properties>
-   <property name="LoadClass" value="Npc.Snake"/>
+   <property name="LoadClass" value="Npc.BlackBird"/>
+  </properties>
+ </tile>
+ <tile id="180">
+  <properties>
+   <property name="LoadClass" value="Npc.Squirrel"/>
+  </properties>
+ </tile>
+ <tile id="182">
+  <properties>
+   <property name="LoadClass" value="Npc.Chipmunk"/>
+  </properties>
+ </tile>
+ <tile id="184">
+  <properties>
+   <property name="LoadClass" value="Npc.Alien"/>
   </properties>
  </tile>
  <tile id="192">
@@ -182,7 +212,22 @@
  </tile>
  <tile id="194">
   <properties>
-   <property name="LoadClass" value="Npc.PaulyTheSnake"/>
+   <property name="LoadClass" value="Npc.BlackBird"/>
+  </properties>
+ </tile>
+ <tile id="196">
+  <properties>
+   <property name="LoadClass" value="Npc.Fox"/>
+  </properties>
+ </tile>
+ <tile id="198">
+  <properties>
+   <property name="LoadClass" value="Npc.Possum"/>
+  </properties>
+ </tile>
+ <tile id="200">
+  <properties>
+   <property name="LoadClass" value="Npc.Robot"/>
   </properties>
  </tile>
 </tileset>

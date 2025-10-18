@@ -534,9 +534,9 @@ namespace MacGame
                             // and don't draw the water graphics.
                             for (int z = 0; z < Map.MapDepth; z++)
                             {
-                                if (cell.LayerTiles[z].WaterType != WaterType.NotWater)
+                                if (cell.HasWaterAtLayer(z))
                                 {
-                                    cell.LayerTiles[z].ShouldDraw = false;
+                                    cell.LayerTiles[z]!.ShouldDraw = false;
                                     var drawDepth = Map.GetLayerDrawDepth(z);
                                     wave.SetDrawDepth(drawDepth);
                                 }
@@ -553,9 +553,9 @@ namespace MacGame
                                 // re-enable the regular flat water tile
                                 for (int z = 0; z < Map.MapDepth; z++)
                                 {
-                                    if (cell.LayerTiles[z].WaterType != WaterType.NotWater)
+                                    if (cell.HasWaterAtLayer(z))
                                     {
-                                        cell.LayerTiles[z].ShouldDraw = true;
+                                        cell.LayerTiles[z]!.ShouldDraw = true;
                                     }
                                 }
 

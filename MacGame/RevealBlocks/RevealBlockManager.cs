@@ -112,7 +112,10 @@ namespace MacGame.RevealBlocks
 
                     for (int i = block.CellZ; i < Game1.CurrentMap.MapDepth; i++)
                     {
-                        layers[i].Color = Color.White * (1 - revealPercentage);
+                        if (layers[i] != null)
+                        {
+                            layers[i].Color = Color.White * (1 - revealPercentage);
+                        }
                     }
                 }
 

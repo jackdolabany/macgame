@@ -671,10 +671,6 @@ namespace Squared.Tiled
                 for (int y = 0; y < height; y++)
                 {
                     tileMap.MapCells[x][y] = new MapSquare(depth, true);
-                    for (int z = 0; z < depth; z++)
-                    {
-                        tileMap.MapCells[x][y].LayerTiles[z] = new Tile();
-                    }
                 }
             }
             tileMap.Layers = new List<TileEngine.Layer>();
@@ -705,6 +701,16 @@ namespace Squared.Tiled
                     for (int y = 0; y < height; y++)
                     {
                         int tileIndex = layer.GetTile(x, y);
+
+                        if (tileIndex > 0)
+                        {
+                            tileMap.MapCells[x][y].LayerTiles[z] = new Tile();
+                        }
+                        else
+                        {
+                            // No tile here, skip it.
+                            continue;
+                        }
 
                         if (tileMapLayer.IsParallax)
                         {

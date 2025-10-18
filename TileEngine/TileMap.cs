@@ -278,7 +278,7 @@ namespace TileEngine
                         if ((x >= 0) && (y >= 0) && (x < MapWidth) && (y < MapHeight))
                         {
                             var tile = MapCells[x][y].LayerTiles[z];
-                            if (tile.ShouldDraw && tile.Texture != null)
+                            if (tile != null && tile.ShouldDraw && tile.Texture != null)
                             {
                                 spriteBatch.Draw(
                                     tile.Texture,

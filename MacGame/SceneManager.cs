@@ -155,15 +155,24 @@ namespace MacGame
 
                     for (int z = 0; z < mapSquare.LayerTiles.Length; z++)
                     {
+
+                        var nullableTile = mapSquare.LayerTiles[z];
+                        if (nullableTile == null)
+                        {
+                            continue;
+                        }
+                        
+                        Tile tile = nullableTile!;
+
                         if (mapSquare.IsWater)
                         {
-                            if (mapSquare.LayerTiles[z].WaterType == WaterType.AnimatingTopOfWater 
-                                || mapSquare.LayerTiles[z].WaterType == WaterType.AltAnimatingTopOfWater)
+                            if (tile.WaterType == WaterType.AnimatingTopOfWater
+                                || tile.WaterType == WaterType.AltAnimatingTopOfWater)
                             {
                                 // The top of water is a special animating flyweight tile thing.
-                                mapSquare.LayerTiles[z].ShouldDraw = false;
+                                tile.ShouldDraw = false;
                                 var drawDepth = map.GetLayerDrawDepth(z);
-                                var isAlt = mapSquare.LayerTiles[z].WaterType == WaterType.AltAnimatingTopOfWater;
+                                var isAlt = tile.WaterType == WaterType.AltAnimatingTopOfWater;
                                 GameObject waterWave;
                                 if (isAlt)
                                 {
@@ -178,12 +187,9 @@ namespace MacGame
 
                         }
 
-                        // Load the textures so the map can draw.
-                        if (mapSquare.LayerTiles[z].TileIndex > 0) // by convention 0 is a null texture on all tile sets
-                        {
-                            mapSquare.LayerTiles[z].Texture = contentManager.Load<Texture2D>(mapSquare.LayerTiles[z].TexturePath);
-                        }
-                        var loadClass = mapSquare.LayerTiles[z].LoadClass;
+                        tile.Texture = contentManager.Load<Texture2D>(tile.TexturePath);
+
+                        var loadClass = tile.LoadClass;
                         if (!string.IsNullOrEmpty(loadClass))
                         {
                             if (loadClass == "PlayerStart")
@@ -228,8 +234,8 @@ namespace MacGame
                                 {
                                     // Use the image from the map tile.
                                     var staticPlatform = (StaticPlatform)platform;
-                                    var texture = mapSquare.LayerTiles[z].Texture;
-                                    var textureRect = mapSquare.LayerTiles[z].TextureRectangle;
+                                    var texture = tile.Texture;
+                                    var textureRect = tile.TextureRectangle;
                                     staticPlatform.SetTextureRectangle(texture!, textureRect);
                                 }
 

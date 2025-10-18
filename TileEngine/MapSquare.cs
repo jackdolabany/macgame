@@ -7,7 +7,7 @@ namespace TileEngine
     /// </summary>
     public class MapSquare
     {
-        public Tile[] LayerTiles { get; set; }
+        public Tile?[] LayerTiles { get; set; }
         
         private bool _passable = true;
         public bool Passable
@@ -108,7 +108,7 @@ namespace TileEngine
 
                 for (int i = 0; i < LayerTiles.Length; i++)
                 {
-                    if (LayerTiles[i].Texture != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))
+                    if (LayerTiles[i] != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))
                     {
                         // Only clear the sand texture.
                         LayerTiles[i].Color = Color.Transparent;
@@ -126,7 +126,7 @@ namespace TileEngine
 
                 for (int i = 0; i < LayerTiles.Length; i++)
                 {
-                    if (LayerTiles[i].Texture != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))
+                    if (LayerTiles[i] != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))
                     {
                         // Only reset the sand textures.
                         LayerTiles[i].Color = Color.White;
@@ -144,7 +144,7 @@ namespace TileEngine
 
                 for (int i = 0; i < LayerTiles.Length; i++)
                 {
-                    if (LayerTiles[i].Texture != null && WaterTextures.Contains(LayerTiles[i].TextureRectangle))
+                    if (LayerTiles[i] != null && WaterTextures.Contains(LayerTiles[i].TextureRectangle))
                     {
                         // Only clear the water texture.
                         LayerTiles[i].Color = Color.Transparent;
@@ -161,13 +161,18 @@ namespace TileEngine
 
                 for (int i = 0; i < LayerTiles.Length; i++)
                 {
-                    if (LayerTiles[i].Texture != null && WaterTextures.Contains(LayerTiles[i].TextureRectangle))
+                    if (LayerTiles[i] != null && WaterTextures.Contains(LayerTiles[i].TextureRectangle))
                     {
                         // Only reset the water textures.
                         LayerTiles[i].Color = Color.White;
                     }
                 }
             }
+        }
+
+        public bool HasWaterAtLayer(int layer)
+        {
+            return this.LayerTiles[layer] != null && this.LayerTiles[layer]!.WaterType != WaterType.NotWater;
         }
 
         /// <summary>
@@ -190,7 +195,7 @@ namespace TileEngine
             // Swap water layer tiles back so the graphics don't change.
             for (int z = 0; z < this.LayerTiles.Length; z++)
             {
-                if (this.LayerTiles[z].WaterType != WaterType.NotWater || mapSquareSwapped.LayerTiles[z].WaterType != WaterType.NotWater)
+                if (this.HasWaterAtLayer(z) || mapSquareSwapped.HasWaterAtLayer(z))
                 {
                     var temp = this.LayerTiles[z];
                     this.LayerTiles[z] = mapSquareSwapped.LayerTiles[z];

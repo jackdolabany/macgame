@@ -33,7 +33,7 @@ namespace MacGame.GameObjects
         private bool isInitialized = false;
 
         private float coolDownTimer = 0f;
-        private float coolDownTimerMax = 2f;
+        private float coolDownTimerMax = 0.5f;
 
         public CrystalSwitch (ContentManager content, int cellX, int cellY, Player player)
         {
@@ -141,7 +141,8 @@ namespace MacGame.GameObjects
                 isInitialized = true;
             }
 
-            if (coolDownTimer > 0)
+            // Cooldown timer only decrements if the player is no longer blocking the switch.
+            if (coolDownTimer > 0 && !_player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
                 coolDownTimer -= elapsed;
             }

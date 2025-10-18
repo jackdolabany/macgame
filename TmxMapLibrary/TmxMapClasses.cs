@@ -674,8 +674,6 @@ namespace Squared.Tiled
                     for (int z = 0; z < depth; z++)
                     {
                         tileMap.MapCells[x][y].LayerTiles[z] = new Tile();
-                        tileMap.MapCells[x][y].LayerTiles[z].TileHeight = TileMap.TileSize;
-                        tileMap.MapCells[x][y].LayerTiles[z].TileWidth = TileMap.TileSize;
                     }
                 }
             }
@@ -706,6 +704,7 @@ namespace Squared.Tiled
                 {
                     for (int y = 0; y < height; y++)
                     {
+                        int tileIndex = layer.GetTile(x, y);
 
                         if (tileMapLayer.IsParallax)
                         {
@@ -715,8 +714,6 @@ namespace Squared.Tiled
                         {
                             tileMap.MapCells[x][y].LayerTiles[z].Color = regularColor;
                         }
-
-                        int tileIndex = layer.GetTile(x, y);
 
                         // .TMX maps use 0 for the when there is no tile. 
                         // We'll assume that we can always draw the texture at tile 1 and it

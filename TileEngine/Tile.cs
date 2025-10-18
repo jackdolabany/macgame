@@ -10,12 +10,6 @@ namespace TileEngine
     public class Tile
     {
         public int TileIndex { get; set; }
-        public int TileWidth
-        {
-            get;
-            set;
-        }
-        public int TileHeight { get; set; }
 
         [ContentSerializerIgnore]
         public Texture2D? Texture { get; set; }
@@ -50,7 +44,7 @@ namespace TileEngine
         {
             get
             {
-                return (Texture?.Width ?? 0) / (TileWidth + 2);
+                return (Texture?.Width ?? 0) / (TileMap.TileSize + 2);
             }
         }
     }

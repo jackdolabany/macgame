@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TileEngine
 {
-    public enum WaterType
+    public enum WaterType : byte
     {
 
         NotWater = 0,

@@ -14,17 +14,17 @@ namespace MacGame
     /// A piston like thing that blocks your path. You need to press a button or something
     /// to make it open up.
     /// </summary>
-    public class BlockingPiston : GameObject
+    public abstract class BlockingPiston : GameObject
     {
 
-        private Player _player;
+        protected Player _player;
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        MapSquare mapSquareTop;
-        MapSquare mapSquareBottom;
+        protected MapSquare firstMapSquare;
+        protected MapSquare secondMapSquare;
 
-        private int _cellX;
-        private int _cellY;
+        protected int _cellX;
+        protected int _cellY;
         private bool isInitialized = false;
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace MacGame
 
             WorldLocation = new Vector2(cellX * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
 
-            this.CollisionRectangle = new Rectangle(-1, -65, 34, 66);
+            this.CollisionRectangle = GetCollisionRectangle();
 
             _player = player;
 
@@ -59,7 +59,7 @@ namespace MacGame
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
-            var open = new AnimationStrip(textures, Helpers.GetBigTileRect(0, 9), 4, "open");
+            var open = new AnimationStrip(textures, GetAnimationRectangle(), 4, "open");
             open.LoopAnimation = false;
             open.FrameLength = 0.1f;
             animations.Add(open);
@@ -70,10 +70,32 @@ namespace MacGame
             animations.Add(close);
         }
 
+        /// <summary>
+        /// Gets the collision rectangle for this piston type.
+        /// </summary>
+        protected abstract Rectangle GetCollisionRectangle();
+
+        /// <summary>
+        /// Gets the animation rectangle (tile rect) for this piston type.
+        /// </summary>
+        protected abstract Rectangle GetAnimationRectangle();
+
+        /// <summary>
+        /// Gets the coordinates for the first map square this piston blocks.
+        /// </summary>
+        protected abstract (int cellX, int cellY) GetFirstMapSquareCoords();
+
+        /// <summary>
+        /// Gets the coordinates for the second map square this piston blocks.
+        /// </summary>
+        protected abstract (int cellX, int cellY) GetSecondMapSquareCoords();
+
         public void Initialize()
         {
-            mapSquareTop = Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY - 1)!;
-            mapSquareBottom = Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY)!;
+            var first = GetFirstMapSquareCoords();
+            var second = GetSecondMapSquareCoords();
+            firstMapSquare = Game1.CurrentMap.GetMapSquareAtCell(first.cellX, first.cellY)!;
+            secondMapSquare = Game1.CurrentMap.GetMapSquareAtCell(second.cellX, second.cellY)!;
             Close();
         }
 
@@ -81,8 +103,8 @@ namespace MacGame
         {
             // We can always just open.
             animations.Play("open");
-            mapSquareTop.Passable = true;
-            mapSquareBottom.Passable = true;
+            firstMapSquare.Passable = true;
+            secondMapSquare.Passable = true;
             requestClose = false;
         }
 
@@ -107,20 +129,26 @@ namespace MacGame
             {
                 // before closing make sure the player isn't blocking the door.
 
-                if (!_player.CollisionRectangle.Intersects(this.CollisionRectangle))
+                var slightlyLargerRect = this.CollisionRectangle;
+                slightlyLargerRect.X -= 1;
+                slightlyLargerRect.Width += 2;
+                slightlyLargerRect.Y -= 1;
+                slightlyLargerRect.Height += 2;
+
+                if (!_player.CollisionRectangle.Intersects(slightlyLargerRect))
                 {
                     // Kill all enemies blocking
                     foreach (var enemy in Game1.CurrentLevel.Enemies)
                     {
-                        if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                        if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(slightlyLargerRect))
                         {
                             enemy.TakeHit(this, 1000, Vector2.Zero);
                         }
                     }
 
                     animations.Play("close");
-                    mapSquareTop.Passable = false;
-                    mapSquareBottom.Passable = false;
+                    firstMapSquare.Passable = false;
+                    secondMapSquare.Passable = false;
                     requestClose = false;
                 }
             }

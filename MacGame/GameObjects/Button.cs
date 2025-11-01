@@ -1,8 +1,10 @@
 ﻿using MacGame.DisplayComponents;
+using MacGame.GameObjects;
 using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using System.Linq;
 using TileEngine;
 
@@ -19,6 +21,11 @@ namespace MacGame
     ///   BreakBricks - Break a series of BreakBricks. The args are the GroupName property of the BreakBricks.
     ///   SolidifyGhostBlock - Makes an open Ghost Block become solid. The args are the Name of the GhostBlock.
     ///   ResetGhostPlatform - Resets a ghost platform to its original position. The args are the Name of the GhostPlatform.
+    ///   RaiseButton - Raises another button. The args are the Name of the Button.
+    ///   LowerButton - What do you think?
+    ///   
+    ///  Add multiple actions like this
+    ///  DownAction: OpenBlockingPiston:Door1;CloseBlockingPiston:Door2;RaiseButton:Button1
     /// </summary>
     public class Button : GameObject
     {
@@ -28,9 +35,9 @@ namespace MacGame
         /// <summary>
         ///  Attach a script here to call a function when the button is pressed. This will be set in the map editor.
         /// </summary>
-        public string DownAction = "";
+        public List<ButtonAction> DownActions;
 
-        public string UpAction = "";
+        public List<ButtonAction> UpActions;
 
         /// <summary>
         /// Put whatever you want here and the custom function up there will be able to read it.
@@ -56,6 +63,10 @@ namespace MacGame
         /// <param name="isSpringButton">If true the button is a spring button. It springs back up if Mac (or something else) isn't on it.</param>
         public Button(ContentManager content, int cellX, int cellY, Player player, bool isUp, bool isSpringButton)
         {
+
+            UpActions = new List<ButtonAction>();
+            DownActions = new List<ButtonAction>();
+
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
 
             _player = player;
@@ -109,7 +120,6 @@ namespace MacGame
             {
                 animations.Play("down");
             }
-
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -161,9 +171,10 @@ namespace MacGame
             {
                 SoundManager.PlaySound("Click");
                 animations.Play("down");
-                if (!string.IsNullOrEmpty(DownAction))
+                
+                foreach (var action in DownActions)
                 {
-                    Game1.CurrentLevel.ButtonAction(this, DownAction, Args);
+                    Game1.CurrentLevel.ExecuteButtonAction(this, action.ActionName, action.Args);
                 }
 
                 cooldownTimer = 0.5f;
@@ -175,20 +186,23 @@ namespace MacGame
                 }
 
                 // Water buttons should put the other buttons up or down.
-                if (this.DownAction.EndsWith("Water"))
+                if (this.DownActions.Any(da => da.ActionName.EndsWith("Water")))
                 {
+                    var actionName = this.DownActions.First(da => da.ActionName.EndsWith("Water")).ActionName;
                     var buttons = Game1.CurrentLevel.GameObjects.OfType<Button>();
 
                     foreach (var button in buttons)
                     {
                         if (button != this)
                         {
-                            if (button.DownAction == this.DownAction)
+                            if (button.DownActions.Any(da => da.ActionName == actionName))
                             {
+                                // Move other similar water buttons down.
                                 button.MoveDownNoAction();
                             }
-                            else if (button.DownAction.EndsWith("Water"))
+                            else if (button.DownActions.Any(da => da.ActionName.EndsWith("Water")))
                             {
+                                // Other water buttons move up.
                                 button.MoveUpNoAction();
                             }
                         }
@@ -202,9 +216,10 @@ namespace MacGame
             {
                 animations.Play("up");
                 SoundManager.PlaySound("Click");
-                if (!string.IsNullOrEmpty(UpAction))
+                
+                foreach (var action in UpActions)
                 {
-                    Game1.CurrentLevel.ButtonAction(this, UpAction, Args);
+                    Game1.CurrentLevel.ExecuteButtonAction(this, action.ActionName, action.Args);
                 }
             }
             base.Update(gameTime, elapsed);

@@ -595,7 +595,7 @@ namespace MacGame
         /// Handles actions from buttons. You can set an UpAction or DownAction in the map editor by surrounding the button with an object.
         /// You can pass additional data in with the Args property.
         /// </summary>
-        public void ButtonAction(Button button, string action, string args)
+        public void ExecuteButtonAction(Button button, string action, string args)
         {
             switch (action)
             {
@@ -673,6 +673,32 @@ namespace MacGame
                             if (ghostPlatform.Name == args || ghostPlatform.GroupName == args)
                             {
                                 ghostPlatform.Reset();
+                            }
+                        }
+                    }
+                    break;
+                case "RaiseButton":
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is Button)
+                        {
+                            var otherButton = (Button)gameObject;
+                            if (otherButton.Name == args)
+                            {
+                                otherButton.MoveUpNoAction();
+                            }
+                        }
+                    }
+                    break;
+                case "LowerButton":
+                    foreach (var gameObject in GameObjects)
+                    {
+                        if (gameObject is Button)
+                        {
+                            var otherButton = (Button)gameObject;
+                            if (otherButton.Name == args)
+                            {
+                                otherButton.MoveDownNoAction();
                             }
                         }
                     }

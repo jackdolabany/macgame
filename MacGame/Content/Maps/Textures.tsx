@@ -871,7 +871,7 @@
  </tile>
  <tile id="368">
   <properties>
-   <property name="LoadClass" value="BlockingPiston"/>
+   <property name="LoadClass" value="BlockingPistonVertical"/>
   </properties>
  </tile>
  <tile id="369">
@@ -887,6 +887,16 @@
  <tile id="374">
   <properties>
    <property name="LoadClass" value="Npc.Beaver"/>
+  </properties>
+ </tile>
+ <tile id="375">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="376">
+  <properties>
+   <property name="LoadClass" value="BlockingPistonHorizontal"/>
   </properties>
  </tile>
  <tile id="380">
@@ -1162,6 +1172,16 @@
  <tile id="472">
   <properties>
    <property name="LoadClass" value="Enemy.SpikesLeft"/>
+  </properties>
+ </tile>
+ <tile id="476">
+  <properties>
+   <property name="LoadClass" value="OrangeCrystalBlock"/>
+  </properties>
+ </tile>
+ <tile id="477">
+  <properties>
+   <property name="LoadClass" value="BlueCrystalBlock"/>
   </properties>
  </tile>
  <tile id="478">

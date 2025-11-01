@@ -567,7 +567,6 @@ namespace MacGame
 
         public void PlaySound()
         {
-            // SoundManager.PlaySound("ConversationStart", 0.3f);
         }
     }
 }

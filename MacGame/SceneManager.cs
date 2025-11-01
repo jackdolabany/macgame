@@ -523,15 +523,11 @@ namespace MacGame
                                             if (prop.Key == "UpAction")
                                             {
                                                 // Actions are scripts to run. They are level methods.
-                                                button.UpAction = prop.Value;
+                                                button.UpActions = ParseButtonActions(prop.Key, obj.Properties);
                                             }
                                             else if (prop.Key == "DownAction")
                                             {
-                                                button.DownAction = prop.Value;
-                                            }
-                                            else if (prop.Key == "Args")
-                                            {
-                                                button.Args = prop.Value;
+                                                button.DownActions = ParseButtonActions(prop.Key, obj.Properties);
                                             }
                                         }
                                     }
@@ -566,16 +562,35 @@ namespace MacGame
                                 level.PickupObjects.Add(cb);
                                 layerDepthObjects[z].Add(cb);
                             }
-                            else if (loadClass == "BlockingPiston")
+                            else if (loadClass == "BlockingPistonVertical")
                             {
-                                var blockingPiston = new BlockingPiston(contentManager, x, y, player);
+                                var blockingPiston = new BlockingPistonVertical(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);
                                 layerDepthObjects[z].Add(blockingPiston);
 
                                 // BlockingPiston modifiers
                                 foreach (var obj in map.ObjectModifiers)
                                 {
-                                    if (obj.GetScaledRectangle().Contains(blockingPiston.CollisionRectangle))
+                                    var scaledRect = obj.GetScaledRectangle();
+                                    var collisionRect = blockingPiston.CollisionRectangle;
+                                    if (scaledRect.Contains(collisionRect))
+                                    {
+                                        blockingPiston.Name = obj.Name;
+                                    }
+                                }
+                            }
+                            else if (loadClass == "BlockingPistonHorizontalb")
+                            {
+                                var blockingPiston = new BlockingPistonHorizontal(contentManager, x, y, player);
+                                level.GameObjects.Add(blockingPiston);
+                                layerDepthObjects[z].Add(blockingPiston);
+
+                                // BlockingPiston modifiers
+                                foreach (var obj in map.ObjectModifiers)
+                                {
+                                    var scaledRect = obj.GetScaledRectangle();
+                                    var collisionRect = blockingPiston.CollisionRectangle;
+                                    if (scaledRect.Contains(collisionRect))
                                     {
                                         blockingPiston.Name = obj.Name;
                                     }
@@ -848,6 +863,47 @@ namespace MacGame
             level.Map.PlayerDrawDepth = player.DrawDepth;
 
             return level;
+        }
+
+        /// <summary>
+        /// Parses the Actions list from button properties. Buttons may have a property UpAction or DownAction.
+        /// If there's just one Action for either, there may be an "Args" property. 
+        /// 
+        /// More complex buttons will lump a series of Actions together like: DownAction: OpenBlockingPiston:Door1;CloseBlockingPiston:Door2;RaiseButton:Button1.
+        /// </summary>
+        private List<ButtonAction> ParseButtonActions(string ActionKeyName, Dictionary<string, string> properties)
+        {
+            var actions = new List<ButtonAction>();
+
+            // first figure out if it's one Action or multiple
+            if (properties.ContainsKey(ActionKeyName))
+            {
+                var actionString = properties[ActionKeyName];
+                var actionParts = actionString.Split(';');
+                foreach (var actionPart in actionParts)
+                {
+                    if (string.IsNullOrWhiteSpace(actionPart))
+                    {
+                        continue;
+                    }
+                    var actionAndArgs = actionPart.Split(':');
+                    if (actionAndArgs.Length == 2)
+                    {
+                        actions.Add(new ButtonAction(actionAndArgs[0], actionAndArgs[1]));
+                    }
+                    else if (actionAndArgs.Length == 1)
+                    {
+                        // See if there's an Args property
+                        var args = "";
+                        if (properties.ContainsKey("Args"))
+                        {
+                            args = properties["Args"];
+                        }
+                        actions.Add(new ButtonAction(actionAndArgs[0], args));
+                    }
+                }
+            }
+            return actions;
         }
 
         private void FindAdjacentSeaweed(ElectricSeaweed currentSeaweed, HashSet<ElectricSeaweed> group, Dictionary<Vector2, ElectricSeaweed> locationsToSeaweeds)

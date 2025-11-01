@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="3" height="6" tilewidth="8" tileheight="8" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="3" height="6" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="2">
  <properties>
   <property name="LevelNumber" value="0"/>
  </properties>
  <tileset firstgid="1" source="Textures.tsx"/>
  <layer id="1" name="Tile Layer 1" width="3" height="6">
   <data encoding="base64">
-   KQEAAAAAAAApAQAAAAAAAAAAAAAAAAAAKQEAAAAAAAApAQAAiQAAAAAAAACJAAAAiQAAAP0AAACJAAAAiQAAAIkAAACJAAAA
+   KQEAAAAAAAApAQAAAAAAAAAAAAAAAAAAKQEAAGEBAAApAQAAiQAAAHEBAACJAAAAiQAAAP0AAACJAAAAiQAAAIkAAACJAAAA
   </data>
  </layer>
+ <objectgroup id="3" name="Objects">
+  <object id="1" name="Piston1" x="7.0393" y="15.8906" width="9.55587" height="16.1367"/>
+ </objectgroup>
  <layer id="2" name="GameObjects" width="3" height="6">
   <data encoding="base64">
    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA

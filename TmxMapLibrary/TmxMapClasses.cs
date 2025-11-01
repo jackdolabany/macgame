@@ -869,7 +869,11 @@ namespace Squared.Tiled
             {
                 
                 var om = new ObjectModifier();
-                om.Rectangle = new Rectangle(obj.Value.X, obj.Value.Y, obj.Value.Width, obj.Value.Height);
+                
+                // Scale them 1 larger since the x and y's aren't really integers compared to the map size. This forces a round up so the object
+                // modifiers are more likely to contain the pixel are they are wrapping.
+                om.Rectangle = new Rectangle(obj.Value.X - 1, obj.Value.Y - 1, obj.Value.Width + 2, obj.Value.Height + 2);
+
                 om.Name = obj.Value.Name;
 
                 foreach(var kvp in obj.Value.Properties)

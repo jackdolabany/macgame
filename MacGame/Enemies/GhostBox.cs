@@ -213,12 +213,13 @@ namespace MacGame.Enemies
                     // Check for rock collisions from below (bounce up when hit by rock)
                     foreach (var pickupObject in Game1.CurrentLevel.PickupObjects)
                     {
-                        if (pickupObject is Rock rock && !rock.IsPickedUp && rock.Enabled)
+                        var go = (GameObject)pickupObject;
+                        if (!pickupObject.IsPickedUp && go.Enabled)
                         {
-                            if (rock.CollisionRectangle.Intersects(this.CollisionRectangle))
+                            if (pickupObject.CollisionRectangle.Intersects(this.CollisionRectangle))
                             {
                                 // Check if rock is moving upward and below the ghost
-                                if (rock.Velocity.Y < 0 && rock.WorldCenter.Y > this.WorldCenter.Y)
+                                if (go.Velocity.Y < 0 && go.WorldCenter.Y > this.WorldCenter.Y)
                                 {
                                     // Enter bouncing state
                                     state = GhostState.Bouncing;

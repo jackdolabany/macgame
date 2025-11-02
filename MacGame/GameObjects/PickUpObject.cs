@@ -94,7 +94,7 @@ namespace MacGame
             }
         }
 
-        public void Pickup()
+        public virtual void Pickup()
         {
             this.isTileColliding = false;
             this.IsAffectedByGravity = false;
@@ -149,7 +149,7 @@ namespace MacGame
         /// <summary>
         /// Breaks the object whether held or not and puts it back where it came from.
         /// </summary>
-        public void BreakAndReset()
+        public virtual void BreakAndReset()
         {
             if (this.Enabled)
             {

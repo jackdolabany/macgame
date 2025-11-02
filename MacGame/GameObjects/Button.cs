@@ -132,6 +132,7 @@ namespace MacGame
 
             bool isColliding = false;
             bool isPlayerColliding = false;
+
             // Check if the player or an object is holding it down. 
             if (_player.CollisionRectangle.Intersects(this.CollisionRectangle)
                 && (_isSpringButton || _player.Velocity.Y > 0) // must jump down onto regular buttons.
@@ -146,7 +147,7 @@ namespace MacGame
                 // Check pick up objects
                 foreach (var puo in Game1.CurrentLevel.PickupObjects)
                 {
-                    var go = puo as PickupObject;
+                    var go = (PickupObject)puo;
                     if (!go.IsPickedUp && go.Enabled && go.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
                         isColliding = true;
@@ -177,20 +178,44 @@ namespace MacGame
                 }
             }
 
+           if (isColliding)
+           {
+               Trigger(isPlayerColliding);
+           }
+
+            if (!isColliding
+                && _isSpringButton
+                && animations.CurrentAnimationName == "down"
+                && cooldownTimer <= 0)
+            {
+                animations.Play("up");
+                SoundManager.PlaySound("Click");
+
+                foreach (var action in UpActions)
+                {
+                    Game1.CurrentLevel.ExecuteButtonAction(this, action.ActionName, action.Args);
+                }
+            }
+
+            base.Update(gameTime, elapsed);
+        }
+
+        public void Trigger(bool isPlayerColliding = false)
+        {
+            if (cooldownTimer > 0) return;
+
             // Should we allow enemies too?
-            if (cooldownTimer <= 0
-                && isColliding
-                && animations.CurrentAnimationName == "up")
+            if (animations.CurrentAnimationName == "up")
             {
                 SoundManager.PlaySound("Click");
                 animations.Play("down");
-                
+
                 foreach (var action in DownActions)
                 {
                     Game1.CurrentLevel.ExecuteButtonAction(this, action.ActionName, action.Args);
                 }
 
-                cooldownTimer = 0.5f;
+                cooldownTimer = 0.4f;
 
                 // Pop the player up a bit.
                 if (!_isSpringButton && isPlayerColliding)
@@ -222,20 +247,6 @@ namespace MacGame
                     }
                 }
             }
-
-            if (!isColliding
-                && _isSpringButton
-                && animations.CurrentAnimationName == "down")
-            {
-                animations.Play("up");
-                SoundManager.PlaySound("Click");
-                
-                foreach (var action in UpActions)
-                {
-                    Game1.CurrentLevel.ExecuteButtonAction(this, action.ActionName, action.Args);
-                }
-            }
-            base.Update(gameTime, elapsed);
         }
 
         public void MoveUpNoAction()

@@ -545,6 +545,16 @@
    <property name="LoadClass" value="FrogDoor"/>
   </properties>
  </tile>
+ <tile id="206">
+  <properties>
+   <property name="LoadClass" value="TNT"/>
+  </properties>
+ </tile>
+ <tile id="207">
+  <properties>
+   <property name="LoadClass" value="TNT"/>
+  </properties>
+ </tile>
  <tile id="214">
   <properties>
    <property name="LoadClass" value="Npc.HyperBluey"/>

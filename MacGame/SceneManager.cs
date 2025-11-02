@@ -562,6 +562,13 @@ namespace MacGame
                                 level.PickupObjects.Add(cb);
                                 layerDepthObjects[z].Add(cb);
                             }
+                            else if (loadClass == "TNT")
+                            {
+                                var tnt = new TNT(contentManager, x, y, player);
+                                level.GameObjects.Add(tnt);
+                                level.PickupObjects.Add(tnt);
+                                layerDepthObjects[z].Add(tnt);
+                            }
                             else if (loadClass == "BlockingPistonVertical")
                             {
                                 var blockingPiston = new BlockingPistonVertical(contentManager, x, y, player);

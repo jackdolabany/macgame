@@ -579,7 +579,7 @@ namespace MacGame
                                     }
                                 }
                             }
-                            else if (loadClass == "BlockingPistonHorizontalb")
+                             else if (loadClass == "BlockingPistonHorizontal")
                             {
                                 var blockingPiston = new BlockingPistonHorizontal(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);

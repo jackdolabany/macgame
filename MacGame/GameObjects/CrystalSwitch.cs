@@ -101,6 +101,17 @@ namespace MacGame.GameObjects
             }
         }
 
+        public void Trigger()
+        {
+            if (coolDownTimer <= 0)
+            {
+                SoundManager.PlaySound("Click");
+                var newColor = !isOrange;
+                SetAllSwitchColors(newColor);
+                SetBlocks();
+            }
+        }
+
         private void SetAllSwitchColors(bool isOrange)
         {
             foreach (var gameObject in Game1.CurrentLevel.GameObjects)
@@ -150,10 +161,20 @@ namespace MacGame.GameObjects
             // Check if the player or an object is holding it down. 
             if (coolDownTimer <= 0 && _player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
-                SoundManager.PlaySound("Click");
-                var newColor = !isOrange;
-                SetAllSwitchColors(newColor);
-                SetBlocks();
+                Trigger();
+            }
+
+            // Check if enemies are colliding with it
+            if (coolDownTimer <= 0)
+            {
+                foreach (var enemy in Game1.CurrentLevel.Enemies)
+                {
+                    if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    {
+                        Trigger();
+                        break;
+                    }
+                }
             }
 
             base.Update(gameTime, elapsed);

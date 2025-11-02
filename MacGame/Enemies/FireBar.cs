@@ -99,12 +99,12 @@ namespace MacGame.Enemies
             }
         }
 
-        public override void ConsumeProperties(Dictionary<string, string> properties)
+        public override void ConsumeObjectModifier(ObjectModifier obj)
         {
-            base.ConsumeProperties(properties);
-            if (properties.ContainsKey("Length"))
+            base.ConsumeObjectModifier(obj);
+            if (obj.Properties.ContainsKey("Length"))
             {
-                Length = int.Parse(properties["Length"]);
+                Length = int.Parse(obj.Properties["Length"]);
                 for (int i = 0; i < MAX_FIREBALLS; i++)
                 {
                     Fireballs[i].Enabled = i < Length;
@@ -112,14 +112,14 @@ namespace MacGame.Enemies
 
             }
 
-            if (properties.ContainsKey("Reverse"))
+            if (obj.Properties.ContainsKey("Reverse"))
             {
-                Reverse = properties["Reverse"].ToBoolean();
+                Reverse = obj.Properties["Reverse"].ToBoolean();
             }
 
-            if (properties.ContainsKey("Offset"))
+            if (obj.Properties.ContainsKey("Offset"))
             {
-                IsOffset = properties["Offset"].ToBoolean();
+                IsOffset = obj.Properties["Offset"].ToBoolean();
             }
         }
     }

@@ -634,6 +634,19 @@ namespace MacGame
                         }
                     }
                     break;
+                case "ReleaseGhostBox":
+                    foreach (var enemy in Enemies)
+                    {
+                        if (enemy is GhostBox)
+                        {
+                            var ghostBox = (GhostBox)enemy;
+                            if (ghostBox.Name == args)
+                            {
+                                ghostBox.Release();
+                            }
+                        }
+                    }
+                    break;
                 case "ShootCannon":
                     foreach (var gameObject in GameObjects)
                     {

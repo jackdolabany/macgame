@@ -162,6 +162,19 @@ namespace MacGame
                         isColliding = true;
                     }
                 }
+
+                // Check enemies
+                if (!isColliding)
+                {
+                    foreach (var enemy in Game1.CurrentLevel.Enemies)
+                    {
+                        if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                        {
+                            isColliding = true;
+                            break;
+                        }
+                    }
+                }
             }
 
             // Should we allow enemies too?

@@ -757,6 +757,11 @@
    <property name="LoadClass" value="Enemy.Spider"/>
   </properties>
  </tile>
+ <tile id="326">
+  <properties>
+   <property name="LoadClass" value="Enemy.GhostBox"/>
+  </properties>
+ </tile>
  <tile id="327">
   <properties>
    <property name="BlockPlayer" value="1"/>

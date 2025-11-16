@@ -13,6 +13,11 @@ namespace MacGame.GameObjects
 {
     public class CrystalSwitch : GameObject
     {
+        /// <summary>
+        /// last game object to trigger the switch can't trigger it again until it's not colliding anymore.
+        /// </summary>
+        GameObject? TriggerObject;
+
         StaticImageDisplay orangeImage;
         StaticImageDisplay blueImage;
         private Player _player;
@@ -101,7 +106,7 @@ namespace MacGame.GameObjects
             }
         }
 
-        public void Trigger()
+        public void Trigger(GameObject? triggerObject = null)
         {
             if (coolDownTimer <= 0)
             {
@@ -109,6 +114,7 @@ namespace MacGame.GameObjects
                 var newColor = !isOrange;
                 SetAllSwitchColors(newColor);
                 SetBlocks();
+                TriggerObject = triggerObject;
             }
         }
 
@@ -152,8 +158,17 @@ namespace MacGame.GameObjects
                 isInitialized = true;
             }
 
+            // Clear the trigger object if it's no longer colliding or disabled.
+            if (TriggerObject != null)
+            {
+                if (!TriggerObject.Enabled || !TriggerObject.CollisionRectangle.Intersects(this.CollisionRectangle))
+                {
+                    TriggerObject = null;
+                }
+            }
+
             // Cooldown timer only decrements if the player is no longer blocking the switch.
-            if (coolDownTimer > 0 && !_player.CollisionRectangle.Intersects(this.CollisionRectangle))
+            if (coolDownTimer > 0 && _player != TriggerObject && !_player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
                 coolDownTimer -= elapsed;
             }
@@ -161,7 +176,8 @@ namespace MacGame.GameObjects
             // Check if the player or an object is holding it down. 
             if (coolDownTimer <= 0 && _player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
-                Trigger();
+                TriggerObject = _player;
+                Trigger(_player);
             }
 
             // Check if enemies are colliding with it
@@ -169,9 +185,9 @@ namespace MacGame.GameObjects
             {
                 foreach (var enemy in Game1.CurrentLevel.Enemies)
                 {
-                    if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                    if (enemy.Alive && enemy != TriggerObject && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
-                        Trigger();
+                        Trigger(enemy);
                         break;
                     }
                 }

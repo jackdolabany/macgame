@@ -76,7 +76,7 @@ namespace MacGame
 
         private void Explode()
         {
-            var explosionRectangle = new Rectangle((int)WorldCenter.X - 32, (int)WorldCenter.Y - 32, 64, 64);
+            var explosionRectangle = new Rectangle((int)WorldCenter.X - 48, (int)WorldCenter.Y - 48, 96, 96);
             
             // Play explosion effect
             EffectsManager.AddExplosion(this.WorldCenter);
@@ -107,6 +107,10 @@ namespace MacGame
                 {
                     // Flip red/blue switches
                     crystalSwitch.Trigger();
+                }
+                else if (gameObject is BreakBrick breakBrick && breakBrick.CollisionRectangle.Intersects(explosionRectangle))
+                {
+                    breakBrick.Break();
                 }
             }
             

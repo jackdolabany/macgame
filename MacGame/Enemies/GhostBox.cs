@@ -26,8 +26,8 @@ namespace MacGame.Enemies
         StaticImageDisplay boxImage;
 
         private GhostState state = GhostState.InBox;
-        private float ghostSpeed = 80f;
-        private float downwardSpeed = 10f;
+        private float ghostSpeed = 120f;
+        private float downwardSpeed = 20f;
         private float bounceSpeed = 300f;
         private float bounceDuration = 0.3f;
         private float bounceTimer = 0f;
@@ -38,7 +38,7 @@ namespace MacGame.Enemies
         /// </summary>
         private float buttonTriggerCooldown = 0f;
 
-        private const float ButtonTriggerCooldownMax = 0.5f;
+        private const float ButtonTriggerCooldownMax = 1f;
         private float boxDrawDepth = 0f; // Draw depth for the box (stays at original location)
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace MacGame.Enemies
                         Flipped = true;
                     }
 
-                    // Check for rock collisions from below (bounce up when hit by rock)
+                    // Check for pick up object collisions from below (bounce up when hit by rock)
                     foreach (var pickupObject in Game1.CurrentLevel.PickupObjects)
                     {
                         var go = (GameObject)pickupObject;
@@ -251,12 +251,6 @@ namespace MacGame.Enemies
                                     }
                                     buttonTriggerCooldown = ButtonTriggerCooldownMax;
                                 }
-                            }
-                            else if (gameObject is CrystalSwitch crystalSwitch && crystalSwitch.CollisionRectangle.Intersects(this.CollisionRectangle))
-                            {
-                                // Trigger crystal switch
-                                crystalSwitch.Trigger();
-                                buttonTriggerCooldown = ButtonTriggerCooldownMax;
                             }
                         }
                     }

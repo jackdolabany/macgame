@@ -26,7 +26,6 @@ namespace MacGame.Enemies
             animations.Add(fly);
 
             animations.Play("fly");
-
             isEnemyTileColliding = false;
             Attack = 1;
             Health = 1;

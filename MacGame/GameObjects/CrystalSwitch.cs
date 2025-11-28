@@ -40,6 +40,13 @@ namespace MacGame.GameObjects
         private float coolDownTimer = 0f;
         private float coolDownTimerMax = 0.5f;
 
+
+        /// <summary>
+        /// If the blocks should change from one color to another we set this to eventually set the blocks the way they are supposed to be. 
+        /// We must first wait until no blocks are interacting with the player because that could cause weird collision issues.
+        /// </summary>
+        bool isWaitingToSetBlocks = false;
+
         public CrystalSwitch (ContentManager content, int cellX, int cellY, Player player)
         {
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
@@ -106,6 +113,11 @@ namespace MacGame.GameObjects
             }
         }
 
+        private void SetBlocksWhenNotPlayerColliding()
+        {
+            isWaitingToSetBlocks = true;
+        }
+
         public void Trigger(GameObject? triggerObject = null)
         {
             if (coolDownTimer <= 0)
@@ -113,7 +125,7 @@ namespace MacGame.GameObjects
                 SoundManager.PlaySound("Click");
                 var newColor = !isOrange;
                 SetAllSwitchColors(newColor);
-                SetBlocks();
+                SetBlocksWhenNotPlayerColliding();
                 TriggerObject = triggerObject;
             }
         }
@@ -190,6 +202,29 @@ namespace MacGame.GameObjects
                         Trigger(enemy);
                         break;
                     }
+                }
+            }
+
+            if (isWaitingToSetBlocks)
+            {
+                // Wait until the player is no longer colliding with any blocks to set the blocks.
+                bool isPlayerCollidingWithAnyBlocks = false;
+                foreach (var obj in Game1.CurrentLevel.GameObjects)
+                {
+                    if (obj is CrystalBlock)
+                    {
+                        var cb = (CrystalBlock)obj;
+                        if (cb.CollisionRectangle.Intersects(_player.CollisionRectangle))
+                        {
+                            isPlayerCollidingWithAnyBlocks = true;
+                            break;
+                        }
+                    }
+                }
+                if (!isPlayerCollidingWithAnyBlocks)
+                {
+                    SetBlocks();
+                    isWaitingToSetBlocks = false;
                 }
             }
 

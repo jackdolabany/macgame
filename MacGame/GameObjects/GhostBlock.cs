@@ -20,8 +20,6 @@ namespace MacGame
 
         private bool _isInitialized = false;
 
-        public string Name { get; set; }
-
         public GhostBlock(ContentManager content, int cellX, int cellY) : base()
         {
             _cellX = cellX;

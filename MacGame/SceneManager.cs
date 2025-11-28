@@ -14,6 +14,7 @@ using System.Data;
 using MacGame.Doors;
 using MacGame.GameObjects;
 using MacGame.DisappearBlocks;
+using System.Runtime.CompilerServices;
 
 namespace MacGame
 {
@@ -200,18 +201,15 @@ namespace MacGame
                             {
                                 // Use reflection to load the enemies from the code
                                 string classname = loadClass.Split('.')[1];
-                                Type t = Type.GetType(typeof(Enemy).Namespace + "." + classname);
-                                var enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
+                                Type t = Type.GetType(typeof(Enemy).Namespace + "." + classname)!;
+                                var enemy = (Enemy)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
                                 level.Enemies.Add(enemy);
                                 layerDepthObjects[z].Add(enemy);
 
-                                foreach (ObjectModifier obj in map.ObjectModifiers)
+                                HandleObjectModifiers(x, y, enemy, map, (props) =>
                                 {
-                                    if (obj.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize, y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
-                                    {
-                                        enemy.ConsumeObjectModifier(obj);
-                                    }
-                                }
+                                    enemy.SetProps(props);
+                                });
 
                                 // Enemies might add extra enemies for projectiles and such.
                                 foreach (var e in enemy.ExtraEnemiesToAddAfterConstructor)
@@ -224,8 +222,8 @@ namespace MacGame
                             {
                                 // Use reflection to load the platform.
                                 string classname = loadClass.Split('.')[1];
-                                Type t = Type.GetType(typeof(Platform).Namespace + "." + classname);
-                                var platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y });
+                                Type t = Type.GetType(typeof(Platform).Namespace + "." + classname)!;
+                                var platform = (Platform)Activator.CreateInstance(t, new object[] { contentManager, x, y })!;
                                 level.Platforms.Add(platform);
 
                                 layerDepthObjects[z].Add(platform);
@@ -241,46 +239,38 @@ namespace MacGame
 
                                 if (platform is MovingPlatform)
                                 {
-                                    foreach (var obj in map.ObjectModifiers)
-                                    {
-                                        if (obj.GetScaledRectangle().Contains(platform.CollisionRectangle))
+                                    HandleObjectModifiers(x, y, platform, map, (props) => { 
+                                        if (props.ContainsKey("Reverse"))
                                         {
-                                            if (obj.Properties.ContainsKey("Reverse"))
+                                            if (props["Reverse"].ToBoolean())
                                             {
-                                                if (obj.Properties["Reverse"].ToBoolean())
-                                                {
-                                                    ((MovingPlatform)platform).Reverse();
-                                                }
-                                            }
-                                            if (obj.Properties.ContainsKey("MoveBlocks"))
-                                            {
-                                                ((MovingPlatform)platform).MoveBlocks = int.Parse(obj.Properties["MoveBlocks"]);
+                                                ((MovingPlatform)platform).Reverse();
                                             }
                                         }
-                                    }
+                                        if (props.ContainsKey("MoveBlocks"))
+                                        {
+                                            ((MovingPlatform)platform).MoveBlocks = int.Parse(props["MoveBlocks"]);
+                                        }
+                                    
+                                    });
                                 }
                                 if (platform is GhostPlatformBase)
                                 {
-                                    foreach (var obj in map.ObjectModifiers)
+                                    HandleObjectModifiers(x, y, platform, map, (props) =>
                                     {
-                                        if (obj.GetScaledRectangle().Contains(platform.CollisionRectangle))
+                                        if (props.ContainsKey("GroupName"))
                                         {
-                                            ((GhostPlatformBase)platform).Name = obj.Name;
-
-                                            if (obj.Properties.ContainsKey("GroupName"))
-                                            {
-                                                ((GhostPlatformBase)platform).GroupName = obj.Properties["GroupName"];
-                                            }
+                                            ((GhostPlatformBase)platform).GroupName = props["GroupName"];
                                         }
-                                    }
+                                    });
                                 }
                             }
                             else if (loadClass.StartsWith("Item."))
                             {
                                 // Use reflection to load the items from the code
                                 string classname = loadClass.Split('.')[1];
-                                Type t = Type.GetType(typeof(Item).Namespace + "." + classname);
-                                var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera });
+                                Type t = Type.GetType(typeof(Item).Namespace + "." + classname)!;
+                                var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
                                 level.Items.Add(item);
 
                                 layerDepthObjects[z].Add(item);
@@ -289,24 +279,18 @@ namespace MacGame
                                 if (item is Sock)
                                 {
                                     var sock = (Sock)item;
-                                    foreach (var obj in map.ObjectModifiers)
-                                    {
-                                        var scaledRect = obj.GetScaledRectangle();
-                                        if (scaledRect.Contains(item.CollisionRectangle))
+
+                                    HandleObjectModifiers(x, y, sock, map, (props) => {
+                                        // Validate the name in the master set of socks and hints
+                                        if (!SockIndex.LevelNumberToSocks[level.LevelNumber].Any(c => c.Name == sock.Name))
                                         {
-                                            // Socks are special items.
-                                            sock.Name = obj.Name;
-
-                                            // Validate the name in the master set of socks and hints
-                                            if (!SockIndex.LevelNumberToSocks[level.LevelNumber].Any(c => c.Name == sock.Name))
-                                            {
-                                                throw new Exception($"Sock '{sock.Name}' not found in world {level.LevelNumber}.");
-                                            }
-
-                                            sock.CheckIfAlreadyCollected(level.LevelNumber);
+                                            throw new Exception($"Sock '{sock.Name}' not found in world {level.LevelNumber}.");
                                         }
-                                    }
 
+                                        sock.CheckIfAlreadyCollected(level.LevelNumber);
+                                    });
+
+                                    // Validate that a name was set by HandleObjectModifiers
                                     if (string.IsNullOrWhiteSpace(sock.Name))
                                     {
                                         throw new Exception($"The sock has no name! x: {x}, y: {y}");
@@ -336,57 +320,51 @@ namespace MacGame
                             else if (DoorClasses.Contains(loadClass))
                             {
                                 // Use reflection to load the items from the code
-                                Type t = Type.GetType(typeof(Door).Namespace + "." + loadClass);
-                                var door = (Door)Activator.CreateInstance(t, new object[] { contentManager, x, y, player });
+                                Type t = Type.GetType(typeof(Door).Namespace + "." + loadClass)!;
+                                var door = (Door)Activator.CreateInstance(t, new object[] { contentManager, x, y, player })!;
                                 level.Doors.Add(door);
                                 layerDepthObjects[z].Add(door);
 
-                                // Doors need to know what level to go to. I expect an object on the map that contains the door and 
-                                // tells it where to go.
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    if (obj.GetScaledRectangle().Contains(door.CollisionRectangle))
+
+                                HandleObjectModifiers(x, y, door, map, (props) => {
+                                    // Doors need to know what level to go to. I expect an object on the map that contains the door and 
+                                    // tells it where to go.
+                                    if (props.ContainsKey("GoToMap"))
                                     {
-                                        foreach (var prop in obj.Properties)
-                                        {
-                                            if (obj.Properties.ContainsKey("GoToMap"))
-                                            {
-                                                door.GoToMap = obj.Properties["GoToMap"];
-                                            }
-                                            if (obj.Properties.ContainsKey("GoToDoor"))
-                                            {
-                                                door.GoToDoorName = obj.Properties["GoToDoor"];
-                                            }
-                                            if (obj.Properties.ContainsKey("IsToSubworld"))
-                                            {
-                                                ((OpenCloseDoor)door).IsToSubworld = obj.Properties["IsToSubworld"] == "1";
-                                            }
-                                            if (obj.Properties.ContainsKey("SocksNeeded"))
-                                            {
-                                                ((OpenCloseDoor)door).SocksNeeded = int.Parse(obj.Properties["SocksNeeded"]);
-                                            }
+                                        door.GoToMap = props["GoToMap"];
+                                    }
+                                    if (props.ContainsKey("GoToDoor"))
+                                    {
+                                        door.GoToDoorName = props["GoToDoor"];
+                                    }
+                                    if (props.ContainsKey("IsToSubworld"))
+                                    {
+                                        ((OpenCloseDoor)door).IsToSubworld = props["IsToSubworld"] == "1";
+                                    }
+                                    if (props.ContainsKey("SocksNeeded"))
+                                    {
+                                        ((OpenCloseDoor)door).SocksNeeded = int.Parse(props["SocksNeeded"]);
+                                    }
 
-                                            door.Name = obj.Name;
+                                });
 
-                                            if (door is OpenCloseDoor)
-                                            {
-                                                var openClosedDoor = (OpenCloseDoor)door;
+                                if (door is OpenCloseDoor)
+                                {
+                                    var openClosedDoor = (OpenCloseDoor)door;
 
-                                                var unlockedDoors = Game1.StorageState.Levels[level.LevelNumber].UnlockedDoors;
+                                    var unlockedDoors = Game1.StorageState.Levels[level.LevelNumber].UnlockedDoors;
 
-                                                if (!openClosedDoor.IsInitiallyLocked || (unlockedDoors.Contains(door.Name) && openClosedDoor.CanPlayerUnlock(player)))
-                                                {
-                                                    openClosedDoor.IsLocked = false;
-                                                }
-                                                else
-                                                {
-                                                    openClosedDoor.IsLocked = true;
-                                                }
-                                            }
-                                        }
+                                    if (!openClosedDoor.IsInitiallyLocked || (unlockedDoors.Contains(door.Name) && openClosedDoor.CanPlayerUnlock(player)))
+                                    {
+                                        openClosedDoor.IsLocked = false;
+                                    }
+                                    else
+                                    {
+                                        openClosedDoor.IsLocked = true;
                                     }
                                 }
 
+                                // Validate that the right props were set.
                                 if (string.IsNullOrEmpty(door.GoToMap) && string.IsNullOrEmpty(door.GoToDoorName))
                                 {
                                     throw new Exception("Doors must have a custom object on the map that specify the map or door it goes to (or both).");
@@ -402,27 +380,22 @@ namespace MacGame
                                 level.DisappearBlockManager.AddRawBlock(block);
                                 layerDepthObjects[z].Add(block);
 
-                                foreach (var obj in map.ObjectModifiers)
+                                HandleObjectModifiers(x, y, block, map, (props) =>
                                 {
-                                    if (obj.GetScaledRectangle().Contains(block.CollisionRectangle))
+                                    if (props.ContainsKey("GroupName"))
                                     {
-                                        foreach (var prop in obj.Properties)
-                                        {
-                                            if (obj.Properties.ContainsKey("GroupName"))
-                                            {
-                                                block.GroupName = obj.Properties["GroupName"];
-                                            }
-                                            else if (obj.Properties.ContainsKey("Group"))
-                                            {
-                                                block.GroupName = obj.Properties["Group"];
-                                            }
-                                            if (obj.Properties.ContainsKey("Series"))
-                                            {
-                                                block.Series = int.Parse(obj.Properties["Series"]);
-                                            }
-                                        }
+                                        block.GroupName = props["GroupName"];
                                     }
-                                }
+                                    else if (props.ContainsKey("Group"))
+                                    {
+                                        block.GroupName = props["Group"];
+                                    }
+                                    if (props.ContainsKey("Series"))
+                                    {
+                                        block.Series = int.Parse(props["Series"]);
+                                    }
+                                });
+
                             }
                             else if (loadClass == "Waypoint")
                             {
@@ -455,20 +428,14 @@ namespace MacGame
                                 level.Npcs.Add(npc);
                                 layerDepthObjects[z].Add(npc);
 
-                                // NPC modifiers
-                                foreach (var obj in map.ObjectModifiers)
+                                HandleObjectModifiers(x, y, npc, map, (props) =>
                                 {
-                                    if (obj.GetScaledRectangle().Contains(npc.CollisionRectangle))
+                                    // NPC modifiers
+                                    if (props.ContainsKey("Convo"))
                                     {
-                                        foreach (var prop in obj.Properties)
-                                        {
-                                            if (obj.Properties.ContainsKey("Convo"))
-                                            {
-                                                npc.CreateConversationOverride(obj.Properties["Convo"]);
-                                            }
-                                        }
+                                        npc.CreateConversationOverride(props["Convo"]);
                                     }
-                                }
+                                });
                             }
                             else if (loadClass == "Cannon")
                             {
@@ -476,31 +443,23 @@ namespace MacGame
                                 level.GameObjects.Add(cannon);
                                 layerDepthObjects[z].Add(cannon);
 
-                                // Cannon modifiers
-                                foreach (var obj in map.ObjectModifiers)
+                                HandleObjectModifiers(x, y, cannon, map, (props) =>
                                 {
-                                    if (obj.GetScaledRectangle().Contains(cannon.CollisionRectangle))
+                                    if (props.ContainsKey("AutoShoot"))
                                     {
-                                        cannon.Name = obj.Name;
-                                        foreach (var prop in obj.Properties)
-                                        {
-                                            if (obj.Properties.ContainsKey("AutoShoot"))
-                                            {
-                                                var direction = Enum.Parse<EightWayRotationDirection>(obj.Properties["AutoShoot"]);
-                                                cannon.AutoShootDirection = new EightWayRotation(direction);
-                                            }
-                                            if (obj.Properties.ContainsKey("SuperShot"))
-                                            {
-                                                cannon.IsSuperShot = true;
-                                            }
-                                            if (obj.Properties.ContainsKey("DefaultDirection"))
-                                            {
-                                                var direction = Enum.Parse<EightWayRotationDirection>(obj.Properties["DefaultDirection"]);
-                                                cannon.DefaultDirection = new EightWayRotation(direction);
-                                            }
-                                        }
+                                        var direction = Enum.Parse<EightWayRotationDirection>(props["AutoShoot"]);
+                                        cannon.AutoShootDirection = new EightWayRotation(direction);
                                     }
-                                }
+                                    if (props.ContainsKey("SuperShot"))
+                                    {
+                                        cannon.IsSuperShot = true;
+                                    }
+                                    if (props.ContainsKey("DefaultDirection"))
+                                    {
+                                        var direction = Enum.Parse<EightWayRotationDirection>(props["DefaultDirection"]);
+                                        cannon.DefaultDirection = new EightWayRotation(direction);
+                                    }
+                                });
                             }
                             else if (loadClass == "ButtonUp" || loadClass == "ButtonDown" || loadClass == "SpringButton")
                             {
@@ -512,26 +471,22 @@ namespace MacGame
                                 level.GameObjects.Add(button);
                                 layerDepthObjects[z].Add(button);
 
-                                // Button modifiers
-                                foreach (var obj in map.ObjectModifiers)
+                                HandleObjectModifiers(x, y, button, map, (props) =>
                                 {
-                                    if (obj.GetScaledRectangle().Contains(button.CollisionRectangle))
+                                    // Button modifiers
+                                    foreach (var prop in props)
                                     {
-                                        button.Name = obj.Name;
-                                        foreach (var prop in obj.Properties)
+                                        if (prop.Key == "UpAction")
                                         {
-                                            if (prop.Key == "UpAction")
-                                            {
-                                                // Actions are scripts to run. They are level methods.
-                                                button.UpActions = ParseButtonActions(prop.Key, obj.Properties);
-                                            }
-                                            else if (prop.Key == "DownAction")
-                                            {
-                                                button.DownActions = ParseButtonActions(prop.Key, obj.Properties);
-                                            }
+                                            // Actions are scripts to run. They are level methods.
+                                            button.UpActions = ParseButtonActions(prop.Key, props);
+                                        }
+                                        else if (prop.Key == "DownAction")
+                                        {
+                                            button.DownActions = ParseButtonActions(prop.Key, props);
                                         }
                                     }
-                                }
+                                });
                             }
                             else if (loadClass == "SpringBoard")
                             {
@@ -574,34 +529,14 @@ namespace MacGame
                                 var blockingPiston = new BlockingPistonVertical(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);
                                 layerDepthObjects[z].Add(blockingPiston);
-
-                                // BlockingPiston modifiers
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    var scaledRect = obj.GetScaledRectangle();
-                                    var collisionRect = blockingPiston.CollisionRectangle;
-                                    if (scaledRect.Contains(collisionRect))
-                                    {
-                                        blockingPiston.Name = obj.Name;
-                                    }
-                                }
+                                HandleObjectModifiers(x, y, blockingPiston, map, (props) => {});
                             }
-                             else if (loadClass == "BlockingPistonHorizontal")
+                            else if (loadClass == "BlockingPistonHorizontal")
                             {
                                 var blockingPiston = new BlockingPistonHorizontal(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);
                                 layerDepthObjects[z].Add(blockingPiston);
-
-                                // BlockingPiston modifiers
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    var scaledRect = obj.GetScaledRectangle();
-                                    var collisionRect = blockingPiston.CollisionRectangle;
-                                    if (scaledRect.Contains(collisionRect))
-                                    {
-                                        blockingPiston.Name = obj.Name;
-                                    }
-                                }
+                                HandleObjectModifiers(x, y, blockingPiston, map, (props) => { });
                             }
                             else if (loadClass.EndsWith("Keyblock"))
                             {
@@ -620,22 +555,16 @@ namespace MacGame
                                 var bb = new BreakBrick(contentManager, x, y, player, isBroken);
                                 level.GameObjects.Add(bb);
                                 layerDepthObjects[z].Add(bb);
-
-                                // BlockingPiston modifiers
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    if (obj.GetScaledRectangle().Contains(bb.CollisionRectangle))
+                                HandleObjectModifiers(x, y, bb, map, (props) => {
+                                    if (props.ContainsKey("GroupName"))
                                     {
-                                        if (obj.Properties.ContainsKey("GroupName"))
-                                        {
-                                            bb.GroupName = obj.Properties["GroupName"];
-                                        }
-                                        if (obj.Properties.ContainsKey("OverrideSave"))
-                                        {
-                                            bb.OverrideSave = obj.Properties["OverrideSave"].ToBoolean();
-                                        }
+                                        bb.GroupName = props["GroupName"];
                                     }
-                                }
+                                    if (props.ContainsKey("OverrideSave"))
+                                    {
+                                        bb.OverrideSave = props["OverrideSave"].ToBoolean();
+                                    }
+                                });
                             }
                             else if (loadClass == "DestroyPickupObjectField")
                             {
@@ -692,15 +621,7 @@ namespace MacGame
                                 var ghostBlock = new GhostBlock(contentManager, x, y);
                                 level.GameObjects.Add(ghostBlock);
                                 layerDepthObjects[z].Add(ghostBlock);
-
-                                // BlockingPiston modifiers
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    if (obj.GetScaledRectangle().Contains(ghostBlock.CollisionRectangle))
-                                    {
-                                        ghostBlock.Name = obj.Name;
-                                    }
-                                }
+                                HandleObjectModifiers(x, y, ghostBlock, map, (props) => { });
 
                                 if (Game1.IS_DEBUG)
                                 {
@@ -713,18 +634,12 @@ namespace MacGame
                             else if (loadClass == "GhostPlatformController")
                             {
                                 var controller = new GhostPlatformController(contentManager, x, y, player);
-
-                                // BlockingPiston modifiers
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    if (obj.GetScaledRectangle().Contains(controller.CollisionRectangle))
+                                HandleObjectModifiers(x, y, controller, map, (props) => {
+                                    if (props.ContainsKey("PlatformName"))
                                     {
-                                        if (obj.Properties.ContainsKey("PlatformName"))
-                                        {
-                                            controller.PlatformName = obj.Properties["PlatformName"];
-                                        }
+                                        controller.PlatformName = props["PlatformName"];
                                     }
-                                }
+                                });
 
                                 if (Game1.IS_DEBUG)
                                 {
@@ -740,17 +655,13 @@ namespace MacGame
                             else if (loadClass == "SpaceShip")
                             {
                                 var spaceShip = new SpaceShip(contentManager, x, y, player);
-
-                                // Spaceship Modifiers
-                                foreach (var obj in map.ObjectModifiers)
-                                {
-                                    if (obj.GetScaledRectangle().Contains(spaceShip.CollisionRectangle))
+                                HandleObjectModifiers(x, y, spaceShip, map, (props) => {
+                                    if (props.ContainsKey("PlatformName"))
                                     {
-                                        spaceShip.Name = obj.Name;
-                                        spaceShip.GoToMap = obj.Properties["GoToMap"];
-                                        spaceShip.GoToDoor = obj.Properties["GoToDoor"];
+                                        spaceShip.GoToMap = props["GoToMap"];
+                                        spaceShip.GoToDoor = props["GoToDoor"];
                                     }
-                                }
+                                });
 
                                 spaceShip.AddStuffToLevel(level, contentManager);
 
@@ -788,7 +699,7 @@ namespace MacGame
                 }
             }
 
-            // Scan for groups of moving blocks.
+            // Loop through ObjectModifiers to do random things to the map.
             foreach (var obj in map.ObjectModifiers)
             {
                 if (obj.Properties.ContainsKey("MoveGroup"))
@@ -911,6 +822,18 @@ namespace MacGame
                 }
             }
             return actions;
+        }
+
+        private void HandleObjectModifiers(int x, int y, GameObject obj, TileMap map, Action<Dictionary<string, string>> action)
+        {
+            foreach (var om in map.ObjectModifiers)
+            {
+                if (om.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize, y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
+                {
+                    obj.Name = om.Name ?? "";
+                    action(om.Properties);
+                }
+            }
         }
 
         private void FindAdjacentSeaweed(ElectricSeaweed currentSeaweed, HashSet<ElectricSeaweed> group, Dictionary<Vector2, ElectricSeaweed> locationsToSeaweeds)

@@ -27,11 +27,6 @@ namespace MacGame
         protected int _cellY;
         private bool isInitialized = false;
 
-        /// <summary>
-        /// You can set this name by surrounding the BlockingPiston with a named object in the tile map.
-        /// </summary>
-        public string? Name { get; set; }
-
         public bool requestClose = false;
 
         public BlockingPiston(ContentManager content, int cellX, int cellY, Player player)

@@ -11,6 +11,11 @@ namespace MacGame
 {
     public class GameObject
     {
+        /// <summary>
+        /// You can set this on the map by overlapping it with an Object with a name. Use this to tag GameObjects and reference them via scripts later.
+        /// </summary>
+        public string Name = "";
+
         protected Vector2 worldLocation;
 
         private bool _flipped = false;

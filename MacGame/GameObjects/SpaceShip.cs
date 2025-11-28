@@ -23,10 +23,6 @@ namespace MacGame
 
         private bool _isInitialized = false;
 
-        /// <summary>
-        /// Set with map modifiers in Scenemanager.cs
-        /// </summary>
-        public string Name { get; set; }
         public string GoToDoor { get; set; }
         public string GoToMap { get; set; }
 

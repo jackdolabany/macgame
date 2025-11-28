@@ -716,6 +716,13 @@ namespace MacGame
                         }
                     }
                     break;
+                case "ResetPickUpObject":
+                    foreach (var puo in PickupObjects)
+                    {
+                        puo.BreakAndReset();
+                        break;
+                    }
+                    break;
                 default:
                     if (Game1.IS_DEBUG)
                     {

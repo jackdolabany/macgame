@@ -18,8 +18,6 @@ namespace MacGame
     public class Cannon : GameObject
     {
 
-        public string Name { get; set; }
-
         protected Player _player;
 
         bool isCooledOff = true;

@@ -8,7 +8,7 @@ namespace TileEngine
     /// </summary>
     public class ObjectModifier
     {
-        public string Name;
+        public string Name = "";
         public Rectangle Rectangle;
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
     }

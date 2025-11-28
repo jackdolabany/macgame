@@ -15,7 +15,6 @@ namespace MacGame.Platforms
 
         private Vector2 startingLocation;
 
-        public string Name { get; set; } = "";
         public string GroupName { get; set; } = "";
 
         public GhostPlatformBase(ContentManager content, int cellX, int cellY, int firstTileRectX, int firstTileRectY)

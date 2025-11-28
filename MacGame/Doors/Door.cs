@@ -9,7 +9,6 @@ namespace MacGame.Doors
 {
     public abstract class Door : GameObject
     {
-        public string Name = "";
         public string GoToMap = "";
         public string GoToDoorName = "";
 

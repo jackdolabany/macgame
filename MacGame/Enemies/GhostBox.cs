@@ -41,11 +41,6 @@ namespace MacGame.Enemies
         private const float ButtonTriggerCooldownMax = 1f;
         private float boxDrawDepth = 0f; // Draw depth for the box (stays at original location)
 
-        /// <summary>
-        /// Set this name so buttons can trigger this ghost box by name.
-        /// </summary>
-        public string? Name { get; set; }
-
         public GhostBox(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -78,13 +73,6 @@ namespace MacGame.Enemies
             state = GhostState.InBox;
             // Don't collide as a box
             isEnemyTileColliding = false;
-        }
-
-        public override void ConsumeObjectModifier(ObjectModifier obj)
-        {
-            base.ConsumeObjectModifier(obj);
-
-            this.Name = obj.Name;
         }
 
         public override void SetDrawDepth(float depth)

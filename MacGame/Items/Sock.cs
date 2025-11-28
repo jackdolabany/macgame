@@ -10,8 +10,6 @@ namespace MacGame.Items
 {
     public class Sock : Item
     {
-        public string Name { get; set; }
-
         /// <summary>
         /// Whether or not the sock was collected when the map was loaded. This is used to show a transparent sock.
         /// Not accurate if you just collected it on the same map. Use IsCollected for that.

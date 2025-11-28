@@ -23,9 +23,14 @@ namespace MacGame
     ///   ResetGhostPlatform - Resets a ghost platform to its original position. The args are the Name of the GhostPlatform.
     ///   RaiseButton - Raises another button. The args are the Name of the Button.
     ///   LowerButton - What do you think?
+    ///   ReleaseGhostBox - Releases a ghost from a ghost box. Use args with the name of the ghost box.
+    ///   ResetPickUpObject - Args is the name of the pick up object to reset.
     ///   
     ///  Add multiple actions like this
     ///  DownAction: OpenBlockingPiston:Door1;CloseBlockingPiston:Door2;RaiseButton:Button1
+    ///  
+    /// Actions are implemented in Level.cs, Level.ExecuteButtonAction.
+    /// 
     /// </summary>
     public class Button : GameObject
     {
@@ -44,11 +49,6 @@ namespace MacGame
         /// Set this in the object that wraps this in the map editor.
         /// </summary>
         public string Args = "";
-
-        /// <summary>
-        /// Set from the map editor.
-        /// </summary>
-        public string Name = "";
 
         private Player _player;
 

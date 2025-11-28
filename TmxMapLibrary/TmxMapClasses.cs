@@ -874,7 +874,7 @@ namespace Squared.Tiled
                 // modifiers are more likely to contain the pixel are they are wrapping.
                 om.Rectangle = new Rectangle(obj.Value.X - 1, obj.Value.Y - 1, obj.Value.Width + 2, obj.Value.Height + 2);
 
-                om.Name = obj.Value.Name;
+                om.Name = obj.Value.Name ?? "";
 
                 foreach(var kvp in obj.Value.Properties)
                 {

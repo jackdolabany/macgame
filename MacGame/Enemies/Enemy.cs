@@ -295,7 +295,7 @@ namespace MacGame.Enemies
         /// <summary>
         /// Override this to handle custom properties from object modifiers in the Tiled maps.
         /// </summary>
-        public virtual void ConsumeObjectModifier(ObjectModifier obj)
+        public virtual void SetProps(Dictionary<string, string> props)
         {
             // Do nothing by default.
         }

@@ -719,8 +719,10 @@ namespace MacGame
                 case "ResetPickUpObject":
                     foreach (var puo in PickupObjects)
                     {
-                        puo.BreakAndReset();
-                        break;
+                        if (((GameObject)puo).Name == args)
+                        {
+                            puo.BreakAndReset();
+                        }
                     }
                     break;
                 default:

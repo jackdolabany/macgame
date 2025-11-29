@@ -1,20 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using MacGame.Platforms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using TileEngine;
-using MacGame.RevealBlocks;
+﻿using MacGame.DisappearBlocks;
+using MacGame.Doors;
 using MacGame.Enemies;
+using MacGame.GameObjects;
 using MacGame.Items;
 using MacGame.Npcs;
+using MacGame.Platforms;
+using MacGame.RevealBlocks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using MacGame.Doors;
-using MacGame.GameObjects;
-using MacGame.DisappearBlocks;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using TileEngine;
 
 namespace MacGame
 {
@@ -493,6 +494,7 @@ namespace MacGame
                                 var springBoard = new SpringBoard(contentManager, x, y, player);
                                 level.SpringBoards.Add(springBoard);
                                 level.PickupObjects.Add(springBoard);
+                                HandleObjectModifiers(x, y, springBoard, map);
                                 layerDepthObjects[z].Add(springBoard);
                             }
                             else if (loadClass == "Box")
@@ -501,6 +503,7 @@ namespace MacGame
                                 level.GameObjects.Add(box);
                                 level.CustomCollisionObjects.Add(box);
                                 level.PickupObjects.Add(box);
+                                HandleObjectModifiers(x, y, box, map);
                                 layerDepthObjects[z].Add(box);
                             }
                             else if (loadClass == "Rock")
@@ -508,6 +511,7 @@ namespace MacGame
                                 var rock = new Rock(contentManager, x, y, player);
                                 level.GameObjects.Add(rock);
                                 level.PickupObjects.Add(rock);
+                                HandleObjectModifiers(x, y, rock, map);
                                 layerDepthObjects[z].Add(rock);
                             }
                             else if (loadClass == "Cannonball")
@@ -515,6 +519,7 @@ namespace MacGame
                                 var cb = new Cannonball(contentManager, x, y, player);
                                 level.GameObjects.Add(cb);
                                 level.PickupObjects.Add(cb);
+                                HandleObjectModifiers(x, y, cb, map);
                                 layerDepthObjects[z].Add(cb);
                             }
                             else if (loadClass == "TNT")
@@ -522,6 +527,7 @@ namespace MacGame
                                 var tnt = new TNT(contentManager, x, y, player);
                                 level.GameObjects.Add(tnt);
                                 level.PickupObjects.Add(tnt);
+                                HandleObjectModifiers(x, y, tnt, map);
                                 layerDepthObjects[z].Add(tnt);
                             }
                             else if (loadClass == "BlockingPistonVertical")
@@ -529,14 +535,14 @@ namespace MacGame
                                 var blockingPiston = new BlockingPistonVertical(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);
                                 layerDepthObjects[z].Add(blockingPiston);
-                                HandleObjectModifiers(x, y, blockingPiston, map, (props) => {});
+                                HandleObjectModifiers(x, y, blockingPiston, map);
                             }
                             else if (loadClass == "BlockingPistonHorizontal")
                             {
                                 var blockingPiston = new BlockingPistonHorizontal(contentManager, x, y, player);
                                 level.GameObjects.Add(blockingPiston);
                                 layerDepthObjects[z].Add(blockingPiston);
-                                HandleObjectModifiers(x, y, blockingPiston, map, (props) => { });
+                                HandleObjectModifiers(x, y, blockingPiston, map);
                             }
                             else if (loadClass.EndsWith("Keyblock"))
                             {
@@ -621,7 +627,7 @@ namespace MacGame
                                 var ghostBlock = new GhostBlock(contentManager, x, y);
                                 level.GameObjects.Add(ghostBlock);
                                 layerDepthObjects[z].Add(ghostBlock);
-                                HandleObjectModifiers(x, y, ghostBlock, map, (props) => { });
+                                HandleObjectModifiers(x, y, ghostBlock, map);
 
                                 if (Game1.IS_DEBUG)
                                 {
@@ -824,14 +830,17 @@ namespace MacGame
             return actions;
         }
 
-        private void HandleObjectModifiers(int x, int y, GameObject obj, TileMap map, Action<Dictionary<string, string>> action)
+        private void HandleObjectModifiers(int x, int y, GameObject obj, TileMap map, Action<Dictionary<string, string>>? action = null)
         {
             foreach (var om in map.ObjectModifiers)
             {
                 if (om.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize, y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
                 {
                     obj.Name = om.Name ?? "";
-                    action(om.Properties);
+                    if (action != null)
+                    {
+                        action(om.Properties);
+                    }
                 }
             }
         }

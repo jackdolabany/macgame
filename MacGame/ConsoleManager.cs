@@ -138,26 +138,26 @@ namespace MacGame
                 switch (thingToGet)
                 {
                     case "keys":
-                        var redKey = new RedKey(contentManager, 0, 0, player, Game1.Camera);
+                        var redKey = new RedKey(contentManager, 0, 0, player);
                         redKey.WhenCollected(player);
-                        var greenKey = new GreenKey(contentManager, 0, 0, player, Game1.Camera);
+                        var greenKey = new GreenKey(contentManager, 0, 0, player);
                         greenKey.WhenCollected(player);
-                        var blueKey = new BlueKey(contentManager, 0, 0, player, Game1.Camera);
+                        var blueKey = new BlueKey(contentManager, 0, 0, player);
                         blueKey.WhenCollected(player);
                         return "You got keys!";
                     case "redkey":
                     case "red key":
-                        var rk = new RedKey(contentManager, 0, 0, player, Game1.Camera);
+                        var rk = new RedKey(contentManager, 0, 0, player);
                         rk.WhenCollected(player);
                         return "you got the red key";
                     case "greenkey":
                     case "green key":
-                        var gk = new GreenKey(contentManager, 0, 0, player, Game1.Camera);
+                        var gk = new GreenKey(contentManager, 0, 0, player);
                         gk.WhenCollected(player);
                         return "you got the green key";
                     case "bluekey":
                     case "blue key":
-                        var bk = new BlueKey(contentManager, 0, 0, player, Game1.Camera);
+                        var bk = new BlueKey(contentManager, 0, 0, player);
                         bk.WhenCollected(player);
                         return "you got the blue key";
                     default:

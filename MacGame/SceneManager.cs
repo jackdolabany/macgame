@@ -271,7 +271,7 @@ namespace MacGame
                                 // Use reflection to load the items from the code
                                 string classname = loadClass.Split('.')[1];
                                 Type t = Type.GetType(typeof(Item).Namespace + "." + classname)!;
-                                var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player, camera })!;
+                                var item = (Item)Activator.CreateInstance(t, new object[] { contentManager, x, y, player })!;
                                 level.Items.Add(item);
 
                                 layerDepthObjects[z].Add(item);
@@ -317,6 +317,13 @@ namespace MacGame
                                 {
                                     item.Enabled = !Game1.StorageState.Levels[level.LevelNumber].Keys.HasBlueKey;
                                 }
+                            }
+                            else if (loadClass == "Chest")
+                            {
+                                var chest = new Chest(contentManager, x, y, player);
+                                level.GameObjects.Add(chest);
+                                HandleObjectModifiers(x, y, chest, map);
+                                layerDepthObjects[z].Add(chest);
                             }
                             else if (DoorClasses.Contains(loadClass))
                             {

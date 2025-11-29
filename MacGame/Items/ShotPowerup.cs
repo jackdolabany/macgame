@@ -15,7 +15,7 @@ namespace MacGame.Items
         Rectangle firstPowerupSource;
         Rectangle secondPowerupSource;
        
-        public ShotPowerup(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public ShotPowerup(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
             var image = new StaticImageDisplay(textures);
@@ -27,9 +27,7 @@ namespace MacGame.Items
             image.Source = firstPowerupSource;
             SetWorldLocationCollisionRectangle(8, 8);
             _player = player;
-            IsReenabledOnceOffScreen = false;
-            IsInChest = false;
-      
+
         }
 
         public override void WhenCollected(Player player)

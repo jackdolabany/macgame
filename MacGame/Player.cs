@@ -457,9 +457,9 @@ namespace MacGame
             wings = new MacWings(this, textures);
 
             Apples = new ObjectPool<Apple>(2);
-            Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
-            Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
-            Apples.AddObject(new Apple(content, 0, 0, this, Game1.Camera));
+            Apples.AddObject(new Apple(content, 0, 0, this));
+            Apples.AddObject(new Apple(content, 0, 0, this));
+            Apples.AddObject(new Apple(content, 0, 0, this));
 
             Harpoons = new ObjectPool<Harpoon>(4);
             Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));

@@ -7,11 +7,14 @@ using TileEngine;
 
 namespace MacGame.Items
 {
+    /// <summary>
+    /// The apple projectile object. Not to be confused with the Apple item that you pick up that looks the same.
+    /// </summary>
     public class Apple : GameObject
     {
         private Player _player;
 
-        public Apple(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public Apple(ContentManager content, int cellX, int cellY, Player player)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);

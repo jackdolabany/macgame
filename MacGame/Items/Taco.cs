@@ -12,7 +12,7 @@ namespace MacGame.Items
         int x;
         int y;
 
-        public Taco(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public Taco(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             x = cellX;
             y = cellY;
@@ -22,8 +22,6 @@ namespace MacGame.Items
             DisplayComponent = image;
             image.Source = Helpers.GetTileRect(8, 2);
             SetWorldLocationCollisionRectangle(7, 7);
-
-            IsInChest = false;
         }
 
         public override void WhenCollected(Player player)

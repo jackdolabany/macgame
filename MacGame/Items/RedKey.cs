@@ -12,7 +12,7 @@ namespace MacGame.Items
     public class RedKey : Item
     {
 
-        public RedKey(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public RedKey(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
@@ -20,7 +20,6 @@ namespace MacGame.Items
             image.Source = Helpers.GetTileRect(13, 4);
             SetWorldLocationCollisionRectangle(8, 8);
             _player = player;
-            IsInChest = false;
         }
 
         public override void WhenCollected(Player player)

@@ -7,7 +7,7 @@ namespace MacGame.Items
 {
     public class Heart : Item
     {
-        public Heart(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public Heart(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);

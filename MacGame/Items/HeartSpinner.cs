@@ -27,7 +27,7 @@ namespace MacGame.Items
         float _slowDownTimer = 0f;
 
         AnimationDisplay Animations => (AnimationDisplay)this.DisplayComponent;
-        public HeartSpinner(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public HeartSpinner(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
 
@@ -51,8 +51,6 @@ namespace MacGame.Items
             animations.Play("idle");
 
             SetWorldLocationCollisionRectangle(8, 8);
-      
-            IsInChest = false;
 
         }
 

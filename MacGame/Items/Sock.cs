@@ -31,7 +31,7 @@ namespace MacGame.Items
 
         private AnimationDisplay _animationDisplay => (AnimationDisplay)DisplayComponent;
 
-        public Sock(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public Sock(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
 
@@ -53,8 +53,6 @@ namespace MacGame.Items
             SetWorldLocationCollisionRectangle(14, 12);
             // Move it up slightly
             this.collisionRectangle.Y -= 8;
-
-            IsInChest = false;
 
             WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
         }

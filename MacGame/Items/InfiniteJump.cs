@@ -9,7 +9,7 @@ namespace MacGame.Items
     public class InfiniteJump : Item
     {
 
-        public InfiniteJump(ContentManager content, int cellX, int cellY, Player player, Camera camera) : base(content, cellX, cellY, player, camera)
+        public InfiniteJump(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             var image = new StaticImageDisplay(textures);
@@ -17,7 +17,6 @@ namespace MacGame.Items
             image.Source = Helpers.GetTileRect(11, 0);
             SetWorldLocationCollisionRectangle(8, 8);
             _player = player;
-            IsReenabledOnceOffScreen = true;
         }
 
         public override void WhenCollected(Player player)

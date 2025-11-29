@@ -71,6 +71,11 @@
    <property name="LoadClass" value="Item.Shovel"/>
   </properties>
  </tile>
+ <tile id="30">
+  <properties>
+   <property name="LoadClass" value="Chest"/>
+  </properties>
+ </tile>
  <tile id="32">
   <properties>
    <property name="LoadClass" value="Waypoint"/>

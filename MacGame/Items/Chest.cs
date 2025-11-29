@@ -1,4 +1,5 @@
 using MacGame.DisplayComponents;
+using MacGame.Enemies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,7 +21,14 @@ namespace MacGame.Items
         private int _cellY;
 
         private Player _player;
-        private GameObject _item;
+        private GameObject _gameObjectInsideChest;
+
+        private float _resetTimer = 0f;
+        private const float PICKUP_RESET_TIME = 4f;
+
+        // When the item pops out it shouldn't be tile colliding until it clears the chest. 
+        private bool wasItemTileColliding = false;
+        private bool shouldItemResetTileCollisions = false;
 
         public Chest(ContentManager content, int cellX, int cellY, Player player)
         {
@@ -55,15 +63,41 @@ namespace MacGame.Items
             chestArea.Y -= TileMap.TileSize;
             chestArea.Height += TileMap.TileSize;
 
-            // Scan for an item whose collision rectangle intersects with the chest area
-            _item = Game1.CurrentLevel.Items.First(item =>
+            // Scan for a GameObject whose collision rectangle intersects with the chest area
+            // Check Items first, then Enemies, then GameObjects
+            _gameObjectInsideChest = Game1.CurrentLevel.Items.FirstOrDefault(item =>
                 item.CollisionRectangle.Intersects(chestArea)
             );
 
-            // Disable the item initially
-            _item.Enabled = false;
+            if (_gameObjectInsideChest == null)
+            {
+                _gameObjectInsideChest = Game1.CurrentLevel.Enemies.FirstOrDefault(enemy =>
+                    enemy.CollisionRectangle.Intersects(chestArea)
+                );
+            }
 
-            SetDrawDepth(_item.DrawDepth);
+            if (_gameObjectInsideChest == null)
+            {
+                _gameObjectInsideChest = Game1.CurrentLevel.GameObjects.FirstOrDefault(obj => this != obj &&
+                    obj.CollisionRectangle.Intersects(chestArea)
+                );
+            }
+
+            if (_gameObjectInsideChest == null)
+            {
+                _gameObjectInsideChest = Game1.CurrentLevel.PickupObjects.Cast<GameObject>().FirstOrDefault(obj =>
+                    obj.CollisionRectangle.Intersects(chestArea)
+                );
+            }
+
+            if (_gameObjectInsideChest == null)
+            {
+                throw new System.Exception($"No item, enemy, or object found in chest at cell ({_cellX}, {_cellY})");
+            }
+
+            // Disable the item initially and store its original location
+            _gameObjectInsideChest.Enabled = false;
+            SetDrawDepth(_gameObjectInsideChest.DrawDepth);
 
             isInitialized = true;
         }
@@ -79,6 +113,47 @@ namespace MacGame.Items
             OpenChestBottom.Update(gameTime, elapsed);
             OpenChestTop.Update(gameTime, elapsed);
 
+            // Check if we need to reset the chest
+            if (isOpen)
+            {
+                bool shouldIncrementResetTimer = false;
+
+                // If the item is an enemy and it died, reset the chest
+                if (_gameObjectInsideChest is Enemy enemy && enemy.Dead)
+                {
+                    shouldIncrementResetTimer = true;
+                }
+
+                // After a few seconds you can always get a new PickUpObject and destroy the old one.
+                if (_gameObjectInsideChest is IPickupObject)
+                {
+                    shouldIncrementResetTimer = true;
+                }
+
+                if (_gameObjectInsideChest is Item)
+                {
+                    if (_gameObjectInsideChest is Heart)
+                    {
+                        shouldIncrementResetTimer = false;
+                    }
+                    else if (_player.CurrentItem == null)
+                    {
+                        shouldIncrementResetTimer = true;
+                    }
+                }
+
+                // If the item is a pickup object, handle timer and reset
+                if (shouldIncrementResetTimer)
+                {
+                    _resetTimer += elapsed;
+
+                    if (_resetTimer >= PICKUP_RESET_TIME)
+                    {
+                        CloseChest();
+                    }
+                }
+            }
+
             if (!isOpen)
             {
                 // Check if the pixel above the player is hitting the bottom of the chest.
@@ -87,29 +162,69 @@ namespace MacGame.Items
                 if (topOfPlayer.Intersects(bottomOfChest))
                 {
                     isOpen = true;
+                    _resetTimer = 0f;
 
                     SoundManager.PlaySound("ChestOpen");
 
-                    if (_item != null)
+                    // Move it a bit above the chest so the player doesn't instantly collect it.
+                    _gameObjectInsideChest.WorldLocation = new Vector2(this.WorldLocation.X, this.CollisionRectangle.Bottom - 8);
+                    _gameObjectInsideChest.Enabled = true;
+
+                    // Temporarily disable tile colliding until the item clears the chest.
+                    wasItemTileColliding = _gameObjectInsideChest.isTileColliding;
+                    _gameObjectInsideChest.isTileColliding = false;
+                    shouldItemResetTileCollisions = true;
+
+                    // Certain objects pop out of the chest.
+                    if (_gameObjectInsideChest.IsAffectedByGravity && (_gameObjectInsideChest is IPickupObject || _gameObjectInsideChest is Enemy))
                     {
-                        // Move it just above the player so he doesn't instantly collect it.
-                        _item.WorldLocation = new Vector2(_item.WorldLocation.X, _player.CollisionRectangle.Top - 8);
-                        _item.Enabled = true;
+                        // If player is to the left, pop right. If player is to the right, pop left.
+                        bool playerIsToLeft = _player.WorldLocation.X < WorldLocation.X;
+                        float horizontalVelocity = playerIsToLeft ? 100f : -100f;
+                        _gameObjectInsideChest.Velocity = new Vector2(horizontalVelocity, -400f);
                     }
+
+                    if (_gameObjectInsideChest is Enemy)
+                    {
+                        // enemies come back to live
+                        var enemy = (Enemy)_gameObjectInsideChest;
+                        enemy.Alive = true;
+                    }
+
+                    _gameObjectInsideChest.ReleasedFromChest(this);
                 }
             }
 
             // Move item up until it's just above the chest.
-            if (isOpen && _item != null && _item.WorldLocation.Y > WorldLocation.Y - 28)
+            if (isOpen && _gameObjectInsideChest != null && _gameObjectInsideChest is Item)
             {
-                _item.Velocity = new Vector2(_item.Velocity.X, -16);
+                if (_gameObjectInsideChest.WorldLocation.Y > WorldLocation.Y - 28)
+                {
+                    _gameObjectInsideChest.Velocity = new Vector2(_gameObjectInsideChest.Velocity.X, -16);
+                }
+                else
+                {
+                    _gameObjectInsideChest.Velocity = new Vector2(_gameObjectInsideChest.Velocity.X, 0);
+                }
             }
-            else if (_item != null)
+
+            // Reset the GameObject collisions as soon as the GameObject has cleared the tile blocking chest.
+            if (shouldItemResetTileCollisions)
             {
-                _item.Velocity = new Vector2(_item.Velocity.X, 0);
+                if (!_gameObjectInsideChest.CollisionRectangle.Intersects(this.CollisionRectangle))
+                {
+                    _gameObjectInsideChest.isTileColliding = wasItemTileColliding;
+                    shouldItemResetTileCollisions = false;
+                }
             }
 
             base.Update(gameTime, elapsed);
+        }
+
+        private void CloseChest()
+        {
+            isOpen = false;
+            _resetTimer = 0f;
         }
 
         public override void SetDrawDepth(float depth)
@@ -132,9 +247,9 @@ namespace MacGame.Items
             {
                 // Draw the item between the open top and bottom of the chest.
                 OpenChestTop.Draw(spriteBatch, WorldLocation, this.Flipped);
-                if (_item != null && _item.Enabled)
+                if (_gameObjectInsideChest != null && _gameObjectInsideChest.Enabled)
                 {
-                    _item.Draw(spriteBatch);
+                    _gameObjectInsideChest.Draw(spriteBatch);
                 }
                 OpenChestBottom.Draw(spriteBatch, WorldLocation, this.Flipped);
             }

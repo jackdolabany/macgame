@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TileEngine;
 using MacGame.DisplayComponents;
+using MacGame.Items;
 
 namespace MacGame
 {
@@ -79,7 +80,7 @@ namespace MacGame
         /// y direction (jump) because they can land on the enemy tiles and it will look weird. 
         /// </summary>
         public bool isEnemyTileColliding = true;
-        protected bool isTileColliding = true;
+        public bool isTileColliding = true;
 
         public float RotationsPerSecond = 0;
         public bool IsRotationClockwise;
@@ -1055,6 +1056,11 @@ namespace MacGame
         }
 
         public virtual void AdjustPositionBeforeDraw(ref Vector2 newPosition, ref Vector2 previousLocation) { }
+        
+        /// <summary>
+        /// Any special handling for GameObjects that pop out of Treasure Chests. Maybe this is specific enough to be it's own interface?
+        /// </summary>
+        public virtual void ReleasedFromChest(Chest chest) { }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

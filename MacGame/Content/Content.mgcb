@@ -60,6 +60,11 @@
 /processor:PassThroughProcessor
 /build:Maps/CarBoss.tmx
 
+#begin Maps/ChestTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/ChestTest.tmx
+
 #begin Maps/CollisionWorld.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

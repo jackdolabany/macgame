@@ -829,6 +829,16 @@
    <property name="LoadClass" value="Enemy.Bomb"/>
   </properties>
  </tile>
+ <tile id="343">
+  <properties>
+   <property name="LoadClass" value="Enemy.GhostBoxGhost"/>
+  </properties>
+ </tile>
+ <tile id="344">
+  <properties>
+   <property name="LoadClass" value="Enemy.GhostBoxGhost"/>
+  </properties>
+ </tile>
  <tile id="345">
   <properties>
    <property name="BlockPlayer" value="1"/>

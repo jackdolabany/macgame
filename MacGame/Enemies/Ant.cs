@@ -47,7 +47,7 @@ namespace MacGame.Enemies
             if (Alive)
             {
                 // Flip if you hit a wall
-                if (!Flipped && velocity.X >= 0 && OnRightWall)
+                if (!Flipped && velocity.X > 0 && OnRightWall)
                 {
                     Flipped = true;
                 }
@@ -63,7 +63,7 @@ namespace MacGame.Enemies
                     CollisionRectangle.Bottom + 4);
 
                 var edgeCell = Game1.CurrentMap.GetMapSquareAtPixel(edgePixel);
-                if (edgeCell != null && edgeCell.Passable)
+                if (OnGround && edgeCell != null && edgeCell.Passable)
                 {
                     Flip();
                 }

@@ -354,6 +354,11 @@ namespace MacGame
 
         Texture2D textures;
 
+        /// <summary>
+        /// Track whether or not the player is in a camera offset zone so that the camera smooth scrolls in and out of these zones.
+        /// </summary>
+        private bool isInCameraOffsetZone;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -2360,6 +2365,24 @@ namespace MacGame
             {
                 // Track in front of the player
                 targetPosition = this.WorldLocation + new Vector2(-80, 0);
+            }
+
+            var wasInCameraOffsetZone = isInCameraOffsetZone;
+            isInCameraOffsetZone = false;
+            foreach (var offsetZone in Game1.CurrentLevel.CameraOffsetZones)
+            {
+                if (offsetZone.CollisionRectangle.Intersects(this.CollisionRectangle))
+                {
+                    targetPosition += offsetZone.Offset;
+                    isInCameraOffsetZone = true;
+                    break;
+                }
+            }
+
+            // Smooth move the camera if Mac goes in or out of an offset zone.
+            if (wasInCameraOffsetZone != isInCameraOffsetZone)
+            {
+                smoothMoveCameraToTarget = true;
             }
 
             if (!smoothMoveCameraToTarget)

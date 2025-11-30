@@ -73,6 +73,7 @@ namespace MacGame
         public List<SpringBoard> SpringBoards;
         public List<Door> Doors;
         public List<Waypoint> Waypoints;
+        public List<CameraOffsetZone> CameraOffsetZones = new List<CameraOffsetZone>();
 
         public Vector2 AutoScrollSpeed { get; set; }
 

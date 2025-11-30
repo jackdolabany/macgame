@@ -751,6 +751,17 @@ namespace MacGame
                         level.CollisionScripts.Add(script);
                     }
                 }
+                else if (obj.Properties.ContainsKey("CameraOffset"))
+                {
+                    // Special areas of the map where the camera pans elsewhere.
+                    var offset = new CameraOffsetZone();
+                    offset.CollisionRectangle = obj.GetScaledRectangle();
+                    var offsetString = obj.Properties["CameraOffset"];
+                    float x = float.Parse(offsetString.Split(',')[0]);
+                    float y = float.Parse(offsetString.Split(',')[1]);
+                    offset.Offset = new Vector2(x, y);
+                    level.CameraOffsetZones.Add(offset);
+                }
             }
 
             // Set the draw depths and initialize all 
@@ -843,7 +854,13 @@ namespace MacGame
             {
                 if (om.GetScaledRectangle().Contains(new Rectangle(x * Game1.TileSize, y * Game1.TileSize, Game1.TileSize, Game1.TileSize)))
                 {
-                    obj.Name = om.Name ?? "";
+                    // Don't override a name with an OM that has no name.
+                    // There can be multiple OM's over an object
+                    if (!string.IsNullOrEmpty(om.Name))
+                    {
+                        obj.Name = om.Name;
+                    }
+
                     if (action != null)
                     {
                         action(om.Properties);

@@ -22,8 +22,10 @@ namespace MacGame.Enemies
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         private GhostState state = GhostState.InBoxOrChest;
-        private float ghostSpeed = 120f;
-        private float maxDownwardSpeed = 20f;
+        const float verticalSpeed = 120f;
+        const float maxDownwardVelocity = 20f;
+        const float fallSpeed = 120f;
+        const float popUpSpeed = 110f;
         private float bounceCooldownTimer = 0f;
         private Vector2 originalWorldLocation;
         
@@ -33,7 +35,6 @@ namespace MacGame.Enemies
         private float buttonTriggerCooldown = 0f;
 
         private const float ButtonTriggerCooldownMax = 1f;
-        private float boxDrawDepth = 0f; // Draw depth for the box (stays at original location)
 
         public GhostBoxGhost(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -79,7 +80,7 @@ namespace MacGame.Enemies
                 Health = 1;
                 isEnemyTileColliding = true;
                 WorldLocation = releaseLocation;
-                Velocity = new Vector2(ghostSpeed, maxDownwardSpeed); // Start flying right
+                Velocity = new Vector2(verticalSpeed, -popUpSpeed); // Start flying right
                 DisplayComponent = animations;
                 animations.Play("fly");
                 Flipped = false; // Face right
@@ -131,23 +132,23 @@ namespace MacGame.Enemies
 
                 case GhostState.Flying:
                     // Normal flying behavior - move horizontally and slowly downward
-                    Velocity = new Vector2(Flipped ? -ghostSpeed : ghostSpeed, velocity.Y);
+                    Velocity = new Vector2(Flipped ? -verticalSpeed : verticalSpeed, velocity.Y);
 
                     // Bounce off walls (check after base.Update so OnLeftWall/OnRightWall are set)
                     if (OnLeftWall)
                     {
-                        Velocity = new Vector2(ghostSpeed, velocity.Y);
+                        Velocity = new Vector2(verticalSpeed, velocity.Y);
                         Flipped = false;
                     }
                     else if (onRightWall)
                     {
-                        Velocity = new Vector2(-ghostSpeed, velocity.Y);
+                        Velocity = new Vector2(-verticalSpeed, velocity.Y);
                         Flipped = true;
                     }
 
-                    if (velocity.Y < maxDownwardSpeed)
+                    if (velocity.Y < maxDownwardVelocity)
                     {
-                        Velocity = new Vector2(velocity.X, velocity.Y + (100 * elapsed));
+                        Velocity = new Vector2(velocity.X, velocity.Y + (fallSpeed * elapsed));
                     }
 
                     // Check for pick up object collisions from below (bounce up when hit by rock)
@@ -163,7 +164,7 @@ namespace MacGame.Enemies
                                     // Check if rock is moving upward and below the ghost
                                     if (go.Velocity.Y < 0 && go.WorldCenter.Y > this.WorldCenter.Y)
                                     {
-                                        Velocity = new Vector2(velocity.X, velocity.Y - 100);
+                                        Velocity = new Vector2(velocity.X, velocity.Y - popUpSpeed);
                                         SoundManager.PlaySound("Bounce");
                                         bounceCooldownTimer = 1f;
                                         break;

@@ -1,5 +1,6 @@
 ﻿using MacGame.DisplayComponents;
 using MacGame.Enemies;
+using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +14,7 @@ namespace MacGame
 
         public bool IsPickedUp { get; private set; }
         protected Player _player;
+        private bool _cameOutOfChest = false;
 
         public virtual float Friction
         {
@@ -94,6 +96,12 @@ namespace MacGame
             }
         }
 
+        public override void ReleasedFromChest(Chest chest)
+        {
+            base.ReleasedFromChest(chest);
+            _cameOutOfChest = true;
+        }
+
         public virtual void Pickup()
         {
             this.isTileColliding = false;
@@ -160,6 +168,9 @@ namespace MacGame
                 isTileColliding = true;
                 IsAffectedByGravity = true;
                 this.Velocity = Vector2.Zero;
+
+                // If it came out of a chest let the chest reset and it'll reenable when you open the chest.
+                this.Enabled = !_cameOutOfChest;
             }
         }
 

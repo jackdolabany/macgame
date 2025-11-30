@@ -136,7 +136,7 @@ namespace MacGame.Items
                     {
                         shouldIncrementResetTimer = false;
                     }
-                    else if (_player.CurrentItem == null)
+                    else if (!_gameObjectInsideChest.Enabled && _player.CurrentItem != _gameObjectInsideChest)
                     {
                         shouldIncrementResetTimer = true;
                     }
@@ -165,6 +165,13 @@ namespace MacGame.Items
                     _resetTimer = 0f;
 
                     SoundManager.PlaySound("ChestOpen");
+
+                    // If the pickup object is enabled, destroy it to reset it in the chest.
+                    if (_gameObjectInsideChest is IPickupObject && _gameObjectInsideChest.Enabled)
+                    {
+                        var puo = (IPickupObject)_gameObjectInsideChest;
+                        puo.BreakAndReset();
+                    }
 
                     // Move it a bit above the chest so the player doesn't instantly collect it.
                     _gameObjectInsideChest.WorldLocation = new Vector2(this.WorldLocation.X, this.CollisionRectangle.Bottom - 8);

@@ -24,7 +24,7 @@ namespace MacGame.Items
         private GameObject _gameObjectInsideChest;
 
         private float _resetTimer = 0f;
-        private const float PICKUP_RESET_TIME = 4f;
+        private const float PICKUP_RESET_TIME = 3f;
 
         // When the item pops out it shouldn't be tile colliding until it clears the chest. 
         private bool wasItemTileColliding = false;

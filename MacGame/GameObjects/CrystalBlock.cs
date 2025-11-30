@@ -33,8 +33,8 @@ namespace MacGame
 
             // Extend the collision rectangle by 4 pixels in all directions since the tile is blocking it can 
             // never interact with the player as is.
-            this.CollisionRectangle = new Rectangle((-TileMap.TileSize / 2) - 4, -TileMap.TileSize - 4, TileMap.TileSize + 8, TileMap.TileSize + 8);
-
+            //ethis.CollisionRectangle = new Rectangle((-TileMap.TileSize / 2) - 4, -TileMap.TileSize - 4, TileMap.TileSize + 8, TileMap.TileSize + 8);
+            this.SetCenteredCollisionRectangle(8, 8, 8, 8);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

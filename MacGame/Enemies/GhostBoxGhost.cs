@@ -25,7 +25,7 @@ namespace MacGame.Enemies
         const float verticalSpeed = 120f;
         const float maxDownwardVelocity = 20f;
         const float fallSpeed = 120f;
-        const float popUpSpeed = 110f;
+        const float popUpSpeed = 130f;
         private float bounceCooldownTimer = 0f;
         private Vector2 originalWorldLocation;
         

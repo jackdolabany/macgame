@@ -2348,7 +2348,7 @@ namespace MacGame
             if (!IsInSpaceShip)
             {
                 // Track just above the player so we see more up than down.
-                targetPosition.Y -= Game1.TileSize * 1;
+                targetPosition.Y -= Game1.TileSize * 1.5f;
             }
 
             if (IsInMineCart && this.Velocity.X > 0)

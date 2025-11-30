@@ -81,7 +81,7 @@ namespace MacGame
             // And why not? kill enemies
             foreach (var enemy in Game1.CurrentLevel.Enemies)
             {
-                if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
+                if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle) && enemy.CanBeHitWithWeapons)
                 {
                     enemy.TakeHit(this, 1, Vector2.Zero);
                 }

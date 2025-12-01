@@ -15,7 +15,7 @@ namespace MacGame.Items
         /// Not accurate if you just collected it on the same map. Use IsCollected for that.
         /// </summary>
         public bool AlreadyCollected { get; set; } = false;
-        
+
         const float fadeInTimerGoal = 3f;
         float fadeInTimer = fadeInTimerGoal;
 
@@ -26,8 +26,6 @@ namespace MacGame.Items
         /// can't collect it so you don't insta-collect it if you're already on it and it's weird.
         /// </summary>
         float blockFromCollectingTime = 0f;
-
-        private bool _isInitialized = false;
 
         private AnimationDisplay _animationDisplay => (AnimationDisplay)DisplayComponent;
 
@@ -57,15 +55,16 @@ namespace MacGame.Items
             WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
         }
 
-        /// <summary>
-        /// Called after the level is set up.
-        /// </summary>
-        public void CheckIfAlreadyCollected(int levelNumber)
+        protected override void Initialize()
         {
+            base.Initialize();
+            var levelNumber = Game1.CurrentLevel.LevelNumber;
+
             if (Game1.StorageState.Levels[levelNumber].CollectedSocks.Contains(Name))
             {
                 AlreadyCollected = true;
                 Color = Color.White * 0.5f;
+                Enabled = true;
             }
         }
 
@@ -100,9 +99,11 @@ namespace MacGame.Items
             _animationDisplay.Play("idle");
         }
 
-        public override void WhenCollected(Player player)
+        public override void Collect(Player player)
         {
             if (!Enabled || AlreadyCollected) return;
+
+            if (blockFromCollectingTime > 0) return;
 
             AlreadyCollected = true;
 
@@ -124,22 +125,12 @@ namespace MacGame.Items
 
             // take the player back to the main room. Reset tacos, health, etc. Save the game.
             GlobalEvents.FireSockCollected(this, EventArgs.Empty);
+            
+            base.Collect(player);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-
-            if (!_isInitialized)
-            {
-                _isInitialized = true;
-
-                if (AlreadyCollected)
-                {
-                    // They're enabled but not collectible if they are already collected. They're kind of of in a ghost mode.
-                    Enabled = true;
-                }
-            }
-
             if (blockFromCollectingTime > 0)
             {
                 blockFromCollectingTime -= elapsed;
@@ -166,14 +157,6 @@ namespace MacGame.Items
             this.DisplayComponent.TintColor = Color.Transparent;
             SoundManager.PlaySound("SockReveal");
             blockFromCollectingTime = fadeInTimerGoal + 0.5f;
-        }
-
-        protected override void Collect(Player player)
-        {
-            if (blockFromCollectingTime <= 0)
-            {
-                base.Collect(player);
-            }
         }
     }
 }

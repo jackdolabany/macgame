@@ -22,11 +22,12 @@ namespace MacGame.Items
             _player = player;
         }
 
-        public override void WhenCollected(Player player)
+        public override void Collect(Player player)
         {
             EffectsManager.EnemyPop(WorldCenter, 7, Color.White, 80);
             player.CurrentItem = this;
             this.Enabled = false;
+            base.Collect(player);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

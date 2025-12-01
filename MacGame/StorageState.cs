@@ -33,6 +33,14 @@ namespace MacGame
 
         public bool HasDancedForDaisy { get; set; } = false;
 
+        public bool HasDraculaHeart { get; set; } = false;
+
+        public bool HasDraculaSkull { get; set; } = false;
+
+        public bool HasDraculaNail { get; set; } = false;
+
+        public bool HasDraculaTeeth { get; set; } = false;
+
 
         /// <param name="saveSlot">1 through 3</param>
         public StorageState(int saveSlot)
@@ -71,6 +79,10 @@ namespace MacGame
             clone.HasSeenIntroText = this.HasSeenIntroText;
             clone.HasBeatenIntroLevel = this.HasBeatenIntroLevel;
             clone.HasDancedForDaisy = this.HasDancedForDaisy;
+            clone.HasDraculaHeart = this.HasDraculaHeart;
+            clone.HasDraculaSkull = this.HasDraculaSkull;
+            clone.HasDraculaNail = this.HasDraculaNail;
+            clone.HasDraculaTeeth = this.HasDraculaTeeth;
             return clone;
         }
 

@@ -230,4 +230,24 @@
    <property name="LoadClass" value="Npc.Robot"/>
   </properties>
  </tile>
+ <tile id="563">
+  <properties>
+   <property name="LoadClass" value="Item.DraculaHeart"/>
+  </properties>
+ </tile>
+ <tile id="564">
+  <properties>
+   <property name="LoadClass" value="Item.DraculaSkull"/>
+  </properties>
+ </tile>
+ <tile id="565">
+  <properties>
+   <property name="LoadClass" value="Item.DraculaNail"/>
+  </properties>
+ </tile>
+ <tile id="566">
+  <properties>
+   <property name="LoadClass" value="Item.DraculaTeeth"/>
+  </properties>
+ </tile>
 </tileset>

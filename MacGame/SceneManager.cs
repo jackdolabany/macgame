@@ -287,8 +287,6 @@ namespace MacGame
                                         {
                                             throw new Exception($"Sock '{sock.Name}' not found in world {level.LevelNumber}.");
                                         }
-
-                                        sock.CheckIfAlreadyCollected(level.LevelNumber);
                                     });
 
                                     // Validate that a name was set by HandleObjectModifiers

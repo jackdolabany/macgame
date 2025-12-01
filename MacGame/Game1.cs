@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World3GhostHouseDoor2";
+        public const string StartingWorld = "World3GhostHouse";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -46,6 +46,11 @@ namespace MacGame
         /// 8 x 8 Tiles
         /// </summary>
         public static Texture2D TileTextures;
+
+        /// <summary>
+        /// 8 x 8 Tiles (alternate texture set)
+        /// </summary>
+        public static Texture2D TileTextures2;
 
         public static Texture2D SpaceTextures;
 
@@ -394,6 +399,7 @@ namespace MacGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             TileTextures = Content.Load<Texture2D>(@"Textures\Textures");
+            TileTextures2 = Content.Load<Texture2D>(@"Textures\Textures2");
             SpaceTextures = Content.Load<Texture2D>(@"Textures\SpaceTextures");
             BigTileTextures = Content.Load<Texture2D>(@"Textures\BigTextures");
             ReallyBigTileTextures = Content.Load<Texture2D>(@"Textures\ReallyBigTextures");
@@ -1171,6 +1177,35 @@ namespace MacGame
             if (Player.CurrentItem != null)
             {
                 spriteBatch.Draw(Player.CurrentItem.ItemIcon.Texture, new Rectangle(8, TileSize + 20, TileSize, TileSize), Player.CurrentItem.ItemIcon.Source, Color.White);
+            }
+
+            // Draw Dracula parts to the right of current item (or at left if no current item)
+            int draculaPartsYPos = TileSize + 20;
+            const int draculaPartsSpacing = 4;
+            int draculaPartsX = Player.CurrentItem != null ? 8 + TileSize + draculaPartsSpacing : 8;
+
+            if (StorageState.HasDraculaHeart)
+            {
+                var heartSourceRect = Helpers.GetTileRect(3, 35);
+                spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), heartSourceRect, Color.White);
+                draculaPartsX += TileSize + draculaPartsSpacing;
+            }
+            if (StorageState.HasDraculaSkull)
+            {
+                var skullSourceRect = Helpers.GetTileRect(4, 35);
+                spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), skullSourceRect, Color.White);
+                draculaPartsX += TileSize + draculaPartsSpacing;
+            }
+            if (StorageState.HasDraculaNail)
+            {
+                var nailSourceRect = Helpers.GetTileRect(5, 35);
+                spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), nailSourceRect, Color.White);
+                draculaPartsX += TileSize + draculaPartsSpacing;
+            }
+            if (StorageState.HasDraculaTeeth)
+            {
+                var teethSourceRect = Helpers.GetTileRect(6, 35);
+                spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), teethSourceRect, Color.White);
             }
 
             // Draw the number of tacos in the HUD for regular levels, or draw the socks for the Hub level.

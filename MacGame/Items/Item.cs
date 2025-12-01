@@ -21,6 +21,8 @@ namespace MacGame.Items
 
         protected Player _player;
 
+        private bool _isInitailized = false;
+
         public Item(ContentManager content, int cellX, int cellY, Player player) : base()
         {
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
@@ -28,21 +30,28 @@ namespace MacGame.Items
             _player = player;
         }
 
-        protected virtual void Collect(Player player)
+        public virtual void Collect(Player player)
         {
-            WhenCollected(player);
             PlayCollectedSound();
         }
-
-        public abstract void WhenCollected(Player player);
 
         public virtual void PlayCollectedSound()
         {
             SoundManager.PlaySound("PowerUp");
         }
 
+
+        protected virtual void Initialize() { }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            if (!_isInitailized)
+            {
+                Initialize();
+                _isInitailized = true;
+            }
+
             if (Enabled)
             {
                 // Check for player/item collision.

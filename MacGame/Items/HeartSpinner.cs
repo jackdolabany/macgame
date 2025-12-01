@@ -99,21 +99,16 @@ namespace MacGame.Items
             base.Update(gameTime, elapsed);
         }
 
-        public override void PlayCollectedSound()
-        {
-            // Do Nothing
-        }
-
-        public override void WhenCollected(Player player)
+        public override void Collect(Player player)
         {
             if (_heartState != HeartState.FillingHealth && _player.Health < Player.MaxHealth)
             {
-                SoundManager.PlaySound("PowerUp");
                 _heartState = HeartState.FillingHealth;
                 _spinTimer = 0f;
                 _player.Health += 1;
                 Animations.Play("spin");
                 Animations.CurrentAnimation.FrameLength = _maxSpinAnimationSpeed;
+                base.Collect(player);
             }
         }
     }

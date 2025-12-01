@@ -22,11 +22,12 @@ namespace MacGame.Items
             _player = player;
         }
 
-        public override void WhenCollected(Player player)
+        public override void Collect(Player player)
         {
             this.Enabled = false;
             Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasGreenKey = true;
             StorageManager.TrySaveGame();
+            base.Collect(player);
         }
     }
 }

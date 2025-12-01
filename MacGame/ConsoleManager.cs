@@ -139,26 +139,26 @@ namespace MacGame
                 {
                     case "keys":
                         var redKey = new RedKey(contentManager, 0, 0, player);
-                        redKey.WhenCollected(player);
+                        redKey.Collect(player);
                         var greenKey = new GreenKey(contentManager, 0, 0, player);
-                        greenKey.WhenCollected(player);
+                        greenKey.Collect(player);
                         var blueKey = new BlueKey(contentManager, 0, 0, player);
-                        blueKey.WhenCollected(player);
+                        blueKey.Collect(player);
                         return "You got keys!";
                     case "redkey":
                     case "red key":
                         var rk = new RedKey(contentManager, 0, 0, player);
-                        rk.WhenCollected(player);
+                        rk.Collect(player);
                         return "you got the red key";
                     case "greenkey":
                     case "green key":
                         var gk = new GreenKey(contentManager, 0, 0, player);
-                        gk.WhenCollected(player);
+                        gk.Collect(player);
                         return "you got the green key";
                     case "bluekey":
                     case "blue key":
                         var bk = new BlueKey(contentManager, 0, 0, player);
-                        bk.WhenCollected(player);
+                        bk.Collect(player);
                         return "you got the blue key";
                     default:
                         return "I don't know what that is.";

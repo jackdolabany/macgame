@@ -24,7 +24,7 @@ namespace MacGame.Items
             SetWorldLocationCollisionRectangle(7, 7);
         }
 
-        public override void WhenCollected(Player player)
+        public override void Collect(Player player)
         {
             player.Tacos += 1;
 
@@ -32,6 +32,7 @@ namespace MacGame.Items
 
             // Add to the collection so it stays collected.
             Game1.TacoCollected(Game1.CurrentLevel.Name, x, y);
+            base.Collect(player);
         }
 
         public override void PlayCollectedSound()

@@ -1600,9 +1600,8 @@ namespace MacGame
             }
 
             // Level.cs will check door collisions if this is true.
-            this.InteractButtonPressedThisFrame = 
-                (InputManager.CurrentAction.up && !InputManager.PreviousAction.up) || 
-                (InputManager.CurrentAction.action && !InputManager.PreviousAction.action);
+            this.InteractButtonPressedThisFrame =
+                (InputManager.CurrentAction.up && !InputManager.PreviousAction.up);
 
             // slightly sliding is not sliding, so we want to see the idle animation.
             if (velocity.X < 80 && velocity.X > -80 && IsSliding)

@@ -16,7 +16,7 @@ namespace MacGame.Items
             SetWorldLocationCollisionRectangle(8, 8);
         }
 
-        public override void WhenCollected(Player player)
+        public override void Collect(Player player)
         {
             this.Enabled = false;
             player.Health += 1;
@@ -26,6 +26,7 @@ namespace MacGame.Items
             }
             
             EffectsManager.EnemyPop(WorldCenter, 7, Color.Red, 80);
+            base.Collect(player);
         }
 
         public override void PlayCollectedSound()

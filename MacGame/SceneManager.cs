@@ -745,7 +745,7 @@ namespace MacGame
                     {
                         var script = new CollisionScript();
                         script.CollisionRectangle = obj.GetScaledRectangle();
-                        script.Name = obj.Name;
+                        script.Script = obj.Properties["Script"];
                         level.CollisionScripts.Add(script);
                     }
                 }

@@ -25,14 +25,11 @@ namespace MacGame.Behaviors
                 if (_targetLocation != value)
                 {
                     _targetLocation = value;
-                    _locationBeforeMove = _gameObject.WorldLocation;
                 }
             }
         }
 
         private GameObject _gameObject { get; set; }
-
-        private Vector2 _locationBeforeMove;
 
         public float MoveSpeed { get; set; }
 

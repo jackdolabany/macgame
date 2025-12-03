@@ -24,8 +24,6 @@ namespace MacGame.Enemies
 
         private bool _isInitialized = false;
 
-        private Rectangle DraculaConversationSourceRect => Helpers.GetReallyBigTileRect(3, 1);
-
         Vector2 middleLocation;
         Vector2 leftLocation;
         Vector2 rightLocation;
@@ -232,9 +230,6 @@ namespace MacGame.Enemies
 
             TimerManager.AddNewTimer(2f, () =>
             {
-                ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
-                ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left);
-                ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
                 state = DraculaState.Attacking;
             });
 

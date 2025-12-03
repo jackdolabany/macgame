@@ -80,7 +80,8 @@ namespace MacGame
         /// <summary>
         /// NPC behavior so Mac can go to a location.
         /// </summary>
-        private MoveToLocation _moveToLocation { get; set; } 
+        private MoveToLocation _moveToLocation { get; set; }
+        private JustIdle _justIdle { get; set; }
 
         private bool IsRunning => _state == MacState.Running;
         private bool IsJumping => _state == MacState.Jumping;
@@ -359,6 +360,19 @@ namespace MacGame
         /// </summary>
         private bool isInCameraOffsetZone;
 
+        // Dracula parts rotation state
+        private bool isRotatingDracParts = false;
+        private float rotatingDracPartsTimer = 0f;
+        private const float rotatingDracPartsDuration = 5f;
+        private float dracPartsRotationAngle = 0f;
+        private const float dracPartsRotationSpeed = 2f; // radians per second
+        private const float dracPartsMaxDistance = 60f;
+        private float dracPartsCurrentDistance = 0f;
+        private const float dracPartsExpansionDuration = 1.5f; // Time to expand outward
+        private const float dracPartsExpansionSpeed = dracPartsMaxDistance / dracPartsExpansionDuration;
+        private bool dracPartsFullyExpanded = false;
+        private Texture2D textures2;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -367,6 +381,7 @@ namespace MacGame
             textures = content.Load<Texture2D>(@"Textures\Textures");
             var bigTextures = content.Load<Texture2D>(@"Textures\BigTextures");
             var spaceTextures = content.Load<Texture2D>(@"Textures\SpaceTextures");
+            textures2 = content.Load<Texture2D>(@"Textures\Textures2");
 
             var idle = new AnimationStrip(textures, Helpers.GetTileRect(1, 0), 1, "idle");
             idle.LoopAnimation = true;
@@ -493,6 +508,7 @@ namespace MacGame
             _shovel = new MacShovel(this, textures);
 
             _moveToLocation = new MoveToLocation(this, 150, 150, "idle", "run", "jump", "climbLadder");
+            _justIdle = new JustIdle("idle");
         }
 
         public void SmoothMoveCameraToTarget(int initialVelocity = 0)
@@ -632,7 +648,14 @@ namespace MacGame
                 }
                 else if (IsNpcMode)
                 {
-                    _moveToLocation.Update(this, gameTime, elapsed);
+                    if (_moveToLocation.TargetLocation == Vector2.Zero)
+                    {
+                        _justIdle.Update(this, gameTime, elapsed);
+                    }
+                    else
+                    {
+                        _moveToLocation.Update(this, gameTime, elapsed);
+                    }
                 }
                 else if (IsInSpaceShip)
                 {
@@ -779,6 +802,36 @@ namespace MacGame
             else
             {
                 this.animations.Offset = Vector2.Zero;
+            }
+
+            // Handle Dracula parts rotation
+            if (isRotatingDracParts)
+            {
+                rotatingDracPartsTimer += elapsed;
+
+                // First phase: expand the parts outward from the center
+                if (!dracPartsFullyExpanded)
+                {
+                    dracPartsCurrentDistance += dracPartsExpansionSpeed * elapsed;
+                    if (dracPartsCurrentDistance >= dracPartsMaxDistance)
+                    {
+                        dracPartsCurrentDistance = dracPartsMaxDistance;
+                        dracPartsFullyExpanded = true;
+                    }
+                }
+                else
+                {
+                    // Second phase: rotate the parts around the player
+                    dracPartsRotationAngle += dracPartsRotationSpeed * elapsed;
+                }
+
+                // After 5 seconds, transition to the Dracula fight
+                if (rotatingDracPartsTimer >= rotatingDracPartsDuration)
+                {
+                    isRotatingDracParts = false;
+                    // Trigger transition to Dracula level
+                    GlobalEvents.FireDoorEntered(this, "DraculaConvo", "", "FromPlayer");
+                }
             }
         }
 
@@ -2331,6 +2384,53 @@ namespace MacGame
                 }
             }
 
+            // Draw the rotating Dracula parts behind the player
+            if (isRotatingDracParts)
+            {
+                // Draw depth just behind the player
+                var depth = this.DisplayComponent.DrawDepth - Game1.MIN_DRAW_INCREMENT;
+
+                // Define the 4 parts and their tile positions
+                var parts = new[]
+                {
+                    new { TileX = 3, TileY = 35 }, // Heart
+                    new { TileX = 4, TileY = 35 }, // Skull
+                    new { TileX = 5, TileY = 35 }, // Nail
+                    new { TileX = 6, TileY = 35 }  // Teeth
+                };
+
+                // Draw each part at its position around the player
+                for (int i = 0; i < 4; i++)
+                {
+                    // Calculate angle for this part (evenly spaced around the circle)
+                    float angleOffset = (float)(i * Math.PI / 2); // 0°, 90°, 180°, 270°
+                    float totalAngle = dracPartsRotationAngle + angleOffset;
+
+                    // Calculate position offset from player center
+                    float offsetX = (float)Math.Cos(totalAngle) * dracPartsCurrentDistance;
+                    float offsetY = (float)Math.Sin(totalAngle) * dracPartsCurrentDistance;
+
+                    // Calculate world position for this part
+                    Vector2 partPosition = this.CollisionCenter + new Vector2(offsetX, offsetY);
+
+                    // Adjust for tile size (center the sprite)
+                    partPosition -= new Vector2(16, 16);
+
+                    // Draw the part
+                    spriteBatch.Draw(
+                        textures2,
+                        partPosition,
+                        Helpers.GetTileRect(parts[i].TileX, parts[i].TileY),
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        depth
+                    );
+                }
+            }
+
             base.Draw(spriteBatch);
 
         }
@@ -2458,6 +2558,17 @@ namespace MacGame
                 }
             }
 
+        }
+
+        public void RotateDracParts()
+        {
+            isRotatingDracParts = true;
+            rotatingDracPartsTimer = 0f;
+            dracPartsRotationAngle = 0f;
+            dracPartsCurrentDistance = 0f;
+            dracPartsFullyExpanded = false;
+            this.Velocity = Vector2.Zero;
+            animations.Play("idle");
         }
 
         public void AddUnlockedDoor(string doorName)

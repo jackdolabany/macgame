@@ -30,14 +30,16 @@
   </data>
  </layer>
  <objectgroup id="5" name="Object Layer 1">
-  <object id="12" name="IntroText" x="219.334" y="-5.66667" width="52" height="114.667">
+  <object id="12" x="219.334" y="-5.66667" width="52" height="114.667">
    <properties>
     <property name="LoadClass" value="CollisionScript"/>
+    <property name="Script" value="IntroText"/>
    </properties>
   </object>
-  <object id="14" name="OttisIntro" x="1149.75" y="1.25" width="119.833" height="98.6667">
+  <object id="14" x="1149.75" y="1.25" width="119.833" height="98.6667">
    <properties>
     <property name="LoadClass" value="CollisionScript"/>
+    <property name="Script" value="OttisIntro"/>
    </properties>
   </object>
  </objectgroup>

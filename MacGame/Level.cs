@@ -283,18 +283,28 @@ namespace MacGame
 
             foreach (var script in this.CollisionScripts)
             {
-                if (Player.CollisionRectangle.Intersects(script.CollisionRectangle))
+                if (Player.CollisionRectangle.Intersects(script.CollisionRectangle) && script.Enabled)
                 {
-                    switch (script.Name)
+                    switch (script.Script)
                     {
                         case "IntroText":
                             DisplayIntroText();
+                            script.Enabled = false;
                             break;
                         case "OttisIntro":
                             OttisIntro();
+                            script.Enabled = false;
+                            break;
+                        case "Dracula":
+                            Dracula();
+                            script.Enabled = false;
+                            break;
+                        case "DraculaConversation":
+                            InitiateDraculaConversation();
+                            script.Enabled = false;
                             break;
                         default:
-                            throw new NotImplementedException($"Unknown collision script: {script.Name}");
+                            throw new NotImplementedException($"Unknown collision script: {script.Script}");
                     }
                 }
             }
@@ -403,6 +413,41 @@ namespace MacGame
             Player.GoToLocation(waypoint.BottomCenterLocation);
             var ottis = (Ottie)Npcs.Single(npc => npc is Ottie);
             ottis.GoToLocation(new Vector2(waypoint.BottomCenterLocation.X + 2 * Game1.TileSize, waypoint.BottomCenterLocation.Y));
+        }
+
+        public void Dracula()
+        {
+            // Make sure they have all of Dracula's parts to summon him.
+            if (!Game1.StorageState.HasDraculaSkull ||                
+                !Game1.StorageState.HasDraculaNail ||
+                !Game1.StorageState.HasDraculaHeart ||
+                !Game1.StorageState.HasDraculaTeeth)
+            {
+                // Get the parts first!
+                return;
+            }
+
+            // Kill all enemies in case any are on screen.
+            foreach (var enemy in this.Enemies)
+            {
+                enemy.Enabled = false;
+            }
+
+            Player.BecomeNpc();
+
+            Player.RotateDracParts();
+        }
+
+        public void InitiateDraculaConversation()
+        {
+            var DraculaConversationSourceRect = Helpers.GetReallyBigTileRect(3, 1);
+            ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left);
+            ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () => 
+            {
+                // Go to another map to start the fight. This other map has a chair without Dracula in it and instead he's the boss.
+                GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs");
+            });
         }
 
         Dictionary<Vector2, WaterWave> waterWaves;

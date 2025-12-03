@@ -162,7 +162,7 @@ namespace MacGame
                 spriteBatch.DrawString(Game1.Font, sockText, new Vector2(x + 44, y), Color.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, drawDepth);
 
                 // Draw a crown to the right of the socks if they've beaten the game
-                if (state.HasBeatedGame)
+                if (state.HasBeatenGame)
                 {
                     var crownSourceRect = Helpers.GetTileRect(12, 2);
                     spriteBatch.Draw(Game1.TileTextures, new Rectangle(x + 84, y - 36, Game1.TileSize, Game1.TileSize), crownSourceRect, Color.White, 0f, Vector2.Zero, SpriteEffects.None, drawDepth);

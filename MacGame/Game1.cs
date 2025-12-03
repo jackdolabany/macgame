@@ -364,7 +364,7 @@ namespace MacGame
         
         private void OnFinalBossComplete(object? sender, EventArgs args)
         {
-            StorageState.HasBeatedGame = true;
+            StorageState.HasBeatenGame = true;
             StorageManager.TrySaveGame();
             PlayCredits();
         }

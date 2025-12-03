@@ -12,6 +12,7 @@ using System.Xml;
 using MacGame;
 using Newtonsoft.Json;
 using System.IO.Compression;
+using System.Collections.Concurrent;
 
 namespace MacGame
 {
@@ -31,6 +32,10 @@ namespace MacGame
         private static bool IsSaving { get; set; }
         private static bool IsLoading { get; set; }
 
+        // Queue for pending saves
+        private static ConcurrentQueue<StorageState> saveQueue = new ConcurrentQueue<StorageState>();
+        private static Task saveProcessorTask = null;
+
         /// <summary>
         /// Fade the disk for this amount of time after save.
         /// </summary>
@@ -42,7 +47,7 @@ namespace MacGame
         {
             get
             {
-                return IsSaving || IsLoading;
+                return IsSaving || IsLoading || !saveQueue.IsEmpty;
             }
         }
 
@@ -54,22 +59,6 @@ namespace MacGame
 
         public static void TrySaveGame(int? saveSlot = null)
         {
-
-            // Do a series of sleeping and checking in the case
-            // of 2 or 3 saves in a short time that overlap.
-            for (int i = 0; i < 10; i++)
-            {
-                if (!IsSaving) break;
-                System.Threading.Thread.Sleep(200);
-            }
-
-            if (IsSaving)
-            {
-                System.Threading.Thread.Sleep(200);
-            }
-
-            IsSaving = true;
-
             // Clone to be safe since we're going to a background thread.
             StorageState stateToSave = (StorageState)Game1.StorageState.Clone();
 
@@ -78,42 +67,62 @@ namespace MacGame
                 stateToSave.SaveSlot = saveSlot.Value;
             }
 
-            var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var fileName = string.Format(SavedGameFileName, stateToSave.SaveSlot);
+            // Add the save to the queue
+            saveQueue.Enqueue(stateToSave);
 
-            var result = Task.Run(() =>
+            // Start the save processor if it's not already running
+            if (saveProcessorTask == null || saveProcessorTask.IsCompleted)
             {
-                // Convert to Json using JSON.NET and write the file.
-                var json = JsonConvert.SerializeObject(stateToSave);
-                var bytes = Encoding.UTF8.GetBytes(json);
+                saveProcessorTask = Task.Run(ProcessSaveQueue);
+            }
+        }
 
-                // Zip compress the bytes.
-                using (var compressedStream = new MemoryStream())
+        private static async Task ProcessSaveQueue()
+        {
+            while (saveQueue.TryDequeue(out StorageState stateToSave))
+            {
+                IsSaving = true;
+
+                try
                 {
-                    using (var zipStream = new GZipStream(compressedStream, CompressionMode.Compress))
+                    var appFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    var fileName = string.Format(SavedGameFileName, stateToSave.SaveSlot);
+
+                    // Convert to Json using JSON.NET and write the file.
+                    var json = JsonConvert.SerializeObject(stateToSave);
+                    var bytes = Encoding.UTF8.GetBytes(json);
+
+                    // Zip compress the bytes.
+                    using (var compressedStream = new MemoryStream())
                     {
-                        zipStream.Write(bytes, 0, bytes.Length);
+                        using (var zipStream = new GZipStream(compressedStream, CompressionMode.Compress))
+                        {
+                            zipStream.Write(bytes, 0, bytes.Length);
+                        }
+                        bytes = compressedStream.ToArray();
                     }
-                    bytes = compressedStream.ToArray();
+
+                    var filePath = appFolderPath + $@"\{Game1.SaveGameFolder}\" + fileName;
+
+                    var file = new FileInfo(filePath);
+                    file.Directory!.Create();
+                    File.WriteAllBytes(filePath, bytes);
+
+                    // Testing
+                    //System.Threading.Thread.Sleep(3000);
+
+                    // Start to fade the icon away.
+                    _diskfadeTimer = DiskFadeTimerMax;
                 }
+                catch (Exception ex)
+                {
+                    // Log error but don't crash the game
+                    System.Diagnostics.Debug.WriteLine($"Error saving game: {ex.Message}");
+                }
+            }
 
-                var filePath = appFolderPath + $@"\{Game1.SaveGameFolder}\" + fileName;
-
-                var file = new FileInfo(filePath);
-                file.Directory!.Create();
-                File.WriteAllBytes(filePath, bytes);
-
-                // Testing
-                //System.Threading.Thread.Sleep(3000);
-
-                // Start to fade the icon away.
-                _diskfadeTimer = DiskFadeTimerMax;
-
-                DoneSavingOrLoading();
-            });
-
-
-            if (result == null) return;
+            // All saves processed
+            IsSaving = false;
         }
 
         public static void TryLoadGame(int saveSlot)
@@ -195,16 +204,21 @@ namespace MacGame
             {
                 _diskfadeTimer -= elapsed;
             }
+
+            if (IsSaving || !saveQueue.IsEmpty)
+            {
+                spinnerRotation += elapsed * 3f; // Rotate the save icon
+            }
         }
 
         internal static void Draw(SpriteBatch spriteBatch)
         {
-            if (IsSaving || _diskfadeTimer > 0)
+            if (IsSaving || !saveQueue.IsEmpty || _diskfadeTimer > 0)
             {
 
                 var color = Color.White;
 
-                if (!IsSaving)
+                if (!IsSaving && saveQueue.IsEmpty)
                 {
                     color = Color.Lerp(Color.White, Color.Transparent, (DiskFadeTimerMax - _diskfadeTimer) / DiskFadeTimerMax);
                 }

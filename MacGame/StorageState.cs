@@ -23,7 +23,7 @@ namespace MacGame
         /// <summary>
         ///  Set to true if you beat the game. Maybe we'll display a star or something on your save file.
         /// </summary>
-        public bool HasBeatedGame { get; set; }
+        public bool HasBeatenGame { get; set; }
 
         public float TotalElapsedTime { get; set; }
 
@@ -73,7 +73,7 @@ namespace MacGame
         public object Clone()
         {
             var clone = new StorageState(this.SaveSlot);
-            clone.HasBeatedGame = this.HasBeatedGame;
+            clone.HasBeatenGame = this.HasBeatenGame;
             clone.TotalElapsedTime = this.TotalElapsedTime;
             clone.Levels = this.Levels.ToDictionary(kvp => kvp.Key, kvp => (LevelStorageState)kvp.Value.Clone());
             clone.HasSeenIntroText = this.HasSeenIntroText;

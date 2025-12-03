@@ -24,7 +24,7 @@ namespace MacGame.Enemies
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\Textures");
-            var fly = new AnimationStrip(textures, Helpers.GetTileRect(0, 8), 2, "fly");
+            var fly = new AnimationStrip(textures, Helpers.GetTileRect(3, 23), 2, "fly");
             fly.LoopAnimation = true;
             fly.Oscillate = true;
             fly.FrameLength = 0.08f;

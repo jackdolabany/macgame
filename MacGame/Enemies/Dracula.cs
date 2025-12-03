@@ -228,7 +228,7 @@ namespace MacGame.Enemies
 
             Sock.Enabled = false;
 
-            TimerManager.AddNewTimer(2f, () =>
+            TimerManager.AddNewTimer(1.5f, () =>
             {
                 state = DraculaState.Attacking;
             });

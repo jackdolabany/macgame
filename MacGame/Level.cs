@@ -288,20 +288,17 @@ namespace MacGame
                     switch (script.Script)
                     {
                         case "IntroText":
-                            DisplayIntroText();
-                            script.Enabled = false;
+                            DisplayIntroText(script);
+                            
                             break;
                         case "OttisIntro":
-                            OttisIntro();
-                            script.Enabled = false;
+                            OttisIntro(script);
                             break;
                         case "Dracula":
-                            Dracula();
-                            script.Enabled = false;
+                            Dracula(script);
                             break;
                         case "DraculaConversation":
-                            InitiateDraculaConversation();
-                            script.Enabled = false;
+                            InitiateDraculaConversation(script);
                             break;
                         default:
                             throw new NotImplementedException($"Unknown collision script: {script.Script}");
@@ -387,7 +384,7 @@ namespace MacGame
 
         }
 
-        public void DisplayIntroText()
+        public void DisplayIntroText(CollisionScript script)
         {
             if (!Game1.StorageState.HasSeenIntroText)
             {
@@ -395,10 +392,13 @@ namespace MacGame
                 ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
                 ConversationManager.AddMessage("Crikey! My human forgot me in the yard. I'll have to find my way home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
             }
+            script.Enabled = false;
         }
 
-        public void OttisIntro()
+        public void OttisIntro(CollisionScript script)
         {
+            script.Enabled = false;
+
             // Kill all enemies in case any are on screen.
             foreach (var enemy in this.Enemies)
             {
@@ -415,7 +415,7 @@ namespace MacGame
             ottis.GoToLocation(new Vector2(waypoint.BottomCenterLocation.X + 2 * Game1.TileSize, waypoint.BottomCenterLocation.Y));
         }
 
-        public void Dracula()
+        public void Dracula(CollisionScript script)
         {
             // Make sure they have all of Dracula's parts to summon him.
             if (!Game1.StorageState.HasDraculaSkull ||                
@@ -426,6 +426,8 @@ namespace MacGame
                 // Get the parts first!
                 return;
             }
+
+            script.Enabled = false;
 
             // Kill all enemies in case any are on screen.
             foreach (var enemy in this.Enemies)
@@ -438,15 +440,20 @@ namespace MacGame
             Player.RotateDracParts();
         }
 
-        public void InitiateDraculaConversation()
+        public void InitiateDraculaConversation(CollisionScript script)
         {
+            script.Enabled = false;
             var DraculaConversationSourceRect = Helpers.GetReallyBigTileRect(3, 1);
-            ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
-            ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left);
-            ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () => 
+
+            TimerManager.AddNewTimer(2f, () =>
             {
-                // Go to another map to start the fight. This other map has a chair without Dracula in it and instead he's the boss.
-                GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs");
+                ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left);
+                ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
+                {
+                    // Go to another map to start the fight. This other map has a chair without Dracula in it and instead he's the boss.
+                    GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs");
+                });
             });
         }
 

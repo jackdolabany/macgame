@@ -203,11 +203,12 @@ namespace MacGame
             if (_diskfadeTimer > 0)
             {
                 _diskfadeTimer -= elapsed;
+                //spinnerRotation += elapsed * 2f; // Rotate the save icon
+                //spinnerRotation = spinnerRotation % (MathHelper.TwoPi);
             }
-
-            if (IsSaving || !saveQueue.IsEmpty)
+            else
             {
-                spinnerRotation += elapsed * 3f; // Rotate the save icon
+                spinnerRotation = 0f;
             }
         }
 

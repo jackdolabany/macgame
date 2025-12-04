@@ -825,12 +825,12 @@ namespace MacGame
                     dracPartsRotationAngle += dracPartsRotationSpeed * elapsed;
                 }
 
-                // After 5 seconds, transition to the Dracula fight
+                // After 5 seconds, transition to the Dracula conversation
                 if (rotatingDracPartsTimer >= rotatingDracPartsDuration)
                 {
                     isRotatingDracParts = false;
-                    // Trigger transition to Dracula level
-                    GlobalEvents.FireDoorEntered(this, "DraculaConvo", "", "FromPlayer");
+                    // Trigger transition to Dracula conversation with slow dramatic fade
+                    GlobalEvents.FireDoorEntered(this, "DraculaConvo", "", "FromPlayer", Game1.TransitionType.SlowFade);
                 }
             }
         }
@@ -1094,6 +1094,7 @@ namespace MacGame
             this.IsJustShotOutOfCannon = false;
             this.PlatformThatThisIsOn = null;
             ShotPower = ShotPower.Single;
+            isRotatingDracParts = false;
 
             SoundManager.StopMinecart(); 
             SoundManager.StopCharging();

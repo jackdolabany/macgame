@@ -47,12 +47,12 @@ namespace MacGame
             }
         }
 
-        public static void FireDoorEntered(Object? sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered)
+        public static void FireDoorEntered(Object? sender, string transitionToMap, string putPlayerAtDoor, string doorNameEntered, Game1.TransitionType transitionType = Game1.TransitionType.FastFade)
         {
             var evt = DoorEntered;
             if (evt != null)
             {
-                var args = new DoorEnteredEventArgs(transitionToMap, putPlayerAtDoor, doorNameEntered);
+                var args = new DoorEnteredEventArgs(transitionToMap, putPlayerAtDoor, doorNameEntered, transitionType);
                 evt(sender, args);
             }
         }
@@ -82,12 +82,14 @@ namespace MacGame
         public string TransitionToMap { get; set; }
         public string PutPlayerAtDoor { get; set; }
         public string DoorNameEntered { get; set; }
+        public Game1.TransitionType TransitionType { get; set; }
 
-        public DoorEnteredEventArgs(string transitionToMap, string putPlayerAtDoor, string doorNameEntered)
+        public DoorEnteredEventArgs(string transitionToMap, string putPlayerAtDoor, string doorNameEntered, Game1.TransitionType transitionType = Game1.TransitionType.FastFade)
         {
             TransitionToMap = transitionToMap;
             PutPlayerAtDoor = putPlayerAtDoor;
             DoorNameEntered = doorNameEntered;
+            TransitionType = transitionType;
         }
     }
 

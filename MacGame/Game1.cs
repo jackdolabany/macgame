@@ -236,6 +236,9 @@ namespace MacGame
         private string _goToMap;
         private string _putPlayerAtDoor;
 
+        // Save the transition type used when entering LoadingLevel so we can use it when fading back in
+        private TransitionType _loadingTransitionType = TransitionType.FastFade;
+
         InputManager inputManager;
 
         // Some number strings so that we don't need to create garbage by boxing and unboxing numbers.
@@ -341,7 +344,9 @@ namespace MacGame
             TransitionToState(GameState.PausedForAction, TransitionType.Instant);
 
             // Then transition to loading.
-            TransitionToState(GameState.LoadingLevel, TransitionType.FastFade);
+            // Use the transition type specified in the event args
+            _loadingTransitionType = args.TransitionType; // Save it so we can use it when fading back in
+            TransitionToState(GameState.LoadingLevel, args.TransitionType);
         }
 
         private void OnBeginDoorEnter(object? sender, EventArgs args)
@@ -815,10 +820,10 @@ namespace MacGame
                 {
                     if (transitionToState != GameState.Playing)
                     {
-                        // We must transition to playing but also immediately set the mode to Playing to 
+                        // We must transition to playing but also immediately set the mode to Playing to
                         // trick the stupid thing into thinking we just transitioned to Playing and we need to fade in
-                        // from black.
-                        TransitionToState(GameState.Playing, TransitionType.FastFade);
+                        // from black. Use the same transition type that was used when entering LoadingLevel.
+                        TransitionToState(GameState.Playing, _loadingTransitionType);
                         this.CurrentGameState = GameState.Playing;
                     }
                 }
@@ -904,7 +909,8 @@ namespace MacGame
             }
 
             // Handle transitions
-            var multiplier = this.transitionType == TransitionType.FastFade ? 2.5f : 1f;
+            // FastFade is 2.5x faster, SlowFade is 0.5x (2x slower than default)
+            var multiplier = this.transitionType == TransitionType.FastFade ? 2.5f : 0.4f;
             if (transitionTimer > 0)
             {
                 transitionTimer -= (elapsed * multiplier);

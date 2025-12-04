@@ -445,14 +445,14 @@ namespace MacGame
             script.Enabled = false;
             var DraculaConversationSourceRect = Helpers.GetReallyBigTileRect(3, 1);
 
-            TimerManager.AddNewTimer(2f, () =>
+            TimerManager.AddNewTimer(3f, () =>
             {
                 ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
                 ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left);
                 ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
                 {
                     // Go to another map to start the fight. This other map has a chair without Dracula in it and instead he's the boss.
-                    GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs");
+                    GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs", Game1.TransitionType.SlowFade);
                 });
             });
         }

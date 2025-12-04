@@ -244,6 +244,8 @@ namespace MacGame.Enemies
             locations = new[] { leftLocation, middleLocation, rightLocation };
 
             offScreenLocation = new Vector2(-500, -500);
+
+            this.worldLocation = offScreenLocation;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

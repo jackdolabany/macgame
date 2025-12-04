@@ -194,6 +194,9 @@ namespace MacGame
             LoadSound("Hurt");
             LoadSound("Sickle");
             LoadSound("BlockAppear");
+            LoadSound("DracPart1");
+            LoadSound("DracPart2");
+            LoadSound("GlassBreak");
 
 
             // Charging the ship's mega laser.

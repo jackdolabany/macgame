@@ -230,6 +230,11 @@
    <property name="LoadClass" value="Npc.Robot"/>
   </properties>
  </tile>
+ <tile id="516">
+  <properties>
+   <property name="LoadClass" value="WineGlass"/>
+  </properties>
+ </tile>
  <tile id="563">
   <properties>
    <property name="LoadClass" value="Item.DraculaHeart"/>

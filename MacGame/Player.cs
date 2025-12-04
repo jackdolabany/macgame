@@ -2570,6 +2570,11 @@ namespace MacGame
             dracPartsFullyExpanded = false;
             this.Velocity = Vector2.Zero;
             animations.Play("idle");
+            SoundManager.PlaySound("DracPart1");
+            TimerManager.AddNewTimer(1.5f, () =>
+            {
+                SoundManager.PlaySound("DracPart2");
+            });
         }
 
         public void AddUnlockedDoor(string doorName)

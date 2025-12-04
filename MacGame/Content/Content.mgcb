@@ -494,6 +494,18 @@
 /processorParam:Quality=Best
 /build:SoundEffects/DracDeath.wav
 
+#begin SoundEffects/DracPart1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/DracPart1.wav
+
+#begin SoundEffects/DracPart2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/DracPart2.wav
+
 #begin SoundEffects/Electric.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -529,6 +541,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/GhostSound.wav
+
+#begin SoundEffects/GlassBreak.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/GlassBreak.wav
 
 #begin SoundEffects/GooseBallBounce.wav
 /importer:WavImporter

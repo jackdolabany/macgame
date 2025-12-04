@@ -448,11 +448,25 @@ namespace MacGame
             TimerManager.AddNewTimer(3f, () =>
             {
                 ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
-                ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left);
-                ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
+                ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left, null, () =>
                 {
-                    // Go to another map to start the fight. This other map has a chair without Dracula in it and instead he's the boss.
-                    GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs", Game1.TransitionType.SlowFade);
+                    // Spill the wine
+                    foreach(var obj in this.GameObjects)
+                    {
+                        if ( obj is WineGlass)
+                        {
+                            ((WineGlass)obj).TossGlass();
+                            break;
+                        }
+                    }
+                });
+
+                TimerManager.AddNewTimer(1.2f, () => {
+                    ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
+                    {
+                        // Go to another map to start the fight. This other map has a chair without Dracula in it and instead he's the boss.
+                        GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromLevel.cs", Game1.TransitionType.SlowFade);
+                    });
                 });
             });
         }

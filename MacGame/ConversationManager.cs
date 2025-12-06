@@ -73,6 +73,10 @@ namespace MacGame
         private static float _showMessageTimeRemaining = 0f;
         private const float _messageTime = 3f;
 
+        // Have a small delay where you just see the black box before we start typing letters.
+        public static float typeDelayTimer = 0f;
+        public static float typeDelayTimerGoal = 0.4f;
+
         public static void AddMessage(
             string text, 
             Rectangle? imageSource = null, 
@@ -157,6 +161,8 @@ namespace MacGame
             currentLetterIndex = 0;
             letterTimer = 0;
             totalLetters = 0;
+
+            typeDelayTimer = 0f;
 
             if (Messages.Count > 0)
             {
@@ -268,21 +274,29 @@ namespace MacGame
                 }
             }
 
-            float speedMultiplier = 2f;
-            if (ca.acceptMenu)
+            if (typeDelayTimer >= typeDelayTimerGoal)
             {
-                speedMultiplier = 4f;
-            }
-            letterTimer += elapsed * speedMultiplier;
-
-            if (letterTimer >= letterTimerGoal && currentLetterIndex < totalLetters)
-            {
-                currentLetterIndex++;
-                if (currentLetterIndex % 5 == 0)
+                // Advance the letters.
+                float letterSpeed = 0.7f;
+                if (ca.acceptMenu)
                 {
-                    SoundManager.PlaySound("TypeLetter", 0.35f, 0.5f);
+                    letterSpeed *= 2;
                 }
-                letterTimer -= letterTimerGoal;
+                letterTimer += elapsed * letterSpeed;
+
+                if (letterTimer >= letterTimerGoal && currentLetterIndex < totalLetters)
+                {
+                    currentLetterIndex++;
+                    if (currentLetterIndex % 5 == 0)
+                    {
+                        SoundManager.PlaySound("TypeLetter", 0.35f, 0.5f);
+                    }
+                    letterTimer -= letterTimerGoal;
+                }
+            }
+            else
+            {
+                typeDelayTimer += elapsed;
             }
         }
 

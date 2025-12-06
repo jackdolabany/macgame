@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MacGame.Items
 {
     /// <summary>
-    /// Base class for Dracula parts (Heart, Skull, Nail, Teeth).
+    /// Base class for Dracula parts (Heart, Skull, Rib, Eye).
     /// These are unique collectibles that persist across the entire game.
     /// </summary>
     public abstract class DraculaPart : Item

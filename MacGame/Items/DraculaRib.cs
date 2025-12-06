@@ -3,18 +3,18 @@ using Microsoft.Xna.Framework.Content;
 
 namespace MacGame.Items
 {
-    public class DraculaNail : DraculaPart
+    public class DraculaRib : DraculaPart
     {
-        public DraculaNail(ContentManager content, int cellX, int cellY, Player player)
+        public DraculaRib(ContentManager content, int cellX, int cellY, Player player)
             : base(content, cellX, cellY, player, 5, 35)
         {
         }
 
-        public override bool IsCollected => Game1.StorageState.HasDraculaNail;
+        public override bool IsCollected => Game1.StorageState.HasDraculaRib;
 
         protected override void MarkAsCollected()
         {
-            Game1.StorageState.HasDraculaNail = true;
+            Game1.StorageState.HasDraculaRib = true;
         }
 
         protected override Color GetPopColor()

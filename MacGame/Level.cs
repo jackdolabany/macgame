@@ -416,9 +416,9 @@ namespace MacGame
         {
             // Make sure they have all of Dracula's parts to summon him.
             if (!Game1.StorageState.HasDraculaSkull ||                
-                !Game1.StorageState.HasDraculaNail ||
+                !Game1.StorageState.HasDraculaRib ||
                 !Game1.StorageState.HasDraculaHeart ||
-                !Game1.StorageState.HasDraculaTeeth)
+                !Game1.StorageState.HasDraculaEye)
             {
                 // Get the parts first!
                 return;

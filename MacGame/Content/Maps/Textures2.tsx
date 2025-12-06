@@ -247,12 +247,12 @@
  </tile>
  <tile id="565">
   <properties>
-   <property name="LoadClass" value="Item.DraculaNail"/>
+   <property name="LoadClass" value="Item.DraculaRib"/>
   </properties>
  </tile>
  <tile id="566">
   <properties>
-   <property name="LoadClass" value="Item.DraculaTeeth"/>
+   <property name="LoadClass" value="Item.DraculaEye"/>
   </properties>
  </tile>
 </tileset>

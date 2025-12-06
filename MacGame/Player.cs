@@ -2396,8 +2396,8 @@ namespace MacGame
                 {
                     new { TileX = 3, TileY = 35 }, // Heart
                     new { TileX = 4, TileY = 35 }, // Skull
-                    new { TileX = 5, TileY = 35 }, // Nail
-                    new { TileX = 6, TileY = 35 }  // Teeth
+                    new { TileX = 5, TileY = 35 }, // Rib
+                    new { TileX = 6, TileY = 35 }  // Eye
                 };
 
                 // Draw each part at its position around the player
@@ -2570,10 +2570,10 @@ namespace MacGame
             dracPartsFullyExpanded = false;
             this.Velocity = Vector2.Zero;
             animations.Play("idle");
-            SoundManager.PlaySound("DracPart1");
+            SoundManager.PlaySound("DracPart1", 0.25f);
             TimerManager.AddNewTimer(1.5f, () =>
             {
-                SoundManager.PlaySound("DracPart2");
+                SoundManager.PlaySound("DracPart2", 0.25f);
             });
         }
 

@@ -1205,16 +1205,16 @@ namespace MacGame
                     spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), skullSourceRect, Color.White);
                     draculaPartsX += TileSize + draculaPartsSpacing;
                 }
-                if (StorageState.HasDraculaNail)
+                if (StorageState.HasDraculaRib)
                 {
-                    var nailSourceRect = Helpers.GetTileRect(5, 35);
-                    spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), nailSourceRect, Color.White);
+                    var ribSourceRect = Helpers.GetTileRect(5, 35);
+                    spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), ribSourceRect, Color.White);
                     draculaPartsX += TileSize + draculaPartsSpacing;
                 }
-                if (StorageState.HasDraculaTeeth)
+                if (StorageState.HasDraculaEye)
                 {
-                    var teethSourceRect = Helpers.GetTileRect(6, 35);
-                    spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), teethSourceRect, Color.White);
+                    var eyeSourceRect = Helpers.GetTileRect(6, 35);
+                    spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), eyeSourceRect, Color.White);
                 }
             }
 

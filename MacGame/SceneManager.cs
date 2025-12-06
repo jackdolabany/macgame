@@ -679,12 +679,6 @@ namespace MacGame
                                 level.GameObjects.Add(spaceShip);
                                 layerDepthObjects[z].Add(spaceShip);
                             }
-                            else if (loadClass == "WineGlass")
-                            {
-                                var wineGlass = new WineGlass(contentManager, x, y);
-                                level.GameObjects.Add(wineGlass);
-                                layerDepthObjects[z].Add(wineGlass);
-                            }
                         }
                     }
                 }

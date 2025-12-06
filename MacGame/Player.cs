@@ -825,12 +825,12 @@ namespace MacGame
                     dracPartsRotationAngle += dracPartsRotationSpeed * elapsed;
                 }
 
-                // After 5 seconds, transition to the Dracula conversation
+                // After 5 seconds, transition to the Dracula fight
                 if (rotatingDracPartsTimer >= rotatingDracPartsDuration)
                 {
                     isRotatingDracParts = false;
-                    // Trigger transition to Dracula conversation with slow dramatic fade
-                    GlobalEvents.FireDoorEntered(this, "DraculaConvo", "", "FromPlayer", Game1.TransitionType.SlowFade);
+                    // Trigger transition to Dracula fight with slow dramatic fade
+                    GlobalEvents.FireDoorEntered(this, "Dracula", "", "FromPlayer", Game1.TransitionType.SlowFade);
                 }
             }
         }

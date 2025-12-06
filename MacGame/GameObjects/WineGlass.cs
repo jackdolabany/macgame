@@ -9,7 +9,6 @@ namespace MacGame
     public class WineGlass : GameObject
     {
         private bool hasBeenTossed = false;
-        private bool hasLanded = false;
 
         public WineGlass(ContentManager content, int x, int y)
         {
@@ -35,7 +34,6 @@ namespace MacGame
             {
                 hasBeenTossed = true;
                 IsAffectedByGravity = true;
-                isTileColliding = true;
 
                 // Give it a velocity moving left and up slightly
                 Velocity = new Vector2(-150, -200);
@@ -49,10 +47,15 @@ namespace MacGame
             base.Update(gameTime, elapsed);
 
             // Break when it hits the ground
-            if (hasBeenTossed && !hasLanded && OnGround && !wasOnGround)
+            if (hasBeenTossed && Enabled)
             {
-                hasLanded = true;
-                Break();
+                // Smash when the center hits the ground
+                var center = this.CollisionCenter;
+                var centerSquare = Game1.CurrentMap.GetMapSquareAtPixel(center);
+                if (centerSquare != null && !centerSquare.Passable)
+                {
+                    Break();
+                }
             }
         }
 

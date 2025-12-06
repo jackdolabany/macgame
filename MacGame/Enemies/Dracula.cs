@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using MacGame.DisplayComponents;
+﻿using MacGame.DisplayComponents;
 using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 using TileEngine;
 
 namespace MacGame.Enemies
@@ -34,13 +35,13 @@ namespace MacGame.Enemies
 
         public enum DraculaState
         {
-            Idle,
+            Sitting,
             Attacking,
             Dying,
             Dead
         }
 
-        public DraculaState state = DraculaState.Idle;
+        public DraculaState _state = DraculaState.Sitting;
 
         Rectangle _hittableCollisionRectangle;
 
@@ -57,6 +58,8 @@ namespace MacGame.Enemies
         private float flashEffectTimer = flashEffectTimerGoal;
         private Vector2 flashEffectLocation;
 
+        private WineGlass _wineGlass;
+
         public Dracula(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -66,12 +69,23 @@ namespace MacGame.Enemies
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\ReallyBigTextures");
+
+            var sitting = new AnimationStrip(textures, Helpers.GetReallyBigTileRect(1, 5), 1, "sitting");
+            sitting.LoopAnimation = false;
+            sitting.FrameLength = 0.05f;
+            animations.Add(sitting);
+
+            var tossWine = new AnimationStrip(textures, Helpers.GetReallyBigTileRect(2, 5), 1, "tossWine");
+            tossWine.LoopAnimation = false;
+            tossWine.FrameLength = 0.4f;
+            animations.Add(tossWine);
+
             var idle = new AnimationStrip(textures, Helpers.GetReallyBigTileRect(0, 2), 1, "idle");
             idle.LoopAnimation = false;
             idle.FrameLength = 0.05f;
             animations.Add(idle);
 
-            animations.Play("idle");
+            animations.Play("sitting");
 
             var openCape = new AnimationStrip(textures, Helpers.GetReallyBigTileRect(0, 2), 2, "openCape");
             openCape.LoopAnimation = false;
@@ -95,10 +109,9 @@ namespace MacGame.Enemies
 
             SetWorldLocationCollisionRectangle(8, 20);
 
-            // we'll set the collision rectangle to empty so that the player can walk through the boss
-            // And reset it after you talk to drac
+            // Store the current value since he'll sometimes be not hittable.
+            // we can toggle this rectangle empty as needed.
             _hittableCollisionRectangle = collisionRectangle;
-            CollisionRectangle = Rectangle.Empty;
 
             FireBalls = new List<DraculaFireball>();
             for (int i = 0; i < 3; i++)
@@ -135,6 +148,8 @@ namespace MacGame.Enemies
             // Shift the blue source over 2 pixels to get the white.
             whiteSource = blueSource;
             whiteSource.X += 2 * Game1.TileScale;
+
+            _wineGlass = new WineGlass(content, 0 , 0);
         }
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
@@ -174,7 +189,7 @@ namespace MacGame.Enemies
             if (Health <= 0)
             {
                 // DEATH!!!
-                state = DraculaState.Dying;
+                _state = DraculaState.Dying;
                 Dead = true;
                 Enabled = false;
                 this.velocity = Vector2.Zero;
@@ -228,24 +243,41 @@ namespace MacGame.Enemies
 
             Sock.Enabled = false;
 
-            TimerManager.AddNewTimer(1.5f, () =>
-            {
-                state = DraculaState.Attacking;
-            });
-
+            // Set the locations he'll teleport to
             var offset = 6 * TileMap.TileSize;
 
             var mapWidth = Game1.CurrentLevel.Map.MapWidth * TileMap.TileSize;
-
             middleLocation = new Vector2(mapWidth / 2f, WorldLocation.Y);
             leftLocation = new Vector2(middleLocation.X - offset, middleLocation.Y);
             rightLocation = new Vector2(middleLocation.X + offset, middleLocation.Y);
 
             locations = new[] { leftLocation, middleLocation, rightLocation };
 
-            offScreenLocation = new Vector2(-500, -500);
+            // To start, move drac so he's sitting in his chair.
+            this.WorldLocation += new Vector2(0, -96);
 
-            this.worldLocation = offScreenLocation;
+            // Adjust the wine glass based on his new chair location.
+            _wineGlass.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+            _wineGlass.WorldLocation = new Vector2(this.WorldLocation.X - 24, this.WorldLocation.Y - 40);
+
+            // Start the conversation.
+            var DraculaConversationSourceRect = Helpers.GetReallyBigTileRect(3, 1);
+            TimerManager.AddNewTimer(3f, () =>
+            {
+                ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left, null, () =>
+                {
+                    _wineGlass.TossGlass();
+                    animations.Play("tossWine").FollowedBy("sitting");
+                });
+
+                TimerManager.AddNewTimer(1.2f, () => {
+                    ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
+                    {
+                        _state = DraculaState.Attacking;
+                    });
+                });
+            });
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -267,7 +299,11 @@ namespace MacGame.Enemies
                 flashEffectTimer += elapsed;
             }
 
-            if (state == DraculaState.Attacking)
+            if (_state == DraculaState.Sitting)
+            {
+
+            }
+            else if (_state == DraculaState.Attacking)
             {
                 var isOnScreen = worldLocation != offScreenLocation;
 
@@ -318,7 +354,7 @@ namespace MacGame.Enemies
                 }
             }
 
-            if (state == DraculaState.Dying)
+            if (_state == DraculaState.Dying)
             {
                 revealSockTimer += elapsed;
                 if (revealSockTimer > 3f)
@@ -326,13 +362,15 @@ namespace MacGame.Enemies
                     Sock.Enabled = true;
                     Sock.FadeIn();
                     revealSockTimer = 0f;
-                    state = DraculaState.Dead;
+                    _state = DraculaState.Dead;
                 }
             }
 
             int previousAnimationFrame = animations.CurrentAnimation.currentFrameIndex;
 
             base.Update(gameTime, elapsed);
+
+            _wineGlass.Update(gameTime, elapsed);
 
             if (animations.CurrentAnimationName == "openCape" && previousAnimationFrame == 0 && animations.CurrentAnimation.currentFrameIndex == 1)
             {
@@ -356,6 +394,8 @@ namespace MacGame.Enemies
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+
+            _wineGlass.Draw(spriteBatch);
 
             // Draw the flash effect for when Dracula is disappearing.
             if (flashEffectTimer < flashEffectTimerGoal)

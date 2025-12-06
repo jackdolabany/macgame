@@ -32,6 +32,7 @@ namespace MacGame.Enemies
         Vector2 offScreenLocation;
 
         float disappearTimer = 0f;
+        float dissappearTimerGoal = 1.6f;
 
         public enum DraculaState
         {
@@ -54,11 +55,25 @@ namespace MacGame.Enemies
         // Used to create the flash effect when Drac disappears.
         private Rectangle whiteSource;
         private Rectangle blueSource;
-        private const float flashEffectTimerGoal = 0.7f;
-        private float flashEffectTimer = flashEffectTimerGoal;
+        private const float flashEffectTimerGrowGoal = 0.7f;
+        private const float flashEffectTimerShrinkGoal = 0.35f;
+        private float flashEffectTimer = flashEffectTimerGrowGoal;
         private Vector2 flashEffectLocation;
 
         private WineGlass _wineGlass;
+
+        // Must be behind the player while sitting
+        private float _sittingDrawDepth;
+        private float _regularDrawDepth;
+
+        private enum FlashEffectState
+        {
+            None,
+            Growing,
+            Shrinking
+        }
+
+        private FlashEffectState _flashEffectState = FlashEffectState.None;
 
         public Dracula(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -112,6 +127,7 @@ namespace MacGame.Enemies
             // Store the current value since he'll sometimes be not hittable.
             // we can toggle this rectangle empty as needed.
             _hittableCollisionRectangle = collisionRectangle;
+            collisionRectangle = Rectangle.Empty;
 
             FireBalls = new List<DraculaFireball>();
             for (int i = 0; i < 3; i++)
@@ -257,6 +273,9 @@ namespace MacGame.Enemies
             this.WorldLocation += new Vector2(0, -96);
 
             // Adjust the wine glass based on his new chair location.
+            _sittingDrawDepth = _player.DrawDepth + (20 * Game1.MIN_DRAW_INCREMENT);
+            _regularDrawDepth = this.DrawDepth;
+            this.SetDrawDepth(_sittingDrawDepth);
             _wineGlass.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
             _wineGlass.WorldLocation = new Vector2(this.WorldLocation.X - 24, this.WorldLocation.Y - 40);
 
@@ -294,25 +313,45 @@ namespace MacGame.Enemies
             Game1.BossHealth = Health;
             Game1.BossName = "Dracula";
 
-            if (flashEffectTimer < flashEffectTimerGoal)
+            // The point where the flash effect goes from growing to shrinking.
+            // This is when Dracula will move.
+            bool isFlashEffectMaxed = false;
+
+            if (_flashEffectState != FlashEffectState.None)
             {
                 flashEffectTimer += elapsed;
+
+                if (_flashEffectState == FlashEffectState.Growing)
+                {
+                    if (flashEffectTimer > flashEffectTimerGrowGoal)
+                    {
+                        _flashEffectState = FlashEffectState.Shrinking;
+                        flashEffectTimer = 0;
+                        isFlashEffectMaxed = true;
+                    }
+                }
+
+                if (_flashEffectState == FlashEffectState.Shrinking)
+                {
+                    if (flashEffectTimer > flashEffectTimerShrinkGoal)
+                    {
+                        _flashEffectState = FlashEffectState.None;
+                        flashEffectTimer = 0;
+                    }
+                }
             }
 
-            if (_state == DraculaState.Sitting)
-            {
-
-            }
-            else if (_state == DraculaState.Attacking)
+            if (_state == DraculaState.Attacking)
             {
                 var isOnScreen = worldLocation != offScreenLocation;
 
                 disappearTimer += elapsed;
 
-                if (disappearTimer > 1.6f && flashEffectTimer >= flashEffectTimerGoal)
+                if (disappearTimer > dissappearTimerGoal)
                 {
                     SoundManager.PlaySound("Disappear");
                     flashEffectTimer = 0f;
+                    _flashEffectState = FlashEffectState.Growing;
 
                     if (isOnScreen)
                     {
@@ -324,10 +363,10 @@ namespace MacGame.Enemies
                         var locationIndex = Game1.Randy.Next(0, locations.Length);
                         flashEffectLocation = locations[locationIndex];
                     }
-                    
+                    disappearTimer = 0f;
                 }
 
-                if (disappearTimer > 2f)
+                if (isFlashEffectMaxed)
                 {
                     disappearTimer = 0f;
                     if (isOnScreen)
@@ -337,6 +376,7 @@ namespace MacGame.Enemies
                     }
                     else
                     {
+                        SetDrawDepth(_regularDrawDepth);
                         this.worldLocation = flashEffectLocation;
                         Flipped = _player.WorldLocation.X < this.worldLocation.X;
                         animations.Play("openCape");
@@ -344,11 +384,11 @@ namespace MacGame.Enemies
                 }
 
                 // You can only hit him or be hit when the flash effect is no longer on screen.
-                if (isOnScreen && flashEffectTimer >= flashEffectTimerGoal)
+                if (isOnScreen && _flashEffectState == FlashEffectState.Shrinking && collisionRectangle == Rectangle.Empty)
                 {
                     CollisionRectangle = _hittableCollisionRectangle;
                 }
-                else
+                else if (!isOnScreen || _flashEffectState == FlashEffectState.Growing || _state != DraculaState.Attacking)
                 {
                     CollisionRectangle = Rectangle.Empty;
                 }
@@ -357,7 +397,7 @@ namespace MacGame.Enemies
             if (_state == DraculaState.Dying)
             {
                 revealSockTimer += elapsed;
-                if (revealSockTimer > 3f)
+                if (revealSockTimer > 4f)
                 {
                     Sock.Enabled = true;
                     Sock.FadeIn();
@@ -397,25 +437,32 @@ namespace MacGame.Enemies
 
             _wineGlass.Draw(spriteBatch);
 
-            // Draw the flash effect for when Dracula is disappearing.
-            if (flashEffectTimer < flashEffectTimerGoal)
+            if (_flashEffectState != FlashEffectState.None && flashEffectTimer < flashEffectTimerGrowGoal)
             {
                 const int fullWidth = 100;
-                var currentWidth = (fullWidth * (flashEffectTimer / flashEffectTimerGoal)).ToInt();
 
-                float flashEffectDepth = this.DrawDepth - Game1.MIN_DRAW_INCREMENT * 10;
+                int currentWidth;
+                if (_flashEffectState == FlashEffectState.Growing)
+                {
+                    currentWidth = (fullWidth * (flashEffectTimer / flashEffectTimerGrowGoal)).ToInt();
+                }
+                else
+                {
+                    currentWidth = fullWidth - (fullWidth * (flashEffectTimer / flashEffectTimerShrinkGoal)).ToInt();
+                }
+
+                // Always in front of Drac and Mac. We mess around with the draw depths so just consider both.
+                float flashEffectDepth = Math.Min(this.DrawDepth, _player.DrawDepth) - Game1.MIN_DRAW_INCREMENT * 10;
 
                 Rectangle blueDestination = new Rectangle((flashEffectLocation.X - (currentWidth / 2f)).ToInt(), 0, currentWidth, Game1.CurrentLevel.Map.MapHeightInPixels);
 
                 spriteBatch.Draw(Game1.TileTextures, blueDestination, blueSource, Color.White, 0f, Vector2.Zero, SpriteEffects.None, flashEffectDepth);
-
 
                 flashEffectDepth -= (Game1.MIN_DRAW_INCREMENT * 10);
 
                 Rectangle whiteDestination = blueDestination;
                 whiteDestination.X += 2 * Game1.TileScale;
                 whiteDestination.Width -= 4 * Game1.TileScale;
-
 
                 spriteBatch.Draw(Game1.TileTextures, whiteDestination, whiteSource, Color.White, 0f, Vector2.Zero, SpriteEffects.None, flashEffectDepth);
             }

@@ -13,7 +13,7 @@ namespace MacGame
         public WineGlass(ContentManager content, int x, int y)
         {
             var texture = content.Load<Texture2D>(@"Textures\Textures2");
-            this.DisplayComponent = new StaticImageDisplay(texture, Helpers.GetTileRect(4, 32));
+            this.DisplayComponent = new StaticImageDisplay(texture, Helpers.GetTileRect(3, 32));
 
             Enabled = true;
             WorldLocation = new Vector2(x * TileMap.TileSize + TileMap.TileSize / 2, (y + 1) * TileMap.TileSize);

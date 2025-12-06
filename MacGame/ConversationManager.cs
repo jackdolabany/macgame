@@ -75,7 +75,7 @@ namespace MacGame
 
         // Have a small delay where you just see the black box before we start typing letters.
         public static float typeDelayTimer = 0f;
-        public static float typeDelayTimerGoal = 0.4f;
+        public static float typeDelayTimerGoal = 0.3f;
 
         public static void AddMessage(
             string text, 
@@ -277,7 +277,7 @@ namespace MacGame
             if (typeDelayTimer >= typeDelayTimerGoal)
             {
                 // Advance the letters.
-                float letterSpeed = 0.7f;
+                float letterSpeed = 0.8f;
                 if (ca.acceptMenu)
                 {
                     letterSpeed *= 2;

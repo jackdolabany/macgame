@@ -41,6 +41,8 @@ namespace MacGame
 
         public bool HasDraculaEye { get; set; } = false;
 
+        public bool HasDraculaTeeth { get; set; } = false;
+
 
         /// <param name="saveSlot">1 through 3</param>
         public StorageState(int saveSlot)
@@ -83,6 +85,7 @@ namespace MacGame
             clone.HasDraculaSkull = this.HasDraculaSkull;
             clone.HasDraculaRib = this.HasDraculaRib;
             clone.HasDraculaEye = this.HasDraculaEye;
+            clone.HasDraculaTeeth = this.HasDraculaTeeth;
             return clone;
         }
 

@@ -1215,6 +1215,12 @@ namespace MacGame
                 {
                     var eyeSourceRect = Helpers.GetTileRect(6, 35);
                     spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), eyeSourceRect, Color.White);
+                    draculaPartsX += TileSize + draculaPartsSpacing;
+                }
+                if (StorageState.HasDraculaTeeth)
+                {
+                    var teethSourceRect = Helpers.GetTileRect(7, 35);
+                    spriteBatch.Draw(TileTextures2, new Vector2(draculaPartsX, draculaPartsYPos), teethSourceRect, Color.White);
                 }
             }
 

@@ -418,7 +418,8 @@ namespace MacGame
             if (!Game1.StorageState.HasDraculaSkull ||                
                 !Game1.StorageState.HasDraculaRib ||
                 !Game1.StorageState.HasDraculaHeart ||
-                !Game1.StorageState.HasDraculaEye)
+                !Game1.StorageState.HasDraculaEye ||
+                !Game1.StorageState.HasDraculaTeeth)
             {
                 // Get the parts first!
                 return;

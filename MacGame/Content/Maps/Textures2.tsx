@@ -255,4 +255,9 @@
    <property name="LoadClass" value="Item.DraculaEye"/>
   </properties>
  </tile>
+ <tile id="567">
+  <properties>
+   <property name="LoadClass" value="Item.DraculaTeeth"/>
+  </properties>
+ </tile>
 </tileset>

@@ -2391,20 +2391,21 @@ namespace MacGame
                 // Draw depth just behind the player
                 var depth = this.DisplayComponent.DrawDepth - Game1.MIN_DRAW_INCREMENT;
 
-                // Define the 4 parts and their tile positions
+                // Define the parts and their tile positions
                 var parts = new[]
                 {
                     new { TileX = 3, TileY = 35 }, // Heart
                     new { TileX = 4, TileY = 35 }, // Skull
                     new { TileX = 5, TileY = 35 }, // Rib
-                    new { TileX = 6, TileY = 35 }  // Eye
+                    new { TileX = 6, TileY = 35 }, // Eye
+                    new { TileX = 7, TileY = 35 }  // Teeth
                 };
 
                 // Draw each part at its position around the player
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < parts.Length; i++)
                 {
                     // Calculate angle for this part (evenly spaced around the circle)
-                    float angleOffset = (float)(i * Math.PI / 2); // 0°, 90°, 180°, 270°
+                    float angleOffset = (float)(i * (MathHelper.TwoPi / parts.Length));
                     float totalAngle = dracPartsRotationAngle + angleOffset;
 
                     // Calculate position offset from player center

@@ -43,6 +43,8 @@ namespace MacGame
 
         public bool HasDraculaTeeth { get; set; } = false;
 
+        public bool HasBeatenDracula { get; set; } = false;
+
         public bool IsNerdHitByMac { get; set; } = false;
 
         /// <param name="saveSlot">1 through 3</param>

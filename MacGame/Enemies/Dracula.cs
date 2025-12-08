@@ -113,7 +113,7 @@ namespace MacGame.Enemies
             Health = MaxHealth;
 
             // TODO: Undo
-            Health = 1;
+            //Health = 1;
 
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = true;
@@ -230,6 +230,9 @@ namespace MacGame.Enemies
                     var randomDirection = Game1.Randy.NextVector();
                     bat.Velocity = randomDirection * speed;
                 }
+
+                // We'll set this for now, but we can wait until they collect the sock to save it.
+                Game1.StorageState.HasBeatenDracula = true;
 
             }
         }

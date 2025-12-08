@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World3";
+        public const string StartingWorld = "World3GhostHouse";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -1187,7 +1187,7 @@ namespace MacGame
 
             // Draw Dracula parts to the right of current item (or at left if no current item)
             // But only if we are in level 3, the Haunted campground.
-            if (CurrentLevel.LevelNumber == 3)
+            if (CurrentLevel.LevelNumber == 3 && CurrentLevel.Name != "Dracula" && !Game1.StorageState.HasBeatenDracula)
             {
                 int draculaPartsYPos = TileSize + 20;
                 const int draculaPartsSpacing = 4;

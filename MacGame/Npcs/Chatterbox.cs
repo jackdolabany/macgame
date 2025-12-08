@@ -24,7 +24,7 @@ namespace MacGame.Npcs
             "One time I tried to fart in a jar and save it",
             "You can stuff your sorries in a sack mister!",
             "Why does Ottie want these stupid smelly socks anyway?",
-            "Why would I give my sock to a scruffy nerf herder like you anyway?",
+            "Why would I give my sock to a scruffy nerf herder like you?",
             "Without my sock, life would have no meaning. I would rather die than give up my sock. Sock is everything. Sock is life.",
             "OK fine. Here, have my sock"
         };
@@ -49,7 +49,7 @@ namespace MacGame.Npcs
             Flipped = true;
         }
 
-        public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(0, 32);
+        public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(3, 4);
 
         public override void InitiateConversation()
         {

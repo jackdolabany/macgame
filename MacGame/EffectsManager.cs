@@ -131,8 +131,8 @@ namespace MacGame
                         Vector2.Zero,
                         100,
                         40,
-                        color * 0.8f,
-                        Color.White * 0.8f);
+                        color,
+                        color * 0.6f);
                 pop.Scale = 1f * Game1.TileScale;
                 pop.FinalScale = 1f * Game1.TileScale;
                 pop.SetStaticImage(Game1.TileTextures, WhiteSquareSourceRectangle);

@@ -230,6 +230,11 @@
    <property name="LoadClass" value="Npc.Robot"/>
   </properties>
  </tile>
+ <tile id="500">
+  <properties>
+   <property name="LoadClass" value="Npc.Bully1"/>
+  </properties>
+ </tile>
  <tile id="512">
   <properties>
    <property name="LoadClass" value="Npc.Chatterbox"/>
@@ -237,7 +242,17 @@
  </tile>
  <tile id="516">
   <properties>
-   <property name="LoadClass" value="WineGlass"/>
+   <property name="LoadClass" value="Npc.Bully2"/>
+  </properties>
+ </tile>
+ <tile id="532">
+  <properties>
+   <property name="LoadClass" value="Npc.Bully3"/>
+  </properties>
+ </tile>
+ <tile id="548">
+  <properties>
+   <property name="LoadClass" value="Npc.Nerd"/>
   </properties>
  </tile>
  <tile id="563">

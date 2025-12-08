@@ -43,6 +43,11 @@ namespace MacGame
         /// </summary>
         public JobState JobState { get; set; } = JobState.NotAccepted;
 
+        /// <summary>
+        /// Only for the Dracula boss. Don't want to hear his conversation each time you fight him.
+        /// </summary>
+        public bool HasHeardDraculaConversation = false;
+
         public void Reset()
         {
             HubDoorNameYouCameFrom = "";

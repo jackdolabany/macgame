@@ -12,10 +12,6 @@ namespace MacGame.Doors
     /// </summary>
     public class OpenCloseDoor : Door
     {
-        /// <summary>
-        /// If the door is coming from a hub world and going to a sub world display the hints from that sub world.
-        /// </summary>
-        public bool IsToSubworld = false;
 
         public int SocksNeeded;
 

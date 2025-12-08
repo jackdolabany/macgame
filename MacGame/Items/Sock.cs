@@ -22,6 +22,12 @@ namespace MacGame.Items
         private Color Color = Color.White;
 
         /// <summary>
+        /// Set this to do something after the sock is collected. Or, if it's already been collected, it'll do it a few seconds after it is revealed.
+        /// Use this for socks that appear after you beat a boss but then you need to warp back to another level or something.
+        /// </summary>
+        public Action? CollectOrRevealAction;
+
+        /// <summary>
         /// If this time is > 0 you can't collect the sock. This gives it a small period of time after fading in where you
         /// can't collect it so you don't insta-collect it if you're already on it and it's weird.
         /// </summary>
@@ -64,7 +70,6 @@ namespace MacGame.Items
             {
                 AlreadyCollected = true;
                 Color = Color.White * 0.5f;
-                Enabled = true;
             }
         }
 
@@ -123,7 +128,12 @@ namespace MacGame.Items
             // Speed it up
             _animationDisplay.CurrentAnimation!.FrameLength /= 4;
 
-            // take the player back to the main room. Reset tacos, health, etc. Save the game.
+            if (CollectOrRevealAction != null)
+            {
+                TimerManager.AddNewTimer(2, CollectOrRevealAction);
+            }
+
+            // Used by the Game class to temporarily pause state to play the collected music and stuff.
             GlobalEvents.FireSockCollected(this, EventArgs.Empty);
             
             base.Collect(player);
@@ -157,6 +167,11 @@ namespace MacGame.Items
             this.DisplayComponent.TintColor = Color.Transparent;
             SoundManager.PlaySound("SockReveal");
             blockFromCollectingTime = fadeInTimerGoal + 0.5f;
+
+            if (AlreadyCollected && CollectOrRevealAction != null)
+            {
+                TimerManager.AddNewTimer(4, CollectOrRevealAction);
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="21" height="15" tilewidth="8" tileheight="8" infinite="0" nextlayerid="20" nextobjectid="7">
  <properties>
+  <property name="CustomRestartDoorName" value="DraculaExit"/>
+  <property name="CustomRestartLevelName" value="World3GhostHouse"/>
   <property name="LevelNumber" value="3"/>
  </properties>
  <tileset firstgid="1" source="Textures.tsx"/>

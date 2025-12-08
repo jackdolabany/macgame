@@ -113,7 +113,7 @@ namespace MacGame.Enemies
             Health = MaxHealth;
 
             // TODO: Undo
-            //Health = 1;
+            Health = 1;
 
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = true;
@@ -259,6 +259,11 @@ namespace MacGame.Enemies
 
             Sock.Enabled = false;
 
+            Sock.CollectOrRevealAction = () =>
+            {
+                GlobalEvents.FireDoorEntered(this, "World3GhostHouse", "DraculaExit", "FromDracula", Game1.TransitionType.SlowFade);
+            };
+
             // Set the locations he'll teleport to
             var offset = 6 * TileMap.TileSize;
 
@@ -280,23 +285,33 @@ namespace MacGame.Enemies
             _wineGlass.WorldLocation = new Vector2(this.WorldLocation.X - 24, this.WorldLocation.Y - 40);
 
             // Start the conversation.
-            var DraculaConversationSourceRect = Helpers.GetReallyBigTileRect(3, 1);
-            TimerManager.AddNewTimer(3f, () =>
+            if (Game1.LevelState.HasHeardDraculaConversation)
             {
-                ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
-                ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left, null, () =>
+                _state = DraculaState.Attacking;
+                _wineGlass.TossGlass();
+            }
+            else
+            {
+                var DraculaConversationSourceRect = Helpers.GetReallyBigTileRect(3, 1);
+                TimerManager.AddNewTimer(3f, () =>
                 {
-                    _wineGlass.TossGlass();
-                    animations.Play("tossWine").FollowedBy("sitting");
-                });
-
-                TimerManager.AddNewTimer(1.2f, () => {
-                    ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
+                    ConversationManager.AddMessage("Behold! I am Dracula, the dark prince. I am evil made flesh.", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right);
+                    ConversationManager.AddMessage("Hi, I'm Mac.", ConversationManager.PlayerSourceRectangle, ConversationManager.ImagePosition.Left, null, () =>
                     {
-                        _state = DraculaState.Attacking;
+                        _wineGlass.TossGlass();
+                        animations.Play("tossWine").FollowedBy("sitting");
+                    });
+
+                    TimerManager.AddNewTimer(1.2f, () =>
+                    {
+                        ConversationManager.AddMessage("What is a Mac? A miserable little pile of pixels. Have at you!", DraculaConversationSourceRect, ConversationManager.ImagePosition.Right, null, () =>
+                        {
+                            _state = DraculaState.Attacking;
+                            Game1.LevelState.HasHeardDraculaConversation = true;
+                        });
                     });
                 });
-            });
+            }
         }
 
         public override void Update(GameTime gameTime, float elapsed)

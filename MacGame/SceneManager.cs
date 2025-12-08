@@ -343,13 +343,13 @@ namespace MacGame
                                     {
                                         door.GoToDoorName = props["GoToDoor"];
                                     }
-                                    if (props.ContainsKey("IsToSubworld"))
-                                    {
-                                        ((OpenCloseDoor)door).IsToSubworld = props["IsToSubworld"] == "1";
-                                    }
                                     if (props.ContainsKey("SocksNeeded"))
                                     {
                                         ((OpenCloseDoor)door).SocksNeeded = int.Parse(props["SocksNeeded"]);
+                                    }
+                                    if (props.ContainsKey("IsExitOnly"))
+                                    {
+                                        door.IsExitOnly = props["IsExitOnly"].ToBoolean();
                                     }
 
                                 });
@@ -371,7 +371,7 @@ namespace MacGame
                                 }
 
                                 // Validate that the right props were set.
-                                if (string.IsNullOrEmpty(door.GoToMap) && string.IsNullOrEmpty(door.GoToDoorName))
+                                if (!door.IsExitOnly && string.IsNullOrEmpty(door.GoToMap) && string.IsNullOrEmpty(door.GoToDoorName))
                                 {
                                     throw new Exception("Doors must have a custom object on the map that specify the map or door it goes to (or both).");
                                 }

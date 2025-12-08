@@ -14,6 +14,10 @@ namespace MacGame.Npcs
         private bool _isFallen = false;
         private Sock _nerdSock;
         private bool _isInitialized = false;
+        private Vector2 _startingPosition;
+        private bool _movingRight = true;
+        private const float MOVE_DISTANCE = 12f;
+        private const float MOVE_SPEED = 40f;
 
         public Nerd(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -35,6 +39,8 @@ namespace MacGame.Npcs
             animations.Add(fall);
 
             SetWorldLocationCollisionRectangle(8, 8);
+
+            _startingPosition = this.WorldLocation;
 
             animations.Play("idle");
         }
@@ -92,6 +98,34 @@ namespace MacGame.Npcs
             }
 
             base.Update(gameTime, elapsed);
+
+            // Move back and forth while bullies are still throwing fruit
+            if (!Game1.StorageState.IsNerdHitByMac)
+            {
+                // Move left or right
+                if (_movingRight)
+                {
+                    this.WorldLocation = new Vector2(this.WorldLocation.X + MOVE_SPEED * elapsed, this.WorldLocation.Y);
+
+                    // Check if we've moved far enough right
+                    if (this.WorldLocation.X >= _startingPosition.X + MOVE_DISTANCE)
+                    {
+                        _movingRight = false;
+                        Flipped = true;
+                    }
+                }
+                else
+                {
+                    this.WorldLocation = new Vector2(this.WorldLocation.X - MOVE_SPEED * elapsed, this.WorldLocation.Y);
+
+                    // Check if we've moved far enough left
+                    if (this.WorldLocation.X <= _startingPosition.X - MOVE_DISTANCE)
+                    {
+                        _movingRight = true;
+                        Flipped = false;
+                    }
+                }
+            }
 
             // Check collision with player's apples
             if (!Game1.StorageState.IsNerdHitByMac && !_isFallen && _player.Apples != null)

@@ -57,7 +57,7 @@ namespace MacGame
                 3,
                 new List<SockInfo>
                 {
-                    new SockInfo { Name = "DraculaSock", Hint = "To resurrect Dracula you must find his 3 remains." },
+                    new SockInfo { Name = "DraculaSock", Hint = "To resurrect Dracula you must find his 5 remains." },
                     new SockInfo { Name = "QuadcopterSock", Hint = "Fight the drone wars you must." },
                     new SockInfo { Name = "CarSock", Hint = "Pauly the snake can make you an offer you shouldn't refuse." },
                     new SockInfo { Name = "Wallsock", Hint = "A while ago I stashed a sock in the walls." },

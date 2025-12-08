@@ -8,7 +8,7 @@ namespace MacGame.Npcs
         protected override int TextureX => 4;
         protected override int TextureY => 33;
         protected override string BullyMessage => "I just love blasting nerds with fruit!";
-        protected override string BullyMessageAfterNerdHit => "Brutal. Mac, what's wrong with you?";
+        protected override string BullyMessageAfterNerdHit => "Brutal, Mac. You took it too far. What's wrong with you?";
         protected override Color FruitColor => Pallette.Yellow;
         public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(5, 5);
 

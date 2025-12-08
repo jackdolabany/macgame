@@ -25,6 +25,8 @@ namespace MacGame.Npcs
         private Nerd _nerd;
         private float _throwTimer;
         private float _nextThrowTime;
+        private float _jumpTimer;
+        private float _nextJumpTime;
         private static Random _random = new Random();
         private bool _isThrowing = false;
         private bool _isInitialized = false;
@@ -59,6 +61,10 @@ namespace MacGame.Npcs
             // Set initial throw timer (random between 1-3 seconds)
             _nextThrowTime = GetRandomThrowTime();
             _throwTimer = 0;
+
+            // Set initial jump timer (random between 2-3 seconds)
+            _nextJumpTime = GetRandomJumpTime();
+            _jumpTimer = 0;
 
             animations.Play("idle");
         }
@@ -99,7 +105,7 @@ namespace MacGame.Npcs
                 if (_nerd != null)
                 {
                     Rectangle fruitRect = new Rectangle((int)_fruitLocation.X - 4, (int)_fruitLocation.Y - 4, 8, 8);
-                    if (fruitRect.Contains(_nerd.WorldCenter))
+                    if (_nerd.CollisionRectangle.Intersects(fruitRect))
                     {
                         SmashFruit();
                     }
@@ -136,6 +142,20 @@ namespace MacGame.Npcs
                 ThrowFruit();
                 _throwTimer = 0;
                 _nextThrowTime = GetRandomThrowTime();
+            }
+
+            // Jump randomly in excitement while throwing fruit.
+            if (!Game1.StorageState.IsNerdHitByMac)
+            {
+                _jumpTimer += elapsed;
+
+                // Time to jump
+                if (_jumpTimer >= _nextJumpTime && onGround)
+                {
+                    Jump();
+                    _jumpTimer = 0;
+                    _nextJumpTime = GetRandomJumpTime();
+                }
             }
         }
 
@@ -183,6 +203,18 @@ namespace MacGame.Npcs
         {
             // Random time between 1 and 3 seconds
             return 1.0f + (float)(_random.NextDouble() * 2.0);
+        }
+
+        private float GetRandomJumpTime()
+        {
+            // Random time between 2 and 3 seconds
+            return 2.0f + (float)(_random.NextDouble() * 1.0);
+        }
+
+        private void Jump()
+        {
+            // Small jump
+            velocity.Y = -220;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

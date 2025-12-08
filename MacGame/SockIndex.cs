@@ -66,6 +66,7 @@ namespace MacGame
                     new SockInfo { Name = "DisappearBlockSock", Hint = "Socks eventually appear where blocks disappear." },
                     new SockInfo { Name = "HauntedMazeSock", Hint = "There's a ghastly maze inside the haunted house, with a wicked smell at the end." },
                     new SockInfo { Name = "GhostBoxPuzzleSock", Hint = "Ghostly treasure chest puzzles lead to a stinky sock smell." },
+                    new SockInfo { Name = "ChatterboxSock", Hint = "Frankie has a sock. Maybe you can talk him out of it." },
                 }
             },
             {

@@ -48,11 +48,19 @@ namespace MacGame
         /// </summary>
         public bool HasHeardDraculaConversation = false;
 
+        /// <summary>
+        /// Tracks how many times the player has talked to the Chatterbox NPC in the current level session.
+        /// </summary>
+        public int ChatterboxConversationCount = 0;
+
         public void Reset()
         {
             HubDoorNameYouCameFrom = "";
             MapNameToCollectedTacos.Clear();
             WaterHeight = WaterHeight.High;
+            JobState = JobState.NotAccepted;
+            HasHeardDraculaConversation = false;
+            ChatterboxConversationCount = 0;
         }
     }
 

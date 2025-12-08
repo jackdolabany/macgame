@@ -230,6 +230,11 @@
    <property name="LoadClass" value="Npc.Robot"/>
   </properties>
  </tile>
+ <tile id="512">
+  <properties>
+   <property name="LoadClass" value="Npc.Chatterbox"/>
+  </properties>
+ </tile>
  <tile id="516">
   <properties>
    <property name="LoadClass" value="WineGlass"/>

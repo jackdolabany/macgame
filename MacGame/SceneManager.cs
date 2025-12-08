@@ -83,6 +83,10 @@ namespace MacGame
             }
             var isNewLevel = level.LevelNumber != priorLevelNumber;
             player.ResetStateForLevelTransition(isNewLevel);
+            if (isNewLevel)
+            {
+                Game1.LevelState.Reset();
+            }
 
             if (map.Properties.ContainsKey("IsSpace"))
             {

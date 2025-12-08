@@ -12,8 +12,15 @@ using TileEngine;
 
 namespace MacGame.Npcs
 {
-  
 
+    /// <summary>
+    /// To give NPCs conversations, decorate them with an Object modifier with the Convo property. 
+    /// They can be simple, or more complex. Examples:
+    /// 
+    /// Convo - Me:The marks on your head look like stars in the sky
+    /// Convo - Me:Animals here love to talk.;Mac:I'm a great listener;Me:Meow
+    /// 
+    /// </summary>
     public abstract class Npc : GameObject
     {
         

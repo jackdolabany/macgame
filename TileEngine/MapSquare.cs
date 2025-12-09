@@ -28,6 +28,12 @@ namespace TileEngine
             }
         }
 
+        /// <summary>
+        /// If this is set, we'd expect passable to be false. And the player should
+        /// be able to jump up through this block, but not fall down from below.
+        /// </summary>
+        public bool IsPlatform { get; set; } = false;
+
         public bool EnemyPassable { get; set; } = true;
         public bool IsSand { get; set; } = false;
         public bool IsMinecartTrack { get; set; } = false;
@@ -105,7 +111,7 @@ namespace TileEngine
             {
                 IsSand = false;
                 wasSand = true;
-
+                IsPlatform = false;
                 for (int i = 0; i < LayerTiles.Length; i++)
                 {
                     if (LayerTiles[i] != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))
@@ -123,7 +129,7 @@ namespace TileEngine
             {
                 IsSand = true;
                 wasSand = false;
-
+                IsPlatform = true;
                 for (int i = 0; i < LayerTiles.Length; i++)
                 {
                     if (LayerTiles[i] != null && SandTextures.Contains(LayerTiles[i].TextureRectangle))

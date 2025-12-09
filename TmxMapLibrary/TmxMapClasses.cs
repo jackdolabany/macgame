@@ -776,6 +776,15 @@ namespace Squared.Tiled
                                 tileMap.MapCells[x][y].RightHeight = 0;
                                 unblocked.Add(new Tuple<int, int>(x, y));
                             }
+                            else if (tileInfo.properties["BlockPlayer"] == "Platform")
+                            {
+                                // This is a special block that the player can jump up through but then land on.
+                                tileMap.MapCells[x][y].LeftHeight = 8 * tileScale;
+                                tileMap.MapCells[x][y].RightHeight = 8 * tileScale;
+                                tileMap.MapCells[x][y].Passable = true;
+                                tileMap.MapCells[x][y].IsPlatform = true;
+
+                            }
                             else
                             {
                                 // Totally blocking
@@ -798,6 +807,10 @@ namespace Squared.Tiled
                         if (tileInfo.properties.ContainsKey("Sand"))
                         {
                             tileMap.MapCells[x][y].IsSand = true;
+
+                            // Sand is like a platform that you can jump up through.
+                            tileMap.MapCells[x][y].Passable = true;
+                            tileMap.MapCells[x][y].IsPlatform = true;
                         }
                         else if (tileInfo.properties.ContainsKey("Ice"))
                         {

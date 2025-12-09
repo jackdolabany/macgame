@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.0" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -1267,6 +1267,21 @@
  <tile id="498">
   <properties>
    <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="502">
+  <properties>
+   <property name="BlockPlayer" value="Platform"/>
+  </properties>
+ </tile>
+ <tile id="503">
+  <properties>
+   <property name="BlockPlayer" value="Platform"/>
+  </properties>
+ </tile>
+ <tile id="504">
+  <properties>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="512">

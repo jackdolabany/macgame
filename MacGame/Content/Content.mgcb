@@ -340,6 +340,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World3GhostHouseDoor4.tmx
 
+#begin Maps/World3MineCart.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World3MineCart.tmx
+
 #begin Maps/World4SpaceShip1.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

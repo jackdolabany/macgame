@@ -471,13 +471,22 @@ namespace MacGame
                                     }
                                 });
                             }
-                            else if (loadClass == "ButtonUp" || loadClass == "ButtonDown" || loadClass == "SpringButton")
+                            else if (loadClass == "ButtonUp" || loadClass == "ButtonDown" || loadClass == "SpringButton" || loadClass == "LightButton")
                             {
 
-                                var isUp = loadClass == "ButtonUp" || loadClass == "SpringButton";
-                                var isSpring = loadClass == "SpringButton";
+                                var isUp = loadClass == "ButtonUp" || loadClass == "SpringButton" || loadClass == "LightButton";
 
-                                var button = new Button(contentManager, x, y, player, isUp, isSpring);
+                                var buttonType = Button.ButtonType.Regular;
+                                if (loadClass == "SpringButton")
+                                {
+                                    buttonType = Button.ButtonType.Spring;
+                                }
+                                else if (loadClass == "LightButton")
+                                {
+                                    buttonType = Button.ButtonType.Light;
+                                }
+
+                                var button = new Button(contentManager, x, y, player, isUp, buttonType);
                                 level.GameObjects.Add(button);
                                 layerDepthObjects[z].Add(button);
 
@@ -778,6 +787,7 @@ namespace MacGame
                     if (o is WaterBomb) return 1;
                     if (o is SpaceShip) return 1;
                     if (o is Npc) return 2;
+                    if (o is Button && ((Button)o).GetButtonType == Button.ButtonType.Light) return 1;
                     if (o is Platform) return 3;
                     if (o is Player) return 4;
                     return 5; // enemies and items in front of the player.

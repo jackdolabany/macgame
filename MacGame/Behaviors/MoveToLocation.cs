@@ -168,14 +168,8 @@ namespace MacGame.Behaviors
 
                 var upwardSpeed  = -((0.55f * _gameObject.Gravity.Y * timeToImpact) + (heightToTarget / timeToImpact));
 
-
-
-
                 // Calculate required initial vertical velocity considering height difference
                 upwardSpeed = -(heightToTarget + 0.55f * _gameObject.Gravity.Y * timeToImpact * timeToImpact) / timeToImpact;
-
-
-
 
                 jumpXVelocity = _gameObject.Flipped ? -JumpMoveSpeed : JumpMoveSpeed;
 

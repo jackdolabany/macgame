@@ -405,7 +405,7 @@ namespace MacGame
                     var cell = Game1.CurrentMap.GetMapSquareAtCell(x, y);
                     if (cell != null)
                     {
-                        if (!cell.Passable && !cell.IsSlope() || (isEnemyTileColliding && !cell.EnemyPassable))
+                        if (cell != null && !cell.Passable && !cell.IsSlope() || (isEnemyTileColliding && !cell.EnemyPassable))
                         {
                             // There was a collision, place the object to the edge of the tile.
                             if (isMovingRight)
@@ -654,20 +654,20 @@ namespace MacGame
                                 slopeCheck = collisionTop >= tileBottom;
                             }
 
-                            // Sand in the game is funny. It only collides when you are falling. But we do check
+                            // Platforms in the game are funny. They only collide when you are falling. But we do check
                             // cells that may start slightly above your feet to help with walking into slopes. So make sure
-                            // we only check sand that was below you.
-                            var collideWithSandCell = isFalling && cell.IsSand;
-                            if (collideWithSandCell)
+                            // we only check Platforms that were below you.
+                            var collideWithPlatformCell = isFalling && cell.IsPlatform;
+                            if (collideWithPlatformCell)
                             {
-                                // Don't check sand if it was below you on the previous frame
+                                // Don't check the platform if it was below you on the previous frame.
                                 if (WorldLocation.Y > (TileMap.TileSize * y))
                                 {
-                                    collideWithSandCell = false;
+                                    collideWithPlatformCell = false;
                                 }
                             }
 
-                            if ((!cell.Passable && slopeCheck) || (isEnemyTileColliding && !cell.EnemyPassable) || collideWithSandCell)
+                            if ((!cell.Passable && slopeCheck) || (isEnemyTileColliding && !cell.EnemyPassable) || collideWithPlatformCell)
                             {
                                 // There was a collision with a non-slope tile, place the object to the edge of the tile.
                                 if (isFalling)

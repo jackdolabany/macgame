@@ -54,14 +54,32 @@ namespace MacGame
 
         float cooldownTimer = 0f;
 
-        private bool _isSpringButton;
+        public enum ButtonType
+        {
+            /// <summary>
+            /// A regular button, you jump on it and it goes down.
+            /// </summary>
+            Regular,
+            /// <summary>
+            /// A spring button springs up if you don't stand on it or have an object on it.
+            /// </summary>
+            Spring,
+            /// <summary>
+            /// A red light that when you touch it turns green.
+            /// </summary>
+            Light
+        }
+
+        private ButtonType _buttonType = ButtonType.Regular;
+
+        public ButtonType GetButtonType => _buttonType;
 
         /// <summary>
         /// A button that Mac can compress.
         /// </summary>
         /// <param name="isUp">If true the button is initially up. Else, down.</param>
         /// <param name="isSpringButton">If true the button is a spring button. It springs back up if Mac (or something else) isn't on it.</param>
-        public Button(ContentManager content, int cellX, int cellY, Player player, bool isUp, bool isSpringButton)
+        public Button(ContentManager content, int cellX, int cellY, Player player, bool isUp, ButtonType type)
         {
 
             UpActions = new List<ButtonAction>();
@@ -73,7 +91,7 @@ namespace MacGame
 
             Enabled = true;
 
-            _isSpringButton = isSpringButton;
+            _buttonType = type;
 
             // This is a button. It doesn't do anything.
             IsAffectedByForces = false;
@@ -86,20 +104,39 @@ namespace MacGame
 
             DisplayComponent = new AnimationDisplay();
 
-            var textures = content.Load<Texture2D>(@"Textures\Textures");
+            
             Rectangle upSource;
             Rectangle downSource;
-            if (isSpringButton)
+
+            this.SetWorldLocationCollisionRectangle(8, 4);
+
+            Texture2D textures;
+
+            if (_buttonType == ButtonType.Regular)
             {
-                // Spring button uses slightly different graphics
-                upSource = Helpers.GetTileRect(9, 1);
-                downSource = Helpers.GetTileRect(10, 1);
-            }
-            else
-            {
+                textures = content.Load<Texture2D>(@"Textures\Textures");
                 upSource = Helpers.GetTileRect(13, 2);
                 downSource = Helpers.GetTileRect(14, 2);
             }
+            else if (_buttonType == ButtonType.Spring)
+            {
+                // Spring button uses slightly different graphics
+                textures = content.Load<Texture2D>(@"Textures\Textures");
+                upSource = Helpers.GetTileRect(9, 1);
+                downSource = Helpers.GetTileRect(10, 1);
+            }
+            else if (_buttonType == ButtonType.Light)
+            {
+                textures = content.Load<Texture2D>(@"Textures\BigTextures");
+                upSource = Helpers.GetBigTileRect(12, 6);
+                downSource = Helpers.GetBigTileRect(13, 6);
+                this.SetCenteredCollisionRectangle(16, 16, 12, 12);
+            }
+            else
+            {
+                throw new System.Exception("Unknown button type");
+            }
+            
             var up = new AnimationStrip(textures, upSource, 1, "up");
             up.LoopAnimation = false;
             up.FrameLength = 0.14f;
@@ -109,8 +146,6 @@ namespace MacGame
             down.LoopAnimation = false;
             down.FrameLength = 0.14f;
             animations.Add(down);
-
-            this.SetWorldLocationCollisionRectangle(8, 4);
 
             if (isUp)
             {
@@ -135,7 +170,7 @@ namespace MacGame
 
             // Check if the player or an object is holding it down. 
             if (_player.CollisionRectangle.Intersects(this.CollisionRectangle)
-                && (_isSpringButton || _player.Velocity.Y > 0) // must jump down onto regular buttons.
+                && (_buttonType != ButtonType.Regular || _player.Velocity.Y > 0) // must jump down onto regular buttons.
                 && !_player.IsInWater)
             {
                 isColliding = true;
@@ -184,7 +219,7 @@ namespace MacGame
            }
 
             if (!isColliding
-                && _isSpringButton
+                && _buttonType == ButtonType.Spring
                 && animations.CurrentAnimationName == "down"
                 && cooldownTimer <= 0)
             {
@@ -218,7 +253,7 @@ namespace MacGame
                 cooldownTimer = 0.4f;
 
                 // Pop the player up a bit.
-                if (!_isSpringButton && isPlayerColliding)
+                if (_buttonType == ButtonType.Regular && isPlayerColliding)
                 {
                     _player.Velocity = new Vector2(_player.Velocity.X, -300);
                 }

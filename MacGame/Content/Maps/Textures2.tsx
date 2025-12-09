@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.0" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.2" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures2.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -151,6 +151,76 @@
   </properties>
  </tile>
  <tile id="86">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="122">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="123">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="124">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="125">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="126">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="138">
+  <properties>
+   <property name="LoadClass" value="Enemy.SmallBuzzsaw"/>
+  </properties>
+ </tile>
+ <tile id="139">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="140">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="141">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="142">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="154">
+  <properties>
+   <property name="LoadClass" value="LightButton"/>
+  </properties>
+ </tile>
+ <tile id="156">
+  <properties>
+   <property name="LoadClass" value="Enemy.BigBuzzsaw"/>
+  </properties>
+ </tile>
+ <tile id="157">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="158">
   <properties>
    <property name="Hidden" value="1"/>
   </properties>

@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World3";
+        public const string StartingWorld = "CollisionWorld";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -226,9 +226,12 @@ namespace MacGame
         const float totalTransitionTime = 0.5f;
 
         // After loading assets MonoGame likes to skip  bunch of draw calls. So we'll
-        // wait a little bit of time after loading to transition to the Playing state. 
+        // wait a little bit of time after loading to transition to the Playing state.
         // Otherwise transitions will be janky.
         static float waitAfterLoadingTimer;
+
+        // Delay fade-in by a few frames to let camera adjust after map load
+        static int frameDelayBeforeFadeIn = 0;
 
         private bool IsFading;
 
@@ -825,6 +828,9 @@ namespace MacGame
                         // from black. Use the same transition type that was used when entering LoadingLevel.
                         TransitionToState(GameState.Playing, _loadingTransitionType);
                         this.CurrentGameState = GameState.Playing;
+
+                        // Delay some frames so the Camera can adjust.
+                        frameDelayBeforeFadeIn = 1;
                     }
                 }
             }
@@ -908,19 +914,28 @@ namespace MacGame
                 previousKeyState = keyState;
             }
 
-            // Handle transitions
-            // FastFade is 2.5x faster, SlowFade is 0.5x (2x slower than default)
-            var multiplier = this.transitionType == TransitionType.FastFade ? 2.5f : 0.4f;
-            if (transitionTimer > 0)
+            // Handle frame delay before fade-in starts (to let camera adjust)
+            if (frameDelayBeforeFadeIn > 0)
             {
-                transitionTimer -= (elapsed * multiplier);
+                frameDelayBeforeFadeIn--;
+                // Don't update transition timer yet, keep screen black
             }
-
-            if (transitionTimer <= 0 && transitionToState != CurrentGameState)
+            else
             {
-                // set the timer to transition/fade back in
-                transitionTimer = totalTransitionTime;
-                CurrentGameState = transitionToState;
+                // Handle transitions
+                // FastFade is 2.5x faster, SlowFade is 0.5x (2x slower than default)
+                var multiplier = this.transitionType == TransitionType.FastFade ? 2.5f : 0.4f;
+                if (transitionTimer > 0)
+                {
+                    transitionTimer -= (elapsed * multiplier);
+                }
+
+                if (transitionTimer <= 0 && transitionToState != CurrentGameState)
+                {
+                    // set the timer to transition/fade back in
+                    transitionTimer = totalTransitionTime;
+                    CurrentGameState = transitionToState;
+                }
             }
 
             base.Update(gameTime);

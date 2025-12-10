@@ -2444,16 +2444,16 @@ namespace MacGame
         {
             var targetPosition = this.WorldLocation + new Vector2(Game1.CurrentLevel.CameraXOffset, 0);
 
-            if (!IsInSpaceShip)
-            {
-                // Track just above the player so we see more up than down.
-                targetPosition.Y -= Game1.TileSize * 1.5f;
-            }
-
             if (IsInMineCart)
             {
                 // Track behind the player
                 targetPosition = this.WorldLocation + new Vector2(80, 0);
+            }
+
+            if (!IsInSpaceShip)
+            {
+                // Track just above the player so we see more up than down.
+                targetPosition.Y -= Game1.TileSize * 1.5f;
             }
 
             var wasInCameraOffsetZone = isInCameraOffsetZone;

@@ -359,7 +359,7 @@ namespace MacGame.Enemies
                     Sock.FadeIn();
 
                     // break these bricks so that Mac can leave.
-                    Game1.CurrentLevel.BreakBricks("Puff");
+                    Game1.CurrentLevel.BreakBricks("Puff", 0.5f);
                 }
             }
 

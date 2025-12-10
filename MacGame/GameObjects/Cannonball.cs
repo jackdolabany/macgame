@@ -112,7 +112,7 @@ namespace MacGame
                     var breakBrick = (BreakBrick)gameObject;
                     if (breakBrick.Enabled && breakBrick.CollisionRectangle.Intersects(collisionRectangle))
                     {
-                        Game1.CurrentLevel.BreakBricks(breakBrick.GroupName);
+                        Game1.CurrentLevel.BreakBricks(breakBrick.GroupName, 0.2f);
                     }
                 }
             }

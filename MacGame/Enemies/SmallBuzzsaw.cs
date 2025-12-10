@@ -11,6 +11,9 @@ namespace MacGame.Enemies
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
+        float clickTimer = 0f;
+        float clickTimerGoal = 0.2f;
+
         public SmallBuzzsaw(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -31,11 +34,24 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
+            IsAbleToMoveOutsideOfWorld = false;
+            IsAbleToSurviveOutsideOfWorld = false;
 
             WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
 
             // Collision rectangle slightly smaller than 64x64
             SetCenteredCollisionRectangle(16, 16, 14, 14);
+
+        }
+
+        public override void Update(GameTime gameTime, float elapsed)
+        {
+            base.Update(gameTime, elapsed);
+
+            if (camera.IsObjectVisible(this.CollisionRectangle))
+            {
+                SoundManager.IsBuzzsawOnScreen = true;
+            }
 
         }
     }

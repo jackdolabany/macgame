@@ -431,9 +431,6 @@ namespace MacGame.Enemies
                     _state = OurTypeOfBossState.Dead;
 
                     TimerManager.AddNewTimer(1f, () => { Sock.FadeIn(); });
-
-                    // break these bricks so that Mac can leave.
-                    Game1.CurrentLevel.BreakBricks("Puff");
                 }
             }
         }

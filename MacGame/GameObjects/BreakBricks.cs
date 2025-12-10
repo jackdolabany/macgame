@@ -13,6 +13,7 @@ namespace MacGame
     /// Place BreakBrick tiles on the map. Put an object rectangle over them and give it the GroupName property.
     /// GroupName: Bricks1
     /// OverrideSave: 1 - Optional, use this property to make it so the brick doesn't save its state when it breaks. For example, for when you beat a boss.
+    /// Save: True or False. Same as override save but that's annoying because of the double negative. Saves by default.
     /// 
     /// From code call: Game1.CurrentLevel.BreakBricks("Bricks1");
     /// 
@@ -37,7 +38,16 @@ namespace MacGame
         /// Normal behavior is to save the state of these when they break. For bosses or other things you
         /// might want it to reset every time. Set the OverrideSave property to "1" in the map to set this.
         /// </summary>
-        public bool OverrideSave { get; set; } = false;
+        public bool OverrideSave
+        { 
+            get => !Save; 
+            set 
+            {
+                Save = !value;
+            }
+        }
+
+        public bool Save { get; set; } = true;
 
         public BreakBrick(ContentManager content, int cellX, int cellY, Player player, bool isBroken) : base()
         {
@@ -70,26 +80,31 @@ namespace MacGame
             if (!_isInitialized)
             {
                 _isInitialized = true;
-                Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY).Passable = IsBroken;
+                Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY)!.Passable = IsBroken;
             }
         }
 
-        public void Break()
+        public void Break(float explosionDelay = 0f)
         {
             if (IsBroken) return;
 
-            EffectsManager.AddExplosion(this.CollisionCenter);
-
             IsBroken = true;
-            this.DisplayComponent = noDisplay;
-            Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY).Passable = true;
+            Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY)!.Passable = true;
 
-            SoundManager.PlaySound("Break");
-
-            if (!OverrideSave)
+            if (Save)
             {
                 Game1.StorageState.AddUnblockedMapSquare(Game1.CurrentLevel.LevelNumber, Game1.CurrentLevel.Name, _cellX, _cellY);
             }
+
+            // Instantly become passable for timing reasons, but we may delay the explosion for dramatic effect
+            // break but do it randomly in a small time so that it doesn't all happen at once
+            var randomFloat = Game1.Randy.NextFloat();
+            var randomTime = randomFloat * explosionDelay;
+            TimerManager.AddNewTimer(randomTime, () =>
+            {
+                this.DisplayComponent = noDisplay;
+                EffectsManager.AddExplosion(this.CollisionCenter);
+            });
         }
 
     }

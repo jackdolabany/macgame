@@ -588,6 +588,10 @@ namespace MacGame
                                     {
                                         bb.OverrideSave = props["OverrideSave"].ToBoolean();
                                     }
+                                    if (props.ContainsKey("Save"))
+                                    {
+                                        bb.OverrideSave = !props["Save"].ToBoolean();
+                                    }
                                 });
                             }
                             else if (loadClass == "DestroyPickupObjectField")

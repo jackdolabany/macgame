@@ -25,6 +25,8 @@ namespace MacGame
     ///   LowerButton - What do you think?
     ///   ReleaseGhostBox - Releases a ghost from a ghost box. Use args with the name of the ghost box.
     ///   ResetPickUpObject - Args is the name of the pick up object to reset.
+    ///   MoveEnemyUp - Causes an enemy to move upwards.
+    ///   MoveEnemyDown - Causes an enemy to move downwards.
     ///   
     ///  Add multiple actions like this
     ///  DownAction: OpenBlockingPiston:Door1;CloseBlockingPiston:Door2;RaiseButton:Button1
@@ -127,6 +129,8 @@ namespace MacGame
             }
             else if (_buttonType == ButtonType.Light)
             {
+                // this button is larger, so move it down.
+                this.WorldLocation += new Vector2(0, Game1.TileSize / 2);
                 textures = content.Load<Texture2D>(@"Textures\BigTextures");
                 upSource = Helpers.GetBigTileRect(12, 6);
                 downSource = Helpers.GetBigTileRect(13, 6);

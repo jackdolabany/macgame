@@ -696,7 +696,7 @@ namespace MacGame
                     TimerManager.AddNewTimer(2f, () => button.MoveUpNoAction());
                     break;
                 case "BreakBricks":
-                    BreakBricks(args);
+                    BreakBricks(args, 0.7f);
                     break;
                 case "SolidifyGhostBlock":
                     foreach (var gameObject in GameObjects)
@@ -759,6 +759,25 @@ namespace MacGame
                         }
                     }
                     break;
+
+                case "MoveEnemyUp":
+                    foreach (var enemy in Enemies)
+                    {
+                        if (enemy.Name == args)
+                        {
+                            enemy.Velocity += new Vector2(0, -170);
+                        }
+                    }
+                    break;
+                case "MoveEnemyDown":
+                    foreach (var enemy in Enemies)
+                    {
+                        if (enemy.Name == args)
+                        {
+                            enemy.Velocity += new Vector2(0, 170);
+                        }
+                    }
+                    break;
                 default:
                     if (Game1.IS_DEBUG)
                     {
@@ -767,7 +786,12 @@ namespace MacGame
             }
         }
 
-        public void BreakBricks(string brickGroupName)
+        /// <summary>
+        /// Breaks a group of bricks.
+        /// </summary>
+        /// <param name="explosionDelay">Pass in a time and the bricks will break over a period of 
+        /// 0 to this time. Use this for more cinematic breaking so they don't all break at once.</param>
+        public void BreakBricks(string brickGroupName, float explosionDelay = 0f)
         {
             var shouldSave = false;
             foreach (var gameObject in GameObjects)
@@ -782,8 +806,9 @@ namespace MacGame
                             // They've already been broken. Don't do anything.
                             return;
                         }
-                        bb.Break();
-                        
+
+                        bb.Break(explosionDelay);
+
                         if (!bb.OverrideSave)
                         {
                             shouldSave = true;
@@ -792,7 +817,6 @@ namespace MacGame
                     }
                 }
             }
-            SoundManager.PlaySound("Explosion");
             
             if (shouldSave)
             {

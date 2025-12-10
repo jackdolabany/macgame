@@ -284,7 +284,7 @@ namespace MacGame.Enemies
                     Enabled = false;
                     TimerManager.AddNewTimer(2f, () => 
                     { 
-                        Game1.CurrentLevel.BreakBricks("Bricks");
+                        Game1.CurrentLevel.BreakBricks("Bricks", 0.5f);
                         Game1.Camera.ClearRestrictions();
                         Player.SmoothMoveCameraToTarget();
                     });

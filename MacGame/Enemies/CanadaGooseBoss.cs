@@ -510,7 +510,7 @@ namespace MacGame.Enemies
                 if (this.CollisionRectangle.Top > (Game1.Camera.WorldRectangle.Bottom + 200))
                 {
                     state = GooseState.Dead;
-                    Game1.CurrentLevel.BreakBricks("GooseBricks");
+                    Game1.CurrentLevel.BreakBricks("GooseBricks", 0.5f);
                 }
             }
 

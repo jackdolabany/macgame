@@ -195,6 +195,14 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("HitEnemy");
         }
 
+        protected void PlaySoundIfOnScreen(string soundName, float volume = 1f)
+        {
+            if (Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+            {
+                SoundManager.PlaySound(soundName, volume);
+            }
+        }
+
         public virtual void Kill()
         {
             Dead = true;

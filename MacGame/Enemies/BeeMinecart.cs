@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MacGame.Behaviors;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
@@ -33,6 +34,18 @@ namespace MacGame.Enemies
             Enabled = false;
 
             behavior = new MinecartEnemyBehavior(player, false);
+        }
+
+        public override void SetProps(Dictionary<string, string> props)
+        {
+            base.SetProps(props);
+
+            if (props.ContainsKey("Reverse"))
+            {
+                var mineCartBehavior = (MinecartEnemyBehavior)behavior;
+                mineCartBehavior.MoveAwayFromPlayer = props["Reverse"].ToBoolean();
+                mineCartBehavior.Speed /= 2;
+            }
         }
 
         public override void Kill()

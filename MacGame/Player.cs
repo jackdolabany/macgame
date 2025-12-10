@@ -701,6 +701,8 @@ namespace MacGame
                 SoundManager.PlayMinecartLanded();
             }
 
+            var velocityBeforeUpdate = this.Velocity;
+
             base.Update(gameTime, elapsed);
 
             if (Landed && PlatformThatThisIsOn != null)
@@ -710,26 +712,19 @@ namespace MacGame
                 this.velocity.X -= PlatformThatThisIsOn.Velocity.X;
             }
 
-            // The minecart flips if it hits a wall.
+            // Bounce off walls in the Minecart instead of stopping.
             if (IsInMineCart)
             {
-                if (OnRightWall)
+                Flipped = false;
+
+                if (this.OnRightWall)
                 {
-                    this.Flipped = true;
-                    SoundManager.PlaySound("Bounce");
-                    velocity.X = -mineCartVelocity;
-                    // Since the minecart camera tracks behind you, flipping causes us to have to slowly move
-                    // the camera so we need to slow track for a second.
-                    SmoothMoveCameraToTarget(mineCartVelocity);
-                }
-                else if (OnLeftWall)
-                {
-                    this.Flipped = false;
-                    SoundManager.PlaySound("Bounce");
-                    velocity.X = mineCartVelocity;
-                    // Since the minecart camera tracks behind you, flipping causes us to have to slowly move
-                    // the camera so we need to slow track for a second.
-                    SmoothMoveCameraToTarget(mineCartVelocity);
+                    this.velocity.X = velocityBeforeUpdate.X * - 1;
+                    
+                    if (this.velocity.X >= (mineCartVelocity / 2))
+                    {
+                        SoundManager.PlaySound("Bounce");
+                    }
                 }
             }
 
@@ -1909,11 +1904,10 @@ namespace MacGame
                 return;
             }
 
-            this.velocity.X = mineCartVelocity;
-            if (Flipped)
-            {
-                this.velocity.X *= -1;
-            }
+            Flipped = false;
+
+            this.velocity.X += 600f * elapsed;
+            this.velocity.X = Math.Min(this.velocity.X, mineCartVelocity);
 
             // Jump
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
@@ -2456,15 +2450,10 @@ namespace MacGame
                 targetPosition.Y -= Game1.TileSize * 1.5f;
             }
 
-            if (IsInMineCart && this.Velocity.X > 0)
+            if (IsInMineCart)
             {
                 // Track behind the player
                 targetPosition = this.WorldLocation + new Vector2(80, 0);
-            }
-            else if (IsInMineCart && this.Velocity.X < 0)
-            {
-                // Track in front of the player
-                targetPosition = this.WorldLocation + new Vector2(-80, 0);
             }
 
             var wasInCameraOffsetZone = isInCameraOffsetZone;

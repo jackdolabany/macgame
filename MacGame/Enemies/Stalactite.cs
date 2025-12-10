@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -9,6 +10,11 @@ namespace MacGame.Enemies
 {
     /// <summary>
     /// A stone spike on the ceiling that will shake and fall if Mac goes under it.
+    /// 
+    /// use an object modifier to change the fall time.
+    /// 
+    /// Falltime: 0.2f
+    /// 
     /// </summary>
     public class Stalactite : Enemy
     {
@@ -22,6 +28,11 @@ namespace MacGame.Enemies
         /// The spike will shake for a bit before dropping.
         /// </summary>
         float shakeTimer = 0f;
+
+        /// <summary>
+        /// The amount of time between this object detecting the player and it falling.
+        /// </summary>
+        public float TimeBeforeFall { get; set; } = 0.6f;
 
         private bool _isInitialized = false;
 
@@ -58,6 +69,18 @@ namespace MacGame.Enemies
             SetWorldLocationCollisionRectangle(6, 8);
         }
 
+        public override void SetProps(Dictionary<string, string> props)
+        {
+            base.SetProps(props);
+            if (props.ContainsKey("Falltime"))
+            {
+                if (float.TryParse(props["Falltime"], out float fallTime))
+                {
+                    TimeBeforeFall = fallTime;
+                }
+            }
+        }
+
         private void Initialize()
         {
             // Scan down up to 8 blocks below until you hit a solid tile. That will be the Danger zone.
@@ -92,7 +115,7 @@ namespace MacGame.Enemies
             {
                 if (Player.CollisionRectangle.Intersects(DangerZone))
                 {
-                    shakeTimer = 0.6f;
+                    shakeTimer = TimeBeforeFall;
                     _state = StalactiteState.Shaking;
                 }
             }
@@ -168,14 +191,6 @@ namespace MacGame.Enemies
             }
 
             base.Draw(spriteBatch);
-        }
-
-        private void PlaySoundIfOnScreen(string soundName, float volume = 1f)
-        {
-            if (Game1.Camera.IsObjectVisible(this.CollisionRectangle))
-            {
-                SoundManager.PlaySound(soundName, volume);
-            }
         }
 
         public override void PlayDeathSound()

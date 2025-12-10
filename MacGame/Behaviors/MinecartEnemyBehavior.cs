@@ -14,7 +14,9 @@ namespace MacGame.Behaviors
         Rectangle startCollisionRect;
         Vector2 startLocation;
 
-        const float speed = 200f;
+        public float Speed = 200f;
+
+        public bool MoveAwayFromPlayer { get; set; } = false;
 
         public MinecartEnemyBehavior(Player player, bool jump)
         {
@@ -44,13 +46,13 @@ namespace MacGame.Behaviors
                     var direction = _player.WorldCenter - enemy.WorldCenter;
                     if (direction.X > 0)
                     {
-                        enemy.Velocity = new Vector2(speed, 0);
-                        enemy.Flipped = false;
+                        enemy.Velocity = new Vector2(Speed * (MoveAwayFromPlayer ? -1f : 1f), 0);
+                        enemy.Flipped = MoveAwayFromPlayer;
                     }
                     else
                     {
-                        enemy.Velocity = new Vector2(-speed, 0);
-                        enemy.Flipped = true;
+                        enemy.Velocity = new Vector2(-Speed * (MoveAwayFromPlayer ? -1f : 1f), 0);
+                        enemy.Flipped = !MoveAwayFromPlayer;
                     }
                 }
                 else

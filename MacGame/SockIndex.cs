@@ -68,6 +68,7 @@ namespace MacGame
                     new SockInfo { Name = "GhostBoxPuzzleSock", Hint = "Ghostly treasure chest puzzles lead to a stinky sock smell." },
                     new SockInfo { Name = "ChatterboxSock", Hint = "Frankie has a sock. Maybe you can talk him out of it." },
                     new SockInfo { Name = "NerdSock", Hint = "Show those bullies what bullying is all about!" },
+                    new SockInfo { Name = "MinecartSock", Hint = "Show those bullies what bullying is all about!" },
                 }
             },
             {

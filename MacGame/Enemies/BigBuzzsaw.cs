@@ -31,6 +31,8 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = false;
+            IsAbleToMoveOutsideOfWorld = false;
+            IsAbleToSurviveOutsideOfWorld = false;
 
             WorldLocation = new Vector2(((cellX + 1) * TileMap.TileSize) + (TileMap.TileSize / 2), (cellY + 1) * TileMap.TileSize);
 
@@ -38,11 +40,14 @@ namespace MacGame.Enemies
             SetCenteredCollisionRectangle(24, 24, 20, 20);
         }
 
-        public override void Kill()
+        public override void Update(GameTime gameTime, float elapsed)
         {
-            EffectsManager.SmallEnemyPop(WorldCenter);
-            Enabled = false;
-            base.Kill();
+            base.Update(gameTime, elapsed);
+            
+            if (camera.IsObjectVisible(this.CollisionRectangle))
+            {
+                SoundManager.IsBuzzsawOnScreen = true;
+            }
         }
     }
 }

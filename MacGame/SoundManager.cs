@@ -44,6 +44,13 @@ namespace MacGame
         public static float SoundEffectVolume = 1f;
         public static float MusicVolume = 1f;
 
+        // Buzzsaws click regularly, but I only want the click to happen once even if multiple are on screen.
+        public static float buzzsawTimer = 0f;
+        public static float buzzsawTimerGoal = 0.15f;
+
+        // This class will set this to false after every update, but the buzzsaws can set it true.
+        public static bool IsBuzzsawOnScreen = false;
+
         /// <summary>
         /// Loads a Song into the AudioManager.
         /// </summary>
@@ -339,6 +346,17 @@ namespace MacGame
                 {
                     _isFading = false;
                 }
+            }
+
+            if (IsBuzzsawOnScreen)
+            {
+                buzzsawTimer += elapsed;
+                if (buzzsawTimer >= buzzsawTimerGoal)
+                {
+                    PlaySound("Crackle", 0.1f);
+                    buzzsawTimer -= buzzsawTimerGoal;
+                }
+                IsBuzzsawOnScreen = false;
             }
         }
 

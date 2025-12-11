@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.0" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures2.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -303,6 +303,11 @@
  <tile id="500">
   <properties>
    <property name="LoadClass" value="Npc.Bully1"/>
+  </properties>
+ </tile>
+ <tile id="504">
+  <properties>
+   <property name="LoadClass" value="Npc.Explorer"/>
   </properties>
  </tile>
  <tile id="512">

@@ -45,7 +45,7 @@ namespace MacGame.Npcs
 
         public abstract void InitiateConversation();
 
-        public void CheckPlayerInteractions(Player player)
+        public virtual void CheckPlayerInteractions(Player player)
         {
             // Handle the player talking to the NPC.
             if (player.InteractButtonPressedThisFrame && this.CollisionRectangle.Intersects(player.NpcRectangle))

@@ -357,7 +357,7 @@
  </tile>
  <tile id="117">
   <properties>
-   <property name="LoadClass" value="Platform.StaticPlatform"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="121">
@@ -451,12 +451,12 @@
  </tile>
  <tile id="150">
   <properties>
-   <property name="LoadClass" value="Platform.StaticPlatform"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="151">
   <properties>
-   <property name="LoadClass" value="Platform.StaticPlatform"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="152">
@@ -672,17 +672,17 @@
  </tile>
  <tile id="268">
   <properties>
-   <property name="BlockPlayer" value="1"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="269">
   <properties>
-   <property name="BlockPlayer" value="1"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="270">
   <properties>
-   <property name="BlockPlayer" value="1"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="282">
@@ -1321,7 +1321,7 @@
  </tile>
  <tile id="529">
   <properties>
-   <property name="BlockPlayer" value="1"/>
+   <property name="BlockPlayer" value="Platform"/>
   </properties>
  </tile>
  <tile id="530">

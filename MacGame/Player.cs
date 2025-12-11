@@ -508,7 +508,7 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
 
-            _moveToLocation = new MoveToLocation(this, 150, 150, "idle", "run", "jump", "climbLadder");
+            _moveToLocation = new MoveToLocation(this, 150, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");
         }
 
@@ -545,12 +545,12 @@ namespace MacGame
 
         public void GoToLocation(Vector2 location)
         {
-            _moveToLocation.TargetLocation = location;
+            _moveToLocation.SetTargetLocation(location);
         }
 
         public bool IsAtLocation()
         {
-            return _moveToLocation.IsAtLocation();
+            return _moveToLocation.IsAtFinalLocation;
         }
 
         public void HandleShotPowerupCollected()

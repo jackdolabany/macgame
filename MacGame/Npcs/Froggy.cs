@@ -54,9 +54,9 @@ namespace MacGame.Npcs
 
         List<string> boasts;
 
-        float slowSpeed = 100f;
-        float medSpeed = 200;
-        float fastSpeed = 250;
+        float slowSpeed = 200;
+        float medSpeed = 300;
+        float fastSpeed = 350;
 
         private Vector2 _startLocation;
         private Rectangle _startCollisionRect;
@@ -78,9 +78,11 @@ namespace MacGame.Npcs
             //medSpeed = 100f;
             //fastSpeed = 100f;
 
+            IsAffectedByGravity = false;
+
             Enabled = true;
 
-            _moveToLocation = new MoveToLocation(this, slowSpeed, fastSpeed, "idle", "walk", "jump", "climb");
+            _moveToLocation = new MoveToLocation(this, slowSpeed, "idle", "walk", "jump", "climb");
 
             _startLocation = this.WorldLocation;
             _startCollisionRect = this.CollisionRectangle;
@@ -178,7 +180,7 @@ namespace MacGame.Npcs
             }
         }
 
-        public override Vector2 Gravity => base.Gravity * 0.5f;
+        //public override Vector2 Gravity => base.Gravity * 0.5f;
 
         public void InitializeRacePath()
         {
@@ -224,23 +226,10 @@ namespace MacGame.Npcs
                 if (RacePath == null)
                 {
                     InitializeRacePath();
+                    _moveToLocation.SetTargetLocations(RacePath!.Waypoints.Select(wp => wp.BottomCenterLocation));
                 }
 
-                if (RacePath!.Waypoints.Any())
-                {
-                    var nextWaypoint = RacePath.Waypoints.First();
-
-                    // As you hit waypoints look for the next one. Until the last one, we'll go to that until we stop moving.
-                    if (MoveToLocation.IsAtLocation(this.WorldLocation, nextWaypoint.BottomCenterLocation) && RacePath.Waypoints.Count > 1)
-                    {
-                        // Remove the waypoints as we hit them.
-                        RacePath.Waypoints.Remove(nextWaypoint);
-                        nextWaypoint = RacePath.Waypoints.First();
-                    }
-
-                    _moveToLocation.TargetLocation = nextWaypoint.BottomCenterLocation;
-                    _moveToLocation.Update(this, gameTime, elapsed);
-                }
+                _moveToLocation.Update(this, gameTime, elapsed);
 
                 // Check if someone won.
                 if (_result == LastRaceResult.DidNotFinishYet)
@@ -273,7 +262,7 @@ namespace MacGame.Npcs
                     }
                 }
 
-                if (OnGround && this.Velocity == Vector2.Zero && RacePath.Waypoints.Count == 1)
+                if (OnGround && this.Velocity == Vector2.Zero && _moveToLocation.IsAtFinalLocation)
                 {
                     // we hit the last waypoint
                     animations.Play("idle");

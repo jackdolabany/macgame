@@ -82,7 +82,7 @@ namespace MacGame
 
         // Small delay before you can select a choice so that you don't click it accidentally before you see it.
         public static float choiceDelayTimer = 0f;
-        public const float choiceDelayTimerGoal = 0.5f;
+        public const float choiceDelayTimerGoal = 0.3f;
 
         public static void AddMessage(
             string text, 
@@ -535,8 +535,7 @@ namespace MacGame
 
                     remainingLineSpace -= wordLength;
 
-
-                    if (remainingLineSpace > 0)
+                    if (remainingLineSpace > 0 || isFirstWord)
                     {
                         if (isFirstWord)
                         {

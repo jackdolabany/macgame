@@ -68,7 +68,7 @@ namespace MacGame.Npcs
 
             animations.Play("idle");
 
-            _moveToLocation = new MoveToLocation(this, 100, 100, "idle", "walk", "walk", "walk");
+            _moveToLocation = new MoveToLocation(this, 100, "idle", "walk", "walk", "walk");
 
         }
 
@@ -80,7 +80,8 @@ namespace MacGame.Npcs
             {
                 _moveToLocation.Update(this, gameTime, elapsed);
 
-                var ottisIsAtLocation = _moveToLocation.IsAtLocation();
+                var ottisIsAtLocation = _moveToLocation.IsAtFinalLocation;
+
                 var macIsAtLocation = Game1.Player.IsAtLocation();
 
                 if (!_didInitiateIntroConveration
@@ -231,7 +232,7 @@ namespace MacGame.Npcs
         public void GoToLocation(Vector2 location)
         {
             _state = OttieState.GoToLocation;
-            _moveToLocation.TargetLocation = location;
+            _moveToLocation.SetTargetLocation(location);
         }
 
         public void BeStationary()

@@ -1,249 +1,254 @@
 ﻿using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
 
 namespace MacGame.Behaviors
 {
     /// <summary>
-    /// A behavior for an NPC to just move to a waypoint. This class assumes the NPC can 
+    /// A behavior for an NPC to just move to a waypoint. This class assumes the NPC can
     /// walk, climb, jump, and be idle. And should have animations with those names.
-    /// 
-    /// This is not for NPCs that don't collide with the level.
+    ///
+    /// This class expects the gameObject to move to the bottom center of the waypoint.
+    ///
+    /// We should be able to safely assume the NPC won't be effected by gravity.
     /// </summary>
     public class MoveToLocation : Behavior
     {
+        private Vector2 _previousLocation;
         private Vector2 _targetLocation;
-        public Vector2 TargetLocation 
-        { 
-            get
-            {
-                return _targetLocation;
-            }
-            set
-            {
-                if (_targetLocation != value)
-                {
-                    _targetLocation = value;
-                }
-            }
-        }
+        private Queue<Vector2> _locationQueue;
+
+        public Vector2 TargetLocation => _targetLocation;
 
         private GameObject _gameObject { get; set; }
 
         public float MoveSpeed { get; set; }
-
-        /// <summary>
-        /// The x direction speed when jumping in case it needs to be different from regular.
-        /// </summary>
-        public float JumpMoveSpeed { get; set; }
 
         private string _idleAnimationName;
         private string _walkAnimationName;
         private string _jumpAnimationName;
         private string _climbAnimationName;
 
-        private bool _isAtLocation;
+        public enum WaypointMovement
+        {
+            Walking,
+            Idle,
+            ClimbingLadder,
+            Jumping,
+            Falling
+        }
 
-        private bool isJumping;
-        private float jumpXVelocity;
+        private bool _isAtFinalLocation = true;
+        public bool IsAtFinalLocation => _isAtFinalLocation;
 
-        // Keep track if we are on a ladder. Once you're on a ladder you'll move all the way up or down it.
-        private bool _isClimbingLadder;
-        private float _ladderYVelocity;
+
+        private WaypointMovement _waypointMovement;
 
         /// <summary>
         /// Create a new MoveToLocation behavior for NPCs to follow waypoints or just move to a location. They'll have a half hearted
-        /// attemp to avoid some obstacles or climb ladders.
+        /// attempt to avoid some obstacles or climb ladders.
         /// </summary>
-        /// <param name="targetLocation"></param>
-        /// <param name="moveSpeed"></param>
-        /// <param name="jumpMoveSpeed">Pass something in here if you want to move verticaly at a different speed when jumping. This can
-        /// be useful if you have a character that moves at different speeds but you want to jump gaps consistently</param>
-        /// <param name="idleAnimationName"></param>
-        /// <param name="walkAnimationName"></param>
-        /// <param name="jumpAnimationName"></param>
-        /// <param name="climbAnimationName"></param>
-        public MoveToLocation(GameObject gameObject, float moveSpeed, float jumpMoveSpeed, string idleAnimationName, string walkAnimationName, string jumpAnimationName, string climbAnimationName)
+        public MoveToLocation(GameObject gameObject, float moveSpeed, string idleAnimationName, string walkAnimationName, string jumpAnimationName, string climbAnimationName)
         {
             _gameObject = gameObject;
             MoveSpeed = moveSpeed;
-            JumpMoveSpeed = jumpMoveSpeed;
             _idleAnimationName = idleAnimationName;
             _walkAnimationName = walkAnimationName;
             _jumpAnimationName = jumpAnimationName;
             _climbAnimationName = climbAnimationName;
+            _locationQueue = new Queue<Vector2>();
         }
 
         public override void Update(GameObject _, GameTime gameTime, float elapsed)
         {
-            var animations = (AnimationDisplay)_gameObject.DisplayComponent;
+            // Check if we've reached the current location from the previous frame
+            var isAtTargetLocation = IsAtLocation(_gameObject.WorldLocation, _targetLocation);
 
-            // Go to the next waypoint.
-            Vector2 inFrontOfCenter = new Vector2(_gameObject.CollisionRectangle.Width / 2 + Game1.TileSize, -16);
-            Vector2 inFrontBelow = new Vector2(8, 8);
-            if (_gameObject.Flipped)
+            if (isAtTargetLocation && _locationQueue.Count > 0)
             {
-                inFrontOfCenter.X *= -1;
-                inFrontBelow.X *= -1;
+                // Move to the next location in the queue
+                SetTargetLocation(_locationQueue.Dequeue());
+            }
+            else if (isAtTargetLocation && _locationQueue.Count == 0 && _targetLocation != Vector2.Zero)
+            {
+                // We've reached the final location, stop and set to idle
+                SetTargetLocation(Vector2.Zero);
+                _waypointMovement = WaypointMovement.Idle;
+                _gameObject.Velocity = Vector2.Zero;
+                _isAtFinalLocation = true;
             }
 
-            var tileInFront = Game1.CurrentMap?.GetMapSquareAtPixel(_gameObject.WorldLocation + inFrontOfCenter);
-            var tileAtFrontBelow = Game1.CurrentMap?.GetMapSquareAtPixel(_gameObject.WorldLocation + inFrontBelow);
+            var normalToWaypoint = _targetLocation - _gameObject.WorldLocation;
+            normalToWaypoint.Normalize();
 
-            // Walk towards the target
-            if (_gameObject.OnGround)
+            switch (_waypointMovement)
             {
-                if (_gameObject.WorldLocation.X < TargetLocation.X - 4)
-                {
-                    _gameObject.Velocity = new Vector2(MoveSpeed, _gameObject.Velocity.Y);
+                case WaypointMovement.Walking:
+                    _gameObject.Velocity = new Vector2((_targetLocation.X > _gameObject.WorldLocation.X ? 1 : -1) * MoveSpeed, _gameObject.Velocity.Y);
+                    break;
+                case WaypointMovement.Idle:
+                    _gameObject.Velocity = new Vector2(0, _gameObject.Velocity.Y);
+                    break;
+                case WaypointMovement.Jumping:
 
-                    if (_gameObject.OnGround && animations.CurrentAnimationName != _walkAnimationName)
+                    // Jumping
+                    _gameObject.Velocity = normalToWaypoint * MoveSpeed;
+
+                    break;
+                case WaypointMovement.Falling:
+                    // Falling
+                    _gameObject.Velocity = normalToWaypoint * MoveSpeed;
+                    break;
+                case WaypointMovement.ClimbingLadder:
+
+                    // Move in the x direction full speed until you are within 1 pixel of the target x.
+                    var distanceToCenter = Math.Abs(_targetLocation.X - _gameObject.WorldLocation.X);
+                    if (distanceToCenter < 4)
                     {
-                        animations.Play(_walkAnimationName);
+                        // Lock on the x coordinate.
+                        _gameObject.WorldLocation = new Vector2(_targetLocation.X, _gameObject.WorldLocation.Y);
+                    }
+                    else
+                    {
+                        _gameObject.Velocity = new Vector2((_targetLocation.X > _gameObject.WorldLocation.X ? 1 : -1) * MoveSpeed / 2, _gameObject.Velocity.Y);
                     }
 
-                    _gameObject.Flipped = false;
-                }
-                else if (_gameObject.WorldLocation.X > TargetLocation.X + 4)
-                {
-                    _gameObject.Velocity = new Vector2(-MoveSpeed, _gameObject.Velocity.Y);
-                    if (_gameObject.OnGround && animations.CurrentAnimationName != _walkAnimationName)
-                    {
-                        animations.Play(_walkAnimationName);
-                    }
+                    // Climb the ladder until your y is < the next target.
+                    var directionY = _targetLocation.Y > _gameObject.WorldLocation.Y ? 1 : -1;
 
-                    _gameObject.Flipped = true;
-                }
-                else
-                {
-                    // we're there in the x direction.
-                    _gameObject.Velocity = new Vector2(0, _gameObject.Velocity.Y);
-                }
+                    // Half speed on the ladder.
+                    _gameObject.Velocity = new Vector2(_gameObject.Velocity.X, directionY * MoveSpeed / 2);
+
+
+                    break;
             }
+        }
 
-            // Once in a jump, x velocity doesn't change until you hit the ground.
-            // This helps if you nick the corner of a tile or something.
-            if (isJumping)
+        public void SetTargetLocation(Vector2 location)
+        {
+            if (_targetLocation != Vector2.Zero)
             {
-                _gameObject.Velocity = new Vector2(jumpXVelocity, _gameObject.Velocity.Y);
-
-                if ((jumpXVelocity > 0 && _gameObject.WorldLocation.X > TargetLocation.X) ||
-                    (jumpXVelocity < 0 && _gameObject.WorldLocation.X < TargetLocation.X))
-                {
-                    // overshot the jump, just stop, we tried our best to time it right.
-                    _gameObject.Velocity = new Vector2(0, _gameObject.Velocity.Y);
-                    jumpXVelocity = 0f;
-                }
-            }
-
-            var tileAtHead = Game1.CurrentMap?.GetMapSquareAtPixel(_gameObject.WorldLocation.X.ToInt(), _gameObject.CollisionRectangle.Top + 1);
-            var tileAtFeet = Game1.CurrentMap?.GetMapSquareAtPixel(_gameObject.WorldLocation.X.ToInt(), _gameObject.CollisionRectangle.Bottom);
-            var isOverLadder = (tileAtHead != null && tileAtHead.IsLadder) || (tileAtFeet != null && tileAtFeet.IsLadder);
-
-            if (isOverLadder || _gameObject.OnGround)
-            {
-                isJumping = false;
-            }
-
-            if (!isOverLadder)
-            {
-                _isClimbingLadder = false;
-            }
-
-            // Jump before you walk into a wall.
-            var isWalkingIntoAWall = !isOverLadder && tileInFront != null && !tileInFront.Passable && _gameObject.OnGround && _gameObject.Velocity.X != 0;
-            var isWalkingOffACliff = !_isClimbingLadder && tileAtFrontBelow != null && tileAtFrontBelow.Passable && _gameObject.OnGround && TargetLocation.Y <= _gameObject.CollisionRectangle.Bottom;
-
-            // Jump before a cliff, unless the waypoint is below you.
-            if (isWalkingIntoAWall || isWalkingOffACliff)
-            {
-
-                // figure out how high you have to jump to hit the target location
-                var heightToTarget = Math.Abs(TargetLocation.Y - _gameObject.WorldLocation.Y);
-                var distanceToTarget = Math.Abs(TargetLocation.X - _gameObject.WorldLocation.X);
-
-                // at this speed, how long would it take to reach the target
-                var timeToImpact = distanceToTarget / JumpMoveSpeed;
-
-                var upwardSpeed  = -((0.55f * _gameObject.Gravity.Y * timeToImpact) + (heightToTarget / timeToImpact));
-
-                // Calculate required initial vertical velocity considering height difference
-                upwardSpeed = -(heightToTarget + 0.55f * _gameObject.Gravity.Y * timeToImpact * timeToImpact) / timeToImpact;
-
-                jumpXVelocity = _gameObject.Flipped ? -JumpMoveSpeed : JumpMoveSpeed;
-
-                _gameObject.Velocity = new Vector2(jumpXVelocity, upwardSpeed);
-                jumpXVelocity = _gameObject.Flipped ? -JumpMoveSpeed : JumpMoveSpeed;
-
-                _gameObject.Velocity = new Vector2(jumpXVelocity, upwardSpeed);
-                animations.Play(_jumpAnimationName);
-                SoundManager.PlaySound("Jump");
-                isJumping = true;
-            }
-
-            if (_gameObject.OnGround && isOverLadder && _gameObject.WorldLocation.Y > TargetLocation.Y)
-            {
-                // Climb up the ladder
-                _isClimbingLadder = true;
-                _ladderYVelocity = -MoveSpeed;
-            }
-            else if (isOverLadder && _gameObject.WorldLocation.Y < TargetLocation.Y)
-            {
-                // Climb down the ladder
-                _isClimbingLadder = true;
-                _ladderYVelocity = MoveSpeed;
-            }
-
-            // Ladder climbing.
-            if (_isClimbingLadder)
-            {
-                if (animations.CurrentAnimationName != _climbAnimationName)
-                {
-                    animations.Play(_climbAnimationName);
-                }
-                _gameObject.IsAffectedByGravity = false;
-
-                // Move towards the center of the ladder
-                var targetX = ((int)_gameObject.WorldLocation.X / Game1.TileSize * Game1.TileSize) + (Game1.TileSize / 2);
-
-                if (targetX > _gameObject.WorldLocation.X - 2)
-                {
-                    _gameObject.Velocity = new Vector2(20, _gameObject.Velocity.Y);
-                }
-                else if (targetX <= _gameObject.WorldLocation.X + 2)
-                {
-                    _gameObject.Velocity = new Vector2(-20, _gameObject.Velocity.Y);
-                }
-                else
-                {
-                    // Lock on the x coordinate.
-                    _gameObject.WorldLocation = new Vector2(targetX, _gameObject.WorldLocation.Y);
-                }
-
-                _gameObject.Velocity = new Vector2(_gameObject.Velocity.X, _ladderYVelocity);
+                _previousLocation = _targetLocation;
             }
             else
             {
-                _gameObject.IsAffectedByGravity = true;
+                _previousLocation = _gameObject.WorldLocation;
             }
+            _targetLocation = location;
+            
+            _isAtFinalLocation = false;
 
-            if (_gameObject.OnGround && _gameObject.Velocity.X == 0 && animations.CurrentAnimationName != _idleAnimationName)
+            var priorMovement = _waypointMovement;
+
+            _waypointMovement = DetermineMovementToNextTarget();
+
+            if (_waypointMovement == WaypointMovement.Jumping && priorMovement != WaypointMovement.Jumping)
             {
-                animations.Play(_idleAnimationName);
+                SoundManager.PlaySound("Jump");
             }
 
-            _isAtLocation = IsAtLocation(_gameObject.WorldLocation, TargetLocation);
+            if (_targetLocation != Vector2.Zero && _previousLocation.X != _targetLocation.X)
+            {
+                _gameObject.Flipped = _targetLocation.X < _previousLocation.X;
+            }
+
+            var animations = (AnimationDisplay)_gameObject.DisplayComponent;
+
+            switch (_waypointMovement)
+            {
+                case WaypointMovement.Walking:
+                    animations.PlayIfNotAlreadyPlaying(_walkAnimationName);
+                    break;
+                case WaypointMovement.Idle:
+                    animations.PlayIfNotAlreadyPlaying(_idleAnimationName);
+                    break;
+                case WaypointMovement.Jumping:
+                case WaypointMovement.Falling:
+                    animations.PlayIfNotAlreadyPlaying(_jumpAnimationName);
+                    break;
+                case WaypointMovement.ClimbingLadder:
+                    animations.PlayIfNotAlreadyPlaying(_climbAnimationName);
+                    break;
+            }
+
+            _gameObject.IsAffectedByGravity = _waypointMovement == WaypointMovement.Walking || _waypointMovement == WaypointMovement.Idle;
         }
 
-        public bool IsAtLocation()
+        /// <summary>
+        /// Set multiple target locations for the NPC to follow in sequence.
+        /// The NPC will move through each location in order and stop at the final one.
+        /// </summary>
+        public void SetTargetLocations(IEnumerable<Vector2> locations)
         {
-            return _isAtLocation;
+            _locationQueue.Clear();
+
+            foreach (var location in locations)
+            {
+                _locationQueue.Enqueue(location);
+            }
+
+            if (_locationQueue.Any())
+            {
+                var location = _locationQueue.Dequeue();
+                SetTargetLocation(location);
+            }
+        }
+
+        private WaypointMovement DetermineMovementToNextTarget()
+        {
+
+            if (_targetLocation == Vector2.Zero)
+            {
+                return WaypointMovement.Idle;
+            }
+
+            var isWalkingToWaypoint = Math.Abs(_targetLocation.Y - _gameObject.WorldLocation.Y) < Game1.TileSize / 2;
+            if (isWalkingToWaypoint)
+            {
+                return WaypointMovement.Walking;
+            }
+            else if (_gameObject.WorldLocation.Y > _targetLocation.Y)
+            {
+                // Can only climb a ladder if the next waypoint is directly above
+                var isTargetDirectlyAbove = Math.Abs(_targetLocation.X - _gameObject.WorldLocation.X) < Game1.TileSize / 2;
+                var tileAtCenter = Game1.CurrentMap?.GetMapSquareAtPixel(_gameObject.WorldCenter);
+                var isOverLadder = (tileAtCenter != null && tileAtCenter.IsLadder);
+                if (isTargetDirectlyAbove && isOverLadder)
+                {
+                    return WaypointMovement.ClimbingLadder;
+                }
+                else
+                {
+                    return WaypointMovement.Jumping;
+                }
+            }
+            else if (_gameObject.WorldLocation.Y < _targetLocation.Y)
+            {
+                var isTargetDirectlyBelow = Math.Abs(_targetLocation.X - _gameObject.WorldLocation.X) < Game1.TileSize / 2;
+                var tileBelow = Game1.CurrentMap?.GetMapSquareAtPixel(_gameObject.WorldLocation - new Vector2(0, 16));
+                var isOverLadder = (tileBelow != null && tileBelow.IsLadder);
+                if (isTargetDirectlyBelow && isOverLadder)
+                {
+                    return WaypointMovement.ClimbingLadder;
+                }
+                else
+                {
+                    return WaypointMovement.Falling;
+                }
+            }
+            else
+            {
+                return WaypointMovement.Idle;
+            }
         }
 
         public static bool IsAtLocation(Vector2 gameObjectLocation, Vector2 targetLocation)
         {
-            return Vector2.Distance(gameObjectLocation, targetLocation) < 10;
+            return Vector2.Distance(gameObjectLocation, targetLocation) < 4f;
         }
     }
 }

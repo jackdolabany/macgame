@@ -462,7 +462,7 @@ namespace MacGame
                                     }
                                     if (props.ContainsKey("SuperShot"))
                                     {
-                                        cannon.IsSuperShot = true;
+                                        cannon.IsSuperShot = props["SuperShot"].ToBoolean();
                                     }
                                     if (props.ContainsKey("DefaultDirection"))
                                     {

@@ -69,6 +69,7 @@ namespace MacGame
 
         private const float maxAcceleration = 600;
         private const float maxSpeed = 500;
+        private const float maxFlyingSpeed = 450;
 
         private MacState _state = MacState.Idle;
 
@@ -702,6 +703,14 @@ namespace MacGame
             }
 
             var velocityBeforeUpdate = this.Velocity;
+
+            if (HasWings)
+            {
+                // Cap max velocity
+                this.Velocity = new Vector2(
+                    MathHelper.Clamp(this.Velocity.X, -maxFlyingSpeed, maxFlyingSpeed),
+                    MathHelper.Clamp(this.Velocity.Y, -maxFlyingSpeed * 3, maxFlyingSpeed)); // Less of a cap on upwards speed than falling.
+            }
 
             base.Update(gameTime, elapsed);
 
@@ -2234,12 +2243,12 @@ namespace MacGame
                 
             }
 
-            const float swimSpeed = 250f;
-            const float maxSpeed = 100f;
+            const float swimAcceleration = 250f;
+            const float maxSwimSpeed = 100f;
 
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
             {
-                this.velocity.X += swimSpeed * elapsed;
+                this.velocity.X += swimAcceleration * elapsed;
                 Flipped = false;
             }
             else if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
@@ -2254,11 +2263,11 @@ namespace MacGame
 
             if (InputManager.CurrentAction.down && !InputManager.CurrentAction.up)
             {
-                this.velocity.Y += swimSpeed * elapsed;
+                this.velocity.Y += swimAcceleration * elapsed;
             }
             else if (InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
             {
-                this.velocity.Y -= swimSpeed * elapsed;
+                this.velocity.Y -= swimAcceleration * elapsed;
             }
             else
             {
@@ -2268,8 +2277,8 @@ namespace MacGame
 
             if (isHeadUnderWater)
             {
-                this.velocity.Y = MathHelper.Clamp(this.velocity.Y, -maxSpeed, maxSpeed);
-                this.velocity.X = MathHelper.Clamp(this.velocity.X, -maxSpeed, maxSpeed);
+                this.velocity.Y = MathHelper.Clamp(this.velocity.Y, -maxSwimSpeed, maxSwimSpeed);
+                this.velocity.X = MathHelper.Clamp(this.velocity.X, -maxSwimSpeed, maxSwimSpeed);
             }
 
             // If they are near the top, stop their movement so that they have a head above water but they don't pop out

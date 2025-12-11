@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.0" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.2" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures2.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -257,7 +257,7 @@
  </tile>
  <tile id="178">
   <properties>
-   <property name="LoadClass" value="Npc.BlackBird"/>
+   <property name="LoadClass" value="Npc.Snake"/>
   </properties>
  </tile>
  <tile id="180">
@@ -282,7 +282,7 @@
  </tile>
  <tile id="194">
   <properties>
-   <property name="LoadClass" value="Npc.BlackBird"/>
+   <property name="LoadClass" value="Npc.PaulyTheSnake"/>
   </properties>
  </tile>
  <tile id="196">

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using TileEngine;
+using System.Linq;
 
 namespace MacGame
 {
@@ -44,6 +45,8 @@ namespace MacGame
         private static int currentLetterIndex;
         private static int totalLetters;
 
+        public static bool IsMessageFullyDisplayed => currentLetterIndex > 0 && currentLetterIndex == totalLetters;
+
         static string ChoicePointerString = " > ";
         static float ChoicePointerWidth = 0f;
 
@@ -75,7 +78,11 @@ namespace MacGame
 
         // Have a small delay where you just see the black box before we start typing letters.
         public static float typeDelayTimer = 0f;
-        public static float typeDelayTimerGoal = 0.3f;
+        public const float typeDelayTimerGoal = 0.3f;
+
+        // Small delay before you can select a choice so that you don't click it accidentally before you see it.
+        public static float choiceDelayTimer = 0f;
+        public const float choiceDelayTimerGoal = 0.5f;
 
         public static void AddMessage(
             string text, 
@@ -144,7 +151,7 @@ namespace MacGame
                     Messages.Add(currentMessage);
                 }
 
-                lastMessage.Choices = choices;
+                lastMessage.Choices.AddRange(choices);
             }
 
             lastMessage.CompleteAction = completeAction;
@@ -163,6 +170,7 @@ namespace MacGame
             totalLetters = 0;
 
             typeDelayTimer = 0f;
+            choiceDelayTimer = 0f;
 
             if (Messages.Count > 0)
             {
@@ -204,32 +212,72 @@ namespace MacGame
 
         public static void Update(float elapsed)
         {
-            if (Messages.Count == 0)
-            {
-                return;
-            }
+            if (Messages.Count == 0) return;
 
             if (_showMessageTimeRemaining > 0)
             {
                 _showMessageTimeRemaining -= elapsed;
             }
 
-            var player = Game1.Player;
+            // This adds a little delay before the letters start typing
+            // out to the screen.
+            typeDelayTimer += elapsed;
 
+            if (typeDelayTimer < typeDelayTimerGoal)
+            {
+                return;
+            }
+
+            // Read inputs.
+            var player = Game1.Player;
             var pa = player.InputManager.PreviousAction;
             var ca = player.InputManager.CurrentAction;
 
-            var pressedAcceptButton = ca.acceptMenu && !pa.acceptMenu;
-
-            // if enough time has passed and we dont need to block the inputs any more, see if they pressed the button
-            // if so, advance through the messages.
-            if (currentLetterIndex >= totalLetters)
+            // Advance the letters.
+            float letterSpeed = 0.8f;
+            if (ca.acceptMenu)
             {
+                // Advance faster if they hold the button down.
+                letterSpeed *= 2;
+            }
+            letterTimer += elapsed * letterSpeed;
+
+            if (letterTimer >= letterTimerGoal && currentLetterIndex < totalLetters)
+            {
+                currentLetterIndex++;
+                if (currentLetterIndex % 3 == 0)
+                {
+                    SoundManager.PlaySound("TypeLetter", 0.35f, 0.5f);
+                }
+                letterTimer -= letterTimerGoal;
+            }
+
+            if (IsMessageFullyDisplayed && choiceDelayTimer <= choiceDelayTimerGoal)
+            {
+                choiceDelayTimer += elapsed;
+            }
+
+            bool canMessageBeAdvanced;  
+            if (Messages[0].Choices.Any())
+            {
+                canMessageBeAdvanced = IsMessageFullyDisplayed && choiceDelayTimer >= choiceDelayTimerGoal;
+            }
+            else
+            {
+                canMessageBeAdvanced = IsMessageFullyDisplayed;
+            }
+
+            // Handle inputs
+            if (canMessageBeAdvanced)
+            {
+                var pressedAcceptButton = ca.acceptMenu && !pa.acceptMenu;
+
+                // Execute the action if they pressed the button
                 if ((pressedAcceptButton && _pauseGameplay) || (_showMessageTimeRemaining <= 0 && !_pauseGameplay))
                 {
                     var message = Messages[0];
 
-                    if (message.Choices != null)
+                    if (message.Choices.Any())
                     {
                         var action = message.Choices[message.selectedChoice].Event;
                         if (action != null)
@@ -247,56 +295,31 @@ namespace MacGame
                     SetupNewMessage();
 
                     _showMessageTimeRemaining = _messageTime;
+                    return;
                 }
-            }
 
-            if (Messages.Count == 0) return;
-
-            // Let them choose a choice
-            var currentMessage = Messages[0];
-            if (currentMessage.Choices != null)
-            {
-                if (ca.up && !pa.up)
+                // Move the current selection up or down.
+                var currentMessage = Messages[0];
+                if (currentMessage.Choices != null)
                 {
-                    currentMessage.selectedChoice--;
-                    if (currentMessage.selectedChoice < 0)
+                    if (ca.up && !pa.up)
                     {
-                        currentMessage.selectedChoice = currentMessage.Choices.Count - 1;
+                        currentMessage.selectedChoice--;
+                        if (currentMessage.selectedChoice < 0)
+                        {
+                            currentMessage.selectedChoice = currentMessage.Choices.Count - 1;
+                        }
+                    }
+                    else if (ca.down && !pa.down)
+                    {
+                        currentMessage.selectedChoice++;
+                        if (currentMessage.selectedChoice >= currentMessage.Choices.Count)
+                        {
+                            currentMessage.selectedChoice = 0;
+                        }
+
                     }
                 }
-                else if (ca.down && !pa.down)
-                {
-                    currentMessage.selectedChoice++;
-                    if (currentMessage.selectedChoice >= currentMessage.Choices.Count)
-                    {
-                        currentMessage.selectedChoice = 0;
-                    }
-                }
-            }
-
-            if (typeDelayTimer >= typeDelayTimerGoal)
-            {
-                // Advance the letters.
-                float letterSpeed = 0.8f;
-                if (ca.acceptMenu)
-                {
-                    letterSpeed *= 2;
-                }
-                letterTimer += elapsed * letterSpeed;
-
-                if (letterTimer >= letterTimerGoal && currentLetterIndex < totalLetters)
-                {
-                    currentLetterIndex++;
-                    if (currentLetterIndex % 3 == 0)
-                    {
-                        SoundManager.PlaySound("TypeLetter", 0.35f, 0.5f);
-                    }
-                    letterTimer -= letterTimerGoal;
-                }
-            }
-            else
-            {
-                typeDelayTimer += elapsed;
             }
         }
 
@@ -370,7 +393,7 @@ namespace MacGame
             // Draw the choices.
             var location = new Vector2(textLeftMargin + 16, topMargin + wordHeight + wordHeight - 8);
 
-            if (currentMessage.Choices != null)
+            if (currentMessage.Choices.Any() && IsMessageFullyDisplayed)
             {
 
                 for (int i = 0; i < currentMessage.Choices.Count; i++)
@@ -572,7 +595,7 @@ namespace MacGame
         public int selectedChoice = 0;
 
         // An array of strings to show as choices after the last message.
-        public List<ConversationChoice> Choices;
+        public List<ConversationChoice> Choices = new List<ConversationChoice>(5);
 
         /// <summary>
         /// Some kind of custom action to execute after the last message.

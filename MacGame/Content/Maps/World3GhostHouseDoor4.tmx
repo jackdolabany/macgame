@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="165" height="161" tilewidth="8" tileheight="8" infinite="0" nextlayerid="11" nextobjectid="76">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="165" height="161" tilewidth="8" tileheight="8" infinite="0" nextlayerid="11" nextobjectid="76">
  <editorsettings>
   <export format="tmx"/>
  </editorsettings>
@@ -193,7 +193,7 @@
   </object>
   <object id="75" x="181.727" y="557.909" width="12.1818" height="12.1818">
    <properties>
-    <property name="Convo" value="Me:I know that treasures remain in here, but you have to figure out these platforms."/>
+    <property name="Convo" value="Me:Treasures are in here, but you have to figure out these platforms"/>
    </properties>
   </object>
  </objectgroup>

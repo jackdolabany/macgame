@@ -11,6 +11,8 @@ namespace MacGame.Npcs
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
         List<ConversationChoice> choices;
 
+        string[] randomTacoMessages;
+
         public Mouse(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -43,6 +45,17 @@ namespace MacGame.Npcs
             choices.Add(new ConversationChoice("Nope", () => {
                 ConversationManager.AddMessage("I could live without tacos, but what's the point?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }));
+
+            randomTacoMessages = new string[]
+            {
+                "Thanks for the tacos hombre",
+                "I live for Taco Tuesday. I'd die for Taco Tuesday",
+                "People like to say salsa",
+                "I used to love tacos. I still do, but I used to love them too.",
+                "So long and thanks for all the tacos",
+                "Why restrict tacos to just Tuesday?",
+                "Is a taco a sandwich?"
+            };
         }
 
         public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(3, 0);
@@ -58,26 +71,8 @@ namespace MacGame.Npcs
             if (Game1.StorageState.Levels[Game1.CurrentLevel.LevelNumber].Keys.HasTacoKey)
             {
 
-                var rando = Game1.Randy.Next(0, 4);
-
-                switch (rando)
-                {
-                    case 0:
-                        ConversationManager.AddMessage("Thanks for the tacos hombre", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        break;
-                    case 1:
-                        ConversationManager.AddMessage("I live for Taco Tuesday. I'd die for Taco Tuesday", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        break;
-                    case 2:
-                        ConversationManager.AddMessage("People like to say salsa", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        break;
-                    case 3:
-                        ConversationManager.AddMessage("I used to love tacos. I still do, but I used to love them too.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        break;
-                    default: 
-                        ConversationManager.AddMessage("So long and thanks for all the tacos", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
-                        break;
-                }
+                var rando = Game1.Randy.Next(0, randomTacoMessages.Length);
+                ISay(randomTacoMessages[rando]);
             }
             else
             {

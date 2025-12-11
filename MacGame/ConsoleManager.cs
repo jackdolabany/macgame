@@ -279,6 +279,16 @@ namespace MacGame
                     }
                 }
             }
+            if (input.StartsWith("taco ") || input.StartsWith("tacos "))
+            {
+                int tacoCount = 1;
+                if (inputArray.Length >= 2)
+                {
+                    int.TryParse(inputArray[1], out tacoCount);
+                }
+                player.Tacos += tacoCount;
+                return $"You now have {player.Tacos} tacos!";
+            }
             if (input.StartsWith("breakbricks"))
             {
                 foreach (var gameObject in Game1.CurrentLevel.GameObjects)

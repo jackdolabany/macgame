@@ -26,12 +26,12 @@ namespace MacGame
                     new SockInfo { Name = "IceSock", Hint = "There's something special if you can trek through icy mountains." },
                     new SockInfo { Name = "SandTopSock", Hint = "Deep in the caves is a room with so much sand, it'll make you puke." },
                     new SockInfo { Name = "MinecartSock", Hint = "I heard there's still something shiny down in the old mine." },
-                    new SockInfo { Name = "TacoSock", Hint = "The hungry mouse." },
                     new SockInfo { Name = "RaceSock", Hint = "Boy that Froggy sure is fast! And annoying." },
                     new SockInfo { Name = "WingWorldSock", Hint = "There is a sock accessible to those who fly like birds. Wings boy! They're found in caves!" },
                     new SockInfo { Name = "CatBossSock", Hint = "There's a terrbile beast locked up. Defeat her and get the treasure." },
                     new SockInfo { Name = "CannonSock2", Hint = "I dropped a sock in a cannon once and it blasted off somewhere. Try to find it." },
                     new SockInfo { Name = "WaterSock", Hint = "I once stashed a sock in a secret entrance in the base of a sturdy tree." },
+                    new SockInfo { Name = "TacoSock", Hint = "The hungry mouse." },
                 }
             },
             {
@@ -42,7 +42,6 @@ namespace MacGame
                     new SockInfo { Name = "RedDoorSock", Hint = "Find the red key." },
                     new SockInfo { Name = "GreenDoorSock", Hint = "Find the green key." },
                     new SockInfo { Name = "BlueDoorSock", Hint = "Find the blue key." },
-                    new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
                     new SockInfo { Name = "SpringboardSock", Hint = "I heard those crazy cats trapped a frog. Did you see it?" },
                     new SockInfo { Name = "GooseBossSock", Hint = "Roast the goose!" },
                     new SockInfo { Name = "MinecartSock", Hint = "If you're feeling stressed take a nice relaxing minecart ride." },
@@ -51,6 +50,7 @@ namespace MacGame
                     new SockInfo { Name = "RaceSock", Hint = "If you're having trouble beating the frog in a race, just cheat. He won't notice." },
                     new SockInfo { Name = "BombSock", Hint = "Take a leap of faith to the East. But danger awaits!" },
                     new SockInfo { Name = "MollySock", Hint = "I heard Molly the cat found one of the socks. I'm not sure what you'd have to do to get it from her." },
+                    new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
                 }
             },
             {
@@ -69,6 +69,8 @@ namespace MacGame
                     new SockInfo { Name = "ChatterboxSock", Hint = "Frankie has a sock. Maybe you can talk him out of it." },
                     new SockInfo { Name = "NerdSock", Hint = "Show those bullies what bullying is all about!" },
                     new SockInfo { Name = "MinecartSock", Hint = "Show those bullies what bullying is all about!" },
+                    new SockInfo { Name = "RaceSock", Hint = "Froggie's here hiding a sock again. Go smoke him like jerky!" },
+                    new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
                 }
             },
             {

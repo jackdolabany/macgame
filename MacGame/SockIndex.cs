@@ -69,6 +69,7 @@ namespace MacGame
                     new SockInfo { Name = "ChatterboxSock", Hint = "Frankie has a sock. Maybe you can talk him out of it." },
                     new SockInfo { Name = "NerdSock", Hint = "Show those bullies what bullying is all about!" },
                     new SockInfo { Name = "MinecartSock", Hint = "Show those bullies what bullying is all about!" },
+                    new SockInfo { Name = "HiddenCaveSock", Hint = "I heard there's a sock hidden in the walls of the caves." },
                     new SockInfo { Name = "RaceSock", Hint = "Froggie's here hiding a sock again. Go smoke him like jerky!" },
                     new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
                 }

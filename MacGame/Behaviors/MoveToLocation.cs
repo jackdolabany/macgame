@@ -48,6 +48,8 @@ namespace MacGame.Behaviors
 
         private WaypointMovement _waypointMovement;
 
+        private float playClimbSoundTimer = 0f;
+
         /// <summary>
         /// Create a new MoveToLocation behavior for NPCs to follow waypoints or just move to a location. They'll have a half hearted
         /// attempt to avoid some obstacles or climb ladders.
@@ -66,7 +68,16 @@ namespace MacGame.Behaviors
         public override void Update(GameObject _, GameTime gameTime, float elapsed)
         {
             // Check if we've reached the current location from the previous frame
-            var isAtTargetLocation = IsAtLocation(_gameObject.WorldLocation, _targetLocation);
+            var isAtTargetLocation = Vector2.Distance(_gameObject.WorldLocation, _targetLocation) < 4f;
+
+            // Edge case, you aren't done climbing a ladder until you are fully at the top of the ladder.
+            // Otherwise the character might try to walk prematurely and get stuck on an edge.
+            if (_waypointMovement == WaypointMovement.ClimbingLadder 
+                && _gameObject.Velocity.Y < 0
+                && _gameObject.WorldLocation.Y >= _targetLocation.Y)
+            {
+                isAtTargetLocation = false;
+            }
 
             if (isAtTargetLocation && _locationQueue.Count > 0)
             {
@@ -123,8 +134,15 @@ namespace MacGame.Behaviors
                     // Half speed on the ladder.
                     _gameObject.Velocity = new Vector2(_gameObject.Velocity.X, directionY * MoveSpeed / 2);
 
-
+                    playClimbSoundTimer -= elapsed;
+                    if (playClimbSoundTimer <= 0f)
+                    {
+                        SoundManager.PlaySound("Climb", 0.3f, 0.3f);
+                        playClimbSoundTimer += 0.15f;
+                    }
                     break;
+                default:
+                    throw new NotImplementedException("Unknown WaypointMovement type");
             }
         }
 
@@ -244,11 +262,6 @@ namespace MacGame.Behaviors
             {
                 return WaypointMovement.Idle;
             }
-        }
-
-        public static bool IsAtLocation(Vector2 gameObjectLocation, Vector2 targetLocation)
-        {
-            return Vector2.Distance(gameObjectLocation, targetLocation) < 4f;
         }
     }
 }

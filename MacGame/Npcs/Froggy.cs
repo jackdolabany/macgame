@@ -55,8 +55,8 @@ namespace MacGame.Npcs
         List<string> boasts;
 
         float slowSpeed = 250;
-        float medSpeed = 300;
-        float fastSpeed = 350;
+        float medSpeed = 350;
+        float fastSpeed = 450;
 
         private Vector2 _startLocation;
         private Rectangle _startCollisionRect;
@@ -237,12 +237,14 @@ namespace MacGame.Npcs
                     if (_raceVictoryZone.Contains(this.WorldLocation))
                     {
                         _result = LastRaceResult.FroggyWon;
+                        SoundManager.PlaySound("LoseRace");
                         _raceFinishTime = gameTime.TotalGameTime;
                         _hasSpoken = false;
                     }
                     else if (_raceVictoryZone.Contains(Game1.Player.WorldLocation))
                     {
                         _result = LastRaceResult.MacWon;
+                        SoundManager.PlaySound("WinRace");
                         _hasSpoken = false;
                         if (_speed == Speed.Slow)
                         {

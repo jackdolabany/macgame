@@ -287,9 +287,11 @@ namespace MacGame
                 {
                     switch (script.Script)
                     {
-                        case "IntroText":
-                            DisplayIntroText(script);
-                            
+                        case "IntroText1":
+                            DisplayIntroText1(script);
+                            break;
+                        case "IntroText2":
+                            DisplayIntroText2(script);
                             break;
                         case "OttisIntro":
                             OttisIntro(script);
@@ -381,14 +383,23 @@ namespace MacGame
 
         }
 
-        public void DisplayIntroText(CollisionScript script)
+        public void DisplayIntroText1(CollisionScript script)
         {
             if (!Game1.StorageState.HasSeenIntroText)
             {
-                Game1.StorageState.HasSeenIntroText = true;
-                ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
-                ConversationManager.AddMessage("Crikey! My human forgot me in the yard. I'll have to find my way home.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: false);
+                TimerManager.AddNewTimer(2f, () =>
+                {
+                    Game1.StorageState.HasSeenIntroText = true;
+                    ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: true);
+                    ConversationManager.AddMessage("Crikey! My human forgot me in the yard.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: true);
+                });
             }
+            script.Enabled = false;
+        }
+
+        public void DisplayIntroText2(CollisionScript script)
+        {
+            ConversationManager.AddMessage("Press up to go through doors and talk to friendlies", Helpers.GetReallyBigTileRect(1, 1), ConversationManager.ImagePosition.Right, pauseGameplay: true);
             script.Enabled = false;
         }
 

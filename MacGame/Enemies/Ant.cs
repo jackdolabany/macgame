@@ -47,7 +47,7 @@ namespace MacGame.Enemies
             if (Alive)
             {
                 // Flip if you hit a wall
-                if (!Flipped && velocity.X > 0 && OnRightWall)
+                if (!Flipped && velocity.X >= 0 && OnRightWall)
                 {
                     Flipped = true;
                 }

@@ -315,6 +315,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World3Cabin5.tmx
 
+#begin Maps/World3Cabin6.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World3Cabin6.tmx
+
 #begin Maps/World3FrogHouse.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

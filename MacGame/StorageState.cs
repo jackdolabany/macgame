@@ -45,6 +45,8 @@ namespace MacGame
 
         public bool HasBeatenDracula { get; set; } = false;
 
+        public bool HasKilledMurderer { get; set; } = false;
+
         public bool IsNerdHitByMac { get; set; } = false;
 
         /// <param name="saveSlot">1 through 3</param>
@@ -90,6 +92,8 @@ namespace MacGame
             clone.HasDraculaEye = this.HasDraculaEye;
             clone.HasDraculaTeeth = this.HasDraculaTeeth;
             clone.IsNerdHitByMac = this.IsNerdHitByMac;
+            clone.HasBeatenDracula = this.HasBeatenDracula;
+            clone.HasKilledMurderer = this.HasKilledMurderer;
             return clone;
         }
 
@@ -121,7 +125,7 @@ namespace MacGame
         }
     }
 
-    public class KeyStoargeState : ICloneable
+    public class KeyStorageState : ICloneable
     {
         public bool HasRedKey { get; set; }
         
@@ -142,7 +146,7 @@ namespace MacGame
 
         public object Clone()
         {
-            return new KeyStoargeState
+            return new KeyStorageState
             {
                 HasRedKey = this.HasRedKey,
                 HasGreenKey = this.HasGreenKey,
@@ -158,7 +162,7 @@ namespace MacGame
     /// </summary>
     public class LevelStorageState : ICloneable
     {
-        public KeyStoargeState Keys { get; set; } = new KeyStoargeState();
+        public KeyStorageState Keys { get; set; } = new KeyStorageState();
         
         public HashSet<string> UnlockedDoors { get; set; } = new HashSet<string>();
 
@@ -188,7 +192,7 @@ namespace MacGame
         public object Clone()
         {
             var levelStorageState = new LevelStorageState();
-            levelStorageState.Keys = (KeyStoargeState)this.Keys.Clone();
+            levelStorageState.Keys = (KeyStorageState)this.Keys.Clone();
             levelStorageState.UnlockedDoors = this.UnlockedDoors.ToHashSet();
             levelStorageState.CollectedSocks = this.CollectedSocks.ToHashSet();
             levelStorageState.HasBeatenFroggySlow = this.HasBeatenFroggySlow;

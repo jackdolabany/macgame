@@ -5,12 +5,19 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TileEngine;
 
 namespace MacGame.Enemies
 {
     /// <summary>
     /// Kinda like Jason from Friday the 13th, but certainly not him.
+    /// 
+    /// This guy will appear in multiple places, so set up Murderer Rectangles on the map
+    /// Add Object Modifiers with the property IsMurdererRectangle = true.
+    /// 
+    /// There's only 1 murderer so his health is stored in LevelState. When you kill him 
+    /// it should be saved in StorageState and he won't come back!
     /// </summary>
     public class Murderer : Enemy
     {
@@ -19,11 +26,15 @@ namespace MacGame.Enemies
         // Margin in pixels to spawn off-screen
         const int SpawnMargin = 32;
 
+        private List<Rectangle> _murdererRectangles = new List<Rectangle>(); 
+
         /// <summary>
         /// This is the Rectangle that Mac needs to be inside for the murderer to appear.
         /// In Tiled place a rectangle and call it "MurdererRectangle"
+        /// 
+        /// There's multiple on the map so whatever one Mac steps into last is the current murderer rectangle.
         /// </summary>
-        Rectangle murdererRectangle;
+        Rectangle currentMurdererRectangle;
 
         private bool _isInitialized = false;
         private Player _player;
@@ -107,7 +118,16 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = true;
             Attack = 1;
-            Health = 10;
+
+            if (Game1.LevelState.MurdererHealth.HasValue)
+            {
+                Health = Game1.LevelState.MurdererHealth.Value;
+            }
+            else
+            {
+                Health = 20;
+                Game1.LevelState.MurdererHealth = Health;
+            }
 
             IsAffectedByGravity = true;
             IsAbleToMoveOutsideOfWorld = true;
@@ -122,6 +142,7 @@ namespace MacGame.Enemies
             _sickle = new Sickle(content, cellX, cellY, player, camera);
             _sickle.Enabled = false;
             ExtraEnemiesToAddAfterConstructor.Add(_sickle);
+            ExtraEnemiesToAddAfterConstructor.Add(_sickle);
         }
 
         private void Initialize()
@@ -129,15 +150,15 @@ namespace MacGame.Enemies
             // Find the murderer rectangle in the map.
             foreach (var obj in Game1.CurrentMap.ObjectModifiers)
             {
-                if (obj.Name == "MurdererRectangle")
+                if (obj.Properties.ContainsKey("IsMurdererRectangle") && obj.Properties["IsMurdererRectangle"].ToBoolean())
                 {
-                    murdererRectangle = obj.GetScaledRectangle();
+                    _murdererRectangles.Add(obj.GetScaledRectangle());
                 }
             }
 
-            if (murdererRectangle == Rectangle.Empty)
+            if (!_murdererRectangles.Any())
             {
-                throw new Exception("The murderer needs a rectangle named 'MurdererRectangle' on the map to know where to spawn.");
+                throw new Exception("The murderer needs at least one rectangle with the property 'IsMurdererRectangle' on the map set to true.");
             }
         }
 
@@ -155,10 +176,19 @@ namespace MacGame.Enemies
             if (_state == MurdererState.Hiding)
             {
                 // Be way off the map so we don't collide with the player or anything.
-                this.worldLocation = new Vector2(-10000000, -10000000);
+                this.worldLocation = new Vector2(-10000, -10000);
+
+                foreach (var rectangle in _murdererRectangles)
+                {
+                    // Check if player is inside the murderer rectangle
+                    if (rectangle.Contains(_player.CollisionCenter))
+                    {
+                        currentMurdererRectangle = rectangle;
+                    }
+                }
 
                 // Check if player is inside the murderer rectangle
-                if (murdererRectangle.Contains(_player.CollisionCenter))
+                if (currentMurdererRectangle.Contains(_player.CollisionCenter))
                 {
                     appearTimer += elapsed;
                     if (appearTimer >= (hasAppeared ? reappearTimerGoal : firstAppearanceTimerGoal))
@@ -167,17 +197,17 @@ namespace MacGame.Enemies
                         int spawnX;
 
                         // Y is tricky, just spawn him in the middle of the bounding rect, he's off screen so he'll just fall to the ground.
-                        int spawnY = murdererRectangle.Bottom - 8;
+                        int spawnY = currentMurdererRectangle.Bottom - 8;
 
                         // Figure out if the player is in the left, middle, or right third of the bounding rect
                         bool isLeftSpawn = false;
 
-                        if (_player.WorldLocation.X < (murdererRectangle.X + (murdererRectangle.Width / 3f)))
+                        if (_player.WorldLocation.X < (currentMurdererRectangle.X + (currentMurdererRectangle.Width / 3f)))
                         {
                             // You're too close to the left, spawn on the right.
                             isLeftSpawn = false;
                         }
-                        else if (_player.WorldLocation.X > (murdererRectangle.X + murdererRectangle.Width * (2f / 3f)))
+                        else if (_player.WorldLocation.X > (currentMurdererRectangle.X + currentMurdererRectangle.Width * (2f / 3f)))
                         {                             
                             // You're too close to the right, spawn on the left.
                             isLeftSpawn = true;
@@ -251,7 +281,7 @@ namespace MacGame.Enemies
                 }
 
                 // Check if the player is still in the rectangle
-                if (!murdererRectangle.Contains(_player.CollisionCenter))
+                if (!currentMurdererRectangle.Contains(_player.CollisionCenter))
                 {
                     // Player left, go back to hiding
                     _state = MurdererState.ReadyToRunAway;
@@ -287,7 +317,7 @@ namespace MacGame.Enemies
                     // Run away!
                     animations.Play("walk");
                     // Just run to the left or right, stop colliding, just play the run animation and move!
-                    var isCloserToLeftOfBoundingBox = murdererRectangle.Center.X < this.WorldLocation.X;
+                    var isCloserToLeftOfBoundingBox = currentMurdererRectangle.Center.X < this.WorldLocation.X;
                     var runawaySpeed = _speed * 5;
                     if (isCloserToLeftOfBoundingBox)
                     {
@@ -369,6 +399,8 @@ namespace MacGame.Enemies
             }
 
             Health -= damage;
+
+            Game1.LevelState.MurdererHealth = Health;
 
             if (Health > 0)
             {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33122.133
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11304.174 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacGame", "MacGame\MacGame.csproj", "{BA32D64D-3EBB-4EC8-9AE9-720B7A57AC74}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomContentProcessorLibrary", "CustomContentProcessorLibrary\CustomContentProcessorLibrary.csproj", "{0D6780BF-C15F-479D-BEC6-EE98CE946340}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapLibrary", "TmxMapLibrary\TmxMapLibrary.csproj", "{BFA7B7C2-2B61-4F48-A346-00410385E817}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacGameTests", "MacGameTests\MacGameTests.csproj", "{35C95C2A-2AB5-4235-A5CE-013FFEE48B79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFA7B7C2-2B61-4F48-A346-00410385E817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35C95C2A-2AB5-4235-A5CE-013FFEE48B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C95C2A-2AB5-4235-A5CE-013FFEE48B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C95C2A-2AB5-4235-A5CE-013FFEE48B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C95C2A-2AB5-4235-A5CE-013FFEE48B79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

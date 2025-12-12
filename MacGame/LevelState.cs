@@ -53,6 +53,11 @@ namespace MacGame
         /// </summary>
         public int ChatterboxConversationCount = 0;
 
+        /// <summary>
+        /// If there is a murderer in the level, we track their health here so it persists across map changes.
+        /// </summary>
+        public int? MurdererHealth = null;
+
         public void Reset()
         {
             HubDoorNameYouCameFrom = "";
@@ -61,6 +66,7 @@ namespace MacGame
             JobState = JobState.NotAccepted;
             HasHeardDraculaConversation = false;
             ChatterboxConversationCount = 0;
+            MurdererHealth = null;
         }
     }
 

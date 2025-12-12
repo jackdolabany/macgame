@@ -72,6 +72,7 @@ namespace MacGame
                     new SockInfo { Name = "HiddenCaveSock", Hint = "I heard there's a sock hidden in the walls of the caves." },
                     new SockInfo { Name = "RaceSock", Hint = "Froggie's here hiding a sock again. Go smoke him like jerky!" },
                     new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
+                    new SockInfo { Name = "MurdererSock", Hint = "Can you do something about that nasty murderer problem?" },
                 }
             },
             {

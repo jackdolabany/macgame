@@ -37,6 +37,7 @@ namespace MacGame.Items
 
         public Sock(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
+            WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
 
             var animations = new AnimationDisplay();
@@ -53,12 +54,11 @@ namespace MacGame.Items
             animations.Add(idle);
 
             animations.Play("spin");
-
-            SetWorldLocationCollisionRectangle(14, 12);
+            
             // Move it up slightly
+            SetWorldLocationCollisionRectangle(14, 12);
             this.collisionRectangle.Y -= 8;
-
-            WorldLocation = new Vector2((cellX + 1) * TileMap.TileSize, (cellY + 1) * TileMap.TileSize);
+            
         }
 
         protected override void Initialize()

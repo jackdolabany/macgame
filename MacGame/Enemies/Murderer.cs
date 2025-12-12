@@ -137,8 +137,18 @@ namespace MacGame.Enemies
             SetWorldLocationCollisionRectangle(10, 23);
 
             this.Enabled = false;
-            _state = MurdererState.Hiding;
 
+            if (!Game1.StorageState.HasKilledMurderer)
+            {
+                _state = MurdererState.Hiding;
+            }
+            else
+            {
+                // Once dead in game state, he'll never come back.
+                _state = MurdererState.Dead;
+                Dead = true;
+            }
+            
             _sickle = new Sickle(content, cellX, cellY, player, camera);
             _sickle.Enabled = false;
             ExtraEnemiesToAddAfterConstructor.Add(_sickle);
@@ -419,6 +429,9 @@ namespace MacGame.Enemies
                 EffectsManager.SmallEnemyPop(_sickle.CollisionCenter);
                 SoundManager.PlaySound("MurdererDeath");
                 Dead = true;
+                Game1.StorageState.HasKilledMurderer = true;
+                StorageManager.TrySaveGame();
+
             }
         }
 

@@ -120,19 +120,12 @@ namespace MacGame.Behaviors
                     var distanceToCenter = Math.Abs(_targetLocation.X - _gameObject.WorldLocation.X);
                     if (distanceToCenter < 4)
                     {
-                        // Lock on the x coordinate.
+                        // Lock on the x coordinate if it's close enough.
                         _gameObject.WorldLocation = new Vector2(_targetLocation.X, _gameObject.WorldLocation.Y);
                     }
-                    else
-                    {
-                        _gameObject.Velocity = new Vector2((_targetLocation.X > _gameObject.WorldLocation.X ? 1 : -1) * MoveSpeed / 2, _gameObject.Velocity.Y);
-                    }
-
-                    // Climb the ladder until your y is < the next target.
-                    var directionY = _targetLocation.Y > _gameObject.WorldLocation.Y ? 1 : -1;
 
                     // Half speed on the ladder.
-                    _gameObject.Velocity = new Vector2(_gameObject.Velocity.X, directionY * MoveSpeed / 2);
+                    _gameObject.Velocity = normalToWaypoint * MoveSpeed / 2;
 
                     playClimbSoundTimer -= elapsed;
                     if (playClimbSoundTimer <= 0f)

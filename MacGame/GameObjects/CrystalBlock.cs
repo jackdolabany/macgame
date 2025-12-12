@@ -37,21 +37,21 @@ namespace MacGame
             this.SetCenteredCollisionRectangle(8, 8, 8, 8);
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            passableImage.DrawDepth = depth;
+            solidImage.DrawDepth = depth;
+        }
+
+        public abstract void Initialize();
+
         public override void Update(GameTime gameTime, float elapsed)
         {
 
             if (!_isInitialized)
             {
-                _isInitialized = true;
-                Game1.CurrentMap.GetMapSquareAtCell(_cellX, _cellY).Passable = !_isSolid;
-                if (_isSolid)
-                {
-                    DisplayComponent = solidImage;
-                }
-                else
-                {
-                    DisplayComponent = passableImage;
-                }
+                Initialize();
             }
         }
 

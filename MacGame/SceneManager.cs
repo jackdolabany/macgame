@@ -790,6 +790,8 @@ namespace MacGame
                     if (o is BlockingPiston) return 1;
                     if (o is WaterBomb) return 1;
                     if (o is SpaceShip) return 1;
+                    if (o is CrystalSwitch) return 1;
+                    if (o is CrystalBlock) return 1;
                     if (o is Npc) return 2;
                     if (o is Button && ((Button)o).GetButtonType == Button.ButtonType.Light) return 1;
                     if (o is Platform) return 3;

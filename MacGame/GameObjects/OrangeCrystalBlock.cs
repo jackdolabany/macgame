@@ -18,5 +18,17 @@ namespace MacGame
             this.DisplayComponent = solidImage;
         }
 
+        public override void Initialize()
+        {
+            if (Game1.LevelState.CrystalSwitchIsOrange)
+            {
+                Open();
+            }
+            else
+            {
+                Close();
+            }
+        }
+
     }
 }

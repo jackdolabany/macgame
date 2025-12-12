@@ -58,6 +58,23 @@ namespace MacGame
         /// </summary>
         public int? MurdererHealth = null;
 
+        /// <summary>
+        /// Track the state of Crystal Switches that control the orange and blue blocks in LevelState.
+        /// </summary>
+        public bool CrystalSwitchIsOrange = true;
+
+        public bool CrystalSwitchIsBlue
+        {
+            get
+            {
+                return !CrystalSwitchIsOrange;
+            }
+            set
+            {
+                CrystalSwitchIsOrange = !value;
+            }
+        }
+
         public void Reset()
         {
             HubDoorNameYouCameFrom = "";
@@ -67,6 +84,7 @@ namespace MacGame
             HasHeardDraculaConversation = false;
             ChatterboxConversationCount = 0;
             MurdererHealth = null;
+            CrystalSwitchIsOrange = true;
         }
     }
 

@@ -106,7 +106,7 @@ namespace MacGame
                 else if (gameObject is GameObjects.CrystalSwitch crystalSwitch && crystalSwitch.CollisionRectangle.Intersects(explosionRectangle))
                 {
                     // Flip red/blue switches
-                    crystalSwitch.Trigger();
+                    crystalSwitch.ChangeColor();
                 }
                 else if (gameObject is BreakBrick breakBrick && breakBrick.CollisionRectangle.Intersects(explosionRectangle))
                 {

@@ -22,19 +22,6 @@ namespace MacGame.GameObjects
         StaticImageDisplay blueImage;
         private Player _player;
 
-        bool isOrange = true;
-        bool isBlue
-        {
-            get
-            {
-                return !isOrange;
-            }
-            set
-            {
-                isOrange = !value;
-            }
-        }
-
         private bool isInitialized = false;
 
         private float coolDownTimer = 0f;
@@ -63,21 +50,27 @@ namespace MacGame.GameObjects
             isEnemyTileColliding = false;
             isTileColliding = false;
 
-            isOrange = true;
-
             var textures = content.Load<Texture2D>(@"Textures\Textures");
             orangeImage = new StaticImageDisplay(textures, Helpers.GetTileRect(12, 27));
             blueImage = new StaticImageDisplay(textures, Helpers.GetTileRect(13, 27));
 
-
             DisplayComponent = orangeImage;
-
 
             this.SetWorldLocationCollisionRectangle(8, 8);
 
         }
 
-        private void SetBlocks()
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            orangeImage.DrawDepth = depth;
+            blueImage.DrawDepth = depth;
+        }
+
+        /// <summary>
+        /// Open or close blocks based on the color set in LevelState.
+        /// </summary>
+        private void SetAllBlocks()
         {
 
             foreach (var obj in Game1.CurrentLevel.GameObjects)
@@ -87,7 +80,7 @@ namespace MacGame.GameObjects
                     var cb = (CrystalBlock)obj;
                     if (cb is BlueCrystalBlock)
                     {
-                        if (isBlue)
+                        if (Game1.LevelState.CrystalSwitchIsBlue)
                         {
                             cb.Open();
                         }
@@ -99,7 +92,7 @@ namespace MacGame.GameObjects
 
                     if (cb is OrangeCrystalBlock)
                     {
-                        if (isOrange)
+                        if (Game1.LevelState.CrystalSwitchIsOrange)
                         {
                             cb.Open();
                         }
@@ -118,47 +111,40 @@ namespace MacGame.GameObjects
             isWaitingToSetBlocks = true;
         }
 
-        public void Trigger(GameObject? triggerObject = null)
+        public void ChangeColor(GameObject? triggerObject = null)
         {
             if (coolDownTimer <= 0)
             {
                 SoundManager.PlaySound("Click");
-                var newColor = !isOrange;
-                SetAllSwitchColors(newColor);
+                
+                // Set all switch colors
+                Game1.LevelState.CrystalSwitchIsOrange = !Game1.LevelState.CrystalSwitchIsOrange;
+                
+                foreach (var gameObject in Game1.CurrentLevel.GameObjects)
+                {
+                    if (gameObject is CrystalSwitch)
+                    {
+                        var cs = (CrystalSwitch)gameObject;
+                        cs.coolDownTimer = coolDownTimerMax;
+                        if (Game1.LevelState.CrystalSwitchIsOrange)
+                        {
+                            cs.DisplayComponent = orangeImage;
+                        }
+                        else
+                        {
+                            cs.DisplayComponent = blueImage;
+                        }
+                    }
+                }
+
                 SetBlocksWhenNotPlayerColliding();
                 TriggerObject = triggerObject;
             }
         }
 
-        private void SetAllSwitchColors(bool isOrange)
-        {
-            foreach (var gameObject in Game1.CurrentLevel.GameObjects)
-            {
-                if (gameObject is CrystalSwitch)
-                {
-                    var cs = (CrystalSwitch)gameObject;
-                    cs.SetSwitchColor(isOrange);
-                }
-            }
-        }
-
-        private void SetSwitchColor(bool isOrange)
-        {
-            this.isOrange = isOrange;
-            coolDownTimer = coolDownTimerMax;
-            if (isOrange)
-            {
-                 DisplayComponent = orangeImage;
-            }
-            else
-            {
-                DisplayComponent = blueImage;
-            }
-        }
-
         private void Initialize()
         {
-            SetBlocks();
+            SetAllBlocks();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -189,7 +175,7 @@ namespace MacGame.GameObjects
             if (coolDownTimer <= 0 && _player.CollisionRectangle.Intersects(this.CollisionRectangle))
             {
                 TriggerObject = _player;
-                Trigger(_player);
+                ChangeColor(_player);
             }
 
             // Check if enemies are colliding with it
@@ -199,7 +185,7 @@ namespace MacGame.GameObjects
                 {
                     if (enemy.Alive && enemy != TriggerObject && enemy.Enabled && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
-                        Trigger(enemy);
+                        ChangeColor(enemy);
                         break;
                     }
                 }
@@ -223,7 +209,7 @@ namespace MacGame.GameObjects
                 }
                 if (!isPlayerCollidingWithAnyBlocks)
                 {
-                    SetBlocks();
+                    SetAllBlocks();
                     isWaitingToSetBlocks = false;
                 }
             }

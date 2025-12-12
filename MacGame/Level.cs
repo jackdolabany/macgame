@@ -238,7 +238,7 @@ namespace MacGame
                 {
                     foreach (var door in Doors)
                     {
-                        if (door.Enabled && door.CollisionRectangle.Contains(Player.WorldCenter))
+                        if (door.Enabled && !door.IsExitOnly && door.CollisionRectangle.Contains(Player.WorldCenter))
                         {
                             doorToEnter = door;
                             break;

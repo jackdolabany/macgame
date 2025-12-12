@@ -54,7 +54,7 @@ namespace MacGame.Npcs
 
         List<string> boasts;
 
-        float slowSpeed = 200;
+        float slowSpeed = 250;
         float medSpeed = 300;
         float fastSpeed = 350;
 

@@ -80,7 +80,7 @@ namespace MacGame.Behaviors
                     // About to walk off the edge.
                     var pointDownInFront = new Vector2(gameObject.WorldLocation.X.ToInt() + (4 * (gameObject.Flipped ? -1 : 1)), gameObject.WorldLocation.Y.ToInt() + 4);
                     var mapSquare = Game1.CurrentLevel.Map.GetMapSquareAtPixel(pointDownInFront);
-                    if (mapSquare != null && mapSquare.Passable)
+                    if (mapSquare != null && (mapSquare.Passable && !mapSquare.IsPlatform))
                     {
                         shouldFlip = true;
                     }

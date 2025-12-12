@@ -38,7 +38,7 @@ namespace MacGame
         public static int oldWindowedHeight;
 
         public static Random Randy = new Random();
-        public const float MIN_DRAW_INCREMENT = 0.00001f;
+        public const float MIN_DRAW_INCREMENT = 0.0000001f;
 
         public static bool DrawAllCollisionRects = false;
 

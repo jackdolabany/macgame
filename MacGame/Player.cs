@@ -1754,11 +1754,7 @@ namespace MacGame
             // Drop it
             if (pickedUpObject != null && (!InputManager.CurrentAction.action || !isAbleToPickup))
             {
-                pickedUpObject.Drop();
-                recentlyDropped = pickedUpObject;
-                kickTimer = 0f;
-                pickUpAgainTimer = 1f;
-                pickedUpObject = null;
+                DropItem();
             }
 
             // If Mac recently dropped a block he can kick it away for a short time.
@@ -1881,6 +1877,16 @@ namespace MacGame
                 animations.Play(nextAnimation);
             }
 
+        }
+
+        private void DropItem()
+        {
+            if (pickedUpObject == null) return;
+            pickedUpObject.Drop();
+            recentlyDropped = pickedUpObject;
+            kickTimer = 0f;
+            pickUpAgainTimer = 1f;
+            pickedUpObject = null;
         }
 
         public void EnterMineCart()
@@ -2207,6 +2213,8 @@ namespace MacGame
 
         private void HandleWaterInputs(float elapsed)
         {
+
+            DropItem();
 
             IsAffectedByGravity = false;
 

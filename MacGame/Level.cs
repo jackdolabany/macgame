@@ -387,7 +387,7 @@ namespace MacGame
         {
             if (!Game1.StorageState.HasSeenIntroText)
             {
-                TimerManager.AddNewTimer(2f, () =>
+                TimerManager.AddNewTimer(3f, () =>
                 {
                     Game1.StorageState.HasSeenIntroText = true;
                     ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: true);
@@ -793,6 +793,10 @@ namespace MacGame
                     if (Game1.IS_DEBUG)
                     {
                         throw new Exception($"Unknown button action: {action}");
+                    }
+                    else
+                    {
+                        break;
                     }
             }
         }

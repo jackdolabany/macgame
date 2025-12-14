@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "World3GhostHouse";
+        public const string StartingWorld = "HubWorld";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -66,6 +66,9 @@ namespace MacGame
 
         public static Texture2D titleScreen;
         public static Texture2D dolaSoftSplashScreen;
+        public static Texture2D controllerSplashScreen;
+
+        public const float SPLASH_SCREEN_TIME = 3f;
 
         public static Rectangle WhiteSourceRect;
 
@@ -413,6 +416,7 @@ namespace MacGame
             ReallyBigTileTextures = Content.Load<Texture2D>(@"Textures\ReallyBigTextures");
             titleScreen = Content.Load<Texture2D>(@"Textures\TitleScreen");
             dolaSoftSplashScreen = Content.Load<Texture2D>(@"Textures\LogoScreen");
+            controllerSplashScreen = Content.Load<Texture2D>(@"Textures\Controller");
 
             //Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
             //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
@@ -456,7 +460,7 @@ namespace MacGame
             if (startAtTitleScreen)
             {
                 TransitionToState(GameState.DolaSoftSplashScreen, TransitionType.Instant);
-                splashScreenTimer = 3f;
+                splashScreenTimer = SPLASH_SCREEN_TIME;
             }
             else
             {
@@ -845,10 +849,25 @@ namespace MacGame
                 splashScreenTimer -= elapsed;
                 if (splashScreenTimer <= 0)
                 {
+                    TransitionToState(GameState.ControllerSplashScreen, TransitionType.SlowFade);
+                    splashScreenTimer = SPLASH_SCREEN_TIME;
+                }
+            }
+            else if (_gameState == GameState.ControllerSplashScreen)
+            {
+                if (inputManager.CurrentAction.action || inputManager.CurrentAction.pause || inputManager.CurrentAction.jump)
+                {
+                    // Can't be shorter than 0.5s, but you don't need the full time.
+                    splashScreenTimer = Math.Min(splashScreenTimer, 0.5f);
+                }
+
+                splashScreenTimer -= elapsed;
+                if (splashScreenTimer <= 0)
+                {
                     TransitionToState(GameState.TitleScreen, TransitionType.SlowFade);
                 }
 
-               
+
             }
             else if (_gameState == GameState.TitleScreen && transitionToState == GameState.TitleScreen)
             {
@@ -1034,7 +1053,15 @@ namespace MacGame
                     spriteBatch.Draw(dolaSoftSplashScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
                     spriteBatch.End();
                     break;
+                case GameState.ControllerSplashScreen:
+                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+                    spriteBatch.Draw(controllerSplashScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
 
+                    spriteBatch.DrawString(Font, "Controller", new Vector2(174, 32), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Font, "Recommended", new Vector2(154, GAME_Y_RESOLUTION - 64), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+
+                    spriteBatch.End();
+                    break;
                 case GameState.TitleScreen:
                 case GameState.TitleFromIntro:
 
@@ -1414,6 +1441,11 @@ namespace MacGame
         public enum GameState
         {
             DolaSoftSplashScreen,
+            
+            /// <summary>
+            /// A splash screen begging the user to use a controller.
+            /// </summary>
+            ControllerSplashScreen,
 
             TitleScreen,
 

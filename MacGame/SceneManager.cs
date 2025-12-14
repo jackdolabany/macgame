@@ -684,11 +684,8 @@ namespace MacGame
                             {
                                 var spaceShip = new SpaceShip(contentManager, x, y, player);
                                 HandleObjectModifiers(x, y, spaceShip, map, (props) => {
-                                    if (props.ContainsKey("PlatformName"))
-                                    {
-                                        spaceShip.GoToMap = props["GoToMap"];
-                                        spaceShip.GoToDoor = props["GoToDoor"];
-                                    }
+                                    spaceShip.GoToMap = props["GoToMap"];
+                                    spaceShip.GoToDoor = props["GoToDoor"];
                                 });
 
                                 spaceShip.AddStuffToLevel(level, contentManager);

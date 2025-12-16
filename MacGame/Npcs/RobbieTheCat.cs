@@ -108,7 +108,7 @@ namespace MacGame.Npcs
                     ConversationManager.AddMessage("I borrowed money for a new car. It's coming soon and I'm so excited!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     break;
                 case JobState.Accepted:
-                    ConversationManager.AddMessage("Check out my new ride! It's a cattyllac", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    ConversationManager.AddMessage("Check out my new ride! It's a cattyllac.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     break;
                 case JobState.CarDamaged:
                     ConversationManager.AddMessage("Bro! What are you doing?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);

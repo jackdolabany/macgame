@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="100" height="150" tilewidth="8" tileheight="8" infinite="0" nextlayerid="14" nextobjectid="121">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="150" tilewidth="8" tileheight="8" infinite="0" nextlayerid="14" nextobjectid="121">
  <properties>
   <property name="CustomRestartDoorName" value="Door1"/>
   <property name="CustomRestartLevelName" value="World3GhostHouse"/>
@@ -384,7 +384,7 @@
   </object>
   <object id="113" x="444" y="178.667" width="15.6667" height="16.3333">
    <properties>
-    <property name="Convo" value="Me:Something feels different"/>
+    <property name="Convo" value="Me:Something feels different."/>
    </properties>
   </object>
   <object id="114" x="443" y="1027" width="18" height="16.3333">
@@ -414,12 +414,12 @@
   </object>
   <object id="119" name="StuckKid" x="287" y="294.25" width="11" height="11">
    <properties>
-    <property name="Convo" value="Thanks Mac! I can't believe my parents made me go to this stupid haunted camp"/>
+    <property name="Convo" value="Me:Mac you have that Ohio Skibbidy Riz, no cap!Mac:Mate, I have no idea what you're saying."/>
    </properties>
   </object>
   <object id="120" x="445.364" y="587.636" width="14.4545" height="15">
    <properties>
-    <property name="Convo" value="Me:This room kind of changes on you.;"/>
+    <property name="Convo" value="Me:This is the maze room. I don't know how to navigate this thing."/>
    </properties>
   </object>
  </objectgroup>

@@ -389,6 +389,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/AlienDisappear.wav
 
+#begin SoundEffects/AppleBreak.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/AppleBreak.wav
+
 #begin SoundEffects/Bark.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

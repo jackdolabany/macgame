@@ -487,7 +487,7 @@ namespace MacGame.Npcs
                             ConversationManager.AddMessage("What? I didn't even realize we were racing. Race me again and feel the pain!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                             break;
                         case Speed.Fast:
-                            ConversationManager.AddMessage("Wowza that was fast! Here's a key, go in my house and take whatever you want. You deserve it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            ConversationManager.AddMessage("Wowza that was fast! You won fair and square. Here's a key, go in my house and take whatever you want. You deserve it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                             break;
                         default:
                             if (Game1.IS_DEBUG)
@@ -507,7 +507,7 @@ namespace MacGame.Npcs
                             ConversationManager.AddMessage("Inconceivable! Try me again, I never lose thrice!", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                             break;
                         case Speed.Fast:
-                            ConversationManager.AddMessage("You're as fast as frogs! Go in my house for a special prize.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            ConversationManager.AddMessage("You're as fast as frogs! And you did it the right way without cheating. Go in my house for a special prize.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                             break;
                         default:
                             if (Game1.IS_DEBUG)
@@ -527,7 +527,7 @@ namespace MacGame.Npcs
                             ConversationManager.AddMessage("I would have won but I tripped and fell. Try me again.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                             break;
                         case Speed.Fast:
-                            ConversationManager.AddMessage("Golly that was fast! Go in my house and take your reward. You deserve it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                            ConversationManager.AddMessage("You are a man of speed and integrity. Go in my house and take your reward. You deserve it.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                             break;
                         default:
                             if (Game1.IS_DEBUG)

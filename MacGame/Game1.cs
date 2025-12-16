@@ -849,7 +849,7 @@ namespace MacGame
                 splashScreenTimer -= elapsed;
                 if (splashScreenTimer <= 0)
                 {
-                    TransitionToState(GameState.ControllerSplashScreen, TransitionType.SlowFade);
+                    TransitionToState(GameState.ControllerSplashScreen, TransitionType.FastFade);
                     splashScreenTimer = SPLASH_SCREEN_TIME;
                 }
             }
@@ -864,7 +864,7 @@ namespace MacGame
                 splashScreenTimer -= elapsed;
                 if (splashScreenTimer <= 0)
                 {
-                    TransitionToState(GameState.TitleScreen, TransitionType.SlowFade);
+                    TransitionToState(GameState.TitleScreen, TransitionType.FastFade);
                 }
 
 

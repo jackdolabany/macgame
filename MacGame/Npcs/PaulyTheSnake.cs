@@ -119,7 +119,7 @@ namespace MacGame.Npcs
                         acceptJob,
                         declineJob
                     };
-                    ConversationManager.AddMessage("Hey kid", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                    ConversationManager.AddMessage("Hey kid.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
                     ConversationManager.AddMessage("Want a job?", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, jobChoices);
                     break;
                 case JobState.Accepted:
@@ -140,7 +140,7 @@ namespace MacGame.Npcs
                     }
                     else
                     {
-                        ConversationManager.AddMessage("Wow kid. We just wanted you to remind him. You didn't have to destroy his car. That's actually really messed up. Take this and stay away from us", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, null, showSock);
+                        ConversationManager.AddMessage("Wow kid. We just wanted you to remind him. You didn't have to destroy his car. That's actually really messed up. Take this and stay away from us.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right, null, showSock);
                     }
                     break;
                 case JobState.SockCollected:

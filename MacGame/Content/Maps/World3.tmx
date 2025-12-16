@@ -88,7 +88,7 @@
   <object id="24" name="CarSock" x="888.75" y="524.625" width="30.75" height="22.5"/>
   <object id="25" name="MobSnake2" x="850.523" y="546.568" width="19.1818" height="18.0909">
    <properties>
-    <property name="Convo" value="Me:We run thissss town"/>
+    <property name="Convo" value="Me:We run thissss town."/>
    </properties>
   </object>
   <object id="26" name="MobSnake1" x="901.284" y="548.886" width="15.6364" height="16.9091">
@@ -197,22 +197,22 @@
   </object>
   <object id="53" x="1086.88" y="710.875" width="11.625" height="12">
    <properties>
-    <property name="Convo" value="Mac:Are you going to eat me;Me:No, you have too many spikes. But I may hunt you for sport;Mac:Sweet!;"/>
+    <property name="Convo" value="Mac:Are you going to eat me?;Me:No, you have too many spikes. But I may hunt you for sport.;Mac:Sweet!;"/>
    </properties>
   </object>
   <object id="54" x="1242.92" y="708.5" width="16.8333" height="14.2083">
    <properties>
-    <property name="Convo" value="Me:Whatever you do, do not go in that haunted house;"/>
+    <property name="Convo" value="Me:Whatever you do, do not go in that haunted house.;"/>
    </properties>
   </object>
   <object id="55" x="1093.43" y="292.719" width="13.5" height="14">
    <properties>
-    <property name="Convo" value="Me:What do you call a dog that does magic?;Mac:What;Me:A labracada brador;"/>
+    <property name="Convo" value="Me:What do you call a dog that does magic?;Mac:What?;Me:A labraca- dabrador.;"/>
    </properties>
   </object>
   <object id="56" x="1125.45" y="69.4545" width="12.6364" height="12.9091">
    <properties>
-    <property name="Convo" value="Me:Why do only ugly people come to visit me?;Mac:Gosh! That sounds horrible"/>
+    <property name="Convo" value="Me:Why do only ugly people come to visit me?;Mac:Gosh! That sounds horrible."/>
    </properties>
   </object>
   <object id="58" name="RaceVictoryZone" x="1104.22" y="868.233" width="30.483" height="14.9034"/>
@@ -253,7 +253,7 @@
   </object>
   <object id="66" x="1125.82" y="709.455" width="11.8182" height="13.8182">
    <properties>
-    <property name="Convo" value="Me:Don't worry. We killed Dracula long ago, so he'll never come back;Me:Well, unless the prophecy is true;"/>
+    <property name="Convo" value="Me:Don't worry. We killed Dracula long ago, so he'll never come back.;Me:Well, unless the prophecy is true.;"/>
    </properties>
   </object>
   <object id="67" x="491.818" y="707.818" width="13.8182" height="15.0909">

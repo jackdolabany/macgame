@@ -28,7 +28,7 @@
   </object>
   <object id="5" x="19.5536" y="54.5373" width="16.4942" height="11.9716">
    <properties>
-    <property name="Convo" value="Me:To beat Froggy in a race you need to beavery quick"/>
+    <property name="Convo" value="Me:To beat Froggy in a race you need to beavery quick."/>
    </properties>
   </object>
  </objectgroup>

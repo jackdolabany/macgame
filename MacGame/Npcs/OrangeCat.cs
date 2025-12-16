@@ -120,7 +120,7 @@ namespace MacGame.Npcs
             }
             else
             {
-                ConversationManager.AddMessage("Meow", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("Meow.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }
         }
     }

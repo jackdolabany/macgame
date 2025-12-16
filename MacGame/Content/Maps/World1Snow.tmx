@@ -52,12 +52,7 @@
     <property name="GoToMap" value="World1"/>
    </properties>
   </object>
-  <object id="32" name="IceSock" x="1548.88" y="148.438" width="21.5" height="21.0625">
-   <properties>
-    <property name="Hint" value="There's something special if you can trek through icy mountains."/>
-    <property name="Number" value="6"/>
-   </properties>
-  </object>
+  <object id="32" name="IceSock" x="1548.88" y="148.438" width="21.5" height="21.0625"/>
   <object id="33" name="IceExitDoor" x="1492.09" y="172.818" width="15.9091" height="23.1818">
    <properties>
     <property name="GoToDoor" value="TreeDoor"/>

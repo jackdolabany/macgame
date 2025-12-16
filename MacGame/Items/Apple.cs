@@ -55,6 +55,7 @@ namespace MacGame.Items
         public void Smash()
         {
             ReturnApple();
+            SoundManager.PlaySound("AppleBreak", 0.6f, -0.9f);
             EffectsManager.EnemyPop(this.WorldCenter, 7, Color.Red, 80);
         }
     }

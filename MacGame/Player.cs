@@ -508,7 +508,7 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
 
-            _moveToLocation = new MoveToLocation(this, 150, "idle", "run", "jump", "climbLadder");
+            _moveToLocation = new MoveToLocation(this, 250, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");
         }
 

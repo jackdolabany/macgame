@@ -48,12 +48,7 @@
   </data>
  </layer>
  <objectgroup id="4" name="Object Layer 1">
-  <object id="9" name="TreeSock" x="1953.25" y="173.5" width="38.75" height="34.5">
-   <properties>
-    <property name="Hint" value="Looking for adventure? Try to climb all the way up the tree."/>
-    <property name="Number" value="3"/>
-   </properties>
-  </object>
+  <object id="9" name="TreeSock" x="1953.25" y="173.5" width="38.75" height="34.5"/>
   <object id="10" name="World1YellowHouse" x="891.091" y="754.18" width="17.2727" height="30.7273">
    <properties>
     <property name="GoToDoor" value="Door"/>
@@ -170,23 +165,13 @@
     <property name="GoToMap" value="World1Snow"/>
    </properties>
   </object>
-  <object id="35" name="RoofSock" x="948.042" y="695.67" width="21.6667" height="19">
-   <properties>
-    <property name="Hint" value="There's a coin stuck on my buddy's roof."/>
-    <property name="Number" value="1"/>
-   </properties>
-  </object>
+  <object id="35" name="RoofSock" x="948.042" y="695.67" width="21.6667" height="19"/>
   <object id="36" x="1371.64" y="701.09" width="16.9091" height="13.2727">
    <properties>
     <property name="SuperShot" value="1"/>
    </properties>
   </object>
-  <object id="37" name="TreeCannonSock" x="1371.82" y="619.636" width="24.1818" height="22.7273">
-   <properties>
-    <property name="Hint" value="There's a stronger than normal cannon between the trees."/>
-    <property name="Number" value="2"/>
-   </properties>
-  </object>
+  <object id="37" name="TreeCannonSock" x="1371.82" y="619.636" width="24.1818" height="22.7273"/>
   <object id="38" x="919.5" y="766.88" width="9.5" height="12.25">
    <properties>
     <property name="Convo" value="Me:This is the Tree Top Village. If you don't like it you can leaf."/>
@@ -194,7 +179,7 @@
   </object>
   <object id="39" name="SnakeText" x="1028.75" y="763.88" width="15.875" height="15.875">
    <properties>
-    <property name="Convo" value="Me:The guy in the red house can give you tips"/>
+    <property name="Convo" value="Me:The guy in the red house can give you tips."/>
    </properties>
   </object>
   <object id="40" name="MinecartDoor" x="1451.5" y="1164.5" width="18.5" height="35">

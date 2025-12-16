@@ -34,12 +34,12 @@
   </object>
   <object id="2" x="78.6364" y="54.1818" width="10.9091" height="12.4545">
    <properties>
-    <property name="Convo" value="Me:Me and my homies tagged up the haunted house maze. We each grabbed a color and went down separate paths;Mac:Isn't that illegal mate?;Me:It's called street art! Haven't you heard of prankski?;"/>
+    <property name="Convo" value="Me:Me and my homies tagged up the haunted house maze. We each grabbed a color and went down separate paths.;Mac:Isn't that illegal mate?;Me:It's called street art! Haven't you heard of prankski?;"/>
    </properties>
   </object>
   <object id="3" x="31.3636" y="54" width="9.81818" height="11.2727">
    <properties>
-    <property name="Convo" value="Me:I rigged the ghost house maze with explosives and marked the detonators with colored flags;Mac:Why?;Me:Idk, I was bored;"/>
+    <property name="Convo" value="Me:I rigged the ghost house maze with explosives and marked the detonators with colored flags.;Mac:Why?;Me:Idk, I was bored.;"/>
    </properties>
   </object>
  </objectgroup>

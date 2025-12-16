@@ -46,12 +46,6 @@
    <property name="GoToDoor" value="GhostHouseDoor"/>
    <property name="GoToMap" value="World3"/>
   </properties>
-  <object id="13" name="Entrance" x="355.045" y="386.727" width="18.75" height="25.75">
-   <properties>
-    <property name="GoToDoor" value="GhostHouseDoor"/>
-    <property name="GoToMap" value="World3"/>
-   </properties>
-  </object>
   <object id="17" name="Wallsock" x="5.09091" y="374.727" width="20.9091" height="17.6364"/>
   <object id="18" name="BirdInWall" x="476.364" y="370.909" width="16" height="17.2727">
    <properties>
@@ -152,7 +146,7 @@
   </object>
   <object id="42" x="382.364" y="397.091" width="12.1818" height="12.7273">
    <properties>
-    <property name="Convo" value="Me: Wow a fellow explorer! This haunted house has tricks and treasures in each room. I can tell you when you've found everything"/>
+    <property name="Convo" value="Me: Wow a fellow explorer! This haunted house has tricks and treasures in each room. I can tell you when you've found everything."/>
    </properties>
   </object>
  </objectgroup>

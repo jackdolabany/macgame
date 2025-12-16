@@ -37,7 +37,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            ConversationManager.AddMessage("Blerg", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("Blerg.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

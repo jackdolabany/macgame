@@ -58,7 +58,7 @@ namespace MacGame.Npcs
             // If the sock has been collected, show the final dialogue
             if (ChatterboxSock.IsCollected)
             {
-                ConversationManager.AddMessage("You were right. I didn't need that stinky old sock anyway", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("You were right. I didn't need that stinky old sock anyway.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }
             // After all conversations, reveal the sock
             else if (conversationCount == (conversations.Length - 1))

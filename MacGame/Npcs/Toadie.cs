@@ -36,7 +36,7 @@ namespace MacGame.Npcs
         /// </summary>
         public override void InitiateConversation()
         {
-            ConversationManager.AddMessage("Toadie", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("Toadie.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

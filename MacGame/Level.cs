@@ -391,7 +391,7 @@ namespace MacGame
                 {
                     Game1.StorageState.HasSeenIntroText = true;
                     ConversationManager.AddMessage("Wow that was a good nap!", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: true);
-                    ConversationManager.AddMessage("Crikey! My human forgot me in the yard.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: true);
+                    ConversationManager.AddMessage("Crikey! My human left me in the yard.", Helpers.GetReallyBigTileRect(0, 0), ConversationManager.ImagePosition.Left, pauseGameplay: true);
                 });
             }
             script.Enabled = false;
@@ -399,7 +399,7 @@ namespace MacGame
 
         public void DisplayIntroText2(CollisionScript script)
         {
-            ConversationManager.AddMessage("Press up to go through doors and talk to friendlies", Helpers.GetReallyBigTileRect(1, 1), ConversationManager.ImagePosition.Right, pauseGameplay: true);
+            ConversationManager.AddMessage("Press up to go through doors and talk to friendlies.", Helpers.GetReallyBigTileRect(1, 1), ConversationManager.ImagePosition.Right, pauseGameplay: true);
             script.Enabled = false;
         }
 
@@ -421,6 +421,7 @@ namespace MacGame
             Player.GoToLocation(waypoint.BottomCenterLocation);
             var ottis = (Ottie)Npcs.Single(npc => npc is Ottie);
             ottis.GoToLocation(new Vector2(waypoint.BottomCenterLocation.X + 2 * Game1.TileSize, waypoint.BottomCenterLocation.Y));
+
         }
 
         public void Dracula(CollisionScript script)

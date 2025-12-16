@@ -51,10 +51,10 @@ namespace MacGame.Npcs
             }
             else if (randomSaying == 2)
             {
-                MacSays("Hi I'm Mac");
-                ISay("My name is Hyper Bluey");
-                ISay("If you don't like it you can chew on walnuts buddy");
-                MacSays("I love it");
+                MacSays("Hi I'm Mac.");
+                ISay("My name is Hyper Bluey.");
+                ISay("If you don't like it you can chew on walnuts buddy.");
+                MacSays("I love it.");
             }
             else if (randomSaying == 3)
             {
@@ -64,12 +64,12 @@ namespace MacGame.Npcs
             }
             else if (randomSaying == 4)
             {
-                ISay("Knock Knock");
+                ISay("Knock Knock.");
                 MacSays("Who's there?");
-                ISay("Guy");
+                ISay("Guy.");
                 MacSays("Guy who?");
-                ISay("Guy who walks into my house without knocking");
-                MacSays("I don't get it");
+                ISay("Guy who walks into my house without knocking.");
+                MacSays("I don't get it.");
             }
             else if (randomSaying == 5)
             {

@@ -38,7 +38,7 @@ namespace MacGame.Npcs
 
         public override void InitiateConversation()
         {
-            ConversationManager.AddMessage("I'm lost", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+            ConversationManager.AddMessage("I'm lost.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
         }
     }
 }

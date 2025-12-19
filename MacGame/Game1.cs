@@ -81,6 +81,49 @@ namespace MacGame
         public const int TileScale = 4;
 
         private static RenderTarget2D gameRenderTarget;
+        private static Effect crtEffect;
+        private static Effect crtEffectNone;
+        private static Effect crtEffectSubtle;
+        private static Effect crtEffectFull;
+
+        public enum CRTMode
+        {
+            None,
+            Subtle,
+            Full
+        }
+
+        private static CRTMode currentCRTMode = CRTMode.Subtle;
+
+        public static void CycleCRTMode()
+        {
+            currentCRTMode = currentCRTMode switch
+            {
+                CRTMode.None => CRTMode.Subtle,
+                CRTMode.Subtle => CRTMode.Full,
+                CRTMode.Full => CRTMode.None,
+                _ => CRTMode.Subtle
+            };
+
+            crtEffect = currentCRTMode switch
+            {
+                CRTMode.None => crtEffectNone,
+                CRTMode.Subtle => crtEffectSubtle,
+                CRTMode.Full => crtEffectFull,
+                _ => crtEffectSubtle
+            };
+        }
+
+        public static string GetCRTModeName()
+        {
+            return currentCRTMode switch
+            {
+                CRTMode.None => "None",
+                CRTMode.Subtle => "CRT 1",
+                CRTMode.Full => "CRT 2",
+                _ => "CRT 1"
+            };
+        }
 
         public static Player Player;
 
@@ -440,6 +483,12 @@ namespace MacGame
             Player.WorldLocation = new Vector2(10, 10);
 
             gameRenderTarget = new RenderTarget2D(GraphicsDevice, GAME_X_RESOLUTION, GAME_Y_RESOLUTION, false, SurfaceFormat.Color, DepthFormat.None);
+
+            // Load CRT shader effects
+            crtEffectNone = Content.Load<Effect>(@"Effects\Passthrough");
+            crtEffectSubtle = Content.Load<Effect>(@"Effects\CRTSubtle");
+            crtEffectFull = Content.Load<Effect>(@"Effects\CRT");
+            crtEffect = crtEffectSubtle; // Start with subtle
 
             // Basic Camera Setup
             Camera = new Camera();
@@ -1115,7 +1164,7 @@ namespace MacGame
             GraphicsDevice.Clear(Color.Black);
 
             // Draw the gameRenderTarget with everything in it to the back buffer.We'll reuse spritebatch and just stretch it to fit.
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: crtEffect);
 
             // Figure out the size to render based on the output resolution. We might have black bars on the top or bottom of the screen.
             var widthRatio = (float)Window.ClientBounds.Width / GAME_X_RESOLUTION;

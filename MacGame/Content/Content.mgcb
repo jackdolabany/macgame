@@ -923,3 +923,33 @@
 /processorParam:TextureFormat=Color
 /build:Textures/TitleScreen.png
 
+#begin Effects/CRT.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/CRT.fx
+
+#begin Effects/CRTSubtle.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/CRTSubtle.fx
+
+#begin Effects/Passthrough.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/Passthrough.fx
+
+#begin Effects/ScanlinesOnly.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/ScanlinesOnly.fx
+
+#begin Effects/VignetteOnly.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/VignetteOnly.fx
+

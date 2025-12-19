@@ -7,7 +7,6 @@ namespace MacGame
     {
 
         MenuOption backToHub;
-        MenuOption toggleFullScreen;
 
         public PauseMenu(Game1 game)
             : base(game)
@@ -24,6 +23,8 @@ namespace MacGame
             });
             confirmExitGame.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 120);
             confirmExitGame.Scale = this.Scale;
+
+            var graphicsMenu = new GraphicsMenu(Game);
 
             AddOption("Back", (a, b) => {
                 PlayOptionSelectedSound();
@@ -43,19 +44,16 @@ namespace MacGame
                 Game.GoToHub(true);
             });
 
-            Func<string> GetFullScreenText = () => Game.IsFullScreen() ? "Windowed" : "Full Screen";
-
-            toggleFullScreen = AddOption(GetFullScreenText(), (a, b) => {
+            AddOption("Graphics", (a, b) => {
                 PlayOptionSelectedSound();
-                Game.ToggleFullScreen();
-                toggleFullScreen.Text = GetFullScreenText();
+                MenuManager.AddMenu(graphicsMenu);
             });
 
             AddOption("Quit", (a, b) =>
             {
                 MenuManager.AddMenu(confirmExitGame);
             });
-           
+
         }
 
         public override void AddedToMenuManager()

@@ -10,9 +10,13 @@ namespace MacGame
     public static class SoundManager
     {
         private static SoundEffectInstance seiMinecart;
+        private static string seiMinecartSoundName = "Minecart";
         private static SoundEffectInstance seiSlowFlame;
+        private static string seiSlowFlameSoundName = "SlowFlame";
         private static SoundEffectInstance seiCharging;
+        private static string seiChargingSoundName = "Charging";
         private static SoundEffectInstance seiFullyCharged;
+        private static string seiFullyChargedSoundName = "FullyCharged";
 
         public static Dictionary<string, SoundEffect> Sounds { get; set; }
         public static Dictionary<string, Song> Songs { get; set; }
@@ -109,6 +113,15 @@ namespace MacGame
         }
 
         /// <summary>
+        /// Gets the volume for a specific sound 0 to 1 Returns 0.5 if not set.
+        /// </summary>
+        public static float GetSoundVolumeAsFloat(string soundName)
+        {
+            var volume = GetSoundVolume(soundName);
+            return (float)volume / 100f;
+        }
+
+        /// <summary>
         /// Sets the volume for a specific sound (1 to 100).
         /// </summary>
         public static void SetSoundVolume(string soundName, int volume)
@@ -164,10 +177,9 @@ namespace MacGame
 
             if (index != -1)
             {
-                int soundSpecificVolume = GetSoundVolume(soundName);
-                float soundSpecificVolumeFloat = soundSpecificVolume / 100f; // Convert from 1-100 to 0.0-1.0
+                float soundSpecificVolume = GetSoundVolumeAsFloat(soundName);
                 _playingSounds[index] = sound.CreateInstance();
-                _playingSounds[index].Volume = volume * SoundEffectVolume * soundSpecificVolumeFloat;
+                _playingSounds[index].Volume = volume * SoundEffectVolume * soundSpecificVolume;
                 _playingSounds[index].Pitch = pitch;
                 _playingSounds[index].Pan = 0f;
                 _playingSounds[index].Play();
@@ -259,17 +271,16 @@ namespace MacGame
             LoadSound("LoseRace");
             LoadSound("AppleBreak");
 
-
             // Charging the ship's mega laser.
             LoadSound("Charging");
             LoadSound("FullyCharged");
 
-            seiMinecart = Sounds["Minecart"].CreateInstance();
-            seiSlowFlame = Sounds["SlowFlame"].CreateInstance();
+            seiMinecart = Sounds[seiMinecartSoundName].CreateInstance();
+            seiSlowFlame = Sounds[seiSlowFlameSoundName].CreateInstance();
             seiSlowFlame.Volume = 0.5f;
 
-            seiCharging = Sounds["Charging"].CreateInstance();
-            seiFullyCharged = Sounds["FullyCharged"].CreateInstance();
+            seiCharging = Sounds[seiChargingSoundName].CreateInstance();
+            seiFullyCharged = Sounds[seiFullyChargedSoundName].CreateInstance();
 
             // Music.
             LoadSong("Stage1");
@@ -283,7 +294,8 @@ namespace MacGame
         {
             if (seiCharging.State != SoundState.Playing)
             {
-                seiCharging.Volume = 0.5f;
+                float soundSpecificVolume = GetSoundVolumeAsFloat(seiChargingSoundName);
+                seiCharging.Volume = 0.5f * soundSpecificVolume;
                 seiCharging.Play();
             }
         }
@@ -300,7 +312,8 @@ namespace MacGame
         {
             if (seiFullyCharged.State != SoundState.Playing)
             {
-                seiFullyCharged.Volume = 0.15f;
+                float soundSpecificVolume = GetSoundVolumeAsFloat(seiFullyChargedSoundName);
+                seiFullyCharged.Volume = 0.15f * soundSpecificVolume;
 
                 // Vary the pitch slightly so it doesn't sound so droning.
                 var randomFloat = (float)(Game1.Randy.NextFloat() * 0.4 - 0.2);
@@ -322,8 +335,8 @@ namespace MacGame
         {
             if (!(seiMinecart.State == SoundState.Playing))
             {
-                seiMinecart.Volume = 0.05f;
-                //seiMinecart.Pitch = GetVariedPitch(0.1f);
+                float soundSpecificVolume = GetSoundVolumeAsFloat(seiMinecartSoundName);
+                seiMinecart.Volume = 0.05f * soundSpecificVolume;
                 seiMinecart.Play();
             }
         }
@@ -354,6 +367,8 @@ namespace MacGame
         {
             if (seiSlowFlame.State != SoundState.Playing)
             {
+                var volume = GetSoundVolumeAsFloat(seiSlowFlameSoundName);
+                seiSlowFlame.Volume = volume;
                 seiSlowFlame.Play();
             }
         }
@@ -407,7 +422,7 @@ namespace MacGame
                 buzzsawTimer += elapsed;
                 if (buzzsawTimer >= buzzsawTimerGoal)
                 {
-                    PlaySound("Crackle");
+                    PlaySound("Crackle", 0.75f);
                     buzzsawTimer -= buzzsawTimerGoal;
                 }
                 IsBuzzsawOnScreen = false;

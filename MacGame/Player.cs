@@ -526,7 +526,7 @@ namespace MacGame
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
-            chargedShot.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            chargedShot.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
             for (int i = 0; i < Bubbles.Length; i++)
             {
                 Bubbles.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);

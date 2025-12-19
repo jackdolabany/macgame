@@ -136,7 +136,7 @@ namespace MacGame
                 pop.Scale = 1f * Game1.TileScale;
                 pop.FinalScale = 1f * Game1.TileScale;
                 pop.SetStaticImage(Game1.TileTextures, WhiteSquareSourceRectangle);
-                pop.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
+                pop.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
             }
         }
 
@@ -151,7 +151,7 @@ namespace MacGame
             particle.Rotation = gameObject.Rotation;
             particle.Scale = gameObject.Scale;
             particle.FinalScale = 0.5f;
-            particle.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
+            particle.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
             particle.RotationAndDrawOrigin = gameObject.RotationAndDrawOrigin;
         }
 
@@ -183,7 +183,7 @@ namespace MacGame
                 spark.SetStaticImage(SparkTexture, WhiteSquareSourceRectangle);
                 spark.Scale = scale;
                 spark.Rotation = Game1.Randy.NextFloat() * MathHelper.TwoPi;
-                spark.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
+                spark.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
             }
         }
 
@@ -217,7 +217,7 @@ namespace MacGame
                 splash.SetStaticImage(SparkTexture, WhiteSquareSourceRectangle);
                 splash.Rotation = 0f;
                 splash.Scale = scale;
-                splash.SetDrawDepth(Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects));
+                splash.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
             }
         }
 
@@ -234,7 +234,7 @@ namespace MacGame
         public static void AddBricks(Vector2 location, int pieceCount, Texture2D image, Rectangle imageSourceRect, bool forceUp = false, float scale = 1f, Color color = default(Color), bool isTileProcessed = true, float drawDepth = 0, int brickSourceWidth = TileMap.TileSize)
         {
 
-            var effectDepth = drawDepth > 0 ? drawDepth : Game1.CurrentMap.GetObjectDrawDepth(TileMap.DrawObjectGroups.Effects);
+            var effectDepth = drawDepth > 0 ? drawDepth : TileMap.EFFECTS_DRAW_DEPTH;
             for (int i = 0; i <= pieceCount - 1; i++)
             {
                 int tileOffset = Game1.Randy.Next(0, (imageSourceRect.Width / brickSourceWidth));

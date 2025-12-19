@@ -8,20 +8,20 @@ namespace TileEngine
     public class TileMap
     {
         public const float FRONTMOST_DRAW_DEPTH = 0f;
-        public const float OVERLAY_DRAW_DEPTH = 0.1f;
+        public const float OVERLAY_DRAW_DEPTH = 0.1f; // overlay between 0.1 and 0
 
         /// <summary>
         /// Effects like rising text that are alwasy in front of the level. Otherwise player and 
         /// effects would be drawn at the level the player is in in the map. This way they are behind foreground elements.
         /// </summary>
-        public const float EFFECTS_DRAW_DEPTH = 0.2f;
+        public const float EFFECTS_DRAW_DEPTH = 0.2f; // between 0.2 and 0.1
         
         /// <summary>
         /// The level and all enemies and game objects are drawn between this and the effects layer.
         /// </summary>
-        public const float LEVEL_DRAW_DEPTH = 0.3f;
+        public const float LEVEL_DRAW_DEPTH = 0.3f; // game objects between 0.3 and 0.2
 
-        public const float BACKGROUND_DRAW_DEPTH = 0.4f;
+        public const float BACKGROUND_DRAW_DEPTH = 0.4f; // scrolling backgrounds between 0.4 and 0.5
         public const float BACKMOST_DRAW_DEPTH = 1f;
 
         /// <summary>
@@ -30,7 +30,6 @@ namespace TileEngine
         /// </summary>
         public Vector2 PlayerStart { get; set; }
 
-        public float PlayerDrawDepth = 0f;
         public float Zoom = 1f;
 
         public List<ObjectModifier> ObjectModifiers;
@@ -100,26 +99,12 @@ namespace TileEngine
 
         public float GetLayerIncrement()
         {
-            return (LEVEL_DRAW_DEPTH - OVERLAY_DRAW_DEPTH) / (float)MapDepth;
+            return (LEVEL_DRAW_DEPTH - EFFECTS_DRAW_DEPTH) / (float)MapDepth;
         }
 
         public float GetForegroundLayerDrawDepth()
         {
             return GetLayerDrawDepth(MapDepth - 1);
-        }
-
-        /// <summary>
-        /// Gets the draw depth of some things relative to the player
-        /// </summary>
-        public enum DrawObjectGroups
-        {
-            PlayerAndEnemies,
-            Effects
-        }
-
-        public float GetObjectDrawDepth(DrawObjectGroups group)
-        {
-            return PlayerDrawDepth - ((int)group * 0.001f);
         }
 
         public Rectangle GetWorldRectangle()

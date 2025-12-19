@@ -817,8 +817,6 @@ namespace MacGame
             // Start the camera on the player. This would reset auto scrolling levels.
             camera.Position = player.WorldLocation;
 
-            level.Map.PlayerDrawDepth = player.DrawDepth;
-
             return level;
         }
 

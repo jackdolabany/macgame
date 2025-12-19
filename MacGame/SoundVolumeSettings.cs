@@ -14,9 +14,16 @@ namespace MacGame
             SoundVolumes = new Dictionary<string, int>();
         }
 
-        private static string GetSettingsFilePath()
+        private static string GetRuntimeFilePath()
         {
-            // Save in the project root directory for source control
+            // Read from bin directory (where the file is copied on build)
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            return Path.Combine(baseDir, "SoundVolumes.json");
+        }
+
+        private static string GetSourceFilePath()
+        {
+            // Save to project root directory for source control
             // Walk up from the bin directory to find the project root
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -37,7 +44,7 @@ namespace MacGame
 
         public static SoundVolumeSettings Load()
         {
-            var filePath = GetSettingsFilePath();
+            var filePath = GetRuntimeFilePath();
 
             if (!File.Exists(filePath))
             {
@@ -61,7 +68,7 @@ namespace MacGame
         {
             try
             {
-                var filePath = GetSettingsFilePath();
+                var filePath = GetSourceFilePath();
                 var json = JsonConvert.SerializeObject(this, Formatting.Indented);
                 File.WriteAllText(filePath, json);
                 Console.WriteLine($"Sound volumes saved to: {filePath}");

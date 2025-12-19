@@ -1,6 +1,7 @@
 {
   "SoundVolumes": {
     "AlienDisappear": 50,
-    "AppleBreak": 100
+    "AppleBreak": 100,
+    "AlertBox": 20
   }
 }

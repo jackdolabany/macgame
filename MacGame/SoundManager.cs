@@ -16,6 +16,7 @@ namespace MacGame
 
         public static Dictionary<string, SoundEffect> Sounds { get; set; }
         public static Dictionary<string, Song> Songs { get; set; }
+        private static Dictionary<string, int> soundVolumes = new Dictionary<string, int>();
 
         private static ContentManager content;
         private const int MaxSounds = 32;
@@ -96,6 +97,48 @@ namespace MacGame
         }
 
         /// <summary>
+        /// Gets the volume for a specific sound (1 to 100). Returns 50 if not set.
+        /// </summary>
+        public static int GetSoundVolume(string soundName)
+        {
+            if (soundVolumes.TryGetValue(soundName, out int volume))
+            {
+                return volume;
+            }
+            return 50; // Default volume
+        }
+
+        /// <summary>
+        /// Sets the volume for a specific sound (1 to 100).
+        /// </summary>
+        public static void SetSoundVolume(string soundName, int volume)
+        {
+            soundVolumes[soundName] = MathHelper.Clamp(volume, 0, 100);
+        }
+
+        /// <summary>
+        /// Loads sound volume settings from file.
+        /// </summary>
+        public static void LoadSoundVolumeSettings()
+        {
+            var settings = SoundVolumeSettings.Load();
+            foreach (var kvp in settings.SoundVolumes)
+            {
+                soundVolumes[kvp.Key] = kvp.Value;
+            }
+        }
+
+        /// <summary>
+        /// Saves sound volume settings to file.
+        /// </summary>
+        public static void SaveSoundVolumeSettings()
+        {
+            var settings = new SoundVolumeSettings();
+            settings.SoundVolumes = new Dictionary<string, int>(soundVolumes);
+            settings.Save();
+        }
+
+        /// <summary>
         /// Plays the sound of the given name with the given parameters.
         /// </summary>
         /// <param name="soundName">Name of the sound</param>
@@ -121,8 +164,10 @@ namespace MacGame
 
             if (index != -1)
             {
+                int soundSpecificVolume = GetSoundVolume(soundName);
+                float soundSpecificVolumeFloat = soundSpecificVolume / 100f; // Convert from 1-100 to 0.0-1.0
                 _playingSounds[index] = sound.CreateInstance();
-                _playingSounds[index].Volume = volume * SoundEffectVolume;
+                _playingSounds[index].Volume = volume * SoundEffectVolume * soundSpecificVolumeFloat;
                 _playingSounds[index].Pitch = pitch;
                 _playingSounds[index].Pan = 0f;
                 _playingSounds[index].Play();
@@ -134,6 +179,12 @@ namespace MacGame
             SoundManager.content = content;
             Sounds = new Dictionary<string, SoundEffect>();
             Songs = new Dictionary<string, Song>();
+
+            // Load custom sound volumes for debugging
+            if (Game1.IS_DEBUG)
+            {
+                LoadSoundVolumeSettings();
+            }
 
             // Sound Effects
             LoadSound("AlertBox");

@@ -25,6 +25,7 @@ namespace MacGame
             confirmExitGame.Scale = this.Scale;
 
             var graphicsMenu = new GraphicsMenu(Game);
+            var soundEffectsMenu = new SoundEffectsMenu(Game);
 
             AddOption("Back", (a, b) => {
                 PlayOptionSelectedSound();
@@ -48,6 +49,14 @@ namespace MacGame
                 PlayOptionSelectedSound();
                 MenuManager.AddMenu(graphicsMenu);
             });
+
+            if (Game1.IS_DEBUG)
+            {
+                AddOption("Sound Effects", (a, b) => {
+                    PlayOptionSelectedSound();
+                    MenuManager.AddMenu(soundEffectsMenu);
+                });
+            }
 
             AddOption("Quit", (a, b) =>
             {

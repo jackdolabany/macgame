@@ -17,7 +17,7 @@ namespace MacGame
             this.menuTitle = "Graphics";
             this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.25f).ToInt());
 
-            Func<string> GetFullScreenText = () => Game.IsFullScreen() ? "Windowed" : "Full Screen";
+            Func<string> GetFullScreenText = () => Game.IsFullScreen() ? "Full Screen" : "Windowed";
 
             toggleFullScreen = AddOption(GetFullScreenText(), (a, b) => {
                 PlayOptionSelectedSound();
@@ -29,7 +29,7 @@ namespace MacGame
 
             shaderOption = AddOption(GetShaderText(), (a, b) => {
                 PlayOptionSelectedSound();
-                Game1.CycleCRTMode();
+                game.CycleCRTMode();
                 shaderOption.Text = GetShaderText();
             });
 

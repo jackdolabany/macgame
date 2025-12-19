@@ -86,16 +86,10 @@ namespace MacGame
         private static Effect crtEffectSubtle;
         private static Effect crtEffectFull;
 
-        public enum CRTMode
-        {
-            None,
-            Subtle,
-            Full
-        }
-
         private static CRTMode currentCRTMode = CRTMode.Subtle;
+        private static GameSettings gameSettings;
 
-        public static void CycleCRTMode()
+        public void CycleCRTMode()
         {
             currentCRTMode = currentCRTMode switch
             {
@@ -105,6 +99,30 @@ namespace MacGame
                 _ => CRTMode.Subtle
             };
 
+            crtEffect = currentCRTMode switch
+            {
+                CRTMode.None => crtEffectNone,
+                CRTMode.Subtle => crtEffectSubtle,
+                CRTMode.Full => crtEffectFull,
+                _ => crtEffectSubtle
+            };
+
+            SaveSettings();
+        }
+
+        private void SaveSettings()
+        {
+            gameSettings.CRTMode = currentCRTMode;
+            gameSettings.IsFullScreen = graphics.IsFullScreen;
+            gameSettings.Save();
+        }
+
+        private static void LoadAndApplySettings()
+        {
+            gameSettings = GameSettings.Load();
+
+            // Apply CRT mode
+            currentCRTMode = (CRTMode)gameSettings.CRTMode;
             crtEffect = currentCRTMode switch
             {
                 CRTMode.None => crtEffectNone,
@@ -317,9 +335,12 @@ namespace MacGame
         {
             graphics = new GraphicsDeviceManager(this);
 
+            // Load game settings early
+            gameSettings = GameSettings.Load();
+
             var scale = 2;
 
-            var startInFullscreen = !IS_DEBUG;
+            var startInFullscreen = gameSettings.IsFullScreen;
 
             if (startInFullscreen)
             {
@@ -488,7 +509,9 @@ namespace MacGame
             crtEffectNone = Content.Load<Effect>(@"Effects\Passthrough");
             crtEffectSubtle = Content.Load<Effect>(@"Effects\CRTSubtle");
             crtEffectFull = Content.Load<Effect>(@"Effects\CRT");
-            crtEffect = crtEffectSubtle; // Start with subtle
+
+            // Apply saved CRT mode setting
+            LoadAndApplySettings();
 
             // Basic Camera Setup
             Camera = new Camera();
@@ -546,7 +569,7 @@ namespace MacGame
         {
             if (IsFullScreen())
             {
-                
+
                 graphics.PreferredBackBufferWidth = oldWindowedWidth;
                 graphics.PreferredBackBufferHeight = oldWindowedHeight;
                 graphics.ToggleFullScreen();
@@ -556,7 +579,7 @@ namespace MacGame
                 // Going from windowed to full screen.
                 oldWindowedWidth = graphics.PreferredBackBufferWidth;
                 oldWindowedHeight = graphics.PreferredBackBufferHeight;
-                
+
                 // Monogame is a helpy helperton and tries to find a resolution compatible with your PreferredBackBuffer size.
                 // I just want the native resolution because I'm going to draw black bars in the Draw method if the aspect ratio is off.
                 // So we need to re-set the resolution to the native res after monogame messes it up.
@@ -568,6 +591,8 @@ namespace MacGame
 
                 graphics.ToggleFullScreen();
             }
+
+            SaveSettings();
         }
 
         public bool IsFullScreen()

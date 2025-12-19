@@ -25,6 +25,10 @@
     "Reveal": 25,
     "MinecartLand": 20,
     "MinecartLandMetal": 15,
-    "Crackle": 5
+    "Crackle": 5,
+    "Minecart": 10,
+    "SlowFlame": 15,
+    "Charging": 25,
+    "FullyCharged": 15
   }
 }

@@ -277,7 +277,6 @@ namespace MacGame
 
             seiMinecart = Sounds[seiMinecartSoundName].CreateInstance();
             seiSlowFlame = Sounds[seiSlowFlameSoundName].CreateInstance();
-            seiSlowFlame.Volume = 0.5f;
 
             seiCharging = Sounds[seiChargingSoundName].CreateInstance();
             seiFullyCharged = Sounds[seiFullyChargedSoundName].CreateInstance();
@@ -295,7 +294,7 @@ namespace MacGame
             if (seiCharging.State != SoundState.Playing)
             {
                 float soundSpecificVolume = GetSoundVolumeAsFloat(seiChargingSoundName);
-                seiCharging.Volume = 0.5f * soundSpecificVolume;
+                seiCharging.Volume = soundSpecificVolume;
                 seiCharging.Play();
             }
         }
@@ -312,8 +311,8 @@ namespace MacGame
         {
             if (seiFullyCharged.State != SoundState.Playing)
             {
-                float soundSpecificVolume = GetSoundVolumeAsFloat(seiFullyChargedSoundName);
-                seiFullyCharged.Volume = 0.15f * soundSpecificVolume;
+                float soundSpecificVolume = 0.25f * GetSoundVolumeAsFloat(seiFullyChargedSoundName);
+                seiFullyCharged.Volume = soundSpecificVolume;
 
                 // Vary the pitch slightly so it doesn't sound so droning.
                 var randomFloat = (float)(Game1.Randy.NextFloat() * 0.4 - 0.2);
@@ -336,7 +335,7 @@ namespace MacGame
             if (!(seiMinecart.State == SoundState.Playing))
             {
                 float soundSpecificVolume = GetSoundVolumeAsFloat(seiMinecartSoundName);
-                seiMinecart.Volume = 0.05f * soundSpecificVolume;
+                seiMinecart.Volume = 0.5f * soundSpecificVolume;
                 seiMinecart.Play();
             }
         }

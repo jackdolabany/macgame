@@ -72,7 +72,7 @@ namespace MacGame.Enemies
                 {
                     jumpTimer = 2;
                     animations.Play("jump").FollowedBy("reverseJump").FollowedBy("idle");
-                    SoundManager.PlaySound("Jump", 0.5f, -0.2f);
+                    SoundManager.PlaySound("Jump", 1f, -0.2f);
                     velocity.Y -= 400;
                     velocity.X = 120;
                     if (Game1.Randy.NextBool())

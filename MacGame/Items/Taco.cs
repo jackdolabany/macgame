@@ -37,7 +37,7 @@ namespace MacGame.Items
 
         public override void PlayCollectedSound()
         {
-            SoundManager.PlaySound("TacoCollected", 0.3f);
+            SoundManager.PlaySound("TacoCollected");
         }
     }
 }

@@ -1,7 +1,30 @@
 {
   "SoundVolumes": {
-    "AlienDisappear": 50,
-    "AppleBreak": 100,
-    "AlertBox": 20
+    "AlienDisappear": 20,
+    "AppleBreak": 20,
+    "AlertBox": 30,
+    "Climb": 15,
+    "TypeLetter": 20,
+    "BlockAppear": 10,
+    "OpenLockedDoor": 25,
+    "Fire": 25,
+    "Jump": 25,
+    "ShootFromCannon": 30,
+    "SockCollected": 15,
+    "Dig": 10,
+    "PowerUp": 10,
+    "TacoCollected": 20,
+    "MenuChoice": 50,
+    "ChargedShot": 10,
+    "Shoot": 10,
+    "Swim": 25,
+    "DracPart1": 15,
+    "DracPart2": 10,
+    "DracDeath": 25,
+    "MacDeath": 25,
+    "Reveal": 25,
+    "MinecartLand": 20,
+    "MinecartLandMetal": 15,
+    "Crackle": 5
   }
 }

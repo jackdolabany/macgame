@@ -62,7 +62,7 @@ namespace MacGame.Enemies
 
         public override void PlayDeathSound()
         {
-            SoundManager.PlaySound("Fire", 0.6f, 0.9f);
+            SoundManager.PlaySound("Fire", 1f, 0.9f);
         }
 
         public override void AfterHittingPlayer()

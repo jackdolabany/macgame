@@ -247,7 +247,7 @@ namespace MacGame
                 currentLetterIndex++;
                 if (currentLetterIndex % 3 == 0)
                 {
-                    SoundManager.PlaySound("TypeLetter", 0.35f, 0.5f);
+                    SoundManager.PlaySound("TypeLetter", 1f, 0.5f);
                 }
                 letterTimer -= letterTimerGoal;
             }

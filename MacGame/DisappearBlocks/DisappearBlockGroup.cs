@@ -126,7 +126,7 @@ namespace MacGame.DisappearBlocks
                         {
                             if (!playedSoundThisUpdate)
                             {
-                                SoundManager.PlaySound("BlockAppear", 0.2f, -0.4f);
+                                SoundManager.PlaySound("BlockAppear", 1, -0.4f);
                                 playedSoundThisUpdate = true;
                             }
                             block.Appear(TotalRevealTimerGoal);

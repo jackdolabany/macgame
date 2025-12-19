@@ -146,12 +146,12 @@ namespace MacGame.Enemies
                     if (this.worldLocation.X > originalX + 1)
                     {
                         velocity.X = -shakeSpeed;
-                        PlaySoundIfOnScreen("Crackle", 0.05f);
+                        PlaySoundIfOnScreen("Crackle", 0.5f);
                     }
                     else if (this.worldLocation.X < originalX - 1)
                     {
                         velocity.X = shakeSpeed;
-                        PlaySoundIfOnScreen("Crackle", 0.05f);
+                        PlaySoundIfOnScreen("Crackle", 0.5f);
                     }
                 }
             }

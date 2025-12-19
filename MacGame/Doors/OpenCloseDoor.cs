@@ -256,7 +256,7 @@ namespace MacGame.Doors
                 if (JailBarAnimations.CurrentAnimationName != "open")
                 {
                     JailBarAnimations.Play("open");
-                    SoundManager.PlaySound("OpenLockedDoor", 0.5f);
+                    SoundManager.PlaySound("OpenLockedDoor");
                 }
             }
             else

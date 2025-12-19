@@ -221,7 +221,7 @@ namespace MacGame.Enemies
 
             Health -= damage;
 
-            SoundManager.PlaySound("ShootFromCannon", 0.6f, -0.2f);
+            SoundManager.PlaySound("ShootFromCannon", 1f, -0.2f);
 
             if (!IsTempInvincibleFromBeingHit)
             {

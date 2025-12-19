@@ -339,7 +339,7 @@ namespace MacGame
             cooldownTimer = 0.5f;
             isCooledOff = false;
 
-            SoundManager.PlaySound("ShootFromCannon", 0.5f);
+            SoundManager.PlaySound("ShootFromCannon");
 
         }
 

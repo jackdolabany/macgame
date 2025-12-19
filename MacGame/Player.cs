@@ -941,7 +941,7 @@ namespace MacGame
                     chargedShot.Velocity = new Vector2(500, 0);
                     spaceshipShotCooldownTimer = 0;
                     chargeShotTimer = 0;
-                    SoundManager.PlaySound("ChargedShot", 0.2f, -0.2f);
+                    SoundManager.PlaySound("ChargedShot", 1f, -0.2f);
                 }
                 else
                 {
@@ -971,7 +971,7 @@ namespace MacGame
                         }
                         spaceshipShotCooldownTimer = 0;
                         chargeShotTimer = 0;
-                        SoundManager.PlaySound("Shoot", 0.2f, -0.2f);
+                        SoundManager.PlaySound("Shoot", 1f, -0.2f);
                     }
                 }
             }
@@ -1695,7 +1695,7 @@ namespace MacGame
                 playClimbSoundTimer -= elapsed;
                 if (playClimbSoundTimer <= 0f)
                 {
-                    SoundManager.PlaySound("Climb", 0.3f, 0.3f);
+                    SoundManager.PlaySound("Climb", 1f, 0.3f);
                     playClimbSoundTimer += 0.15f;
                 }
             }
@@ -2238,7 +2238,7 @@ namespace MacGame
                     // random pitch
                     var pitch = Game1.Randy.NextFloat() / 2f;
 
-                    SoundManager.PlaySound("Swim", 0.5f, pitch);
+                    SoundManager.PlaySound("Swim", 1f, pitch);
                 }
                 else
                 {
@@ -2309,7 +2309,7 @@ namespace MacGame
             Enabled = false;
             this.CurrentItem = null;
             EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
-            SoundManager.PlaySound("MacDeath", 0.5f);
+            SoundManager.PlaySound("MacDeath");
 
             // Pause for a bit before adding the dead menu
             TimerManager.AddNewTimer(2f, () => MenuManager.AddMenu(_deadMenu));
@@ -2576,10 +2576,10 @@ namespace MacGame
             dracPartsFullyExpanded = false;
             this.Velocity = Vector2.Zero;
             animations.Play("idle");
-            SoundManager.PlaySound("DracPart1", 0.25f);
+            SoundManager.PlaySound("DracPart1");
             TimerManager.AddNewTimer(1.5f, () =>
             {
-                SoundManager.PlaySound("DracPart2", 0.25f);
+                SoundManager.PlaySound("DracPart2");
             });
         }
 

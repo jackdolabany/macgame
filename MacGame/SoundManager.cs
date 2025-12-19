@@ -338,8 +338,8 @@ namespace MacGame
 
         public static void PlayMinecartLanded()
         {
-            SoundManager.PlaySound("MinecartLand", 0.4f);
-            SoundManager.PlaySound("MinecartLandMetal", 0.3f);
+            SoundManager.PlaySound("MinecartLand");
+            SoundManager.PlaySound("MinecartLandMetal");
         }
 
         public static void PlayMinecartJump()
@@ -407,7 +407,7 @@ namespace MacGame
                 buzzsawTimer += elapsed;
                 if (buzzsawTimer >= buzzsawTimerGoal)
                 {
-                    PlaySound("Crackle", 0.1f);
+                    PlaySound("Crackle");
                     buzzsawTimer -= buzzsawTimerGoal;
                 }
                 IsBuzzsawOnScreen = false;

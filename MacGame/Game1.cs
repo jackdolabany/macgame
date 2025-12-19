@@ -394,7 +394,7 @@ namespace MacGame
         {
             collectedSock = sender as Sock;
             pauseForSockTimer = 3f;
-            SoundManager.PlaySound("SockCollected", 0.4f);
+            SoundManager.PlaySound("SockCollected");
             TransitionToState(GameState.GotSock, TransitionType.Instant);
         }
 

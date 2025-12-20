@@ -51,7 +51,7 @@ namespace MacGame.Npcs
         {
             if (!Game1.StorageState.IsNerdHitByMac)
             {
-                ConversationManager.AddMessage("Mac help! These guys bully me every day.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
+                ConversationManager.AddMessage("Help Mac! These guys bully me every day.", ConversationSourceRectangle, ConversationManager.ImagePosition.Right);
             }
             else if (!_nerdSock.IsCollected && !_nerdSock.Enabled)
             {

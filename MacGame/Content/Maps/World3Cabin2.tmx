@@ -34,7 +34,7 @@
   </object>
   <object id="2" x="62.1818" y="46.1818" width="11.2727" height="11.2727">
    <properties>
-    <property name="Convo" value="Me:Avoid the haunted house room with orange and blue blocks. Keep your eye on the prize. See what I'm saying?"/>
+    <property name="Convo" value="Me:Don't look in the haunted house room with orange and blue blocks. Keep your eye on the prize. See what I'm saying?"/>
    </properties>
   </object>
   <object id="3" x="38.1818" y="93.8182" width="12.1818" height="11.6364">

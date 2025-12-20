@@ -10,6 +10,7 @@ namespace MacGame
     {
         None = 0,
         Subtle = 1,
-        Full = 2
+        Full = 2,
+        Green = 3
     }
 }

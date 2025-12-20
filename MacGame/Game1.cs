@@ -85,6 +85,7 @@ namespace MacGame
         private static Effect crtEffectNone;
         private static Effect crtEffectSubtle;
         private static Effect crtEffectFull;
+        private static Effect crtEffectGreen;
 
         private static CRTMode currentCRTMode = CRTMode.Subtle;
         private static GameSettings gameSettings;
@@ -95,7 +96,8 @@ namespace MacGame
             {
                 CRTMode.None => CRTMode.Subtle,
                 CRTMode.Subtle => CRTMode.Full,
-                CRTMode.Full => CRTMode.None,
+                CRTMode.Full => CRTMode.Green,
+                CRTMode.Green => CRTMode.None,
                 _ => CRTMode.Subtle
             };
 
@@ -104,6 +106,7 @@ namespace MacGame
                 CRTMode.None => crtEffectNone,
                 CRTMode.Subtle => crtEffectSubtle,
                 CRTMode.Full => crtEffectFull,
+                CRTMode.Green => crtEffectGreen,
                 _ => crtEffectSubtle
             };
 
@@ -128,6 +131,7 @@ namespace MacGame
                 CRTMode.None => crtEffectNone,
                 CRTMode.Subtle => crtEffectSubtle,
                 CRTMode.Full => crtEffectFull,
+                CRTMode.Green => crtEffectGreen,
                 _ => crtEffectSubtle
             };
         }
@@ -139,6 +143,7 @@ namespace MacGame
                 CRTMode.None => "None",
                 CRTMode.Subtle => "CRT 1",
                 CRTMode.Full => "CRT 2",
+                CRTMode.Green => "CRT 3",
                 _ => "CRT 1"
             };
         }
@@ -509,6 +514,7 @@ namespace MacGame
             crtEffectNone = Content.Load<Effect>(@"Effects\Passthrough");
             crtEffectSubtle = Content.Load<Effect>(@"Effects\CRTSubtle");
             crtEffectFull = Content.Load<Effect>(@"Effects\CRT");
+            crtEffectGreen = Content.Load<Effect>(@"Effects\CRTGreen");
 
             // Apply saved CRT mode setting
             LoadAndApplySettings();

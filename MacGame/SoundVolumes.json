@@ -2,7 +2,7 @@
   "SoundVolumes": {
     "AlienDisappear": 20,
     "AppleBreak": 20,
-    "AlertBox": 30,
+    "AlertBox": 25,
     "Climb": 15,
     "TypeLetter": 20,
     "BlockAppear": 10,
@@ -29,6 +29,7 @@
     "Minecart": 10,
     "SlowFlame": 15,
     "Charging": 25,
-    "FullyCharged": 15
+    "FullyCharged": 15,
+    "KickedOutOfDoor": 25
   }
 }

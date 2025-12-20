@@ -70,7 +70,7 @@ namespace MacGame.Enemies
             if (goingUp)
             {
                 var tileAbove = Game1.CurrentMap.GetMapSquareAtPixel(WorldLocation + new Vector2(0, -Game1.TileSize - 1));
-                if (tileAbove == null || !tileAbove.IsVine || !tileAbove.EnemyPassable)
+                if (tileAbove == null || !tileAbove.IsVine || !tileAbove.EnemyPassable || !tileAbove.Passable)
                 {
                     goingUp = false;
                 }
@@ -78,7 +78,7 @@ namespace MacGame.Enemies
             else
             {
                 var tileBelow = Game1.CurrentMap.GetMapSquareAtPixel(WorldLocation + new Vector2(0, 1));
-                if (tileBelow == null || !tileBelow.IsVine || !tileBelow.EnemyPassable)
+                if (tileBelow == null || !tileBelow.IsVine || !tileBelow.EnemyPassable || !tileBelow.Passable)
                 {
                     goingUp = true;
                 }

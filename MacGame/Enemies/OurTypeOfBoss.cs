@@ -495,5 +495,10 @@ namespace MacGame.Enemies
                 _shot.Kill();
             }
         }
+
+        public override void PlayDeathSound()
+        {
+            // Do nothing, the tail blowing up makes enough noise.
+        }
     }
 }

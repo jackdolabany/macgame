@@ -18,9 +18,9 @@
     "ChargedShot": 10,
     "Shoot": 10,
     "Swim": 25,
-    "DracPart1": 15,
-    "DracPart2": 10,
-    "DracDeath": 25,
+    "DracPart1": 10,
+    "DracPart2": 5,
+    "DracDeath": 20,
     "MacDeath": 25,
     "Reveal": 25,
     "MinecartLand": 20,
@@ -30,6 +30,8 @@
     "SlowFlame": 15,
     "Charging": 25,
     "FullyCharged": 15,
-    "KickedOutOfDoor": 25
+    "KickedOutOfDoor": 25,
+    "Disappear": 20,
+    "SockReveal": 20
   }
 }

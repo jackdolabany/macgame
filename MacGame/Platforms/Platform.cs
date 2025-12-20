@@ -20,7 +20,7 @@ namespace MacGame.Platforms
             isEnemyTileColliding = false;
             IsAbleToMoveOutsideOfWorld = false;
             IsAffectedByGravity = false;
-            isTileColliding = true;
+            isTileColliding = false;
             IsAffectedByPlatforms = false;
         }
 

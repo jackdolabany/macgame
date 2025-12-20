@@ -61,7 +61,7 @@ namespace MacGame
                     new SockInfo { Name = "QuadcopterSock", Hint = "Fight the drone wars you must." },
                     new SockInfo { Name = "CarSock", Hint = "Pauly the snake can make you an offer you shouldn't refuse." },
                     new SockInfo { Name = "Wallsock", Hint = "A while ago I stashed a sock in the walls." },
-                    new SockInfo { Name = "BasementSock", Hint = "A while ago I stashed a sock in the basement." },
+                    new SockInfo { Name = "BasementSock", Hint = "A while ago I stashed a sock in the basement of that haunted house. Somewhere near my pet rock." },
                     new SockInfo { Name = "PlatformSock1", Hint = "Ride ghostly platforms to stinky sock treasures." },
                     new SockInfo { Name = "DisappearBlockSock", Hint = "Socks eventually appear where blocks disappear." },
                     new SockInfo { Name = "HauntedMazeSock", Hint = "There's a ghastly maze inside the haunted house, with a wicked smell at the end." },
@@ -73,6 +73,7 @@ namespace MacGame
                     new SockInfo { Name = "RaceSock", Hint = "Froggie's here hiding a sock again. Go smoke him like jerky!" },
                     new SockInfo { Name = "TacoSock", Hint = "Talk to that taco loving rat." },
                     new SockInfo { Name = "MurdererSock", Hint = "Can you do something about that nasty murderer problem?" },
+                    new SockInfo { Name = "Door2WallSock", Hint = "There's another sock in that haunted house somewhere." },
                 }
             },
             {

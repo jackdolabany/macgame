@@ -396,6 +396,11 @@
 /processor:PassThroughProcessor
 /build:Maps/World3TacoSockCabin.tmx
 
+#begin Maps/World4.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4.tmx
+
 #begin Maps/World4SpaceShip1.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

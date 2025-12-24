@@ -466,6 +466,9 @@ namespace MacGame
 
             sceneManager = new SceneManager();
 
+            // Initialize PlayerSettings with hot-reload
+            PlayerSettings.Initialize();
+
             base.Initialize();
         }
 
@@ -772,6 +775,9 @@ namespace MacGame
                 gameRenderTarget.Dispose();
                 gameRenderTarget = null;
             }
+
+            // Clean up PlayerSettings file watcher
+            PlayerSettings.Dispose();
         }
 
         float pauseForSockTimer = 0f;

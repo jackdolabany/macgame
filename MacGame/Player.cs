@@ -67,8 +67,6 @@ namespace MacGame
 
         private DeadMenu _deadMenu;
 
-        private const float maxAcceleration = 600;
-        private const float maxSpeed = 500;
         private const float maxFlyingSpeed = 450;
 
         private MacState _state = MacState.Idle;
@@ -1276,8 +1274,8 @@ namespace MacGame
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
             var isIce = mapSquareBelow != null && mapSquareBelow.IsIce || (!OnGround && isInJumpFromIce);
             
-            var environmentMaxWalkSpeed = maxSpeed;
-            var acceleration = maxAcceleration;
+            var environmentMaxWalkSpeed = PlayerSettings.MaxRunSpeed;
+            var acceleration = PlayerSettings.RunAcceleration;
 
             friction = 1.5f;
             jumpBoost = 390;
@@ -1402,11 +1400,6 @@ namespace MacGame
                 && !(PlatformThatThisIsOn is LadderPlatform)) // Don't climb if you are standing on a ladder platform. Climbing down from atop a ladder is handled below.
             {
                 _state = MacState.ClimbingLadder;
-                this.velocity.X -= maxAcceleration * elapsed;
-                if (velocity.X < -environmentMaxWalkSpeed)
-                {
-                    velocity.X = -environmentMaxWalkSpeed;
-                }
                 this.velocity.Y = climbingSpeed;
                 if (InputManager.CurrentAction.up)
                 {

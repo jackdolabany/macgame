@@ -1,0 +1,16 @@
+{
+  "maxRunSpeed": 500.0,
+  "runAcceleration": 600.0,
+  "runDeceleration": 500,
+  "turnSpeed": 500,
+  "jumpHeight": 20,
+  "downGravity": 200,
+  "jumpDuration": 2,
+  "airAcceleration": 100,
+  "airControl": 100,
+  "airBreak": 100,
+  "jumpCutoff": 10,
+  "coyoteTime": 0.1,
+  "jumpBufferTime": 0.1,
+  "terminalVelocity": 500
+}

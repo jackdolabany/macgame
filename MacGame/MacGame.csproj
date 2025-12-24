@@ -14,9 +14,13 @@
   <ItemGroup>
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
+    <None Remove="PlayerSettings.json" />
     <None Remove="SoundVolumes.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PlayerSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SoundVolumes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

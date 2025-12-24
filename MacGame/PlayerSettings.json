@@ -1,8 +1,8 @@
 {
   "maxRunSpeed": 500.0,
-  "runAcceleration": 600.0,
-  "runDeceleration": 500,
-  "turnSpeed": 500,
+  "runAcceleration": 450.0,
+  "runDeceleration": 700,
+  "turnSpeed": 700,
   "jumpHeight": 20,
   "downGravity": 200,
   "jumpDuration": 2,
@@ -12,5 +12,5 @@
   "jumpCutoff": 10,
   "coyoteTime": 0.1,
   "jumpBufferTime": 0.1,
-  "terminalVelocity": 500
+  "terminalVelocity": 1000
 }

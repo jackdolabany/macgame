@@ -141,6 +141,11 @@
 /processor:PassThroughProcessor
 /build:Maps/SmallestTest.tmx
 
+#begin Maps/TestControls.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/TestControls.tmx
+
 #begin Maps/TestFinalBoss.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

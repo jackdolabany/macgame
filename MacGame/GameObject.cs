@@ -180,7 +180,7 @@ namespace MacGame
         {
             get
             {
-                return 1000;
+                return PlayerSettings.TerminalVelocity;
             }
         }
 

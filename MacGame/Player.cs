@@ -1268,7 +1268,7 @@ namespace MacGame
 
         private void HandleRegularInputs(float elapsed)
         {
-            float friction;
+            float deceleration = PlayerSettings.RunDeceleration;
             float jumpBoost;
 
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
@@ -1277,12 +1277,21 @@ namespace MacGame
             var environmentMaxWalkSpeed = PlayerSettings.MaxRunSpeed;
             var acceleration = PlayerSettings.RunAcceleration;
 
-            friction = 1.5f;
+            // If the player is turning, use a different acceleration value
+            if (InputManager.CurrentAction.left && this.velocity.X > 0)
+            {
+                acceleration = PlayerSettings.TurnSpeed;
+            }
+            else if (InputManager.CurrentAction.right && this.Velocity.X < 0)
+            {
+                acceleration = PlayerSettings.TurnSpeed;
+            }
+
             jumpBoost = 390;
 
             if (isIce)
             {
-                friction /= 2f;
+                deceleration /= 2f;
                 environmentMaxWalkSpeed *= 1.25f;
             }
 
@@ -1312,11 +1321,26 @@ namespace MacGame
                 if (OnGround && !IsClimbingLadder)
                 {
                     // Walking
-                    this.velocity.X += acceleration * elapsed;
-                    if (velocity.X > environmentMaxWalkSpeed)
+                    if (this.velocity.X < environmentMaxWalkSpeed)
                     {
-                        velocity.X = environmentMaxWalkSpeed;
+                        // Accelerate to max velocity
+                        this.velocity.X += acceleration * elapsed;
+                        if (velocity.X > environmentMaxWalkSpeed)
+                        {
+                            velocity.X = environmentMaxWalkSpeed;
+                        }
                     }
+                    else if (this.velocity.X > environmentMaxWalkSpeed)
+                    {
+                        // Decelerate
+                        this.velocity.X -= deceleration * elapsed;
+                        if (velocity.X < environmentMaxWalkSpeed)
+                        {
+                            velocity.X = environmentMaxWalkSpeed;
+                        }
+                    }
+                    
+                    _state = MacState.Running;
                 }
                 else if (IsClimbingLadder)
                 {
@@ -1328,10 +1352,6 @@ namespace MacGame
                     this.velocity.X += airMovementSpeed * elapsed;
                 }
 
-                if (onGround)
-                {
-                    _state = MacState.Running;
-                }
                 Flipped = false;
             }
 
@@ -1340,11 +1360,26 @@ namespace MacGame
             {
                 if (OnGround && !IsClimbingLadder)
                 {
-                    this.velocity.X -= acceleration * elapsed;
-                    if (velocity.X < -environmentMaxWalkSpeed)
+                    if (this.velocity.X > -environmentMaxWalkSpeed)
                     {
-                        velocity.X = -environmentMaxWalkSpeed;
+                        // Accelerate to max walk speed
+                        this.velocity.X -= acceleration * elapsed;
+                        if (velocity.X < -environmentMaxWalkSpeed)
+                        {
+                            velocity.X = -environmentMaxWalkSpeed;
+                        }
                     }
+                    else if (this.velocity.X < -environmentMaxWalkSpeed)
+                    {
+                        // Decelerate
+                        this.velocity.X += deceleration * elapsed;
+                        if (velocity.X > -environmentMaxWalkSpeed)
+                        {
+                            velocity.X = -environmentMaxWalkSpeed;
+                        }
+                    }
+
+                    _state = MacState.Running;
                 }
                 else if (IsClimbingLadder)
                 {
@@ -1356,19 +1391,30 @@ namespace MacGame
                     this.velocity.X -= airMovementSpeed * elapsed;
                 }
 
-                if (onGround)
-                {
-                    _state = MacState.Running;
-                }
                 Flipped = true;
             }
 
-            if (OnGround && !IsClimbingLadder && !IsClimbingVine)
+            // Decelerate if they aren't pressing the button.
+            if (OnGround && !IsClimbingLadder && !IsClimbingVine && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
             {
-                this.velocity.X -= (this.velocity.X * friction * elapsed);
-                if (Math.Abs(this.velocity.X) < 1f)
+                if (this.velocity.X > 0)
                 {
-                    this.velocity.X = 0;
+                    this.velocity.X -= (deceleration * elapsed);
+
+                    // Stop if they're close to stopping or going negative
+                    if (this.velocity.X < 1f)
+                    {
+                        this.velocity.X = 0;
+                    }
+                }
+                else if (this.velocity.X < 0)
+                {
+                    this.velocity.X += (deceleration * elapsed);
+                    // Stop if they're close to stopping or going positive
+                    if (this.velocity.X > -1f)
+                    {
+                        this.velocity.X = 0;
+                    }
                 }
             }
 

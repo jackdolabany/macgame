@@ -22,10 +22,7 @@ namespace MacGame
 
         public const int TacosNeeded = 100;
 
-        public readonly static Vector2 EarthGravity = new Vector2(0, 1600);
-        public readonly static Vector2 MoonGravity = new Vector2(0, 700);
-        public readonly static Vector2 WaterGravity = new Vector2(0, 5f);
-        public static Vector2 Gravity = EarthGravity;
+        public static Vector2 Gravity = new Vector2(0, PlayerSettings.EarthGravity);
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;

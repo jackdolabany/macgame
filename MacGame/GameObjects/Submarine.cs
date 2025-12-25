@@ -69,11 +69,11 @@ namespace MacGame
 
                 if (isInWater)
                 {
-                    return Game1.WaterGravity;
+                    return new Vector2(0, PlayerSettings.WaterGravity);
                 }
                 else
                 {
-                    return Game1.EarthGravity;
+                    return new Vector2(0, PlayerSettings.EarthGravity);
                 }
             }
         }

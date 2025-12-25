@@ -66,11 +66,11 @@ namespace MacGame
 
             if (level.LevelNumber == 4)
             {
-                Game1.Gravity = Game1.MoonGravity;
+                Game1.Gravity = new Vector2(0, PlayerSettings.MoonGravity);
             }
             else
             {
-                Game1.Gravity = Game1.EarthGravity;
+                Game1.Gravity = new Vector2(0, PlayerSettings.EarthGravity);
             }
 
             // Just in case!

@@ -33,7 +33,9 @@ namespace MacGame
         /// </summary>
         public static float JumpHeight { get; private set; }
 
-        public static float DownGravity { get; private set; }
+        public static float EarthGravity { get; private set; }
+        public static float MoonGravity { get; private set; }
+        public static float WaterGravity { get; private set; }
 
         /// <summary>
         /// The amount of time it takes for you to reach the jump Height.
@@ -80,7 +82,9 @@ namespace MacGame
             public float runDeceleration { get; set; }
             public float turnSpeed { get; set; }
             public float jumpHeight { get; set; }
-            public float downGravity { get; set; }
+            public float earthGravity { get; set; }
+            public float moonGravity { get; set; }
+            public float waterGravity { get; set; }
             public float jumpDuration { get; set; }
             public float airAcceleration { get; set; }
             public float airControl { get; set; }
@@ -126,7 +130,9 @@ namespace MacGame
                     RunDeceleration = settings.runDeceleration;
                     TurnSpeed = settings.turnSpeed;
                     JumpHeight = settings.jumpHeight;
-                    DownGravity = settings.downGravity;
+                    EarthGravity = settings.earthGravity;
+                    MoonGravity = settings.moonGravity;
+                    WaterGravity = settings.waterGravity;
                     JumpDuration = settings.jumpDuration;
                     AirAcceleration = settings.airAcceleration;
                     AirControl = settings.airControl;

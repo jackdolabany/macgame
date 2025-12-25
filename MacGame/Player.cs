@@ -104,7 +104,23 @@ namespace MacGame
         // movement speed through the jump.
         private bool isInJumpFromIce = false;
         private bool isInJumpFromGround = false;
-        float jumpButtonHeldDownTimer = 0f;
+
+        /// <summary>
+        /// Counts how long they held the jump button down to extend the jump.
+        /// </summary>
+        float _jumpButtonHeldDownTimer = 0f;
+        
+        /// <summary>
+        /// Tracks when the player is jumping if they released the jump button to shorten the jump.
+        /// </summary>
+        bool _jumpReleased = true;
+
+        /// <summary>
+        /// After they release the jump button track whether or not we already applied the jump height
+        /// cutoff.
+        /// </summary>
+        bool _jumpCutApplied = false;
+
         const float maxJumpButtonHeldDownTime = 0.5f;
 
         public bool IsInWater = false;
@@ -255,20 +271,20 @@ namespace MacGame
         /// </summary>
         public bool IsInvisibleAndCantMove { get; set; } = false;
 
-        public override Vector2 Gravity
-        {
-            get
-            {
-                if (isInJumpFromGround && jumpButtonHeldDownTimer > 0)
-                {
-                    return base.Gravity * 0.333f;
-                }
-                else
-                {
-                    return base.Gravity;
-                }
-            }
-        }
+        //public override Vector2 Gravity
+        //{
+        //    get
+        //    {
+        //        if (isInJumpFromGround && jumpButtonHeldDownTimer > 0)
+        //        {
+        //            return base.Gravity * 0.333f;
+        //        }
+        //        else
+        //        {
+        //            return base.Gravity;
+        //        }
+        //    }
+        //}
 
         public bool IsInCannon 
         {
@@ -1269,7 +1285,6 @@ namespace MacGame
         private void HandleRegularInputs(float elapsed)
         {
             float deceleration = PlayerSettings.RunDeceleration;
-            float jumpBoost;
 
             var mapSquareBelow = Game1.CurrentMap.GetMapSquareAtPixel(this.worldLocation + new Vector2(0, 1));
             var isIce = mapSquareBelow != null && mapSquareBelow.IsIce || (!OnGround && isInJumpFromIce);
@@ -1286,8 +1301,6 @@ namespace MacGame
             {
                 acceleration = PlayerSettings.TurnSpeed;
             }
-
-            jumpBoost = 390;
 
             if (isIce)
             {
@@ -1519,23 +1532,27 @@ namespace MacGame
                 PoisonPlatforms.Clear();
                 isInJumpFromIce = false;
                 isInJumpFromGround = false;
-                jumpButtonHeldDownTimer = 0f;
+                _jumpButtonHeldDownTimer = 0f;
                 IsJustShotOutOfCannon = false;
             }
 
-            // Stop the jump if they let go of the button or hit a ceiling or something.
-            if (!InputManager.CurrentAction.jump || OnCeiling || this.velocity.Y >= 0)
-            {
-                jumpButtonHeldDownTimer = 0;
-            }
-            else if (jumpButtonHeldDownTimer > 0)
-            {
-                jumpButtonHeldDownTimer -= elapsed;
-            }
+            //// Stop the jump if they let go of the button or hit a ceiling or something.
+            //if (!InputManager.CurrentAction.jump || OnCeiling || this.velocity.Y >= 0)
+            //{
+            //    jumpButtonHeldDownTimer = 0;
+            //}
+            //else if (jumpButtonHeldDownTimer > 0)
+            //{
+            //    jumpButtonHeldDownTimer -= elapsed;
+            //}
 
-            // Jump down from platform(s). 
+            // Jumping Logic
+            var jumpVelocity = (2f * PlayerSettings.JumpHeight) / PlayerSettings.JumpDuration;
+            var jumpGravity = (2f * PlayerSettings.JumpHeight) / (PlayerSettings.JumpDuration * PlayerSettings.JumpDuration);
+
             if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && InputManager.CurrentAction.down && OnPlatform)
             {
+                // Jump down platforms
                 // Find every platform below the player and mark them all as poison.
                 // extend left and right a bit in case the player is moving.
                 var belowPlayerRect = new Rectangle(this.CollisionRectangle.Left - 32, this.CollisionRectangle.Bottom, this.CollisionRectangle.Width + 64, 3);
@@ -1552,8 +1569,10 @@ namespace MacGame
             }
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
             {
-                // Regular jump.
-                this.velocity.Y -= jumpBoost;
+                // Regular jump from the Ground.
+         
+
+                this.velocity.Y = -jumpVelocity;
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
                 if (isIce)
@@ -1561,7 +1580,9 @@ namespace MacGame
                     isInJumpFromIce = true;
                 }
                 isInJumpFromGround = true;
-                jumpButtonHeldDownTimer = maxJumpButtonHeldDownTime;
+                _jumpButtonHeldDownTimer = 0;
+                _jumpCutApplied = false;
+                _jumpReleased = false;
                 onGround = false;
 
                 if (PlatformThatThisIsOn != null)
@@ -1574,7 +1595,7 @@ namespace MacGame
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasWings && this.Velocity.Y >= 0)
             {
                 // Infinite Jump Jump.
-                this.velocity.Y = -jumpBoost * 1.5f;
+               // this.velocity.Y = -jumpBoost * 1.5f; // TODO
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
                 isInJumpFromGround = true;
@@ -1584,7 +1605,7 @@ namespace MacGame
                 && IsClimbingLadder)
             {
                 // Jump off ladder
-                this.velocity.Y -= (jumpBoost / 2); // weaker jump
+                //this.velocity.Y -= (jumpBoost / 2); // weaker jump // TODO
                 SoundManager.PlaySound("Jump");
 
                 // block their ability to climb ladders until they release up. This prevents you from
@@ -1611,6 +1632,40 @@ namespace MacGame
 
                 SoundManager.PlaySound("Jump");
             }
+
+            if (!InputManager.CurrentAction.jump)
+            {
+                _jumpReleased = true;
+                _jumpButtonHeldDownTimer = 0;
+            }
+
+            if (IsJumping && !_jumpReleased)
+            {
+                _jumpButtonHeldDownTimer += elapsed;
+            }
+
+            // ---- Early release cutoff (variable jump) ----
+            // If player releases while still moving upward, reduce upward velocity.
+            // JumpCutoff: 0 = no cut; 1 = full cut to 0 upward velocity.
+            if (_jumpReleased && !_jumpCutApplied && Velocity.Y < 0f)
+            {
+                float cutoffPercentage = MathHelper.Clamp(PlayerSettings.JumpCutoff, 0f, 1f);
+                velocity.Y *= (1f - cutoffPercentage); // e.g. c=0.5 halves upward speed
+                _jumpCutApplied = true;
+                //_jumping = false; <-- do I want this?
+            }
+
+            bool rising = Velocity.Y < 0f;
+
+            this.IsAffectedByGravity = false;
+
+            float gravityMag;
+            if (rising && !_jumpReleased && _state == MacState.Jumping)
+                gravityMag = jumpGravity;
+            else
+                gravityMag = this.Gravity.Y;
+            velocity.Y += gravityMag * elapsed;
+
 
             // Unset canclimb ladders if they release up.
             if (!InputManager.CurrentAction.up || onGround)

@@ -172,7 +172,7 @@ namespace MacGame
         {
             get
             {
-                return Game1.Gravity;
+                return Game1.Gravity.Invoke();
             }
         }
 

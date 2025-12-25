@@ -1,18 +1,18 @@
 {
   "maxRunSpeed": 500.0,
   "runAcceleration": 450.0,
-  "runDeceleration": 700,
+  "runDeceleration": 800,
   "turnSpeed": 700,
-  "jumpHeight": 20,
-  "earthGravity": 1600,
+  "jumpHeight": 135,
+  "earthGravity": 2000,
   "moonGravity": 700,
   "waterGravity": 5,
-  "jumpDuration": 2,
+  "jumpDuration": 0.4,
   "airAcceleration": 100,
   "airControl": 100,
   "airBreak": 100,
-  "jumpCutoff": 10,
+  "jumpCutoff": 0.6,
   "coyoteTime": 0.1,
   "jumpBufferTime": 0.1,
-  "terminalVelocity": 1000
+  "terminalVelocity": 2000
 }

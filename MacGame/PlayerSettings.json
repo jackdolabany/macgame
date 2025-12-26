@@ -13,7 +13,7 @@
   "airControl": 1,
   "airBreak": 800,
   "jumpCutoff": 0.5,
-  "coyoteTime": 0.05,
-  "jumpBufferTime": 0.05,
+  "coyoteTime": 0.07,
+  "jumpBufferTime": 0.07,
   "terminalVelocity": 1000
 }

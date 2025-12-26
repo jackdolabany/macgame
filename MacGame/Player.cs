@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MacGame.Behaviors;
+using MacGame.DisplayComponents;
+using MacGame.Enemies;
+using MacGame.Items;
+using MacGame.Platforms;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MacGame.Platforms;
 using System;
-using TileEngine;
-using MacGame.Enemies;
-using MacGame.DisplayComponents;
-using MacGame.Items;
 using System.Collections.Generic;
-using MacGame.Behaviors;
+using System.Threading;
+using TileEngine;
 
 namespace MacGame
 {
@@ -103,12 +104,6 @@ namespace MacGame
         // Track if the player jumped off of ice so that we can maintain the adjusted
         // movement speed through the jump.
         private bool isInJumpFromIce = false;
-        private bool isInJumpFromGround = false;
-
-        /// <summary>
-        /// Counts how long they held the jump button down to extend the jump.
-        /// </summary>
-        float _jumpButtonHeldDownTimer = 0f;
         
         /// <summary>
         /// Tracks when the player is jumping if they released the jump button to shorten the jump.
@@ -270,21 +265,6 @@ namespace MacGame
         /// For things like doors that may need to make Mac temporarily invisible/disabled.
         /// </summary>
         public bool IsInvisibleAndCantMove { get; set; } = false;
-
-        //public override Vector2 Gravity
-        //{
-        //    get
-        //    {
-        //        if (isInJumpFromGround && jumpButtonHeldDownTimer > 0)
-        //        {
-        //            return base.Gravity * 0.333f;
-        //        }
-        //        else
-        //        {
-        //            return base.Gravity;
-        //        }
-        //    }
-        //}
 
         public bool IsInCannon 
         {
@@ -478,7 +458,10 @@ namespace MacGame
             this.IsAffectedByForces = false;
             this.isEnemyTileColliding = false;
 
-            this.IsAffectedByGravity = true;
+            // Gravity for the player will be handled all custom in update due to the 
+            // Complicated nature of jumping and other states the player might be in
+            // (like a spaceship).
+            this.IsAffectedByGravity = false;
 
             this.IsAffectedByPlatforms = true;
 
@@ -866,7 +849,6 @@ namespace MacGame
             this.IsAbleToSurviveOutsideOfWorld = true;
             this.isTileColliding = false;
 
-            IsAffectedByGravity = false;
             Flipped = false;
 
             float moveSpeed = 200f;
@@ -1011,7 +993,6 @@ namespace MacGame
                 {
                     SoundManager.PlayCharging();
                 }
-           
             }
             else
             {
@@ -1100,7 +1081,6 @@ namespace MacGame
             subPlayerIsIn = null;
             pickedUpObject = null;
             CollisionRectangle = normalCollisionRectangle;
-            IsAffectedByGravity = true;
             
             IsInvisibleAndCantMove = false;
             _state = MacState.Idle;
@@ -1302,113 +1282,87 @@ namespace MacGame
                 acceleration = PlayerSettings.TurnSpeed;
             }
 
+            // If they aren't running max walk speed is cut down.
+            if (!InputManager.CurrentAction.action)
+            {
+                environmentMaxWalkSpeed = PlayerSettings.MaxWalkSpeed;
+            }
+
             if (isIce)
             {
                 deceleration /= 2f;
                 environmentMaxWalkSpeed *= 1.25f;
             }
 
-            // If they aren't running max walk speed is cut down.
-            if (!InputManager.CurrentAction.action && (onGround || IsClimbingLadder))
+            var isMovingRight = InputManager.CurrentAction.right && !InputManager.CurrentAction.left;
+            var isMovingLeft = InputManager.CurrentAction.left && !InputManager.CurrentAction.right;
+            var isNotMovingX = !InputManager.CurrentAction.left && !InputManager.CurrentAction.right;
+            var moveX = 0f;
+            if (isMovingRight)
             {
-                environmentMaxWalkSpeed /= 3;
+                moveX = 1f;
             }
-
-            // Cut the acceleration in half if they are in the air.
-            if (!OnGround && !IsClimbingLadder && !IsClimbingVine)
+            else if (isMovingLeft)
             {
-                acceleration /= 2;
-            }
-
-            float airMovementSpeed = 250f;
-
-            // If they aren't running cut the air move speed.
-            if (!InputManager.CurrentAction.action)
-            {
-                airMovementSpeed /= 3;
+                moveX = -1f;
             }
 
             // Walk Right
-            if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left && !IsClimbingVine)
+            if (isMovingRight && OnGround)
             {
-                if (OnGround && !IsClimbingLadder)
+                if (this.velocity.X < environmentMaxWalkSpeed)
                 {
-                    // Walking
-                    if (this.velocity.X < environmentMaxWalkSpeed)
+                    // Accelerate to max velocity
+                    this.velocity.X += acceleration * elapsed;
+                    if (velocity.X > environmentMaxWalkSpeed)
                     {
-                        // Accelerate to max velocity
-                        this.velocity.X += acceleration * elapsed;
-                        if (velocity.X > environmentMaxWalkSpeed)
-                        {
-                            velocity.X = environmentMaxWalkSpeed;
-                        }
+                        velocity.X = environmentMaxWalkSpeed;
                     }
-                    else if (this.velocity.X > environmentMaxWalkSpeed)
+                }
+                else if (this.velocity.X > environmentMaxWalkSpeed)
+                {
+                    // Decelerate
+                    this.velocity.X -= deceleration * elapsed;
+                    if (velocity.X < environmentMaxWalkSpeed)
                     {
-                        // Decelerate
-                        this.velocity.X -= deceleration * elapsed;
-                        if (velocity.X < environmentMaxWalkSpeed)
-                        {
-                            velocity.X = environmentMaxWalkSpeed;
-                        }
+                        velocity.X = environmentMaxWalkSpeed;
                     }
+                }
                     
-                    _state = MacState.Running;
-                }
-                else if (IsClimbingLadder)
-                {
-                    this.velocity.X = climbingSpeed;
-                }
-                else
-                {
-                    // Movement in the air. You should be capped by your initial jump speed but able to accelerate a bit backwards.
-                    this.velocity.X += airMovementSpeed * elapsed;
-                }
+                _state = MacState.Running;
 
                 Flipped = false;
             }
 
             // Walk left
-            if (InputManager.CurrentAction.left && !InputManager.CurrentAction.right && !IsClimbingVine)
+            if (isMovingLeft && OnGround)
             {
-                if (OnGround && !IsClimbingLadder)
+                if (this.velocity.X > -environmentMaxWalkSpeed)
                 {
-                    if (this.velocity.X > -environmentMaxWalkSpeed)
+                    // Accelerate to max walk speed
+                    this.velocity.X -= acceleration * elapsed;
+                    if (velocity.X < -environmentMaxWalkSpeed)
                     {
-                        // Accelerate to max walk speed
-                        this.velocity.X -= acceleration * elapsed;
-                        if (velocity.X < -environmentMaxWalkSpeed)
-                        {
-                            velocity.X = -environmentMaxWalkSpeed;
-                        }
+                        velocity.X = -environmentMaxWalkSpeed;
                     }
-                    else if (this.velocity.X < -environmentMaxWalkSpeed)
+                }
+                else if (this.velocity.X < -environmentMaxWalkSpeed)
+                {
+                    // Decelerate
+                    this.velocity.X += deceleration * elapsed;
+                    if (velocity.X > -environmentMaxWalkSpeed)
                     {
-                        // Decelerate
-                        this.velocity.X += deceleration * elapsed;
-                        if (velocity.X > -environmentMaxWalkSpeed)
-                        {
-                            velocity.X = -environmentMaxWalkSpeed;
-                        }
+                        velocity.X = -environmentMaxWalkSpeed;
                     }
+                }
 
-                    _state = MacState.Running;
-                }
-                else if (IsClimbingLadder)
-                {
-                    this.velocity.X = -climbingSpeed;
-                }
-                else
-                {
-                    // Movement in the air. You should be capped by your initial jump speed but able to accelerate a bit backwards.
-                    this.velocity.X -= airMovementSpeed * elapsed;
-                }
+                _state = MacState.Running;
 
                 Flipped = true;
             }
 
             // Decelerate if they aren't pressing the button.
-            if (OnGround && !IsClimbingLadder && !IsClimbingVine && !InputManager.CurrentAction.left && !InputManager.CurrentAction.right)
+            if (OnGround && isNotMovingX)
             {
                 if (this.velocity.X > 0)
                 {
@@ -1428,6 +1382,77 @@ namespace MacGame
                     {
                         this.velocity.X = 0;
                     }
+                }
+            }
+
+            // Left/right movement while climbing a ladder
+            if (IsClimbingLadder)
+            {
+                if (isMovingRight)
+                {
+                    this.velocity.X = climbingSpeed;
+                }
+                else if (isMovingLeft)
+                {
+                    this.velocity.X = -climbingSpeed;
+                }
+            }
+
+            // Air movement left/right
+            if (!OnGround && !IsClimbingLadder && !IsClimbingVine )
+            {
+                float airAcceleration = PlayerSettings.AirAcceleration * MathHelper.Clamp(PlayerSettings.AirControl, 0f, 1f);
+
+                if (isMovingLeft)
+                {
+                    if (this.velocity.X > -environmentMaxWalkSpeed)
+                    {
+                        // Accelerate to max walk speed
+                        this.velocity.X -= airAcceleration * elapsed;
+                        if (velocity.X < -environmentMaxWalkSpeed)
+                        {
+                            velocity.X = -environmentMaxWalkSpeed;
+                        }
+                    }
+                    else if (this.velocity.X < -environmentMaxWalkSpeed)
+                    {
+                        // Decelerate
+                        this.velocity.X += PlayerSettings.AirBreak * elapsed;
+                        if (velocity.X > -environmentMaxWalkSpeed)
+                        {
+                            velocity.X = -environmentMaxWalkSpeed;
+                        }
+                    }
+                    Flipped = true;
+                }
+                else if (isMovingRight)
+                {
+                    if (this.velocity.X < environmentMaxWalkSpeed)
+                    {
+                        // Accelerate to max walk speed
+                        this.velocity.X += airAcceleration * elapsed;
+                        if (velocity.X > environmentMaxWalkSpeed)
+                        {
+                            velocity.X = environmentMaxWalkSpeed;
+                        }
+                    }
+                    else if (this.velocity.X > environmentMaxWalkSpeed)
+                    {
+                        // Decelerate
+                        this.velocity.X -= PlayerSettings.AirBreak * elapsed;
+                        if (velocity.X < environmentMaxWalkSpeed)
+                        {
+                            velocity.X = environmentMaxWalkSpeed;
+                        }
+                    }
+                    Flipped = false;
+                }
+                else
+                {
+                    // air brake toward 0
+                    float brake = PlayerSettings.AirBreak * elapsed;
+                    if (Velocity.X > 0f) velocity.X = Math.Max(0f, Velocity.X - brake);
+                    else if (Velocity.X < 0f) velocity.X = Math.Min(0f, Velocity.X + brake);
                 }
             }
 
@@ -1468,8 +1493,6 @@ namespace MacGame
                 // No moving left or right on the ladder unless you are not going up or down.
                 this.velocity.X = 0;
             }
-
-            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsJustShotOutOfCannon && !IsInCannon;
 
             // Stop moving while climbing if you aren't pressing up or down.
             if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
@@ -1531,20 +1554,10 @@ namespace MacGame
             {
                 PoisonPlatforms.Clear();
                 isInJumpFromIce = false;
-                isInJumpFromGround = false;
-                _jumpButtonHeldDownTimer = 0f;
                 IsJustShotOutOfCannon = false;
+                _jumpCutApplied = false;
+                _jumpReleased = true;
             }
-
-            //// Stop the jump if they let go of the button or hit a ceiling or something.
-            //if (!InputManager.CurrentAction.jump || OnCeiling || this.velocity.Y >= 0)
-            //{
-            //    jumpButtonHeldDownTimer = 0;
-            //}
-            //else if (jumpButtonHeldDownTimer > 0)
-            //{
-            //    jumpButtonHeldDownTimer -= elapsed;
-            //}
 
             // Jumping Logic
             var jumpVelocity = (2f * PlayerSettings.JumpHeight) / PlayerSettings.JumpDuration;
@@ -1570,8 +1583,6 @@ namespace MacGame
             else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
             {
                 // Regular jump from the Ground.
-         
-
                 this.velocity.Y = -jumpVelocity;
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
@@ -1579,8 +1590,7 @@ namespace MacGame
                 {
                     isInJumpFromIce = true;
                 }
-                isInJumpFromGround = true;
-                _jumpButtonHeldDownTimer = 0;
+
                 _jumpCutApplied = false;
                 _jumpReleased = false;
                 onGround = false;
@@ -1598,7 +1608,6 @@ namespace MacGame
                // this.velocity.Y = -jumpBoost * 1.5f; // TODO
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
-                isInJumpFromGround = true;
             }
             else if (InputManager.CurrentAction.jump
                 && !InputManager.PreviousAction.jump
@@ -1636,36 +1645,30 @@ namespace MacGame
             if (!InputManager.CurrentAction.jump)
             {
                 _jumpReleased = true;
-                _jumpButtonHeldDownTimer = 0;
-            }
-
-            if (IsJumping && !_jumpReleased)
-            {
-                _jumpButtonHeldDownTimer += elapsed;
             }
 
             // ---- Early release cutoff (variable jump) ----
             // If player releases while still moving upward, reduce upward velocity.
             // JumpCutoff: 0 = no cut; 1 = full cut to 0 upward velocity.
-            if (_jumpReleased && !_jumpCutApplied && Velocity.Y < 0f)
+            if (IsJumping && _jumpReleased && !_jumpCutApplied && Velocity.Y < 0f)
             {
                 float cutoffPercentage = MathHelper.Clamp(PlayerSettings.JumpCutoff, 0f, 1f);
                 velocity.Y *= (1f - cutoffPercentage); // e.g. c=0.5 halves upward speed
                 _jumpCutApplied = true;
-                //_jumping = false; <-- do I want this?
             }
 
             bool rising = Velocity.Y < 0f;
 
-            this.IsAffectedByGravity = false;
-
             float gravityMag;
             if (rising && !_jumpReleased && _state == MacState.Jumping)
+            {
                 gravityMag = jumpGravity;
+            }
             else
+            {
                 gravityMag = this.Gravity.Y;
+            }
             velocity.Y += gravityMag * elapsed;
-
 
             // Unset canclimb ladders if they release up.
             if (!InputManager.CurrentAction.up || onGround)
@@ -2032,8 +2035,6 @@ namespace MacGame
         {
             animations.PlayIfNotAlreadyPlaying("sub");
 
-            IsAffectedByGravity = false;
-
             float subVelocity = 200f;
 
             Velocity = Vector2.Zero;
@@ -2160,7 +2161,6 @@ namespace MacGame
         public void EnterSpaceship()
         {
             _state = MacState.SpaceShip;
-            this.IsAffectedByGravity = false;
             animations.Play("spaceShip");
             SetCenteredCollisionRectangle(8, 8, 5, 5);
         }
@@ -2175,7 +2175,6 @@ namespace MacGame
             SmoothMoveCameraToTarget();
             noMoveTimer = 0.2f;
             IsInSub = true;
-            IsAffectedByGravity = false;
             subPlayerIsIn = sub;
             this.WorldLocation = sub.WorldLocation;
             this.CollisionRectangle = sub.RelativeCollisionRectangle;
@@ -2190,7 +2189,6 @@ namespace MacGame
             IsInSub = false;
             this.WorldLocation = new Vector2(subPlayerIsIn.WorldLocation.X, subPlayerIsIn.CollisionRectangle.Bottom - 4);
             SmoothMoveCameraToTarget();
-            IsAffectedByGravity = true;
             subPlayerIsIn = null;
             this.collisionRectangle = normalCollisionRectangle;
             animations.Play("swim");
@@ -2202,7 +2200,6 @@ namespace MacGame
             this.Velocity = Vector2.Zero;
             this.CannonYouAreIn = cannon;
             this.IsJustShotOutOfCannon = false;
-            this.IsAffectedByGravity = false;
             this._state = MacState.Idle;
             this.animations.Play("idle");
 
@@ -2309,8 +2306,6 @@ namespace MacGame
         {
 
             DropItem();
-
-            IsAffectedByGravity = false;
 
             if (animations.CurrentAnimationName != "swim")
             {

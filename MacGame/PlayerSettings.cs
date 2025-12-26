@@ -12,12 +12,13 @@ namespace MacGame
         private static DateTime _lastReloadTime = DateTime.MinValue;
         private static readonly object _lockObject = new object();
 
-        
+
         /// <summary>
-        /// The max speed the character can run
+        /// The max speed the character can run in pixels per second.
         /// </summary>
         public static float MaxRunSpeed { get; private set; }
-        
+        public static float MaxWalkSpeed { get; private set; }
+
         public static float RunAcceleration { get; private set; }
 
         public static float RunDeceleration { get; private set; }
@@ -38,7 +39,7 @@ namespace MacGame
         public static float WaterGravity { get; private set; }
 
         /// <summary>
-        /// The amount of time it takes for you to reach the jump Height.
+        /// The amount of time it takes for you to reach the JumpHeight.
         /// </summary>
         public static float JumpDuration { get; private set; }
 
@@ -55,7 +56,7 @@ namespace MacGame
         public static float AirBreak { get; private set; }
 
         /// <summary>
-        /// Use this for shorter jumps
+        /// Between 1.0 and 0.0. The percentage of the jump you can cut off by releasing the jump button early.
         /// </summary>
         public static float JumpCutoff { get; private set; }
 
@@ -78,6 +79,7 @@ namespace MacGame
         private class Settings
         {
             public float maxRunSpeed { get; set; }
+            public float maxWalkSpeed { get; set; }
             public float runAcceleration { get; set; }
             public float runDeceleration { get; set; }
             public float turnSpeed { get; set; }
@@ -126,6 +128,7 @@ namespace MacGame
                 if (settings != null)
                 {
                     MaxRunSpeed = settings.maxRunSpeed;
+                    MaxWalkSpeed = settings.maxWalkSpeed;
                     RunAcceleration = settings.runAcceleration;
                     RunDeceleration = settings.runDeceleration;
                     TurnSpeed = settings.turnSpeed;

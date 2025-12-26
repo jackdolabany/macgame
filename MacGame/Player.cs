@@ -116,7 +116,16 @@ namespace MacGame
         /// </summary>
         bool _jumpCutApplied = false;
 
-        const float maxJumpButtonHeldDownTime = 0.5f;
+        /// <summary>
+        /// Time since you last feel off a platform. Use this for coyote time jumps.
+        /// </summary>
+        float _timeSinceFall;
+
+        /// <summary>
+        /// How long ago was the jump button pressed? Use this for the jump buffer.
+        /// Let's you jump slightly before hitting the ground.
+        /// </summary>
+        float _timeSinceJumpLastPressed;
 
         public bool IsInWater = false;
         public bool IsJumpingOutOfWater = false;
@@ -1297,15 +1306,6 @@ namespace MacGame
             var isMovingRight = InputManager.CurrentAction.right && !InputManager.CurrentAction.left;
             var isMovingLeft = InputManager.CurrentAction.left && !InputManager.CurrentAction.right;
             var isNotMovingX = !InputManager.CurrentAction.left && !InputManager.CurrentAction.right;
-            var moveX = 0f;
-            if (isMovingRight)
-            {
-                moveX = 1f;
-            }
-            else if (isMovingLeft)
-            {
-                moveX = -1f;
-            }
 
             // Walk Right
             if (isMovingRight && OnGround)
@@ -1562,8 +1562,10 @@ namespace MacGame
             // Jumping Logic
             var jumpVelocity = (2f * PlayerSettings.JumpHeight) / PlayerSettings.JumpDuration;
             var jumpGravity = (2f * PlayerSettings.JumpHeight) / (PlayerSettings.JumpDuration * PlayerSettings.JumpDuration);
+            var jumpPressed = InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump;
+            var jumpPressedRecently = jumpPressed || _timeSinceJumpLastPressed <= PlayerSettings.JumpBufferTime;
 
-            if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && InputManager.CurrentAction.down && OnPlatform)
+            if (jumpPressed && InputManager.CurrentAction.down && OnPlatform)
             {
                 // Jump down platforms
                 // Find every platform below the player and mark them all as poison.
@@ -1580,7 +1582,7 @@ namespace MacGame
                 SoundManager.PlaySound("Jump");
 
             }
-            else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && OnGround)
+            else if ((jumpPressedRecently && OnGround) || (jumpPressed && _timeSinceFall < PlayerSettings.CoyoteTime))
             {
                 // Regular jump from the Ground.
                 this.velocity.Y = -jumpVelocity;
@@ -1602,16 +1604,14 @@ namespace MacGame
                 }
 
             }
-            else if (InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump && !OnGround && HasWings && this.Velocity.Y >= 0)
+            else if (jumpPressed && !OnGround && HasWings && this.Velocity.Y >= 0)
             {
                 // Infinite Jump Jump.
                // this.velocity.Y = -jumpBoost * 1.5f; // TODO
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
             }
-            else if (InputManager.CurrentAction.jump
-                && !InputManager.PreviousAction.jump
-                && IsClimbingLadder)
+            else if (jumpPressed && IsClimbingLadder)
             {
                 // Jump off ladder
                 //this.velocity.Y -= (jumpBoost / 2); // weaker jump // TODO
@@ -1625,9 +1625,7 @@ namespace MacGame
                 }
                 _state = MacState.Jumping;
             }
-            else if (InputManager.CurrentAction.jump
-                && !InputManager.PreviousAction.jump
-                && IsClimbingVine)
+            else if (jumpPressed && IsClimbingVine)
             {
                 // Jump off a vine.
                 canClimbVines = false;
@@ -1642,12 +1640,13 @@ namespace MacGame
                 SoundManager.PlaySound("Jump");
             }
 
+            // Jump cutoff
             if (!InputManager.CurrentAction.jump)
             {
                 _jumpReleased = true;
             }
 
-            // ---- Early release cutoff (variable jump) ----
+            // Early release cutoff (variable jump)
             // If player releases while still moving upward, reduce upward velocity.
             // JumpCutoff: 0 = no cut; 1 = full cut to 0 upward velocity.
             if (IsJumping && _jumpReleased && !_jumpCutApplied && Velocity.Y < 0f)
@@ -1657,8 +1656,8 @@ namespace MacGame
                 _jumpCutApplied = true;
             }
 
+            // Different gravity applied for rising and falling in a jump
             bool rising = Velocity.Y < 0f;
-
             float gravityMag;
             if (rising && !_jumpReleased && _state == MacState.Jumping)
             {
@@ -1669,6 +1668,26 @@ namespace MacGame
                 gravityMag = this.Gravity.Y;
             }
             velocity.Y += gravityMag * elapsed;
+
+            // _timeSinceFall timer used for Coyote time.
+            if (IsFalling)
+            {
+                _timeSinceFall += elapsed;
+            }
+            else
+            {
+                _timeSinceFall = 0;
+            }
+
+            // _timeSinceJumpLastPressed used for Jump Buffer
+            if (jumpPressed)
+            {
+                _timeSinceJumpLastPressed = 0f;
+            }
+            else
+            {
+                _timeSinceJumpLastPressed += elapsed;
+            }
 
             // Unset canclimb ladders if they release up.
             if (!InputManager.CurrentAction.up || onGround)

@@ -168,10 +168,10 @@ namespace MacGame
 
         /// <summary>
         /// When you jump off a vine, we temporarily prevent you from grabbing onto another 
-        /// vine until your y position has moved away from the vine you are currently on.
+        /// vine until x position has moved away from the vine you are currently on.
         /// </summary>
         private bool canClimbVines = true;
-        private float yPositionWhenLastOnVine = 0;
+        private float xPositionWhenLastOnVine = 0;
 
         public bool IsInMineCart = false;
         const int mineCartVelocity = 350;
@@ -467,10 +467,7 @@ namespace MacGame
             this.IsAffectedByForces = false;
             this.isEnemyTileColliding = false;
 
-            // Gravity for the player will be handled all custom in update due to the 
-            // Complicated nature of jumping and other states the player might be in
-            // (like a spaceship).
-            this.IsAffectedByGravity = false;
+            this.IsAffectedByGravity = true;
 
             this.IsAffectedByPlatforms = true;
 
@@ -569,6 +566,14 @@ namespace MacGame
             {
                 ShotPower = ShotPower.Charge;
             }
+        }
+
+        private Vector2 _gravity = Vector2.Zero;
+        public override Vector2 Gravity => _gravity;
+
+        private void ResetGravity()
+        {
+            _gravity = Game1.Gravity();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -858,6 +863,8 @@ namespace MacGame
             this.IsAbleToSurviveOutsideOfWorld = true;
             this.isTileColliding = false;
 
+            IsAffectedByGravity = false;
+
             Flipped = false;
 
             float moveSpeed = 200f;
@@ -1090,7 +1097,11 @@ namespace MacGame
             subPlayerIsIn = null;
             pickedUpObject = null;
             CollisionRectangle = normalCollisionRectangle;
-            
+            IsAffectedByGravity = true;
+            ResetGravity();
+            canClimbLadders = true;
+            canClimbVines = true;
+
             IsInvisibleAndCantMove = false;
             _state = MacState.Idle;
             this.IsInWater = false;
@@ -1494,6 +1505,8 @@ namespace MacGame
                 this.velocity.X = 0;
             }
 
+            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsJustShotOutOfCannon && !IsInCannon;
+
             // Stop moving while climbing if you aren't pressing up or down.
             if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
             {
@@ -1639,14 +1652,14 @@ namespace MacGame
             else if (jumpPressed && !OnGround && HasWings && this.Velocity.Y >= 0)
             {
                 // Infinite Jump Jump.
-               // this.velocity.Y = -jumpBoost * 1.5f; // TODO
+                this.velocity.Y = -jumpVelocity;
                 _state = MacState.Jumping;
                 SoundManager.PlaySound("Jump");
             }
             else if (jumpPressed && IsClimbingLadder)
             {
                 // Jump off ladder
-                //this.velocity.Y -= (jumpBoost / 2); // weaker jump // TODO
+                this.velocity.Y -= (jumpVelocity * 0.66f); // weaker jump
                 SoundManager.PlaySound("Jump");
 
                 // block their ability to climb ladders until they release up. This prevents you from
@@ -1661,9 +1674,9 @@ namespace MacGame
             {
                 // Jump off a vine.
                 canClimbVines = false;
-                yPositionWhenLastOnVine = this.worldLocation.Y;
+                xPositionWhenLastOnVine = this.worldLocation.X;
                 _state = MacState.Jumping;
-                this.velocity = new Vector2(300, -250);
+                this.velocity = new Vector2(400, -250);
                 if (Flipped)
                 {
                     this.velocity.X *= -1;
@@ -1687,19 +1700,17 @@ namespace MacGame
                 velocity.Y *= (1f - cutoffPercentage); // e.g. c=0.5 halves upward speed
                 _jumpCutApplied = true;
             }
-
-            // Different gravity applied for rising and falling in a jump
-            bool rising = Velocity.Y < 0f;
-            float gravityMag;
-            if (rising && !_jumpReleased && _state == MacState.Jumping)
+            
+            ResetGravity();
+            if (IsAffectedByGravity)
             {
-                gravityMag = jumpGravity;
+                bool rising = Velocity.Y < 0f;
+                if (rising && !_jumpReleased && IsJumping)
+                {
+                    // Different gravity applied for rising of a jump.
+                    _gravity = new Vector2(0, jumpGravity);
+                }
             }
-            else
-            {
-                gravityMag = this.Gravity.Y;
-            }
-            velocity.Y += gravityMag * elapsed;
 
             // Unset canclimb ladders if they release up.
             if (!InputManager.CurrentAction.up || onGround)
@@ -1773,7 +1784,7 @@ namespace MacGame
             }
 
             // Unset canClimbVines if they move enough away from the vine.
-            if (!canClimbVines && Math.Abs(this.worldLocation.Y - yPositionWhenLastOnVine) > 20)
+            if (!canClimbVines && Math.Abs(this.worldLocation.X - xPositionWhenLastOnVine) > 20)
             {
                 canClimbVines = true;
             }
@@ -2020,6 +2031,7 @@ namespace MacGame
         public void EnterMineCart()
         {
             this.IsInMineCart = true;
+            ResetGravity();
             SmoothMoveCameraToTarget();
         }
 
@@ -2065,6 +2077,8 @@ namespace MacGame
         private void HandleSubInputs(float elapsed)
         {
             animations.PlayIfNotAlreadyPlaying("sub");
+
+            IsAffectedByGravity = false;
 
             float subVelocity = 200f;
 
@@ -2192,6 +2206,7 @@ namespace MacGame
         public void EnterSpaceship()
         {
             _state = MacState.SpaceShip;
+            this.IsAffectedByGravity = false;
             animations.Play("spaceShip");
             SetCenteredCollisionRectangle(8, 8, 5, 5);
         }
@@ -2206,10 +2221,10 @@ namespace MacGame
             SmoothMoveCameraToTarget();
             noMoveTimer = 0.2f;
             IsInSub = true;
+            this.IsAffectedByGravity = false;
             subPlayerIsIn = sub;
             this.WorldLocation = sub.WorldLocation;
             this.CollisionRectangle = sub.RelativeCollisionRectangle;
-            // TODO: reset collision rect
         }
 
         /// <summary>
@@ -2220,6 +2235,8 @@ namespace MacGame
             IsInSub = false;
             this.WorldLocation = new Vector2(subPlayerIsIn.WorldLocation.X, subPlayerIsIn.CollisionRectangle.Bottom - 4);
             SmoothMoveCameraToTarget();
+            this.IsAffectedByGravity = true;
+            ResetGravity();
             subPlayerIsIn = null;
             this.collisionRectangle = normalCollisionRectangle;
             animations.Play("swim");
@@ -2231,6 +2248,7 @@ namespace MacGame
             this.Velocity = Vector2.Zero;
             this.CannonYouAreIn = cannon;
             this.IsJustShotOutOfCannon = false;
+            this.IsAffectedByGravity = false;
             this._state = MacState.Idle;
             this.animations.Play("idle");
 
@@ -2338,6 +2356,8 @@ namespace MacGame
 
             DropItem();
 
+            this.IsAffectedByGravity = false;
+
             if (animations.CurrentAnimationName != "swim")
             {
                 animations.Play("swim");
@@ -2365,14 +2385,22 @@ namespace MacGame
                     IsJumpingOutOfWater = true;
                     IsInWater = false;
                     SoundManager.PlaySound("Jump");
-                    // TODO: Too much!
-                    this.velocity.Y =- 500;
+                    var jumpVelocity = (2f * PlayerSettings.JumpHeight) / PlayerSettings.JumpDuration;
+                    jumpVelocity *= 0.85f; // Tone it down a little from water.
+                    var jumpGravity = (2f * PlayerSettings.JumpHeight) / (PlayerSettings.JumpDuration * PlayerSettings.JumpDuration);
+                    this.velocity.Y =- jumpVelocity;
+                    _gravity = new Vector2(0, jumpGravity);
+                    _state = MacState.Jumping;
+                    _jumpCutApplied = false;
+                    _jumpReleased = false;
+                    onGround = false;
+                    _jumpBufferTimeRemaining = 0;
+                    _coyoteTimeRemaining = 0;
                 }
-                
             }
 
             const float swimAcceleration = 250f;
-            const float maxSwimSpeed = 100f;
+            const float maxSwimSpeed = 110;
 
             if (InputManager.CurrentAction.right && !InputManager.CurrentAction.left)
             {
@@ -2403,7 +2431,7 @@ namespace MacGame
                 this.velocity.Y += 30 * elapsed;
             }
 
-            if (isHeadUnderWater)
+            if (!IsJumpingOutOfWater)
             {
                 this.velocity.Y = MathHelper.Clamp(this.velocity.Y, -maxSwimSpeed, maxSwimSpeed);
                 this.velocity.X = MathHelper.Clamp(this.velocity.X, -maxSwimSpeed, maxSwimSpeed);

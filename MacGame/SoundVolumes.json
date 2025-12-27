@@ -32,6 +32,10 @@
     "FullyCharged": 15,
     "KickedOutOfDoor": 25,
     "Disappear": 20,
-    "SockReveal": 20
+    "SockReveal": 20,
+    "GooseHonk": 20,
+    "GooseHit": 30,
+    "GooseBallBounce": 35,
+    "Grow": 40
   }
 }

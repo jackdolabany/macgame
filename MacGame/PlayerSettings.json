@@ -11,7 +11,7 @@
   "jumpDuration": 0.5,
   "airAcceleration": 350,
   "airControl": 1,
-  "airBreak": 800,
+  "airBreak": 300,
   "jumpCutoff": 0.5,
   "coyoteTime": 0.07,
   "jumpBufferTime": 0.07,

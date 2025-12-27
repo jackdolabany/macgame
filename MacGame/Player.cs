@@ -1490,6 +1490,7 @@ namespace MacGame
             // Climbing a ladder from standstill.
             if (isOverALadder 
                 && pickedUpObject == null
+                && !HasWings
                 && canClimbLadders
                 && (InputManager.CurrentAction.up || (IsClimbingLadder && InputManager.CurrentAction.down)) // Need to press up to latch onto a ladder. Down only if you are already climbing.
                 && !(PlatformThatThisIsOn is LadderPlatform)) // Don't climb if you are standing on a ladder platform. Climbing down from atop a ladder is handled below.
@@ -1525,7 +1526,7 @@ namespace MacGame
             }
 
             // If you are on a ladder platform you can press down to climb down through it.
-            if (canClimbLadders && !InputManager.CurrentAction.jump && InputManager.CurrentAction.down && OnPlatform && PlatformThatThisIsOn is LadderPlatform)
+            if (canClimbLadders && !InputManager.CurrentAction.jump && InputManager.CurrentAction.down && OnPlatform && PlatformThatThisIsOn is LadderPlatform && pickedUpObject == null && !HasWings)
             {
                 // Also make sure Mac's collision rect isn't blocked from going down by other solid tiles.
                 // Otherwise he may do a weird vibrating thing trying to climb down to ladder with a solid wall next to the top tile.
@@ -1722,7 +1723,7 @@ namespace MacGame
             var tileAtCenter = Game1.CurrentMap.GetMapSquareAtPixel(this.CollisionCenter);
             var isOverVine = tileAtCenter != null && tileAtCenter.IsVine;
             var autoGrabOnToLadder = !OnGround && !HasWings;
-            if (!IsClimbingVine && canClimbVines && isOverVine && (autoGrabOnToLadder || InputManager.CurrentAction.up) && pickedUpObject == null)
+            if (!IsClimbingVine && canClimbVines && isOverVine && (autoGrabOnToLadder || InputManager.CurrentAction.up) && pickedUpObject == null && !HasWings)
             {
                 _state = MacState.ClimbingVine;
             }

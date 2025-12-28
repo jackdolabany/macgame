@@ -112,6 +112,8 @@ namespace MacGame
         public bool AllBombsDisabled = false;
         private bool _isBlownUp = false;
 
+        private float _arrowAnimationTimer = 0f;
+
         public Level(Player player, TileMap map, Camera camera)
         {
             Player = player;
@@ -154,6 +156,9 @@ namespace MacGame
                 Initialize();
                 _isInitailized = true;
             }
+
+            _arrowAnimationTimer += elapsed;
+
             RevealBlockManager.Update(elapsed);
             DisappearBlockManager.Update(gameTime, elapsed);
             // Important that platforms update before player and enemies.
@@ -230,49 +235,15 @@ namespace MacGame
             // Handle the player going through a door.
             if (Player.InteractButtonPressedThisFrame)
             {
+                var interactable = GetNearbyInteractable();
 
-                Door? doorToEnter = null;
-                Npc? npcToTalkTo = null;
-
-                if (BombTimer == 0) // No escape if the bomb is counting down.
+                if (interactable is Door door)
                 {
-                    foreach (var door in Doors)
-                    {
-                        if (door.Enabled && !door.IsExitOnly && door.CollisionRectangle.Contains(Player.WorldCenter))
-                        {
-                            doorToEnter = door;
-                            break;
-                        }
-                    }
+                    door.PlayerTriedToOpen(Player);
                 }
-                foreach (var npc in Npcs)
+                else if (interactable is Npc npc)
                 {
-                    if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.NpcRectangle))
-                    {
-                        npcToTalkTo = npc;
-                        break;
-                    }
-                }
-
-                // if there's a door to go through and an NPC to talk to, prefer the one closer to Mac
-                if (doorToEnter != null && npcToTalkTo != null)
-                {
-                    if (Vector2.Distance(Player.WorldLocation, doorToEnter.WorldLocation) < Vector2.Distance(Player.WorldLocation, npcToTalkTo.WorldLocation))
-                    {
-                        doorToEnter.PlayerTriedToOpen(Player);
-                    }
-                    else
-                    {
-                        npcToTalkTo.CheckPlayerInteractions(Player);
-                    }
-                }
-                else if (doorToEnter != null)
-                {
-                    doorToEnter.PlayerTriedToOpen(Player);
-                }
-                else if (npcToTalkTo != null)
-                {
-                    npcToTalkTo.CheckPlayerInteractions(Player);
+                    npc.CheckPlayerInteractions(Player);
                 }
             }
 
@@ -872,6 +843,55 @@ namespace MacGame
             }
         }
 
+        private GameObject? GetNearbyInteractable()
+        {
+            Door? doorToEnter = null;
+            Npc? npcToTalkTo = null;
+
+            if (BombTimer == 0) // No escape if the bomb is counting down.
+            {
+                foreach (var door in Doors)
+                {
+                    if (door.Enabled && !door.IsExitOnly && door.CollisionRectangle.Contains(Player.WorldCenter))
+                    {
+                        doorToEnter = door;
+                        break;
+                    }
+                }
+            }
+            foreach (var npc in Npcs)
+            {
+                if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.NpcRectangle))
+                {
+                    npcToTalkTo = npc;
+                    break;
+                }
+            }
+
+            // if there's a door to go through and an NPC to talk to, prefer the one closer to Mac
+            if (doorToEnter != null && npcToTalkTo != null)
+            {
+                if (Vector2.Distance(Player.WorldLocation, doorToEnter.WorldLocation) < Vector2.Distance(Player.WorldLocation, npcToTalkTo.WorldLocation))
+                {
+                    return doorToEnter;
+                }
+                else
+                {
+                    return npcToTalkTo;
+                }
+            }
+            else if (doorToEnter != null)
+            {
+                return doorToEnter;
+            }
+            else if (npcToTalkTo != null)
+            {
+                return npcToTalkTo;
+            }
+
+            return null;
+        }
+
         public void Draw(SpriteBatch spriteBatch, Rectangle scaledViewPort)
         {
             Map.Draw(spriteBatch, scaledViewPort);
@@ -918,6 +938,13 @@ namespace MacGame
 
             Player.Draw(spriteBatch);
 
+            // Draw up arrow indicator above nearby interactable object
+            var nearbyInteractable = GetNearbyInteractable();
+            if (nearbyInteractable != null)
+            {
+                DrawUpArrow(spriteBatch, nearbyInteractable);
+            }
+
             if (_isBlownUp)
             {
                 // Figure out how much to fade to white based on the bomb fade to white timer
@@ -929,6 +956,33 @@ namespace MacGame
                 spriteBatch.Draw(Game1.TileTextures, Camera.ViewPort, Game1.WhiteSourceRect, fadeToBlack, 0f, Vector2.Zero, SpriteEffects.None, 0.0001f);
             }
 
+        }
+
+        private void DrawUpArrow(SpriteBatch spriteBatch, GameObject gameObject)
+        {
+            // Calculate bobbing offset using sine wave
+            float bobOffset = (float)Math.Sin(_arrowAnimationTimer * 4f) * 2f; // 4 Hz frequency, 2 pixel amplitude
+
+            // Calculate position above the game object
+            var arrowX = gameObject.WorldLocation.X - (TileMap.TileSize / 2) - 2;
+            var arrowY = gameObject.CollisionRectangle.Top - TileMap.TileSize - 4 + bobOffset; // 4 pixels gap above, with bob
+
+            var arrowPosition = new Vector2(arrowX, arrowY);
+
+            if (!ConversationManager.ShouldPauseForConversation())
+            {
+
+                spriteBatch.Draw(
+                    Game1.TileTextures2,
+                    arrowPosition,
+                    Helpers.GetTileRect(11, 6),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    1f,
+                    SpriteEffects.None,
+                    TileMap.OVERLAY_DRAW_DEPTH);
+            }
         }
     }
 }

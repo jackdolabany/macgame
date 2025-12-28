@@ -16,13 +16,13 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "TestControls";
+        public const string StartingWorld = "HubWorld";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
         public const int TacosNeeded = 100;
 
-        public static Func<Vector2> Gravity;
+        public static Func<Vector2> Gravity = () => new Vector2(0, 0);
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;

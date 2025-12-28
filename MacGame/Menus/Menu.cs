@@ -69,11 +69,17 @@ namespace MacGame
             // Move to the previous menu entry that is not hidden.
             if (ca.up && !pa.up)
             {
+                int attempts = 0;
                 do {
                     selectedEntryIndex--;
 
                     if (selectedEntryIndex < 0)
                         selectedEntryIndex = menuOptions.Count - 1;
+
+                    attempts++;
+                    // Safety check: if we've tried all options and they're all hidden, break
+                    if (attempts >= menuOptions.Count)
+                        break;
                 }
                 while (menuOptions[selectedEntryIndex].Hidden);
             }
@@ -81,18 +87,24 @@ namespace MacGame
             // Move to the next menu entry that is not hidden.
             if (ca.down && !pa.down)
             {
+                int attempts = 0;
                 do
                 {
                     selectedEntryIndex++;
 
                     if (selectedEntryIndex >= menuOptions.Count)
                         selectedEntryIndex = 0;
+
+                    attempts++;
+                    // Safety check: if we've tried all options and they're all hidden, break
+                    if (attempts >= menuOptions.Count)
+                        break;
                 }
                 while (menuOptions[selectedEntryIndex].Hidden);
             }
         }
 
-        public void ResestMenuIndex()
+        public void ResetMenuIndex()
         {
             selectedEntryIndex = defaultSelectedEntryIndex;
         }

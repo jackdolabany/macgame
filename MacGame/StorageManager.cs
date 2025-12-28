@@ -128,10 +128,10 @@ namespace MacGame
         public static void TryLoadGame(int saveSlot)
         {
             IsLoading = true;
-            LoadGameWithStorageState(saveSlot);
+            _ = LoadGameWithStorageState(saveSlot);
         }
 
-        private static async void LoadGameWithStorageState(int saveSlot)
+        private static async Task LoadGameWithStorageState(int saveSlot)
         {
             var loadTask = LoadStorageStateForSlot(saveSlot);
 

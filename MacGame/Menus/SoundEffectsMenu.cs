@@ -130,11 +130,17 @@ namespace MacGame
 
             if (movedUp)
             {
+                int attempts = 0;
                 do
                 {
                     selectedEntryIndex--;
                     if (selectedEntryIndex < 0)
                         selectedEntryIndex = menuOptions.Count - 1;
+
+                    attempts++;
+                    // Safety check: if we've tried all options and they're all hidden, break
+                    if (attempts >= menuOptions.Count)
+                        break;
                 }
                 while (menuOptions[selectedEntryIndex].Hidden);
 
@@ -142,11 +148,17 @@ namespace MacGame
             }
             else if (movedDown)
             {
+                int attempts = 0;
                 do
                 {
                     selectedEntryIndex++;
                     if (selectedEntryIndex >= menuOptions.Count)
                         selectedEntryIndex = 0;
+
+                    attempts++;
+                    // Safety check: if we've tried all options and they're all hidden, break
+                    if (attempts >= menuOptions.Count)
+                        break;
                 }
                 while (menuOptions[selectedEntryIndex].Hidden);
 

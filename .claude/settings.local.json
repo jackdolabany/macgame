@@ -3,7 +3,10 @@
     "allow": [
       "Bash(find:*)",
       "Bash(mkdir:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(ls:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(gunzip:*)"
     ]
   }
 }

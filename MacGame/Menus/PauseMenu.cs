@@ -50,7 +50,7 @@ namespace MacGame
                 MenuManager.AddMenu(graphicsMenu);
             });
 
-            if (Game1.IS_DEBUG)
+            if (ConfigFileManager.SourceFilesExist)
             {
                 AddOption("Sound Effects", (a, b) => {
                     PlayOptionSelectedSound();

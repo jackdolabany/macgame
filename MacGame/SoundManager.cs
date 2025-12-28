@@ -191,12 +191,8 @@ namespace MacGame
             SoundManager.content = content;
             Sounds = new Dictionary<string, SoundEffect>();
             Songs = new Dictionary<string, Song>();
-
-            // Load custom sound volumes for debugging
-            if (Game1.IS_DEBUG)
-            {
-                LoadSoundVolumeSettings();
-            }
+            
+            LoadSoundVolumeSettings();
 
             // Sound Effects
             LoadSound("AlertBox");

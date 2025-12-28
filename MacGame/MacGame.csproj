@@ -12,16 +12,26 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="gamedata1.dat" />
+    <None Remove="gamedata2.dat" />
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
-    <None Remove="PlayerSettings.json" />
-    <None Remove="SoundVolumes.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="PlayerSettings.json">
+  <!-- DEBUG: Copy .json files for hot-reload -->
+  <!-- RELEASE: Copy .dat files (compressed/obfuscated) -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <Content Include="gamedata1.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="SoundVolumes.json">
+    <Content Include="gamedata2.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gamedata1.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="gamedata2.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -40,6 +50,19 @@
   <ItemGroup>
     <Folder Include="Content\Textures\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="PlayerSettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="SoundVolumes.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Target Name="BuildConfigFiles" BeforeTargets="BeforeBuild">
+    <Message Text="Building .dat config files from .json" Importance="High" />
+    <Exec Command="dotnet build $(SolutionDir)ConfigBuilder\ConfigBuilder.csproj --configuration $(Configuration) --verbosity quiet" />
+    <Exec Command="dotnet $(SolutionDir)ConfigBuilder\bin\$(Configuration)\net6.0\ConfigBuilder.dll" />
+  </Target>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />

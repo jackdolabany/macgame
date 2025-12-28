@@ -7,11 +7,9 @@ namespace MacGame
     public static class PlayerSettings
     {
         private static FileSystemWatcher? _watcher;
-        private static string _filePath = ""; // Path in the output/build directory
         private static string _sourceFilePath = ""; // Path in the source directory
         private static DateTime _lastReloadTime = DateTime.MinValue;
         private static readonly object _lockObject = new object();
-
 
         /// <summary>
         /// The max speed the character can run in pixels per second.
@@ -99,76 +97,72 @@ namespace MacGame
 
         public static void Initialize()
         {
-            // Get the path to the PlayerSettings.json file in the output directory (where the game runs)
-            _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PlayerSettings.json");
+            // Get file paths using ConfigFileManager
+            _sourceFilePath = ConfigFileManager.GetSourceFilePath("PlayerSettings");
 
-            // Get the path to the source file (in the project directory)
-            // Go up from bin/Debug/net6.0 to the project root, then to the source file
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var projectRoot = Path.GetFullPath(Path.Combine(baseDir, "..", "..", ".."));
-            _sourceFilePath = Path.Combine(projectRoot, "PlayerSettings.json");
-
-            System.Diagnostics.Debug.WriteLine($"PlayerSettings output path: {_filePath}");
-            System.Diagnostics.Debug.WriteLine($"PlayerSettings source path: {_sourceFilePath}");
-
-            // Load initial settings from the output directory
+            // Load initial settings
             LoadSettings();
 
-            // Set up file watcher for hot-reload on the SOURCE directory
+            // Set up file watcher for hot-reload (only works if source .json file exists)
             SetupFileWatcher();
         }
 
+        /// <summary>
+        /// Load settings from .dat file (initial startup)
+        /// </summary>
         private static void LoadSettings()
         {
             lock (_lockObject)
             {
-                var json = File.ReadAllText(_filePath);
-                var settings = JsonConvert.DeserializeObject<Settings>(json);
-
-                if (settings != null)
-                {
-                    MaxRunSpeed = settings.maxRunSpeed;
-                    MaxWalkSpeed = settings.maxWalkSpeed;
-                    RunAcceleration = settings.runAcceleration;
-                    RunDeceleration = settings.runDeceleration;
-                    TurnSpeed = settings.turnSpeed;
-                    JumpHeight = settings.jumpHeight;
-                    EarthGravity = settings.earthGravity;
-                    MoonGravity = settings.moonGravity;
-                    WaterGravity = settings.waterGravity;
-                    JumpDuration = settings.jumpDuration;
-                    AirAcceleration = settings.airAcceleration;
-                    AirControl = settings.airControl;
-                    AirBreak = settings.airBreak;
-                    JumpCutoff = settings.jumpCutoff;
-                    CoyoteTime = settings.coyoteTime;
-                    JumpBufferTime = settings.jumpBufferTime;
-                    TerminalVelocity = settings.terminalVelocity;
-                }
+                var settings = ConfigFileManager.LoadConfig<Settings>("PlayerSettings");
+                ApplySettings(settings);
             }
+        }
+
+        /// <summary>
+        /// Apply settings to the static properties
+        /// </summary>
+        private static void ApplySettings(Settings settings)
+        {
+            MaxRunSpeed = settings.maxRunSpeed;
+            MaxWalkSpeed = settings.maxWalkSpeed;
+            RunAcceleration = settings.runAcceleration;
+            RunDeceleration = settings.runDeceleration;
+            TurnSpeed = settings.turnSpeed;
+            JumpHeight = settings.jumpHeight;
+            EarthGravity = settings.earthGravity;
+            MoonGravity = settings.moonGravity;
+            WaterGravity = settings.waterGravity;
+            JumpDuration = settings.jumpDuration;
+            AirAcceleration = settings.airAcceleration;
+            AirControl = settings.airControl;
+            AirBreak = settings.airBreak;
+            JumpCutoff = settings.jumpCutoff;
+            CoyoteTime = settings.coyoteTime;
+            JumpBufferTime = settings.jumpBufferTime;
+            TerminalVelocity = settings.terminalVelocity;
         }
 
         private static void SetupFileWatcher()
         {
-            try
+            // Only set up watcher if source files exist (development mode)
+            if (!ConfigFileManager.SourceFilesExist)
             {
-                // Watch the source file directory, not the output directory
-                var directory = Path.GetDirectoryName(_sourceFilePath);
-                var fileName = Path.GetFileName(_sourceFilePath);
-
-                if (directory != null && fileName != null && Directory.Exists(directory))
-                {
-                    _watcher = new FileSystemWatcher(directory, fileName);
-                    _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
-                    _watcher.Changed += OnFileChanged;
-                    _watcher.EnableRaisingEvents = true;
-
-                    System.Diagnostics.Debug.WriteLine($"File watcher set up for: {_sourceFilePath}");
-                }
+                return;
             }
-            catch (Exception ex)
+
+            // Watch the source file directory
+            var directory = Path.GetDirectoryName(_sourceFilePath);
+            var fileName = Path.GetFileName(_sourceFilePath);
+
+            if (directory != null && fileName != null && Directory.Exists(directory))
             {
-                System.Diagnostics.Debug.WriteLine($"Error setting up file watcher: {ex.Message}");
+                _watcher = new FileSystemWatcher(directory, fileName);
+                _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
+                _watcher.Changed += OnFileChanged;
+                _watcher.EnableRaisingEvents = true;
+
+                System.Diagnostics.Debug.WriteLine($"File watcher set up for: {_sourceFilePath}");
             }
         }
 
@@ -186,23 +180,10 @@ namespace MacGame
             // Wait a moment for the file to be fully written
             System.Threading.Thread.Sleep(100);
 
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("PlayerSettings.json changed in source, copying to output and reloading...");
+            var json = File.ReadAllText(_sourceFilePath);
+            var settings = JsonConvert.DeserializeObject<Settings>(json)!;
 
-                // Copy the source file to the output directory
-                File.Copy(_sourceFilePath, _filePath, overwrite: true);
-
-                // Wait a bit for the copy to complete
-                System.Threading.Thread.Sleep(50);
-
-                // Reload the settings from the output directory
-                LoadSettings();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error copying and reloading PlayerSettings: {ex.Message}");
-            }
+            ApplySettings(settings);
         }
 
         public static void Dispose()

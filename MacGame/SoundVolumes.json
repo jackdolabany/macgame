@@ -8,7 +8,7 @@
     "BlockAppear": 10,
     "OpenLockedDoor": 25,
     "Fire": 25,
-    "Jump": 25,
+    "Jump": 35,
     "ShootFromCannon": 30,
     "SockCollected": 15,
     "Dig": 10,

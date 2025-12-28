@@ -426,6 +426,7 @@ namespace MacGame
             mineCart.FrameLength = 0.1f;
             animations.Add(mineCart);
 
+            // Player renders as the submarine when he's in it.
             var sub = new AnimationStrip(bigTextures, Helpers.GetBigTileRect(7, 3), 2, "sub");
             sub.LoopAnimation = true;
             sub.FrameLength = 0.25f;
@@ -2518,8 +2519,9 @@ namespace MacGame
 
             if (IsInSub)
             {
-                // the sub sprite doesn't contain Mac so we're going to just draw his idle image behind the sub.
-                Vector2 position = this.WorldLocation + new Vector2(-16, -40);
+                // Mac's animation is the submarine when he's in it. 
+                // Draw the player sprite just behind it.
+                Vector2 position = this.WorldLocation.ToIntegerVector() + new Vector2(-16, -40);
                 var depth = this.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
                 var effect = this.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                 spriteBatch.Draw(textures, position, Helpers.GetTileRect(1, 0), Color.White, 0f, Vector2.Zero, 1f, effect, depth);

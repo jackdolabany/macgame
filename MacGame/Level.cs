@@ -965,7 +965,7 @@ namespace MacGame
 
             // Calculate position above the game object
             var arrowX = gameObject.WorldLocation.X - (TileMap.TileSize / 2) - 2;
-            var arrowY = gameObject.CollisionRectangle.Top - TileMap.TileSize - 4 + bobOffset; // 4 pixels gap above, with bob
+            var arrowY = gameObject.CollisionRectangle.Top - TileMap.TileSize + bobOffset; // 4 pixels gap above, with bob
 
             var arrowPosition = new Vector2(arrowX, arrowY);
 

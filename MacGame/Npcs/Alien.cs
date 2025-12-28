@@ -20,12 +20,12 @@ namespace MacGame.Npcs
 
             var idle = new AnimationStrip(textures, Helpers.GetTileRect(8, 11), 2, "idle");
             idle.LoopAnimation = true;
-            idle.FrameLength = 0.2f;
+            idle.FrameLength = 0.35f;
             animations.Add(idle);
 
             var walk = new AnimationStrip(textures, Helpers.GetTileRect(8, 11), 2, "walk");
             walk.LoopAnimation = true;
-            walk.FrameLength = 0.1f;
+            walk.FrameLength = 0.25f;
             animations.Add(walk);
 
             SetWorldLocationCollisionRectangle(8, 8);

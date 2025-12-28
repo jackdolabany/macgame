@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using TileEngine;
 
@@ -579,6 +580,7 @@ namespace MacGame
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+            ResetGravity();
 
             InteractButtonPressedThisFrame = false;
 
@@ -1577,6 +1579,14 @@ namespace MacGame
             // Jumping Logic
             var jumpVelocity = (2f * PlayerSettings.JumpHeight) / PlayerSettings.JumpDuration;
             var jumpGravity = (2f * PlayerSettings.JumpHeight) / (PlayerSettings.JumpDuration * PlayerSettings.JumpDuration);
+
+            var isOnMoon = this.Gravity.Y == PlayerSettings.MoonGravity;
+            if (isOnMoon)
+            {
+                var moonGravityFactor = PlayerSettings.MoonGravity / PlayerSettings.EarthGravity;
+                jumpGravity *= moonGravityFactor;
+            }
+
             var jumpPressed = InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump;
 
             // Coyote time so you can jump just slightly after falling off of a platform.

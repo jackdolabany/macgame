@@ -6,7 +6,7 @@
   "turnSpeed": 900,
   "jumpHeight": 140,
   "earthGravity": 1600,
-  "moonGravity": 700,
+  "moonGravity": 900,
   "waterGravity": 5,
   "jumpDuration": 0.5,
   "airAcceleration": 400,

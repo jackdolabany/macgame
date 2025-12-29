@@ -93,7 +93,16 @@ namespace MacGame
         private bool IsDisablingWaterBomb => _state == MacState.DisablingWaterBomb;
         private bool IsInSpaceShip => _state == MacState.SpaceShip;
 
+        /// <summary>
+        /// The PickUpObject you are currently holding.
+        /// </summary>
         IPickupObject? pickedUpObject;
+
+        /// <summary>
+        /// We can mark a pickup object that you can pick up and show the button to press.
+        /// </summary>
+        GameObject? pickUpObjectToMark;
+        private float _buttonAnimationTimer = 0f;
 
         // Track a pickup object that you recently dropped so you can kick it out.
         IPickupObject? recentlyDropped;
@@ -581,6 +590,8 @@ namespace MacGame
         public override void Update(GameTime gameTime, float elapsed)
         {
             ResetGravity();
+
+            _buttonAnimationTimer += elapsed;
 
             InteractButtonPressedThisFrame = false;
 
@@ -1878,7 +1889,8 @@ namespace MacGame
             }
 
             // Pick up objects
-            if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup && InputManager.CurrentAction.action)
+            pickUpObjectToMark = null;
+            if (pickedUpObject == null && pickUpAgainTimer <= 0 && isAbleToPickup)
             {
                 var bottomPickUpRectangle = new Rectangle(this.CollisionRectangle.Left, this.CollisionRectangle.Bottom, this.collisionRectangle.Width, 8);
                 Rectangle frontPickUpRectangle;
@@ -1894,9 +1906,16 @@ namespace MacGame
                 {
                     if (puo.CanBePickedUp && (frontPickUpRectangle.Intersects(puo.CollisionRectangle) || bottomPickUpRectangle.Intersects(puo.CollisionRectangle)))
                     {
-                        this.pickedUpObject = puo;
-                        puo.Pickup();
-                        didPickUpObject = true;
+                        if (InputManager.CurrentAction.action)
+                        {
+                            this.pickedUpObject = puo;
+                            puo.Pickup();
+                            didPickUpObject = true;
+                        }
+                        else
+                        {
+                            pickUpObjectToMark = (GameObject)puo;
+                        }
                         break;
                     }
                 }
@@ -2487,11 +2506,20 @@ namespace MacGame
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (!Enabled) return;
+            
             if (IsInvisibleAndCantMove) return;
 
-            if (IsInCannon) return;
+            // Calculate bobbing offset using sine wave for any button icons drawn.
+            // This logic is copied in Level.cs, maybe it should be centralized. Rule of 3?
+            float bobOffset = (float)Math.Sin(_buttonAnimationTimer * 4f) * 2f; // 4 Hz frequency, 2 pixel amplitude
 
-            if (!Enabled) return;
+            if (IsInCannon)
+            {
+                var spriteDrawLocation = CannonYouAreIn.WorldLocation + new Vector2(-TileMap.TileSize / 2, -TileMap.TileSize * 2 - 8 + bobOffset);
+                spriteBatch.Draw(textures2, spriteDrawLocation, Helpers.GetTileRect(10, 5), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
+                return;
+            }
 
             if (HasWings)
             {
@@ -2602,6 +2630,28 @@ namespace MacGame
                         depth
                     );
                 }
+            }
+
+            // Draw a little marker above the object to show it can be picked up.
+            if (pickUpObjectToMark != null)
+            {
+                
+                // Draw above Mac's head or the pick up object, whichever is higher.
+                float yPosition;
+                
+                if (this.worldLocation.Y < pickUpObjectToMark.WorldLocation.Y)
+                {
+                    // Draw over Mac (he's probably standing on it)
+                    yPosition = this.CollisionRectangle.Top - 8;
+                }
+                else
+                {
+                    // Draw over the object
+                    yPosition = pickUpObjectToMark.CollisionRectangle.Top - 4;
+                }
+
+                var markerPosition = new Vector2(pickUpObjectToMark.WorldLocation.X, yPosition + bobOffset) + new Vector2(-TileMap.TileSize / 2, -(TileMap.TileSize));
+                spriteBatch.Draw(textures2, markerPosition, Helpers.GetTileRect(10, 6), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
             }
 
             base.Draw(spriteBatch);

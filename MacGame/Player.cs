@@ -2516,8 +2516,11 @@ namespace MacGame
 
             if (IsInCannon)
             {
-                var spriteDrawLocation = CannonYouAreIn.WorldLocation + new Vector2(-TileMap.TileSize / 2, -TileMap.TileSize * 2 - 8 + bobOffset);
-                spriteBatch.Draw(textures2, spriteDrawLocation, Helpers.GetTileRect(10, 5), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
+                if (CannonYouAreIn.AutoShootDirection == null)
+                {
+                    var spriteDrawLocation = CannonYouAreIn.WorldLocation + new Vector2(-TileMap.TileSize / 2, -TileMap.TileSize * 2 - 8 + bobOffset);
+                    spriteBatch.Draw(textures2, spriteDrawLocation, Helpers.GetTileRect(10, 5), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
+                }
                 return;
             }
 

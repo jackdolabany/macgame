@@ -222,10 +222,11 @@ namespace MacGame
                Trigger(isPlayerColliding);
            }
 
+           // Don't check cooldown timer for a spring button popping up.
+           // It may need to lock a door immediately.
             if (!isColliding
                 && _buttonType == ButtonType.Spring
-                && animations.CurrentAnimationName == "down"
-                && cooldownTimer <= 0)
+                && animations.CurrentAnimationName == "down")
             {
                 animations.Play("up");
                 SoundManager.PlaySound("Click");

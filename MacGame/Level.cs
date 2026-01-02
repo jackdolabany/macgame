@@ -861,7 +861,7 @@ namespace MacGame
             }
             foreach (var npc in Npcs)
             {
-                if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.NpcRectangle))
+                if (npc.Enabled && npc.CollisionRectangle.Intersects(Player.NpcRectangle) && npc.CanInteract)
                 {
                     npcToTalkTo = npc;
                     break;

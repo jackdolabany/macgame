@@ -37,9 +37,13 @@ namespace MacGame
             {
                 SoundManager.PlaySong("Stage1", true, 0.2f);
             }
+            else
+            {
+                SoundManager.StopSong();
+            }
 
-            // Set false on every level start. Boss enemies can set this true themselves.
-            Game1.DrawBossHealth = false;
+                // Set false on every level start. Boss enemies can set this true themselves.
+                Game1.DrawBossHealth = false;
 
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 

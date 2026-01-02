@@ -180,8 +180,6 @@ namespace MacGame.Npcs
             }
         }
 
-        //public override Vector2 Gravity => base.Gravity * 0.5f;
-
         public void InitializeRacePath()
         {
 
@@ -298,6 +296,8 @@ namespace MacGame.Npcs
         }
 
         public override Rectangle ConversationSourceRectangle => Helpers.GetReallyBigTileRect(7, 0);
+
+        public override bool CanInteract => _state == State.IdleStart || _state == State.IdleEnd;
 
         public override void InitiateConversation()
         {

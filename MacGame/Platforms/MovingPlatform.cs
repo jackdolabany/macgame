@@ -7,6 +7,11 @@ namespace MacGame.Platforms
 {
     /// <summary>
     /// A moving platform that you can inherit from and subclasses can move in different directions or be static.
+    /// 
+    /// Decoreate in the map editor with
+    /// 
+    /// Reverse - starts moving in the opposite direction
+    /// MoveBlocks - how many blocks to move total (default 6).
     /// </summary>
     public class MovingPlatform : Platform
     {

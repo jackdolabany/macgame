@@ -45,6 +45,8 @@ namespace MacGame.Npcs
 
         public abstract void InitiateConversation();
 
+        public virtual bool CanInteract => true;
+
         public virtual void CheckPlayerInteractions(Player player)
         {
             // Handle the player talking to the NPC.

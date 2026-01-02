@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TileEngine;
 
 namespace MacGame.Npcs
 {
@@ -18,6 +19,7 @@ namespace MacGame.Npcs
         private enum State
         {
             IdleStart,
+            Countdown,
             Racing,
             IdleEnd
         }
@@ -34,6 +36,8 @@ namespace MacGame.Npcs
             FroggyWon,
             MacWon
         }
+
+        string[] numbers = new[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
         private State _state = State.IdleStart;
         private Speed _speed = Speed.Slow;
@@ -66,6 +70,13 @@ namespace MacGame.Npcs
 
         private TimeSpan _raceFinishTime;
 
+        float countdownTimer = 0f;
+        const float COUNTDOWN_TIMER_MAX = 4.25f;
+        const int FIRST_COUNTDOWN_NUMBER_TO_SHOW = 3;
+        int lastCountdownNumberShown = -1;
+
+        private Player _player;
+
         public Froggy(ContentManager content, int cellX, int cellY, Player player, Camera camera) 
             : base(content, cellX, cellY, player, camera)
         {
@@ -77,6 +88,8 @@ namespace MacGame.Npcs
             //slowSpeed = 100f;
             //medSpeed = 100f;
             //fastSpeed = 100f;
+
+            _player = player;
 
             IsAffectedByGravity = false;
 
@@ -117,20 +130,9 @@ namespace MacGame.Npcs
             raceChoices = new List<ConversationChoice>();
             raceChoices.Add(new ConversationChoice("Yes", () =>
             {
-                _state = State.Racing;
-                animations.Play("walk");
-                if (_speed == Speed.Slow)
-                {
-                    _moveToLocation.MoveSpeed = slowSpeed;
-                }
-                else if (_speed == Speed.Medium)
-                {
-                    _moveToLocation.MoveSpeed = medSpeed;
-                }
-                else
-                {
-                    _moveToLocation.MoveSpeed = fastSpeed;
-                }
+                _state = State.Countdown;
+                countdownTimer = COUNTDOWN_TIMER_MAX;
+                player.BecomeNpc();
             }));
             raceChoices.Add(new ConversationChoice("No", () =>
             {
@@ -217,7 +219,44 @@ namespace MacGame.Npcs
                 _isInitialized = true;
             }
 
-            if (_state == State.Racing)
+            if (_state == State.Countdown)
+            {
+                countdownTimer -= elapsed;
+
+                int number = countdownTimer.ToCeiling();
+                if (number != lastCountdownNumberShown && number <= FIRST_COUNTDOWN_NUMBER_TO_SHOW)
+                {
+                    lastCountdownNumberShown = number;
+                    if (number == 0)
+                    {
+                        SoundManager.PlaySound("ShootFromCannon");
+                    }
+                    else
+                    {
+                        SoundManager.PlaySound("Shoot");
+                    }
+                }
+
+                if (countdownTimer <= 0f)
+                {
+                    _state = State.Racing;
+                    animations.Play("walk");
+                    _player.ReturnFromNpc();
+                    if (_speed == Speed.Slow)
+                    {
+                        _moveToLocation.MoveSpeed = slowSpeed;
+                    }
+                    else if (_speed == Speed.Medium)
+                    {
+                        _moveToLocation.MoveSpeed = medSpeed;
+                    }
+                    else
+                    {
+                        _moveToLocation.MoveSpeed = fastSpeed;
+                    }
+                }
+            }
+            else if (_state == State.Racing)
             {
                 // TODO: race music
 
@@ -555,6 +594,19 @@ namespace MacGame.Npcs
                 foreach (var waypoint in Game1.CurrentLevel.Waypoints)
                 {
                     spriteBatch.Draw(Game1.TileTextures, new Rectangle((int)waypoint.BottomCenterLocation.X - 2, (int)waypoint.BottomCenterLocation.Y - 2, 4, 4), Game1.WhiteSourceRect, Color.Red);
+                }
+            }
+
+            if (_state == State.Countdown)
+            {
+                // Draw the countdown number above Froggy.
+                int numberToShow = countdownTimer.ToCeiling();
+                if (numberToShow <= FIRST_COUNTDOWN_NUMBER_TO_SHOW)
+                {
+                    var countdownText = numbers[numberToShow];
+                    var textSize = Game1.Font.MeasureString(countdownText);
+                    var textPosition = Game1.Camera.ViewPort.Center.ToVector2() + new Vector2(0, -TileMap.TileSize * 2);
+                    spriteBatch.DrawString(Game1.Font, countdownText, textPosition, Color.Yellow, 0f, textSize / 2, Game1.FontScale, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
                 }
             }
 

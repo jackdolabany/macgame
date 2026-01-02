@@ -555,6 +555,16 @@ namespace MacGame
         public void BecomeNpc()
         {
             this._state = MacState.NPC;
+            this.velocity.X = 0f;
+            if (this.velocity.Y <= 0)
+            {
+                this.velocity.Y = 0;
+            }
+        }
+
+        public void ReturnFromNpc()
+        {
+            this._state = MacState.Idle;
         }
 
         public void GoToLocation(Vector2 location)

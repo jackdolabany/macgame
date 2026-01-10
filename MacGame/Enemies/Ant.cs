@@ -63,7 +63,8 @@ namespace MacGame.Enemies
                     CollisionRectangle.Bottom + 4);
 
                 var edgeCell = Game1.CurrentMap.GetMapSquareAtPixel(edgePixel);
-                if (OnGround && edgeCell != null && edgeCell.Passable)
+                var isAboutToFall = edgeCell != null && edgeCell.Passable && !edgeCell.IsPlatform;
+                if (OnGround && isAboutToFall)
                 {
                     Flip();
                 }

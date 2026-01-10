@@ -137,6 +137,12 @@ namespace MacGame
         /// </summary>
         float _jumpBufferTimeRemaining;
 
+        /// <summary>
+        /// Time remaining before a jump pressed before/during enemy collision is no longer considered "active".
+        /// Allows player to press jump up to 0.1 seconds before hitting an enemy for full bounce.
+        /// </summary>
+        float _enemyBounceJumpBufferTimeRemaining;
+
         public bool IsInWater = false;
         public bool IsJumpingOutOfWater = false;
 
@@ -1191,7 +1197,29 @@ namespace MacGame
                 {
                     // If the player was above the enemy, the enemy was jumped on and takes a hit.
                     enemy.TakeHit(this, 1, Vector2.Zero);
-                    velocity.Y = -450;
+
+                    // Check if player pressed jump recently for active bounce
+                    if (_enemyBounceJumpBufferTimeRemaining > 0)
+                    {
+                        // Active bounce - full jump height (player-initiated)
+                        var jumpVelocity = (2f * PlayerSettings.JumpHeight) / PlayerSettings.JumpDuration;
+                        velocity.Y = -jumpVelocity;
+                        _enemyBounceJumpBufferTimeRemaining = 0;  // Consume the buffer
+
+                        // Set jump state to enable jump cutoff mechanics
+                        _state = MacState.Jumping;
+                        _jumpCutApplied = false;
+                        _jumpReleased = false;
+                        onGround = false;
+
+                        // Play jump sound for feedback
+                        SoundManager.PlaySound("Jump");
+                    }
+                    else
+                    {
+                        // Passive bounce - current behavior (environmental feedback)
+                        velocity.Y = -450;
+                    }
                 }
                 else if (enemy.Attack > 0)
                 {
@@ -1639,6 +1667,20 @@ namespace MacGame
                 if (_jumpBufferTimeRemaining < 0)
                 {
                     _jumpBufferTimeRemaining = 0;
+                }
+            }
+
+            // Enemy Bounce Jump Buffer - track jump presses for active enemy bounces
+            if (jumpPressed)
+            {
+                _enemyBounceJumpBufferTimeRemaining = 0.1f;
+            }
+            else
+            {
+                _enemyBounceJumpBufferTimeRemaining -= elapsed;
+                if (_enemyBounceJumpBufferTimeRemaining < 0)
+                {
+                    _enemyBounceJumpBufferTimeRemaining = 0;
                 }
             }
 

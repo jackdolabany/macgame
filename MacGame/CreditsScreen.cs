@@ -72,7 +72,7 @@ namespace MacGame
             credits.Add(new Credit("Thanks"));
             credits.Last().AddPerson("Jack F. Dolabany");
             credits.Last().AddPerson("Kayla Dolabany");
-
+          
             positionX = Game1.GAME_X_RESOLUTION / 2;
             positionY = Game1.GAME_Y_RESOLUTION / 2;
 
@@ -95,6 +95,15 @@ namespace MacGame
             pauseTimer = 0f;
 
             percentComplete = Game1.StorageState.GetPercentComplete();
+
+            // From the heart
+            var message = new List<string>();
+            message.Add("This game was made");
+            message.Add("for my kids Sophia");
+            message.Add("and Jack.");
+            message.Add("");
+            message.Add("I love you.");
+            Lines.Add(message);
 
             var totalTime = Game1.StorageState.GetFormattedPlayTime();
             var statsLines = new List<string>();

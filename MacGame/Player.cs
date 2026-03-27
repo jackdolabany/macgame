@@ -603,6 +603,24 @@ namespace MacGame
             _gravity = Game1.Gravity();
         }
 
+        /// <summary>
+        /// Resets all player movement state including velocity, jump buffer, and other momentum variables.
+        /// Call this when entering cannons or other events that should completely reset player movement.
+        /// </summary>
+        private void ResetAllMovementState()
+        {
+            this.velocity = Vector2.Zero;
+            this.ForceVelocity = Vector2.Zero;
+            _jumpBufferTimeRemaining = 0f;
+            _enemyBounceJumpBufferTimeRemaining = 0f;
+            _jumpReleased = true;
+            _jumpCutApplied = false;
+            _coyoteTimeRemaining = 0f;
+            isInJumpFromIce = false;
+            timeRemainingToBeShotOutOfCannon = 0f;
+            IsJustShotOutOfCannon = false;
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             ResetGravity();
@@ -2289,6 +2307,7 @@ namespace MacGame
         public void EnterSpaceship()
         {
             _state = MacState.SpaceShip;
+            ResetAllMovementState();
             this.IsAffectedByGravity = false;
             animations.Play("spaceShip");
             SetCenteredCollisionRectangle(8, 8, 5, 5);
@@ -2304,6 +2323,7 @@ namespace MacGame
             SmoothMoveCameraToTarget();
             noMoveTimer = 0.2f;
             IsInSub = true;
+            ResetAllMovementState();
             this.IsAffectedByGravity = false;
             subPlayerIsIn = sub;
             this.WorldLocation = sub.WorldLocation;
@@ -2328,9 +2348,8 @@ namespace MacGame
         public void EnterCannon(Cannon cannon)
         {
             this.WorldLocation = cannon.WorldLocation;
-            this.Velocity = Vector2.Zero;
+            ResetAllMovementState();
             this.CannonYouAreIn = cannon;
-            this.IsJustShotOutOfCannon = false;
             this.IsAffectedByGravity = false;
             this._state = MacState.Idle;
             this.animations.Play("idle");
@@ -2354,7 +2373,7 @@ namespace MacGame
             }
             else
             { 
-                timeRemainingToBeShotOutOfCannon = 0.1f;
+                timeRemainingToBeShotOutOfCannon = 0.2f;
             }
 
             if (this.velocity.X > 0)

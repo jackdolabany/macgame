@@ -17,6 +17,12 @@ namespace MacGame
         public int? MinY { get; set; } = null;
         public int? MaxY { get; set; } = null;
 
+        // Screen shake variables
+        private float _shakeIntensity = 0f;
+        private float _shakeDuration = 0f;
+        private Vector2 _shakeOffset = Vector2.Zero;
+        private Random _shakeRandom = new Random();
+
         private TileMap _map;
         public TileMap Map
         {
@@ -49,6 +55,53 @@ namespace MacGame
             Velocity = 120f;
         }
 
+        /// <summary>
+        /// Triggers a screen shake effect.
+        /// </summary>
+        /// <param name="intensity">The intensity of the shake in pixels</param>
+        /// <param name="duration">How long the shake lasts in seconds</param>
+        public void Shake(float intensity, float duration)
+        {
+            // If a stronger shake is already happening, don't override it
+            if (intensity > _shakeIntensity)
+            {
+                _shakeIntensity = intensity;
+                _shakeDuration = duration;
+            }
+        }
+
+        /// <summary>
+        /// Updates the screen shake effect. Call this every frame.
+        /// </summary>
+        public void UpdateShake(float elapsed)
+        {
+            if (_shakeDuration > 0)
+            {
+                _shakeDuration -= elapsed;
+
+                if (_shakeDuration <= 0)
+                {
+                    _shakeDuration = 0;
+                    _shakeOffset = Vector2.Zero;
+                    _shakeIntensity = 0f;
+                }
+                else
+                {
+                    // Calculate shake progress (1 at start, 0 at end)
+                    float shakeProgress = _shakeDuration / (_shakeDuration + elapsed);
+                    float currentIntensity = _shakeIntensity * shakeProgress;
+
+                    // Random offset within a circle
+                    float angle = (float)(_shakeRandom.NextDouble() * Math.PI * 2);
+                    float distance = (float)_shakeRandom.NextDouble() * currentIntensity;
+                    _shakeOffset = new Vector2(
+                        (float)Math.Cos(angle) * distance,
+                        (float)Math.Sin(angle) * distance
+                    );
+                }
+            }
+        }
+
         public void ClearRestrictions()
         {
             MaxX = null;
@@ -61,7 +114,9 @@ namespace MacGame
 
         public void UpdateTransformation()
         {
-            var translationMatrix = Matrix.CreateTranslation(new Vector3(-(int)position.X, -(int)position.Y, 0));
+            // Apply shake offset to the camera position
+            var shakenPosition = position + _shakeOffset;
+            var translationMatrix = Matrix.CreateTranslation(new Vector3(-(int)shakenPosition.X, -(int)shakenPosition.Y, 0));
             var rotationMatrix = Matrix.CreateRotationZ(Rotation);
             var scaleMatrix = Matrix.CreateScale(new Vector3(Zoom, Zoom, 1f));
             var originMatrix = Matrix.CreateTranslation(new Vector3(viewPortSize.X / 2f, viewPortSize.Y / 2f, 0));

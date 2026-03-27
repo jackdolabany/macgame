@@ -371,9 +371,7 @@ namespace MacGame.Enemies
                     var randomY = Game1.Randy.Next(CollisionRectangle.Height);
 
                     var randomLocation = new Vector2(CollisionRectangle.X + randomX, CollisionRectangle.Y + randomY);
-                    EffectsManager.AddExplosion(randomLocation);
-
-
+                    EffectsManager.AddExplosion(randomLocation, true);
                 }
 
                 // Become more transparent as time goes on

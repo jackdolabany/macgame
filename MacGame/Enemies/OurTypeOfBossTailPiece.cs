@@ -47,7 +47,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.AddExplosion(this.CollisionCenter);
+            EffectsManager.AddExplosion(this.CollisionCenter, true);
             base.Kill();
         }
 

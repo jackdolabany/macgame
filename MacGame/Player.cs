@@ -328,7 +328,7 @@ namespace MacGame
         /// After being shot out of a cannon you are not effected by gravity for a period of time, 
         /// you can't enter inputs, and you smash through sand.
         /// </summary>
-        public bool IsJustShotOutOfCannon { get; set; } = false;
+        public bool IsInitialShotOutOfCannon { get; set; } = false;
 
         /// <summary>
         ///  If this has a positive value then you are only in the 'shooting out of cannon' state until it runs out.
@@ -618,7 +618,9 @@ namespace MacGame
             _coyoteTimeRemaining = 0f;
             isInJumpFromIce = false;
             timeRemainingToBeShotOutOfCannon = 0f;
-            IsJustShotOutOfCannon = false;
+            IsInitialShotOutOfCannon = false;
+            this.IsAffectedByGravity = true;
+            ResetGravity();
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -694,7 +696,7 @@ namespace MacGame
                 {
                     HandleCannonInputs(elapsed);
                 }
-                else if (IsJustShotOutOfCannon)
+                else if (IsInitialShotOutOfCannon)
                 {
                     HandleShotOutOfCannonInputs(elapsed);
                 }
@@ -899,6 +901,9 @@ namespace MacGame
 
         private void HandleSpaceshipInputs(float elapsed)
         {
+
+            if (Health <= 0) return;
+
             if (isShipWhite)
             {
                 animations.PlayIfNotAlreadyPlaying("spaceShipWhite");
@@ -1156,7 +1161,7 @@ namespace MacGame
             IsJumpingOutOfWater = false;
             this.invincibleTimeRemaining = 0f;
             this.IsInvisibleAndCantMove = false;
-            this.IsJustShotOutOfCannon = false;
+            this.IsInitialShotOutOfCannon = false;
             this.PlatformThatThisIsOn = null;
             ShotPower = ShotPower.Single;
             isRotatingDracParts = false;
@@ -1347,6 +1352,7 @@ namespace MacGame
 
                 invincibleTimeRemaining = 1.5f;
                 SoundManager.PlaySound("TakeHit");
+                Game1.Camera.Shake(5f, 0.18f);
 
                 this.Velocity = hitBackBoost;
             }
@@ -1576,7 +1582,7 @@ namespace MacGame
                 this.velocity.X = 0;
             }
 
-            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsJustShotOutOfCannon && !IsInCannon;
+            this.IsAffectedByGravity = !IsClimbingLadder && !IsClimbingVine && !IsInitialShotOutOfCannon && !IsInCannon;
 
             // Stop moving while climbing if you aren't pressing up or down.
             if ((IsClimbingLadder || IsClimbingVine) && !InputManager.CurrentAction.up && !InputManager.CurrentAction.down)
@@ -1638,7 +1644,7 @@ namespace MacGame
             {
                 PoisonPlatforms.Clear();
                 isInJumpFromIce = false;
-                IsJustShotOutOfCannon = false;
+                IsInitialShotOutOfCannon = false;
                 _jumpCutApplied = false;
                 _jumpReleased = true;
             }
@@ -2360,10 +2366,10 @@ namespace MacGame
         public void ShootOutOfCannon(Cannon cannon, Vector2 velocity)
         {
             this.velocity = velocity;
-            this.IsJustShotOutOfCannon = true;
+            this.IsInitialShotOutOfCannon = true;
             this.CannonYouAreIn = null;
 
-            this.IsJustShotOutOfCannon = true;
+            this.IsInitialShotOutOfCannon = true;
 
             // A regular cannon fires Mac for fraction of a second. A supershot leaves
             // him in the air until he hits something.
@@ -2392,7 +2398,7 @@ namespace MacGame
             if (this.CannonYouAreIn.PlayerCanShootOut && InputManager.CurrentAction.jump && !InputManager.PreviousAction.jump)
             {
                 this.CannonYouAreIn.Shoot();
-                this.IsJustShotOutOfCannon = true;
+                this.IsInitialShotOutOfCannon = true;
             }
         }
 
@@ -2430,7 +2436,7 @@ namespace MacGame
             {
                 // If you hit a wall or something you stop being shot out of the cannon.
                 this.velocity = Vector2.Zero;
-                this.IsJustShotOutOfCannon = false;
+                this.IsInitialShotOutOfCannon = false;
                 timeRemainingToBeShotOutOfCannon = 0;
             }
 
@@ -2440,7 +2446,7 @@ namespace MacGame
                 timeRemainingToBeShotOutOfCannon -= elapsed;
                 if (timeRemainingToBeShotOutOfCannon <= 0)
                 {
-                    this.IsJustShotOutOfCannon = false;
+                    this.IsInitialShotOutOfCannon = false;
                 }
             }
 
@@ -2448,7 +2454,7 @@ namespace MacGame
             // be shooting out of a cannon now can you?
             if (this.velocity == Vector2.Zero)
             {
-                this.IsJustShotOutOfCannon = false;
+                this.IsInitialShotOutOfCannon = false;
                 timeRemainingToBeShotOutOfCannon = 0;
             }
         }
@@ -2552,7 +2558,7 @@ namespace MacGame
 
             if (IsInSub || IsInSpaceShip)
             {
-                EffectsManager.AddExplosion(this.WorldCenter);
+                EffectsManager.AddExplosion(this.WorldCenter, true);
             }
 
             Health = 0;

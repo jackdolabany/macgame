@@ -504,7 +504,7 @@ namespace MacGame.Enemies
                     var randomY = Game1.Randy.Next(explosionRectangle.Height);
 
                     var randomLocation = new Vector2(explosionRectangle.X + randomX, explosionRectangle.Y + randomY);
-                    EffectsManager.AddExplosion(randomLocation);
+                    EffectsManager.AddExplosion(randomLocation, true);
                 }
 
                 if (this.CollisionRectangle.Top > (Game1.Camera.WorldRectangle.Bottom + 200))

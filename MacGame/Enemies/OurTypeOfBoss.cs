@@ -416,7 +416,7 @@ namespace MacGame.Enemies
                     var randomY = Game1.Randy.Next(explosionRectangle.Height);
 
                     var randomLocation = new Vector2(explosionRectangle.X + randomX, explosionRectangle.Y + randomY);
-                    EffectsManager.AddExplosion(randomLocation);
+                    EffectsManager.AddExplosion(randomLocation, true);
                 }
 
                 dyingTimer += elapsed;

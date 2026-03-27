@@ -69,7 +69,7 @@ namespace MacGame.Enemies
                 {
                     // Explode!
                     var explosionRectangle = new Rectangle((int)WorldCenter.X - 32, (int)WorldCenter.Y - 32, 64, 64);
-                    EffectsManager.AddExplosion(this.WorldCenter);
+                    EffectsManager.AddExplosion(this.WorldCenter, true);
                     this.Attack = 1;
                     if (_player.CollisionRectangle.Intersects(explosionRectangle))
                     {

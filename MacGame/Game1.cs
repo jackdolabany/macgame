@@ -802,6 +802,7 @@ namespace MacGame
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            Camera.UpdateShake(elapsed);
             SoundManager.Update(elapsed);
             StorageManager.Update(elapsed);
             ConversationManager.Update(elapsed);

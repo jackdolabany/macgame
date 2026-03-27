@@ -79,7 +79,7 @@ namespace MacGame
             var explosionRectangle = new Rectangle((int)WorldCenter.X - 48, (int)WorldCenter.Y - 48, 96, 96);
             
             // Play explosion effect
-            EffectsManager.AddExplosion(this.WorldCenter);
+            EffectsManager.AddExplosion(this.WorldCenter, true);
             
             // Harm the player if they're in the explosion radius
             if (_player.CollisionRectangle.Intersects(explosionRectangle))

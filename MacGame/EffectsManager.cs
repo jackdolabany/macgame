@@ -99,10 +99,14 @@ namespace MacGame
             Explosions.Draw(spriteBatch);
         }
 
-        public static void AddExplosion(Vector2 location)
+        public static void AddExplosion(Vector2 location, bool withShake = false)
         {
             var explosion = (Explosion)Explosions.GetNextObject();
             explosion.Explode(location);
+            if (withShake)
+            {
+                Game1.Camera.Shake(6f, 0.3f);
+            }
         }
 
         /// <summary>

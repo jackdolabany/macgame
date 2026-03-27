@@ -460,7 +460,7 @@ namespace MacGame.Enemies
                     var randomY = Game1.Randy.Next(CollisionRectangle.Height + (explosionBuffer * 2));
 
                     var randomLocation = new Vector2(CollisionRectangle.X + randomX - explosionBuffer, CollisionRectangle.Y + randomY - explosionBuffer);
-                    EffectsManager.AddExplosion(randomLocation);
+                    EffectsManager.AddExplosion(randomLocation, true);
                 }
 
                 dyingTimer += elapsed;

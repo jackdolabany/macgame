@@ -103,7 +103,7 @@ namespace MacGame
             TimerManager.AddNewTimer(randomTime, () =>
             {
                 this.DisplayComponent = noDisplay;
-                EffectsManager.AddExplosion(this.CollisionCenter);
+                EffectsManager.AddExplosion(this.CollisionCenter, true);
             });
         }
 

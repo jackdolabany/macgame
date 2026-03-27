@@ -1356,7 +1356,7 @@ namespace MacGame
 
                 invincibleTimeRemaining = 1.5f;
                 SoundManager.PlaySound("TakeHit");
-                Game1.Camera.Shake(5f, 0.18f);
+                Game1.Camera.Shake(3f, 0.18f);
 
                 this.Velocity = hitBackBoost;
             }

@@ -393,6 +393,10 @@ namespace MacGame
         private bool dracPartsFullyExpanded = false;
         private Texture2D textures2;
 
+        // Dust effect timer
+        private float _dustTimer = 0f;
+        private const float _dustSpawnInterval = 0.1f;
+
         public Player(ContentManager content, InputManager inputManager, DeadMenu deadMenu)
         {
             animations = new AnimationDisplay();
@@ -1902,6 +1906,33 @@ namespace MacGame
             if (velocity.X < 80 && velocity.X > -80 && IsSliding)
             {
                 _state = MacState.Idle;
+            }
+
+            // Spawn dust particles when running at or near full speed on the ground
+            if (OnGround && !IsClimbingLadder && !IsClimbingVine)
+            {
+                float speed = Math.Abs(this.velocity.X);
+                float threshold = PlayerSettings.MaxRunSpeed * 0.8f; // 80% of max speed
+
+                if (speed >= threshold)
+                {
+                    _dustTimer += elapsed;
+                    if (_dustTimer >= _dustSpawnInterval)
+                    {
+                        _dustTimer = 0f;
+                        // Spawn dust at the player's feet
+                        Vector2 dustLocation = new Vector2(this.WorldLocation.X, this.CollisionRectangle.Bottom);
+                        EffectsManager.AddRunDust(dustLocation, !this.Flipped);
+                    }
+                }
+                else
+                {
+                    _dustTimer = 0f; // Reset timer when not running fast
+                }
+            }
+            else
+            {
+                _dustTimer = 0f; // Reset timer when not on ground
             }
 
             // stop the player if they are nearly stopped so you don't get weird 1px movement.

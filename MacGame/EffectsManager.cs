@@ -191,6 +191,41 @@ namespace MacGame
             }
         }
 
+        /// <summary>
+        /// Adds small dust particles when running on the ground.
+        /// </summary>
+        public static void AddRunDust(Vector2 location, bool facingRight)
+        {
+            // Create 1-2 small dust particles behind the player
+            int particleCount = Game1.Randy.Next(1, 3);
+
+            for (int i = 0; i < particleCount; i++)
+            {
+                var dust = (Particle)Particles.GetNextObject();
+
+                // Dust goes backward and slightly up
+                float xDirection = facingRight ? -1f : 1f;
+                float xVelocity = Game1.Randy.Next(15, 35) * xDirection;
+                float yVelocity = Game1.Randy.Next(-50, -10);
+
+                Color dustColor = Pallette.LightGray;
+
+                dust.Initialize(
+                    location,
+                    new Vector2(xVelocity, yVelocity),
+                    new Vector2(0, 5), // Light gravity to make dust fall
+                    50f,
+                    15, // Short lifetime (quarter second)
+                    dustColor,
+                    Color.Transparent);
+
+                dust.InitialScale = 0.5f * Game1.TileScale;
+                dust.FinalScale = 1.5f * Game1.TileScale; // Expand as it fades
+                dust.SetStaticImage(SparkTexture, WhiteSquareSourceRectangle);
+                dust.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
+            }
+        }
+
         public static void AddSplash(Vector2 location, Vector2 impactVelocity, Color? color = null, float scale = 2f)
         {
 

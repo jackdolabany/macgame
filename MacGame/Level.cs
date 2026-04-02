@@ -181,7 +181,18 @@ namespace MacGame
                 // Just scrolling left or right
                 if (AutoScrollSpeed.Y == 0)
                 {
-                    Camera.Position = new Vector2(Camera.Position.X, Player.WorldCenter.Y);
+                    float camX = Camera.Position.X;
+
+                    // When the ship is coasting at scroll speed (not pressing a direction), snap
+                    // the camera's fractional X to match the player's so their integer truncations
+                    // always agree — eliminating 1-pixel sub-pixel jitter.
+                    if (Player.Velocity.X == AutoScrollSpeed.X)
+                    {
+                        float playerFracX = Player.WorldLocation.X - MathF.Floor(Player.WorldLocation.X);
+                        camX = MathF.Floor(Camera.Position.X) + playerFracX;
+                    }
+
+                    Camera.Position = new Vector2(camX, Player.WorldCenter.Y);
                 }
 
             }

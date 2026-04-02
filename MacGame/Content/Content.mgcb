@@ -111,6 +111,11 @@
 /processor:PassThroughProcessor
 /build:Maps/Dracula.tmx
 
+#begin Maps/FortressTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/FortressTest.tmx
+
 #begin Maps/GrokTest.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

@@ -943,6 +943,7 @@ namespace MacGame
             Vector2 initialSpeed = Vector2.Zero;
             if (!isScrolledAllTheWayOver)
             {
+                // We're flying in the ship, the player moves at the same speed as the camera by default.
                 initialSpeed = Game1.CurrentLevel.AutoScrollSpeed;
             }
 

@@ -26,6 +26,21 @@
    <property name="LoadClass" value="Enemy.EnemyShip2"/>
   </properties>
  </tile>
+ <tile id="26">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="27">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="28">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="34">
   <properties>
    <property name="LoadClass" value="Enemy.EnemyShip3"/>
@@ -46,6 +61,21 @@
    <property name="PlayerStart" value="1"/>
   </properties>
  </tile>
+ <tile id="42">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="43">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="44">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
  <tile id="49">
   <properties>
    <property name="LoadClass" value="Enemy.EnemyShip6"/>
@@ -64,6 +94,21 @@
  <tile id="53">
   <properties>
    <property name="LoadClass" value="Enemy.SpaceEyeball"/>
+  </properties>
+ </tile>
+ <tile id="58">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="59">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="60">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
  <tile id="66">

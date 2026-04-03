@@ -530,6 +530,7 @@ namespace MacGame
             SoundManager.Initialize(Content);
             StorageManager.Initialize(TileTextures, this);
             EffectsManager.Initialize(Content);
+            ShotManager.Initialize(Content);
             ConsoleManager.Initialize(Content, Player, this);
 
             pauseMenu = new PauseMenu(this);
@@ -835,6 +836,7 @@ namespace MacGame
                 {
                     CurrentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
+                    ShotManager.Update(gameTime, elapsed);
                     BackgroundEffectsManager.Update(gameTime, elapsed);
                     TimerManager.Update(elapsed);
                 }
@@ -988,6 +990,7 @@ namespace MacGame
                 TimerManager.Update(elapsed);
                 CurrentLevel.PausedUpdate(gameTime, elapsed);
                 EffectsManager.Update(gameTime, elapsed);
+                ShotManager.Update(gameTime, elapsed);
             }
             else if (CurrentGameState == GameState.Credits)
             {
@@ -1083,6 +1086,7 @@ namespace MacGame
                     CutsceneManager.Draw(spriteBatch);
 
                     EffectsManager.Draw(spriteBatch);
+                    ShotManager.Draw(spriteBatch);
                     BackgroundEffectsManager.Draw(spriteBatch);
 
                     spriteBatch.End();

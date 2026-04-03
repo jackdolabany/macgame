@@ -1,0 +1,10 @@
+run: pip install pypdn watchdog pillow
+
+That's a single command that installs three separate Python packages at once. You can list as many packages as you want after pip install and it'll grab them all.
+Here's what each one does in the context of this script:
+
+pypdn — reads .pdn files. Without this, Python has no idea how to open Paint.NET's format.
+watchdog — monitors the filesystem for changes. This is what lets the script detect when you hit Ctrl+S in Paint.NET and react to it.
+pillow — a general-purpose image library. pypdn hands off raw pixel data, and Pillow is what actually writes that data out as a .png file.
+
+So in short: pypdn reads the file, watchdog notices when it changes, and pillow saves the PNG.

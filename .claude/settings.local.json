@@ -6,7 +6,10 @@
       "Bash(dotnet build:*)",
       "Bash(ls:*)",
       "Bash(dotnet clean:*)",
-      "Bash(gunzip:*)"
+      "Bash(gunzip:*)",
+      "Bash(echo:*)",
+      "Bash(grep:*)",
+      "Bash(csc:*)"
     ]
   }
 }

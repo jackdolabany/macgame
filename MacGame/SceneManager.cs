@@ -97,7 +97,7 @@ namespace MacGame
                 var isSpace = map.Properties["IsSpace"].ToBoolean();
                 if (isSpace)
                 {
-                    level.AutoScrollSpeed = new Vector2(100, 0);
+                    level.AutoScrollSpeed = new Vector2(50, 0);
                     player.EnterSpaceship();
                 }
             }

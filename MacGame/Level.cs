@@ -236,6 +236,9 @@ namespace MacGame
                         Player.CheckEnemyInteractions(enemy);
                     }
                 }
+
+                // Check shot collisions
+                ShotManager.CheckPlayerCollisions(Player);
             }
 
             foreach (var item in Items)

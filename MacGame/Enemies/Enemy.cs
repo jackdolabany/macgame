@@ -131,6 +131,12 @@ namespace MacGame.Enemies
             GoToLocation(speed, wayPoint.CenterLocation);
         }
 
+        public bool IsOnScreen()
+        {
+            var isOnScreen = Game1.Camera.IsObjectVisible(this.CollisionRectangle, 1);
+            return isOnScreen;
+        }
+
         public void GoToLocation(float speed, Vector2 location)
         {
             var vectorToLocation = location - CollisionCenter;
@@ -197,7 +203,7 @@ namespace MacGame.Enemies
 
         protected void PlaySoundIfOnScreen(string soundName, float volume = 1f)
         {
-            if (Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+            if (IsOnScreen())
             {
                 SoundManager.PlaySound(soundName, volume);
             }
@@ -284,7 +290,7 @@ namespace MacGame.Enemies
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (camera.IsObjectVisible(GetDrawRectangle()))
+            if (IsOnScreen())
             {
                 base.Draw(spriteBatch);
             }

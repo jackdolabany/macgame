@@ -261,49 +261,37 @@ namespace MacGame
         {
             var direction = target - source;
             direction.Normalize();
-            if (direction.X > 0.5f)
+
+            float absX = Math.Abs(direction.X);
+            float absY = Math.Abs(direction.Y);
+
+            // Use magnitude comparison for equal 45-degree octants
+            if (absX > absY)
             {
-                if (direction.Y > 0.5f)
+                // More horizontal than vertical
+                if (absY < absX * 0.414f) // tan(22.5°) ≈ 0.414
                 {
-                    direction = new Vector2(1, 1);
-                }
-                else if (direction.Y < -0.5f)
-                {
-                    direction = new Vector2(1, -1);
+                    // Pure horizontal
+                    direction = new Vector2(direction.X > 0 ? 1 : -1, 0);
                 }
                 else
                 {
-                    direction = new Vector2(1, 0);
-                }
-            }
-            else if (direction.X < -0.5f)
-            {
-                if (direction.Y > 0.5f)
-                {
-                    direction = new Vector2(-1, 1);
-                }
-                else if (direction.Y < -0.5f)
-                {
-                    direction = new Vector2(-1, -1);
-                }
-                else
-                {
-                    direction = new Vector2(-1, 0);
+                    // Diagonal
+                    direction = new Vector2(direction.X > 0 ? 1 : -1, direction.Y > 0 ? 1 : -1);
                 }
             }
             else
             {
-                if (direction.Y > 0.5f)
+                // More vertical than horizontal
+                if (absX < absY * 0.414f) // tan(22.5°) ≈ 0.414
                 {
-                    direction = new Vector2(0, 1);
-                }
-                else if (direction.Y < -0.5f)
-                {
-                    direction = new Vector2(0, -1);
+                    // Pure vertical
+                    direction = new Vector2(0, direction.Y > 0 ? 1 : -1);
                 }
                 else
                 {
-                    direction = new Vector2(0, 0);
+                    // Diagonal
+                    direction = new Vector2(direction.X > 0 ? 1 : -1, direction.Y > 0 ? 1 : -1);
                 }
             }
 

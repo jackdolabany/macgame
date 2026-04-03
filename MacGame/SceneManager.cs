@@ -29,6 +29,7 @@ namespace MacGame
         public Level LoadLevel(string mapName, ContentManager contentManager, Player player, Camera camera)
         {
             TimerManager.Clear();
+            ShotManager.ClearShots();
             Game1.Camera.ClearRestrictions();
             Game1.BackgroundEffectsManager.Reset();
 

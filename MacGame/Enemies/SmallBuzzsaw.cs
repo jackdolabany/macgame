@@ -48,7 +48,7 @@ namespace MacGame.Enemies
         {
             base.Update(gameTime, elapsed);
 
-            if (camera.IsObjectVisible(this.CollisionRectangle))
+            if (IsOnScreen())
             {
                 SoundManager.IsBuzzsawOnScreen = true;
             }

@@ -108,7 +108,7 @@ namespace MacGame.Enemies
                     {
                         CollisionRectangle = _collisionRectangle;
 
-                        if (!soundPlayed && Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+                        if (!soundPlayed && IsOnScreen())
                         {
                             SoundManager.PlaySlowFlame();
                             soundPlayed = true;

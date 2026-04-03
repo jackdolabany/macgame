@@ -64,7 +64,7 @@ namespace MacGame.Enemies
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (Alive && Game1.Camera.IsObjectVisible(CollisionRectangle))
+            if (Alive && IsOnScreen())
             {
                 jumpTimer -= elapsed;
 

@@ -125,7 +125,7 @@ namespace MacGame.Enemies
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
             // Only take hits if you're on screen. Otherwise you might be attacked from across the map.
-            if (camera.IsObjectVisible(this.CollisionRectangle))
+            if (IsOnScreen())
             {
                 // hitting the head really hits the boss.
                 _boss.TakeHit(attacker, damage, force);

@@ -52,7 +52,7 @@ namespace MacGame.Enemies
         {
 
             // Do nothing if off screen
-            if (!Game1.Camera.IsObjectVisible(this.CollisionRectangle)) return;
+            if (!IsOnScreen()) return;
 
             if (idleTimer > 0)
             {

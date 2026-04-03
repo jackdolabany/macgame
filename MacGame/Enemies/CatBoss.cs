@@ -168,7 +168,7 @@ namespace MacGame.Enemies
 
             if (!hasBeenSeen)
             {
-                if (Game1.Camera.IsObjectVisible(CollisionRectangle))
+                if (IsOnScreen())
                 {
                     hasBeenSeen = true;
                     SoundManager.PlaySong("BossFight", true, 0.2f);

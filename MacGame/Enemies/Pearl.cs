@@ -36,7 +36,7 @@ namespace MacGame.Enemies
 
             if (!Enabled) return;
 
-            if (!Game1.Camera.IsObjectVisible(this.CollisionRectangle))
+            if (!IsOnScreen())
             {
                 this.Enabled = false;
             }

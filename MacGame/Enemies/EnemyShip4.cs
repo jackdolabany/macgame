@@ -27,7 +27,7 @@ namespace MacGame.Enemies
             animations.Play("fly");
 
             Attack = 1;
-            Health = 4;
+            SetInitialHealth(4);
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
             Behavior = new EnemyShipBehavior(30, camera);

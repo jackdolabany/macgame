@@ -1,4 +1,4 @@
-﻿using System;
+using System.Collections.Generic;
 using MacGame.Behaviors;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
@@ -10,6 +10,11 @@ namespace MacGame.Enemies
 {
     public class EnemyShip2 : EnemyShipBase
     {
+        private const float MissileInterval = 2f;
+        private const int MissilePoolSize = 4;
+
+        private float missileTimer = MissileInterval;
+        private List<HomingMissile> missilePool = new List<HomingMissile>();
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
@@ -27,11 +32,46 @@ namespace MacGame.Enemies
             animations.Play("fly");
 
             Attack = 1;
-            Health = 5;
+            SetInitialHealth(5);
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
             Behavior = new EnemyShipBehavior(40, camera);
+
+            for (int i = 0; i < MissilePoolSize; i++)
+            {
+                var missile = new HomingMissile(content, cellX, cellY, player, camera);
+                missile.Enabled = false;
+                missilePool.Add(missile);
+                AddEnemyInConstructor(missile);
+            }
+        }
+
+        private void LaunchMissile()
+        {
+            foreach (var missile in missilePool)
+            {
+                if (!missile.Enabled)
+                {
+                    missile.Launch(CollisionCenter);
+                    return;
+                }
+            }
+        }
+
+        public override void Update(GameTime gameTime, float elapsed)
+        {
+            if (Alive && IsOnScreen())
+            {
+                missileTimer -= elapsed;
+                if (missileTimer <= 0f)
+                {
+                    LaunchMissile();
+                    missileTimer = MissileInterval;
+                }
+            }
+
+            base.Update(gameTime, elapsed);
         }
     }
 }

@@ -30,6 +30,7 @@ namespace MacGame
         {
             TimerManager.Clear();
             ShotManager.ClearShots();
+            MissileManager.Clear();
             Game1.Camera.ClearRestrictions();
             Game1.BackgroundEffectsManager.Reset();
 
@@ -781,7 +782,13 @@ namespace MacGame
                 }
             }
 
-            // Set the draw depths and initialize all 
+            MissileManager.Initialize(contentManager, player, camera, level);
+            foreach (var missile in MissileManager.Pool)
+            {
+                layerDepthObjects[0].Add(missile);
+            }
+
+            // Set the draw depths and initialize all
             var singleLayerDepth = map.GetLayerIncrement();
 
             foreach (var layer in layerDepthObjects.Keys)

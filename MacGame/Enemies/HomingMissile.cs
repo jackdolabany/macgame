@@ -12,7 +12,10 @@ namespace MacGame.Enemies
     /// </summary>
     public class HomingMissile : Enemy
     {
-        private const float Speed = 120f;
+        private const float Speed = 90;
+        private const float TurnInterval = 0.15f;
+
+        private float turnTimer = 0f;
 
         private readonly Rectangle rightRect;
         private readonly Rectangle upRightRect;
@@ -113,6 +116,7 @@ namespace MacGame.Enemies
             Enabled = true;
             Alive = true;
             InvincibleTimer = 0;
+            turnTimer = 0f;
         }
 
         public override void AfterHittingPlayer()
@@ -131,9 +135,14 @@ namespace MacGame.Enemies
         {
             if (Enabled && Alive)
             {
-                UpdateDirectionTowardsPlayer();
-                UpdateDisplay();
-                velocity = RotationDirection.Vector2 * Speed;
+                turnTimer -= elapsed;
+                if (turnTimer <= 0f)
+                {
+                    UpdateDirectionTowardsPlayer();
+                    UpdateDisplay();
+                    velocity = RotationDirection.Vector2 * Speed;
+                    turnTimer = TurnInterval;
+                }
             }
 
             base.Update(gameTime, elapsed);

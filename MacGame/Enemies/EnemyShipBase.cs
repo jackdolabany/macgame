@@ -16,6 +16,7 @@ namespace MacGame.Enemies
         protected Behavior? Behavior { get; set; }
 
         private int _initialHealth;
+        private bool _hasBeenOnScreen = false;
 
         public EnemyShipBase(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -35,6 +36,7 @@ namespace MacGame.Enemies
             Alive = true;
             Health = _initialHealth;
             InvincibleTimer = 0;
+            _hasBeenOnScreen = false;
         }
 
         protected void SetInitialHealth(int health)
@@ -51,7 +53,12 @@ namespace MacGame.Enemies
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (Alive && camera.IsWayOffscreen(CollisionRectangle))
+            if (IsOnScreen())
+            {
+                _hasBeenOnScreen = true;
+            }
+
+            if (Alive && _hasBeenOnScreen && camera.IsWayOffscreen(CollisionRectangle))
             {
                 Enabled = false;
                 return;

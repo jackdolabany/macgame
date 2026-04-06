@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
 {
-    public class GameObjectPool : ObjectPool<GameObject>
+    public class GameObjectPool<T> : ObjectPool<T> where T : GameObject
     {
 
         public GameObjectPool(int poolSize)
@@ -27,10 +27,21 @@ namespace MacGame
             }
         }
 
-        public override void ReturnObject(GameObject obj)
+        public override void ReturnObject(T obj)
         {
             obj.Enabled = false;
             base.ReturnObject(obj);
+        }
+
+
+        public void Reset()
+        {
+            availableQueue.Clear();
+            foreach (var obj in objects)
+            {
+                obj.Enabled = false;
+                availableQueue.Enqueue(obj);
+            }
         }
 
     }

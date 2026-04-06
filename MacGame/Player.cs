@@ -204,7 +204,7 @@ namespace MacGame
             }
         }
 
-        public ObjectPool<Apple> Apples;
+        public GameObjectPool<Apple> Apples;
 
         public bool HasApples
         {
@@ -217,17 +217,17 @@ namespace MacGame
         private float appleCooldownTimer = 0f;
         private const float appleCooldownTime = 0.3f;
 
-        public ObjectPool<Harpoon> Harpoons;
+        public GameObjectPool<Harpoon> Harpoons;
         private float harpoonCooldownTimer = 0f;
         private const float harpoonCooldownTime = 0.3f;
 
         public CircularBuffer<Bubble> Bubbles;
         float bubbleTimer = 0;
 
-        public ObjectPool<SpaceshipShot> Shots;
+        public GameObjectPool<SpaceshipShot> Shots;
         private float spaceshipShotCooldownTimer = 0f;
 
-        public ObjectPool<SpaceshipBomb> Bombs;
+        public GameObjectPool<SpaceshipBomb> Bombs;
         private float bombCooldownTimer = 0f;
         private const float BombCooldownTime = 0.5f;
 
@@ -505,12 +505,12 @@ namespace MacGame
             // Use this one wing image to draw flapping wings.
             wings = new MacWings(this, textures);
 
-            Apples = new ObjectPool<Apple>(2);
+            Apples = new GameObjectPool<Apple>(2);
             Apples.AddObject(new Apple(content, 0, 0, this));
             Apples.AddObject(new Apple(content, 0, 0, this));
             Apples.AddObject(new Apple(content, 0, 0, this));
 
-            Harpoons = new ObjectPool<Harpoon>(4);
+            Harpoons = new GameObjectPool<Harpoon>(4);
             Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
             Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
             Harpoons.AddObject(new Harpoon(content, 0, 0, this, Game1.Camera));
@@ -522,14 +522,14 @@ namespace MacGame
                 Bubbles.SetItem(i, new Bubble(textures));
             }
 
-            Shots = new ObjectPool<SpaceshipShot>(10);
+            Shots = new GameObjectPool<SpaceshipShot>(10);
             for (int i = 0; i < 10; i++)
             {
                 Shots.AddObject(new SpaceshipShot(content, 0, 0, this, Game1.Camera));
             }
             chargedShot = new ChargedSpaceshipShot(content, 0, 0, this, Game1.Camera);
 
-            Bombs = new ObjectPool<SpaceshipBomb>(5);
+            Bombs = new GameObjectPool<SpaceshipBomb>(5);
             for (int i = 0; i < 5; i++)
             {
                 Bombs.AddObject(new SpaceshipBomb(content, 0, 0, this, Game1.Camera));
@@ -1207,6 +1207,12 @@ namespace MacGame
             this.PlatformThatThisIsOn = null;
             ShotPower = ShotPower.Single;
             isRotatingDracParts = false;
+
+            Shots.Reset();
+            Apples.Reset();
+            Harpoons.Reset();
+            Bombs.Reset();
+            chargedShot.Enabled = false;
 
             SoundManager.StopMinecart(); 
             SoundManager.StopCharging();

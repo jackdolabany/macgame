@@ -8,7 +8,7 @@ namespace MacGame.Enemies
 {
     /// <summary>
     /// A homing missile that tracks the player and moves toward them in 8-way directions.
-    /// Health is 1 — destroyed in a single hit. Intended to be launched by other enemies or guns.
+    /// Intended to be launched by other enemies or guns.
     /// </summary>
     public class HomingMissile : Enemy
     {
@@ -16,6 +16,13 @@ namespace MacGame.Enemies
         private const float TurnInterval = 0.15f;
 
         private float turnTimer = 0f;
+
+        /// <summary>
+        /// A fire trail behind the missile.
+        /// </summary>
+        private CircularBuffer<ShipFire> _fires;
+        private float _fireTimer = 0f;
+        private const float FireInterval = 0.1f;
 
         private readonly Rectangle rightRect;
         private readonly Rectangle upRightRect;
@@ -29,7 +36,12 @@ namespace MacGame.Enemies
         {
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
 
-            // (3,5) points right, (4,5) points up-right
+            _fires = new CircularBuffer<ShipFire>(10);
+            for (int i = 0; i < 10; i++)
+            {
+                _fires.SetItem(i, new ShipFire(textures));
+            }
+
             rightRect = Helpers.GetTileRect(3, 5);
             upRightRect = Helpers.GetTileRect(4, 5);
 
@@ -128,6 +140,10 @@ namespace MacGame.Enemies
         {
             EffectsManager.AddExplosion(WorldCenter);
             Enabled = false;
+            for (int i = 0; i < _fires.Length; i++)
+            {
+                _fires.GetItem(i).Enabled = false;
+            }
             base.Kill();
         }
 
@@ -135,17 +151,58 @@ namespace MacGame.Enemies
         {
             if (Enabled && Alive)
             {
-                turnTimer -= elapsed;
-                if (turnTimer <= 0f)
+
+                // Track the player if he's alive
+                if (Player.Enabled)
                 {
-                    UpdateDirectionTowardsPlayer();
-                    UpdateDisplay();
-                    velocity = RotationDirection.Vector2 * Speed;
-                    turnTimer = TurnInterval;
+                    turnTimer -= elapsed;
+                    if (turnTimer <= 0f)
+                    {
+                        UpdateDirectionTowardsPlayer();
+                        UpdateDisplay();
+                        velocity = RotationDirection.Vector2 * Speed;
+                        turnTimer = TurnInterval;
+                    }
+                }
+
+                _fireTimer += elapsed;
+                if (_fireTimer >= FireInterval)
+                {
+                    _fireTimer = 0f;
+                    var fire = _fires.GetNextObject();
+                    fire.Reset();
+                    fire.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+                    // Place fire opposite the direction of travel
+                    var behind = -RotationDirection.Vector2 * 12f;
+                    fire.WorldLocation = WorldLocation + behind;
+                    fire.Velocity = -RotationDirection.Vector2 * 30f;
+                }
+
+                for (int i = 0; i < _fires.Length; i++)
+                {
+                    var fire = _fires.GetItem(i);
+                    if (fire.Enabled)
+                    {
+                        fire.Update(gameTime, elapsed);
+                    }
                 }
             }
 
             base.Update(gameTime, elapsed);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            for (int i = 0; i < _fires.Length; i++)
+            {
+                var fire = _fires.GetItem(i);
+                if (fire.Enabled)
+                {
+                    fire.Draw(spriteBatch);
+                }
+            }
+
+            base.Draw(spriteBatch);
         }
     }
 }

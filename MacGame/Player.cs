@@ -227,6 +227,10 @@ namespace MacGame
         public ObjectPool<SpaceshipShot> Shots;
         private float spaceshipShotCooldownTimer = 0f;
 
+        public ObjectPool<SpaceshipBomb> Bombs;
+        private float bombCooldownTimer = 0f;
+        private const float BombCooldownTime = 0.5f;
+
         ChargedSpaceshipShot chargedShot;
 
         // When shot is fully charged the ship will alternate between being white or not.
@@ -524,6 +528,12 @@ namespace MacGame
                 Shots.AddObject(new SpaceshipShot(content, 0, 0, this, Game1.Camera));
             }
             chargedShot = new ChargedSpaceshipShot(content, 0, 0, this, Game1.Camera);
+
+            Bombs = new ObjectPool<SpaceshipBomb>(5);
+            for (int i = 0; i < 5; i++)
+            {
+                Bombs.AddObject(new SpaceshipBomb(content, 0, 0, this, Game1.Camera));
+            }
             ShipFires = new CircularBuffer<ShipFire>(10);
             for (int i = 0; i < 10; i++)
             {
@@ -848,6 +858,14 @@ namespace MacGame
 
                 chargedShot.Update(gameTime, elapsed);
 
+                foreach (var bomb in Bombs.RawList)
+                {
+                    if (bomb.Enabled)
+                    {
+                        bomb.Update(gameTime, elapsed);
+                    }
+                }
+
                 for (int i = 0; i < ShipFires.Length; i++)
                 {
                     var fire = ShipFires.GetItem(i);
@@ -1043,6 +1061,25 @@ namespace MacGame
                         chargeShotTimer = 0;
                         SoundManager.PlaySound("Shoot", 1f, -0.2f);
                     }
+                }
+            }
+
+            // Bomb dropping
+            if (bombCooldownTimer < BombCooldownTime)
+            {
+                bombCooldownTimer += elapsed;
+            }
+
+            if (InputManager.CurrentAction.jump && bombCooldownTimer >= BombCooldownTime)
+            {
+                var bomb = Bombs.TryGetObject();
+                if (bomb != null)
+                {
+                    bomb.Enabled = true;
+                    bomb.WorldLocation = this.WorldLocation;
+                    bomb.Velocity = new Vector2(400, 0);
+                    bombCooldownTimer = 0;
+                    SoundManager.PlaySound("Shoot", 0.5f, -0.5f);
                 }
             }
 
@@ -1289,6 +1326,18 @@ namespace MacGame
                             {
                                 shot.Break();
                                 enemy.TakeHit(shot, 1, Vector2.Zero);
+                            }
+                        }
+                    }
+
+                    foreach (var bomb in Bombs.RawList)
+                    {
+                        if (bomb.Enabled)
+                        {
+                            if (bomb.CollisionRectangle.Intersects(enemy.CollisionRectangle))
+                            {
+                                bomb.Break();
+                                enemy.TakeHit(bomb, 1, Vector2.Zero);
                             }
                         }
                     }
@@ -2596,7 +2645,7 @@ namespace MacGame
             Health = 0;
             Enabled = false;
             this.CurrentItem = null;
-            EffectsManager.EnemyPop(WorldCenter, 10, Color.Yellow, 200f);
+            EffectsManager.EnemyPop(WorldCenter, 10, Pallette.Yellow, 200f);
             SoundManager.PlaySound("MacDeath");
 
             // Pause for a bit before adding the dead menu
@@ -2627,6 +2676,7 @@ namespace MacGame
             {
                 if (CannonYouAreIn.AutoShootDirection == null)
                 {
+                    // Draw the green button.
                     var spriteDrawLocation = CannonYouAreIn.WorldLocation + new Vector2(-TileMap.TileSize / 2, -TileMap.TileSize * 2 - 8 + bobOffset);
                     spriteBatch.Draw(textures2, spriteDrawLocation, Helpers.GetTileRect(10, 5), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
                 }
@@ -2687,6 +2737,13 @@ namespace MacGame
                     }
                 }
                 chargedShot.Draw(spriteBatch);
+                foreach (var bomb in Bombs.RawList)
+                {
+                    if (bomb.Enabled)
+                    {
+                        bomb.Draw(spriteBatch);
+                    }
+                }
                 for (int i = 0; i < ShipFires.Length; i++)
                 {
                     if (ShipFires.GetItem(i).Enabled)

@@ -1262,7 +1262,7 @@ namespace MacGame
                 var textWidth = Font.MeasureString(BossName).X * FontScale;
                 var startingTextXPos = (GAME_X_RESOLUTION / 2) - (textWidth / 2);
 
-                spriteBatch.DrawString(Font, BossName, new Vector2(startingTextXPos + 6, bossHealthYPosition), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(Font, BossName, new Vector2(startingTextXPos + 6, bossHealthYPosition), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
                 bossHealthYPosition += TileSize;
 
                 if (MaxBossHealth <= 8)
@@ -1399,7 +1399,7 @@ namespace MacGame
                     _timerOrigin = new Vector2(size.X / 2, size.Y / 2); 
                 }
                 
-                spriteBatch.DrawString(Font, inputString, new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION - 32), Color.White, 0f, _timerOrigin, FontScale, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(Font, inputString, new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION - 32), Pallette.White, 0f, _timerOrigin, FontScale, SpriteEffects.None, 0.5f);
             }
 
             if (Player.ShotPower == ShotPower.Charge)
@@ -1442,21 +1442,21 @@ namespace MacGame
         {
             int onesPlace = count % 10;
 
-            spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(rightMostX, yPos), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
 
             if (count > 9)
             {
                 int tensPlace = (count / 10) % 10;
                 int width = (Font.MeasureString(Numbers[tensPlace]).X * Game1.FontScale).ToInt();
                 rightMostX -= width;
-                spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(rightMostX, yPos), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
             }
             if (count > 99)
             {
                 int hundredsPlace = (count / 100) % 10;
                 int width = (Font.MeasureString(Numbers[hundredsPlace]).X * Game1.FontScale).ToInt();
                 rightMostX -= width;
-                spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Color.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
             }
 
             // Draw the icon image

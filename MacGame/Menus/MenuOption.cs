@@ -18,8 +18,8 @@ namespace MacGame
         public float DrawDepth;
         public float Scale = 1f;
 
-        public Color Color = Color.White;
-        public Color SelectedColor = Color.Yellow;
+        public Color Color = Pallette.White;
+        public Color SelectedColor = Pallette.Yellow;
 
         public bool Hidden = false;
 

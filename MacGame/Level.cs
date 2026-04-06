@@ -962,11 +962,11 @@ namespace MacGame
             if (_isBlownUp)
             {
                 // Figure out how much to fade to white based on the bomb fade to white timer
-                Color fadeToWhite = Color.White * (1 - ((_bombFadeToWhiteTimerGoal - _bombFadeToWhiteTimer) / _bombFadeToWhiteTimerGoal));
+                Color fadeToWhite = Pallette.White * (1 - ((_bombFadeToWhiteTimerGoal - _bombFadeToWhiteTimer) / _bombFadeToWhiteTimerGoal));
                 spriteBatch.Draw(Game1.TileTextures, Camera.ViewPort, Game1.WhiteSourceRect, fadeToWhite, 0f, Vector2.Zero, SpriteEffects.None, 0.0002f);
 
                 // Figure out how much to fade to white based on the bomb fade to white timer
-                Color fadeToBlack = Color.Black * (1 - ((_bombFadeToBlackTimerGoal - _bombFadeToBlackTimer) / _bombFadeToBlackTimerGoal));
+                Color fadeToBlack = Pallette.Black * (1 - ((_bombFadeToBlackTimerGoal - _bombFadeToBlackTimer) / _bombFadeToBlackTimerGoal));
                 spriteBatch.Draw(Game1.TileTextures, Camera.ViewPort, Game1.WhiteSourceRect, fadeToBlack, 0f, Vector2.Zero, SpriteEffects.None, 0.0001f);
             }
 
@@ -990,7 +990,7 @@ namespace MacGame
                     Game1.TileTextures2,
                     arrowPosition,
                     Helpers.GetTileRect(11, 6),
-                    Color.White,
+                    Pallette.White,
                     0f,
                     Vector2.Zero,
                     1f,

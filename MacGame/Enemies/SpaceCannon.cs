@@ -46,7 +46,7 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             Attack = 1;
-            Health = 5;
+            Health = 4;
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;

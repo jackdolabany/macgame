@@ -114,7 +114,7 @@ namespace MacGame
         /// </summary>
         public static void SmallEnemyPop(Vector2 location)
         {
-            EffectsManager.EnemyPop(location, 10, Color.White, 120f);
+            EffectsManager.EnemyPop(location, 10, Pallette.White, 120f);
         }
 
         public static void EnemyPop(Vector2 location, int pointCount, Color color, float speed)
@@ -164,7 +164,7 @@ namespace MacGame
 
             if (!color.HasValue)
             {
-                color = Color.Yellow;
+                color = Pallette.Yellow;
             }
 
             int particleCount = Game1.Randy.Next(10, 20);
@@ -173,7 +173,7 @@ namespace MacGame
                 var spark = (Particle)Particles.GetNextObject();
 
                 // Add some whiteness to some particles
-                var sparkColor = Color.Lerp(color.Value, Color.White, Game1.Randy.NextFloat() / 2);
+                var sparkColor = Color.Lerp(color.Value, Pallette.White, Game1.Randy.NextFloat() / 2);
 
                 spark.Initialize(
                     location - (impactVelocity / 100),
@@ -231,7 +231,7 @@ namespace MacGame
 
             if (!color.HasValue)
             {
-                color = Color.White;
+                color = Pallette.White;
             }
 
             int particleCount = 5;
@@ -365,8 +365,8 @@ namespace MacGame
                 Vector2.Zero,
                 10000,
                 100,
-                Color.White,
-                Color.White * 0.3f);
+                Pallette.White,
+                Pallette.White * 0.3f);
 
             textParticle.InitialScale = 0.4f;
             textParticle.FinalScale = 0.8f;

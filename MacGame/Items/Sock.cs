@@ -95,7 +95,7 @@ namespace MacGame.Items
         public void HideSock()
         {
             this.Enabled = false;
-            EffectsManager.EnemyPop(this.CollisionCenter, 10, Color.White, 200);
+            EffectsManager.EnemyPop(this.CollisionCenter, 10, Pallette.White, 200);
         }
 
         // Call this to stop the sock from spinning

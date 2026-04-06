@@ -108,7 +108,7 @@ namespace MacGame
 
             // Draw over the background.
             var screenRect = new Rectangle(0, 0, Game1.GAME_X_RESOLUTION, Game1.GAME_Y_RESOLUTION);
-            spriteBatch.Draw(Game1.TileTextures, screenRect, Game1.WhiteSourceRect, Color.DarkRed, 0f, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Game1.TileTextures, screenRect, Game1.WhiteSourceRect, Pallette.Red, 0f, Vector2.Zero, SpriteEffects.None, 1f);
 
             StorageState? selectedState = null;
             if (loadMenu.SlotToState.ContainsKey(this.selectedEntryIndex + 1))

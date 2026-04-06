@@ -55,7 +55,7 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = true;
             Attack = 1;
-            Health = 4;
+            Health = 1;
             IsAffectedByGravity = true;
             InvincibleTimeAfterBeingHit = 0.1f;
 

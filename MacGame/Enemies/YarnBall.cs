@@ -87,7 +87,7 @@ namespace MacGame.Enemies
         {
             if (Enabled && Alive)
             {
-                EffectsManager.EnemyPop(WorldCenter, 10, Color.Pink, 120f);
+                EffectsManager.EnemyPop(WorldCenter, 10, Pallette.Pink, 120f);
                 Enabled = false;
             }
             base.Kill();

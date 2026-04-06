@@ -34,7 +34,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.AddSparksEffect(WorldCenter, velocity, Color.Orange, 0.5f);
+            EffectsManager.AddSparksEffect(WorldCenter, velocity, Pallette.Orange, 0.5f);
             Enabled = false;
             base.Kill();
         }

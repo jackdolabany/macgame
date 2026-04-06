@@ -19,7 +19,7 @@ namespace MacGame.Items
 
         protected override Color GetPopColor()
         {
-            return Color.Gray;
+            return Pallette.LightGray;
         }
     }
 }

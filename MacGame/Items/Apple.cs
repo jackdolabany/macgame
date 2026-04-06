@@ -56,7 +56,7 @@ namespace MacGame.Items
         {
             ReturnApple();
             SoundManager.PlaySound("AppleBreak", 1f, -0.9f);
-            EffectsManager.EnemyPop(this.WorldCenter, 7, Color.Red, 80);
+            EffectsManager.EnemyPop(this.WorldCenter, 7, Pallette.Red, 80);
         }
     }
 }

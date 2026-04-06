@@ -81,7 +81,7 @@ namespace MacGame.Items
         /// </summary>
         protected virtual Color GetPopColor()
         {
-            return Color.White;
+            return Pallette.White;
         }
 
         public override void Update(GameTime gameTime, float elapsed)

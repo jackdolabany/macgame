@@ -8,7 +8,10 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class EnemyShip6 : EnemyShipBase
+    /// <summary>
+    /// This ship launches out of the ship launcher.
+    /// </summary>
+    public class ShipLaunchedShip : EnemyShipBase
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
@@ -16,7 +19,7 @@ namespace MacGame.Enemies
         /// <summary>
         /// Small and fast.
         /// </summary>
-        public EnemyShip6(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public ShipLaunchedShip(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             DisplayComponent = new AnimationDisplay();
@@ -34,7 +37,7 @@ namespace MacGame.Enemies
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            Behavior = new EnemyShipBehavior(200, camera);
+            Behavior = new LaunchedShipBehavior(player);
 
         }
     }

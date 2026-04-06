@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="SpaceTextures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.0" name="SpaceTextures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/SpaceTextures.png" width="128" height="288"/>
  <tile id="2">
   <properties>
@@ -78,7 +78,7 @@
  </tile>
  <tile id="49">
   <properties>
-   <property name="LoadClass" value="Enemy.EnemyShip6"/>
+   <property name="LoadClass" value="Enemy.ShipLaunchedShip"/>
   </properties>
  </tile>
  <tile id="50">

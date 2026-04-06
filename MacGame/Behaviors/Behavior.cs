@@ -8,5 +8,7 @@ namespace MacGame.Behaviors
     public abstract class Behavior
     {
         public abstract void Update(GameObject gameObject, GameTime gameTime, float elapsed);
+
+        public virtual void Reset() { }
     }
 }

@@ -50,7 +50,7 @@ namespace MacGame.Items
                     }
                 }
 
-                if (Game1.Camera.IsWayOffscreen(CollisionRectangle))
+                if (this.CollisionRectangle.Top > Game1.Camera.WorldRectangle.Bottom + TileMap.TileSize)
                 {
                     Disable();
                 }

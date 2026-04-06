@@ -37,6 +37,7 @@ namespace MacGame.Enemies
             Health = _initialHealth;
             InvincibleTimer = 0;
             _hasBeenOnScreen = false;
+            Behavior?.Reset();
         }
 
         protected void SetInitialHealth(int health)

@@ -64,7 +64,7 @@ namespace MacGame.Enemies
 
             SetWorldLocationCollisionRectangle(14, 6);
 
-            _ship = new EnemyShip(content, cellX, cellY, player, camera);
+            _ship = new ShipLaunchedShip(content, cellX, cellY, player, camera);
             _ship.Enabled = false;
             AddEnemyInConstructor(_ship);
         }

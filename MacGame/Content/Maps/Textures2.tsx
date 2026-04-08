@@ -275,6 +275,11 @@
    <property name="LoadClass" value="Npc.Alien"/>
   </properties>
  </tile>
+ <tile id="186">
+  <properties>
+   <property name="LoadClass" value="Npc.BabyAlien"/>
+  </properties>
+ </tile>
  <tile id="192">
   <properties>
    <property name="LoadClass" value="Npc.RobbieTheCat"/>

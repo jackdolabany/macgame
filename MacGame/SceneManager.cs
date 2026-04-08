@@ -444,6 +444,11 @@ namespace MacGame
                                 level.Npcs.Add(npc);
                                 layerDepthObjects[z].Add(npc);
 
+                                if (npc is IPickupObject pickupNpc)
+                                {
+                                    level.PickupObjects.Add(pickupNpc);
+                                }
+
                                 HandleObjectModifiers(x, y, npc, map, (props) =>
                                 {
                                     // NPC modifiers

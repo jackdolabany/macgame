@@ -24,6 +24,12 @@ namespace MacGame.Behaviors
             _walkAnimationName = walkAnimationName;
         }
 
+        public override void Reset()
+        {
+            OriginalPosition = default;
+            base.Reset();
+        }
+
         public override void Update(GameObject gameObject, GameTime gameTime, float elapsed)
         {
 

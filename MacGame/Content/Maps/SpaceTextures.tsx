@@ -26,21 +26,6 @@
    <property name="LoadClass" value="Enemy.EnemyShip2"/>
   </properties>
  </tile>
- <tile id="26">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="27">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
- <tile id="28">
-  <properties>
-   <property name="BlockPlayer" value="1"/>
-  </properties>
- </tile>
  <tile id="34">
   <properties>
    <property name="LoadClass" value="Enemy.EnemyShip3"/>

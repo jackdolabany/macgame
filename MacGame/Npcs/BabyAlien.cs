@@ -12,8 +12,15 @@ namespace MacGame.Npcs
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
+        private bool _isInitialized = false;
+
         public bool IsPickedUp { get; private set; }
         private readonly Player _player;
+        
+        /// <summary>
+        /// We expect the AlienMom to be on the same map. You must bring the baby to the Mom.
+        /// </summary>
+        private AlienMom _alienMom;
 
         // No talky to baby.
         public override bool CanInteract => false;
@@ -104,53 +111,88 @@ namespace MacGame.Npcs
             // Do nothing, no break and reset.
         }
 
+        private void Initialize()
+        {
+            foreach (var npc in Game1.CurrentLevel.Npcs)
+            {
+                if (npc is AlienMom alienMom)
+                {
+                    _alienMom = alienMom;
+                    break;
+                }
+            }
+
+            if (_alienMom == null)
+            {
+                throw new Exception("Couldn't find Alien Mom in the level. Baby Alien requires Alien Mom to be present.");
+            }
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (_state == BabyAlienState.WalkingAround)
+            if (!_isInitialized)
             {
-                if (IsPickedUp)
-                {
-                    _state = BabyAlienState.PickedUp;
-                    Behavior = _idleBehavior;
-                }
+                Initialize();
+                _isInitialized = true;
             }
-            else if (_state == BabyAlienState.PickedUp)
-            {
-                // Track the player while held
-                Velocity = Vector2.Zero;
-                WorldLocation = _player.WorldLocation + new Vector2(16 * (_player.Flipped ? -1 : 1), -8);
 
-                if (!IsPickedUp)
-                {
-                    _state = BabyAlienState.Tossed;
-                }
-            }
-            else if (_state == BabyAlienState.Tossed)
+            if (Enabled)
             {
-                // Apply friction so the alien doesn't slide forever
-                if (OnGround && Velocity.X != 0)
+                if (!IsPickedUp && WorldLocation.Y > Game1.Camera.WorldRectangle.Bottom + TileMap.TileSize)
                 {
-                    velocity.X -= velocity.X * 3.5f * elapsed;
-                    if (Math.Abs(velocity.X) < 15f)
+                    // Detect if baby fell off the bottom of the world.
+                    _alienMom.HandleBabyDeath();
+                    Enabled = false;
+                    SoundManager.PlaySound("HitEnemy");
+                    return;
+                }
+
+                if (_state == BabyAlienState.WalkingAround)
+                {
+                    if (IsPickedUp)
                     {
-                        velocity.X = 0;
+                        _state = BabyAlienState.PickedUp;
+                        Behavior = _idleBehavior;
                     }
                 }
-
-                if (IsPickedUp)
+                else if (_state == BabyAlienState.PickedUp)
                 {
-                    // weird case but you can go from tossed to picked up if you
-                    // pick the baby up while he's still sliding.
-                    _state = BabyAlienState.PickedUp;
-                    Behavior = _idleBehavior;
-                }
-                else if (OnGround && Math.Abs(Velocity.X) < 5f)
-                {
-                    // Revert back to walking after sliding for a bit.
+                    // Track the player while held
                     Velocity = Vector2.Zero;
-                    _state = BabyAlienState.WalkingAround;
-                    Behavior = _walkRandomlyBehavior;
-                    _walkRandomlyBehavior.Reset();
+                    WorldLocation = _player.WorldLocation + new Vector2(16 * (_player.Flipped ? -1 : 1), -8);
+
+                    if (!IsPickedUp)
+                    {
+                        _state = BabyAlienState.Tossed;
+                    }
+                }
+                else if (_state == BabyAlienState.Tossed)
+                {
+                    // Apply friction so the alien doesn't slide forever
+                    if (OnGround && Velocity.X != 0)
+                    {
+                        velocity.X -= velocity.X * 3.5f * elapsed;
+                        if (Math.Abs(velocity.X) < 15f)
+                        {
+                            velocity.X = 0;
+                        }
+                    }
+
+                    if (IsPickedUp)
+                    {
+                        // weird case but you can go from tossed to picked up if you
+                        // pick the baby up while he's still sliding.
+                        _state = BabyAlienState.PickedUp;
+                        Behavior = _idleBehavior;
+                    }
+                    else if (OnGround && Math.Abs(Velocity.X) < 5f)
+                    {
+                        // Revert back to walking after sliding for a bit.
+                        Velocity = Vector2.Zero;
+                        _state = BabyAlienState.WalkingAround;
+                        Behavior = _walkRandomlyBehavior;
+                        _walkRandomlyBehavior.Reset();
+                    }
                 }
             }
 

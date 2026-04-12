@@ -305,6 +305,11 @@
    <property name="LoadClass" value="Npc.Robot"/>
   </properties>
  </tile>
+ <tile id="202">
+  <properties>
+   <property name="LoadClass" value="Npc.AlienMom"/>
+  </properties>
+ </tile>
  <tile id="500">
   <properties>
    <property name="LoadClass" value="Npc.Bully1"/>

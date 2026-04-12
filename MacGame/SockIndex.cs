@@ -82,6 +82,7 @@ namespace MacGame
                 new List<SockInfo>
                 {
                     new SockInfo { Name = "GrokSock", Hint = "Grok steal sock." },
+                    new SockInfo { Name = "AlienMomSock", Hint = "Alien moms always have socks for their Alien babies." },
                 }
             },
         };

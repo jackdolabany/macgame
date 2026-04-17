@@ -26,6 +26,16 @@
    <property name="LoadClass" value="Enemy.EnemyShip2"/>
   </properties>
  </tile>
+ <tile id="24">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="25">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="34">
   <properties>
    <property name="LoadClass" value="Enemy.EnemyShip3"/>
@@ -44,6 +54,16 @@
  <tile id="37">
   <properties>
    <property name="PlayerStart" value="1"/>
+  </properties>
+ </tile>
+ <tile id="40">
+  <properties>
+   <property name="LoadClass" value="Enemy.MegaSpaceCannon"/>
+  </properties>
+ </tile>
+ <tile id="41">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
  <tile id="42">

@@ -98,7 +98,7 @@ namespace MacGame
         public static void FireSmallShot(Vector2 position, Vector2 velocity)
         {
             var shot = (EnemyShot)SmallShots.GetNextObject();
-            shot.WorldLocation = position;
+            shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.Enabled = true;
             shot.Alive = true;
@@ -107,7 +107,7 @@ namespace MacGame
         public static void FireMediumShot(Vector2 position, Vector2 velocity)
         {
             var shot = (EnemyShot)MediumShots.GetNextObject();
-            shot.WorldLocation = position;
+            shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.Enabled = true;
             shot.Alive = true;
@@ -116,7 +116,7 @@ namespace MacGame
         public static void FireLargeShot(Vector2 position, Vector2 velocity)
         {
             var shot = (EnemyShot)LargeShots.GetNextObject();
-            shot.WorldLocation = position;
+            shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.Enabled = true;
             shot.Alive = true;

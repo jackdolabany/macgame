@@ -7,7 +7,7 @@ namespace MacGame
 {
     public static class MissileManager
     {
-        private const int PoolSize = 10;
+        private const int PoolSize = 20;
 
         private static HomingMissile[] pool = new HomingMissile[0];
 

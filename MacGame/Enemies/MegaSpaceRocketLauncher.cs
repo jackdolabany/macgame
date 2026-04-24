@@ -7,16 +7,15 @@ namespace MacGame.Enemies
 {
     public class MegaSpaceRocketLauncher : Enemy
     {
-        private const float HeadTravelPixels = 100f;
-        private const float HeadMoveDuration = 0.8f;
+        private const float HeadTravelPixels = 88;
         private const float HeadVelocity = 100f;
 
         private const float DownDuration = 3f;
         private const float UpDuration = 3f;
         private const float FireDelay = 1f;
 
-        private const float DyingDuration = 1f;
-        private const float ExplosionInterval = 0.1f;
+        private const float DyingDuration = 3f;
+        private const float ExplosionInterval = 0.07f;
 
         private const float SinkVelocity = 30f;
         private const int SinkPixels = 300;
@@ -45,6 +44,8 @@ namespace MacGame.Enemies
 
         private float missileDrawDepth;
 
+        private Vector2 _initialWorldLocation;
+
         public MegaSpaceRocketLauncher(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -65,16 +66,18 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0f;
 
-            SetWorldLocationCollisionRectangle(36, 44);
+            SetWorldLocationCollisionRectangle(36, 46);
 
-            _headDownY = WorldLocation.Y - HeadTravelPixels;
-            _headUpY = WorldLocation.Y - 2f * HeadTravelPixels;
+            _headDownY = WorldLocation.Y - 96;
+            _headUpY = _headDownY - HeadTravelPixels;
 
             _head = new MegaSpaceRocketLauncherHead(content, cellX, cellY, player, camera, this);
             _head.WorldLocation = new Vector2(WorldLocation.X, _headDownY);
             AddEnemyInConstructor(_head);
 
             _stateTimer = DownDuration;
+
+            _initialWorldLocation = WorldLocation;
         }
 
         public override void SetDrawDepth(float depth)
@@ -96,6 +99,13 @@ namespace MacGame.Enemies
             _stateTimer = DyingDuration;
             _explosionTimer = 0f;
             Attack = 0;
+
+            // Start moving the head down to the start position.
+            _head.Velocity = new Vector2(0, HeadVelocity);
+
+            this.IsPlayerColliding = false;
+            _head.IsPlayerColliding = false;
+
             PlayDeathSound();
         }
 
@@ -103,8 +113,8 @@ namespace MacGame.Enemies
         {
             Vector2 topLeftMissileLocation = _head.WorldLocation;
              topLeftMissileLocation += new Vector2(-20, -50);
-            const int missileVerticalSpacing = 30;
-            const int missileHorizontalSpacing = 40;
+            const int missileVerticalSpacing = 24;
+            const int missileHorizontalSpacing = 36;
             const float delay = 2f;
             
             var missile1 = MissileManager.LaunchMissile(topLeftMissileLocation, EightWayRotationDirection.UpLeft, delay);
@@ -213,19 +223,48 @@ namespace MacGame.Enemies
                     case LauncherState.Dying:
                         _stateTimer -= elapsed;
                         _explosionTimer -= elapsed;
+                        
+                        // Is the head returning to psoition independent of the body?
+                        if (_head.Velocity.Y > 0 && this.Velocity.Y == 0)
+                        {
+                            // Head drops until back to original position.
+                            if (_head.WorldLocation.Y >= _headDownY)
+                            {
+                                // Start sinking both head and body
+                                _head.WorldLocation = new Vector2(_head.WorldLocation.X, _headDownY);
+                                this.Velocity = new Vector2(0, 70);
+                                _head.Velocity = this.Velocity;
+                            }
+                        }
+
+                        // Add random explosions.
                         if (_explosionTimer <= 0f)
                         {
-                            _explosionTimer = ExplosionInterval;
-                            var randomX = CollisionRectangle.Left + Game1.Randy.Next(CollisionRectangle.Width);
-                            var randomY = CollisionRectangle.Top + Game1.Randy.Next(CollisionRectangle.Height);
-                            _head.Velocity = Vector2.Zero;
-                            EffectsManager.AddExplosion(new Vector2(randomX, randomY));
+                            // Add an offset for the head.
+                            var top = CollisionRectangle.Top + 36;
+                            var rectHeight = _initialWorldLocation.Y.ToInt() - top;
+
+                            // Don't add explosions if it's too tight or negative.
+                            if (rectHeight > 24)
+                            {
+                                var explosionRectangle = new Rectangle(CollisionRectangle.Left, top, CollisionRectangle.Width, rectHeight);
+                                _explosionTimer = ExplosionInterval;
+                                var randomX = explosionRectangle.Left + Game1.Randy.Next(explosionRectangle.Width);
+                                var randomY = explosionRectangle.Top + Game1.Randy.Next(explosionRectangle.Height);
+                                EffectsManager.AddExplosion(new Vector2(randomX, randomY));
+                            }
                         }
-                        if (_stateTimer <= 0f)
+
+                        // Transition to the dead texture halfway through the explosions.
+                        if (_stateTimer <= DyingDuration / 2 && DisplayComponent != _destroyedDisplay)
                         {
                             DisplayComponent = _destroyedDisplay;
                             _head.Enabled = false;
                             _head.Dead = true;
+                        }
+
+                        if (_stateTimer <= 0f)
+                        {
                             _launcherState = LauncherState.Dead;
                         }
                         break;

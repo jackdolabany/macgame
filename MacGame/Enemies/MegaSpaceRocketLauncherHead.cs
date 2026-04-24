@@ -24,9 +24,9 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
-            InvincibleTimeAfterBeingHit = 0.5f;
+            InvincibleTimeAfterBeingHit = 0f;
 
-            SetWorldLocationCollisionRectangle(40, 40);
+            SetWorldLocationCollisionRectangle(30, 40);
         }
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)

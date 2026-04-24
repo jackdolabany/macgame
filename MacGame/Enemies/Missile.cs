@@ -6,20 +6,13 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    /// <summary>
-    /// A homing missile that tracks the player and moves toward them in 8-way directions.
-    /// Intended to be launched by other enemies or guns.
-    /// </summary>
-    public class HomingMissile : Enemy
+    public class Missile : Enemy
     {
         private const float Speed = 90;
         private const float TurnInterval = 0.15f;
 
         private float turnTimer = 0f;
 
-        /// <summary>
-        /// A fire trail behind the missile.
-        /// </summary>
         private CircularBuffer<ShipFire> _fires;
         private float _fireTimer = 0f;
         private const float FireInterval = 0.1f;
@@ -31,7 +24,13 @@ namespace MacGame.Enemies
 
         public EightWayRotation RotationDirection { get; set; }
 
-        public HomingMissile(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        // True when actively tracking the player.
+        private bool _isHoming;
+
+        // When > 0, counts down before switching to homing. < 0 means never home.
+        private float _homingCountdown;
+
+        public Missile(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
@@ -65,19 +64,7 @@ namespace MacGame.Enemies
         private void UpdateDirectionTowardsPlayer()
         {
             var dir = Helpers.GetEightWayDirectionTowardsTarget(CollisionCenter, Player.CollisionCenter);
-            RotationDirection = new EightWayRotation(VectorToEightWayDirection(dir));
-        }
-
-        private static EightWayRotationDirection VectorToEightWayDirection(Vector2 dir)
-        {
-            if (dir.X > 0.5f && dir.Y < -0.5f) return EightWayRotationDirection.UpRight;
-            if (dir.X > 0.5f && dir.Y > 0.5f) return EightWayRotationDirection.DownRight;
-            if (dir.X < -0.5f && dir.Y < -0.5f) return EightWayRotationDirection.UpLeft;
-            if (dir.X < -0.5f && dir.Y > 0.5f) return EightWayRotationDirection.DownLeft;
-            if (dir.X > 0.5f) return EightWayRotationDirection.Right;
-            if (dir.X < -0.5f) return EightWayRotationDirection.Left;
-            if (dir.Y < -0.5f) return EightWayRotationDirection.Up;
-            return EightWayRotationDirection.Down;
+            RotationDirection = new EightWayRotation(Helpers.VectorToEightWayDirection(dir));
         }
 
         private void UpdateDisplay()
@@ -120,15 +107,44 @@ namespace MacGame.Enemies
             }
         }
 
-        public void Launch(Vector2 position)
+        private void ResetCommon(Vector2 position)
         {
             WorldLocation = position;
-            Velocity = Vector2.Zero;
             Health = 1;
             Enabled = true;
             Alive = true;
             InvincibleTimer = 0;
             turnTimer = 0f;
+            _fireTimer = 0f;
+            for (int i = 0; i < _fires.Length; i++)
+            {
+                _fires.GetItem(i).Enabled = false;
+            }
+        }
+
+        public void LaunchHoming(Vector2 position)
+        {
+            ResetCommon(position);
+            Velocity = Vector2.Zero;
+            _isHoming = true;
+            _homingCountdown = 0f;
+        }
+
+        /// <summary>
+        /// Launches the missile in a fixed direction. If homingDelay is >= 0, the missile turns
+        /// into a homing missile after that many seconds. If homingDelay is negative, it flies
+        /// straight forever.
+        /// </summary>
+        public void Launch(Vector2 position, Vector2 direction, float homingDelay = -1f)
+        {
+            ResetCommon(position);
+            _isHoming = false;
+            _homingCountdown = homingDelay;
+
+            var normalized = Vector2.Normalize(direction);
+            RotationDirection = new EightWayRotation(Helpers.VectorToEightWayDirection(normalized));
+            UpdateDisplay();
+            Velocity = RotationDirection.Vector2 * Speed;
         }
 
         public override void AfterHittingPlayer()
@@ -151,9 +167,20 @@ namespace MacGame.Enemies
         {
             if (Enabled && Alive)
             {
+                if (!_isHoming)
+                {
+                    if (_homingCountdown >= 0f)
+                    {
+                        _homingCountdown -= elapsed;
+                        if (_homingCountdown <= 0f)
+                        {
+                            _isHoming = true;
+                            turnTimer = 0f;
+                        }
+                    }
+                }
 
-                // Track the player if he's alive
-                if (Player.Enabled)
+                if (_isHoming && Player.Enabled)
                 {
                     turnTimer -= elapsed;
                     if (turnTimer <= 0f)
@@ -172,7 +199,6 @@ namespace MacGame.Enemies
                     var fire = _fires.GetNextObject();
                     fire.Reset();
                     fire.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-                    // Place fire opposite the direction of travel
                     var behind = -RotationDirection.Vector2 * 12f;
                     fire.WorldLocation = WorldLocation + behind;
                     fire.Velocity = -RotationDirection.Vector2 * 30f;

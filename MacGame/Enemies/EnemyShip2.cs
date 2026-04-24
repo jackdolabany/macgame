@@ -43,7 +43,7 @@ namespace MacGame.Enemies
                 missileTimer -= elapsed;
                 if (missileTimer <= 0f)
                 {
-                    MissileManager.Launch(CollisionCenter);
+                    MissileManager.LaunchHomingMissile(CollisionCenter);
                     missileTimer = MissileInterval;
                 }
             }

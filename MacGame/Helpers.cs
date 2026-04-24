@@ -253,6 +253,18 @@ namespace MacGame
             return new Vector2(rect.Width / 2f, rect.Height / 2f);
         }
 
+        public static EightWayRotationDirection VectorToEightWayDirection(Vector2 dir)
+        {
+            if (dir.X > 0.5f && dir.Y < -0.5f) return EightWayRotationDirection.UpRight;
+            if (dir.X > 0.5f && dir.Y > 0.5f) return EightWayRotationDirection.DownRight;
+            if (dir.X < -0.5f && dir.Y < -0.5f) return EightWayRotationDirection.UpLeft;
+            if (dir.X < -0.5f && dir.Y > 0.5f) return EightWayRotationDirection.DownLeft;
+            if (dir.X > 0.5f) return EightWayRotationDirection.Right;
+            if (dir.X < -0.5f) return EightWayRotationDirection.Left;
+            if (dir.Y < -0.5f) return EightWayRotationDirection.Up;
+            return EightWayRotationDirection.Down;
+        }
+
         /// <summary>
         /// This method returns the unit vector of the direction from the source to the target,
         /// but only in 8 directions. Up, UpRight, Right, DownRight, Down, DownLeft, Left, or UpLeft.

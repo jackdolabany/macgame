@@ -43,6 +43,8 @@ namespace MacGame.Enemies
 
         private bool _isInitialized = false;
 
+        private float missileDrawDepth;
+
         public MegaSpaceRocketLauncher(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -78,9 +80,12 @@ namespace MacGame.Enemies
         public override void SetDrawDepth(float depth)
         {
             _bodyDisplay.DrawDepth = depth;
-            _backDisplay.DrawDepth = depth + 2f * Game1.MIN_DRAW_INCREMENT;
+            _backDisplay.DrawDepth = depth + (2f * Game1.MIN_DRAW_INCREMENT);
             _destroyedDisplay.DrawDepth = depth;
             _head.SetDrawDepth(depth + Game1.MIN_DRAW_INCREMENT);
+
+            // Missiles are in front
+            missileDrawDepth = depth - (3f * Game1.MIN_DRAW_INCREMENT);
         }
 
         public override void Kill()
@@ -100,12 +105,43 @@ namespace MacGame.Enemies
              topLeftMissileLocation += new Vector2(-20, -50);
             const int missileVerticalSpacing = 30;
             const int missileHorizontalSpacing = 40;
-            MissileManager.Launch(topLeftMissileLocation);
-            MissileManager.Launch(topLeftMissileLocation + new Vector2(0, missileVerticalSpacing));
-            MissileManager.Launch(topLeftMissileLocation + new Vector2(0, 2 * missileVerticalSpacing));
-            MissileManager.Launch(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, 0));
-            MissileManager.Launch(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, missileVerticalSpacing));
-            MissileManager.Launch(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, 2 * missileVerticalSpacing));
+            const float delay = 2f;
+            
+            var missile1 = MissileManager.LaunchMissile(topLeftMissileLocation, EightWayRotationDirection.UpLeft, delay);
+            if (missile1 != null)
+            {
+                missile1.SetDrawDepth(missileDrawDepth);
+            }
+
+            var missile2 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(0, missileVerticalSpacing), EightWayRotationDirection.Left, delay);
+            if (missile2 != null)
+            {
+                missile2.SetDrawDepth(missileDrawDepth - Game1.MIN_DRAW_INCREMENT);
+            }
+
+            var missile3 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(0, 2 * missileVerticalSpacing), EightWayRotationDirection.DownLeft, delay);
+            if (missile3 != null)
+            {
+                missile3.SetDrawDepth(missileDrawDepth - (2f * Game1.MIN_DRAW_INCREMENT));
+            }   
+
+            var missile4 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, 0), EightWayRotationDirection.UpRight, delay);
+            if (missile4 != null)
+            {
+                missile4.SetDrawDepth(missileDrawDepth - (3f * Game1.MIN_DRAW_INCREMENT));
+            }
+
+            var missile5 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, missileVerticalSpacing), EightWayRotationDirection.Right, delay);
+            if (missile5 != null)
+            {
+                missile5.SetDrawDepth(missileDrawDepth - (4f * Game1.MIN_DRAW_INCREMENT));
+            }
+
+            var missile6 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, 2 * missileVerticalSpacing), EightWayRotationDirection.DownRight, delay);
+            if (missile6 != null)
+            {
+                missile6.SetDrawDepth(missileDrawDepth - (5f * Game1.MIN_DRAW_INCREMENT));
+            }
 
             PlaySoundIfOnScreen("Fire", 0.5f);
         }

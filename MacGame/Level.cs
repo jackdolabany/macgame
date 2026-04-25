@@ -77,6 +77,18 @@ namespace MacGame
 
         public Vector2 AutoScrollSpeed { get; set; }
 
+        public bool IsSpaceScrollLocked { get; private set; }
+
+        public void StopSpaceAutoScrolling()
+        {
+            IsSpaceScrollLocked = true;
+        }
+
+        public void StartSpaceAutoScrolling()
+        {
+            IsSpaceScrollLocked = false;
+        }
+
         /// <summary>
         /// These objects collide with other objects and block the way. They're checked when we check collisions deep inside GameObject.
         /// </summary>

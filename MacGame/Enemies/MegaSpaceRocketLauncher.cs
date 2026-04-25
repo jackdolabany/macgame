@@ -84,6 +84,8 @@ namespace MacGame.Enemies
             _initialWorldLocation = WorldLocation;
         }
 
+        public int CurrentHealth => Health;
+
         public override void SetDrawDepth(float depth)
         {
             _bodyDisplay.DrawDepth = depth;
@@ -113,6 +115,7 @@ namespace MacGame.Enemies
             _head.Kill();
 
             Game1.Camera.MaxX = null;
+            Game1.CurrentLevel.StartSpaceAutoScrolling();
 
             PlayDeathSound();
 
@@ -187,6 +190,7 @@ namespace MacGame.Enemies
                 if (Alive && !_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
                 {
                     Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
+                    Game1.CurrentLevel.StopSpaceAutoScrolling();
                     _hasLockedCamera = true;
                 }
 

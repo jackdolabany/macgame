@@ -77,6 +77,8 @@ namespace MacGame.Enemies
             ResetShootTimer();
         }
 
+        public int CurrentHealth => Health;
+
         private void ResetShootTimer()
         {
             _shootTimer = MIN_SHOOT_TIME + Game1.Randy.NextFloat() * (MAX_SHOOT_TIME - MIN_SHOOT_TIME);
@@ -139,6 +141,7 @@ namespace MacGame.Enemies
             IsPlayerColliding = false;
             CanBeHitWithWeapons = false;
             Game1.Camera.MaxX = null;
+            Game1.CurrentLevel.StartSpaceAutoScrolling();
             PlayDeathSound();
             Dead = true;
         }
@@ -152,6 +155,7 @@ namespace MacGame.Enemies
                 if (!_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
                 {
                     Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
+                    Game1.CurrentLevel.StopSpaceAutoScrolling();
                     _hasLockedCamera = true;
                 }
 

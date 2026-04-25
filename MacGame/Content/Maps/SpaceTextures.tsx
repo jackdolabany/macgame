@@ -136,6 +136,11 @@
    <property name="BlockPlayer" value="1"/>
   </properties>
  </tile>
+ <tile id="61">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpaceFortressBoss"/>
+  </properties>
+ </tile>
  <tile id="66">
   <properties>
    <property name="Hidden" value="1"/>

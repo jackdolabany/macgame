@@ -13,6 +13,11 @@ namespace MacGame.Enemies
         private const int ReallyBigSize = 24 * Game1.TileScale;
         private const int TopRaisePixels = 26 * Game1.TileScale; // 104 pixels
 
+        private const float DyingDuration = 3f;
+        private const float ExplosionInterval = 0.07f;
+        private const float SinkVelocity = 30f;
+        private const int SinkPixels = 300;
+
         private float _shootTimer;
 
         private Texture2D _megaTextures;
@@ -22,9 +27,18 @@ namespace MacGame.Enemies
         private Rectangle _topRect;
         private Rectangle _barrelLeftRect;
         private Rectangle _barrelDiagonalRect;
+        private Rectangle _destroyedRect;
 
         private enum FacingDirection { Left, UpLeft, Up, UpRight, Right }
         private FacingDirection _currentDirection;
+
+        private enum CannonState { Alive, Dying, Dead }
+        private CannonState _cannonState = CannonState.Alive;
+        private float _stateTimer;
+        private float _explosionTimer = 0f;
+        private float _sinkOffset = 0f;
+        private bool _isDestroyed = false;
+        private bool _hasLockedCamera = false;
 
         /// <summary>
         /// Compute the center point for the barrel and shots on every update after the direction is figured out.
@@ -34,6 +48,8 @@ namespace MacGame.Enemies
         public MegaSpaceCannon(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
+            WorldLocation = WorldLocation + new Vector2(0, 12);
+
             _megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
             _reallyBigTextures = content.Load<Texture2D>(@"Textures\ReallyBigTextures");
 
@@ -41,6 +57,7 @@ namespace MacGame.Enemies
             _topRect = Helpers.GetMegaTileRect(3, 2);
             _barrelLeftRect = Helpers.GetReallyBigTileRect(4, 6);
             _barrelDiagonalRect = Helpers.GetReallyBigTileRect(5, 6);
+            _destroyedRect = Helpers.GetMegaTileRect(4, 2);
 
             // Use the base as the primary display component for IsOnScreen checks
             DisplayComponent = new StaticImageDisplay(_megaTextures, _baseRect);
@@ -48,7 +65,7 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             Attack = 2;
-            Health = 10;
+            Health = 30;
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
@@ -113,26 +130,80 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.AddExplosion(WorldCenter, false);
-            Dead = true;
+            if (_cannonState == CannonState.Dying || _cannonState == CannonState.Dead) return;
+
+            _cannonState = CannonState.Dying;
+            _stateTimer = DyingDuration;
+            _explosionTimer = 0f;
+            Attack = 0;
+            IsPlayerColliding = false;
+            CanBeHitWithWeapons = false;
+            Game1.Camera.MaxX = null;
             PlayDeathSound();
+            Dead = true;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (Alive)
+            if (Enabled)
             {
-                UpdateFacingDirection();
-
                 _barrelRotationCenter = new Vector2(WorldLocation.X, WorldLocation.Y - CollisionRectangle.Height + 32);
 
-                if (IsOnScreen())
+                if (!_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
                 {
-                    _shootTimer -= elapsed;
-                    if (_shootTimer <= 0)
-                    {
-                        Shoot();
-                    }
+                    Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
+                    _hasLockedCamera = true;
+                }
+
+                switch (_cannonState)
+                {
+                    case CannonState.Alive:
+                        UpdateFacingDirection();
+                        if (IsOnScreen())
+                        {
+                            _shootTimer -= elapsed;
+                            if (_shootTimer <= 0)
+                            {
+                                Shoot();
+                            }
+                        }
+                        break;
+
+                    case CannonState.Dying:
+                        _stateTimer -= elapsed;
+                        _explosionTimer -= elapsed;
+
+                        if (_explosionTimer <= 0f)
+                        {
+                            _explosionTimer = ExplosionInterval;
+                            var randomX = CollisionRectangle.Left + Game1.Randy.Next(CollisionRectangle.Width);
+                            var randomY = CollisionRectangle.Top + Game1.Randy.Next(CollisionRectangle.Height);
+                            EffectsManager.AddExplosion(new Vector2(randomX, randomY));
+                        }
+
+                        if (_stateTimer <= DyingDuration / 2 && !_isDestroyed)
+                        {
+                            _isDestroyed = true;
+                        }
+
+                        if (_isDestroyed)
+                        {
+                            _sinkOffset += SinkVelocity * elapsed;
+                        }
+
+                        if (_stateTimer <= 0f)
+                        {
+                            _cannonState = CannonState.Dead;
+                        }
+                        break;
+
+                    case CannonState.Dead:
+                        _sinkOffset += SinkVelocity * elapsed;
+                        if (_sinkOffset >= SinkPixels)
+                        {
+                            Enabled = false;
+                        }
+                        break;
                 }
             }
 
@@ -142,6 +213,13 @@ namespace MacGame.Enemies
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (!IsOnScreen()) return;
+
+            if (_isDestroyed)
+            {
+                var destroyedTopLeft = new Vector2(WorldLocation.X - MegaSize / 2f, WorldLocation.Y - MegaSize + _sinkOffset).ToIntegerVector();
+                spriteBatch.Draw(_megaTextures, destroyedTopLeft, _destroyedRect, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, DrawDepth);
+                return;
+            }
 
             float baseDepth = DrawDepth;
             float topDepth = baseDepth - Game1.MIN_DRAW_INCREMENT;

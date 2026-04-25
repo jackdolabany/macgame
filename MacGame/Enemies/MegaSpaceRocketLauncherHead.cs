@@ -40,7 +40,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            // Lifecycle is controlled by the launcher.
+            CanBeHitWithWeapons = false;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

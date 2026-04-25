@@ -35,6 +35,7 @@ namespace MacGame.Enemies
         private float _explosionTimer = 0f;
         private float _sinkOffset = 0f;
         private bool _hasFired = false;
+        private bool _hasLockedCamera = false;
 
         // Target Y world positions for the head, computed once WorldLocation is known.
         private float _headDownY;
@@ -49,6 +50,9 @@ namespace MacGame.Enemies
         public MegaSpaceRocketLauncher(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
+
+            WorldLocation = WorldLocation + new Vector2(0, 12);
+
             _megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
 
             _bodyDisplay = new StaticImageDisplay(_megaTextures, Helpers.GetMegaTileRect(3, 3));
@@ -60,7 +64,7 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             Attack = 2;
-            Health = 10;
+            Health = 40;
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
@@ -99,14 +103,20 @@ namespace MacGame.Enemies
             _stateTimer = DyingDuration;
             _explosionTimer = 0f;
             Attack = 0;
+            CanBeHitWithWeapons = false;
 
             // Start moving the head down to the start position.
             _head.Velocity = new Vector2(0, HeadVelocity);
 
             this.IsPlayerColliding = false;
             _head.IsPlayerColliding = false;
+            _head.Kill();
+
+            Game1.Camera.MaxX = null;
 
             PlayDeathSound();
+
+            Dead = true;
         }
 
         private void LaunchMissiles()
@@ -172,8 +182,14 @@ namespace MacGame.Enemies
                 _isInitialized = true;
             }
 
-            if (Alive && IsOnScreen())
+            if (Enabled && IsOnScreen())
             {
+                if (Alive && !_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
+                {
+                    Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
+                    _hasLockedCamera = true;
+                }
+
                 switch (_launcherState)
                 {
                     case LauncherState.Down:
@@ -274,7 +290,7 @@ namespace MacGame.Enemies
                         _destroyedDisplay.Offset = new Vector2(0, _sinkOffset);
                         if (_sinkOffset >= SinkPixels)
                         {
-                            Dead = true;
+                            Enabled = false;
                         }
                         break;
                 }

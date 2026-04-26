@@ -9,8 +9,8 @@ namespace MacGame.Enemies
 {
     public class SpaceCannon : Enemy
     {
-        private const float MIN_SHOOT_TIME = 0.5f;
-        private const float MAX_SHOOT_TIME = 1.5f;
+        private const float MIN_SHOOT_TIME = 1f;
+        private const float MAX_SHOOT_TIME = 2f;
 
         private float shootTimer = 0f;
         private Texture2D textures;

@@ -22,6 +22,7 @@ namespace MacGame.Enemies
             : base(content, cellX, cellY, player, camera)
         {
             isEnemyTileColliding = false;
+            isTileColliding = false;
             Attack = 1;
             IsAffectedByGravity = false;
             Flipped = true;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="SpaceTextures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.0" name="SpaceTextures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/SpaceTextures.png" width="128" height="288"/>
  <tile id="2">
   <properties>
@@ -156,6 +156,21 @@
    <property name="LoadClass" value="Enemy.SpaceMouth"/>
   </properties>
  </tile>
+ <tile id="77">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="78">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="79">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="81">
   <properties>
    <property name="LoadClass" value="Item.ShotPowerup"/>
@@ -179,6 +194,21 @@
  <tile id="90">
   <properties>
    <property name="LoadClass" value="Enemy.ShipLauncher"/>
+  </properties>
+ </tile>
+ <tile id="93">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="94">
+  <properties>
+   <property name="LoadClass" value="Enemy.BigShipBoss"/>
+  </properties>
+ </tile>
+ <tile id="95">
+  <properties>
+   <property name="Hidden" value="1"/>
   </properties>
  </tile>
 </tileset>

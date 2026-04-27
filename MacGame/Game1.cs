@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "FortressTest";
+        public const string StartingWorld = "BigShipBossTest";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -490,7 +490,8 @@ namespace MacGame
             //Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
             //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
             //Font = Content.Load<SpriteFont>(@"Fonts\MacFont");
-            Font = Content.Load<SpriteFont>(@"Fonts\NesFontCaps");
+            //Font = Content.Load<SpriteFont>(@"Fonts\NesFontCaps");
+            Font = Content.Load<SpriteFont>(@"Fonts\MacFontSmall");
 
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);

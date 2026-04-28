@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using TileEngine;
 using System.Linq;
+using System.Threading;
 
 namespace MacGame
 {
@@ -35,8 +36,13 @@ namespace MacGame
 
         static int bubbleHeight;
         static int bubbleWidth;
-        static int textWidth;
-        static int textHeight;
+        /// <summary>
+        /// Total room for text withing the bubbleWidth. Less room because the bubble contains spacing and the picture of the person talking.
+        /// </summary>
+        static int totalTextBubbleWidth;
+
+        // Total height for text within the text bubble. Less than bubbleWidth because of padding.
+        static int totalTextBubbleHeight;
 
         public static float textScale = Game1.FontScale;
 
@@ -84,6 +90,22 @@ namespace MacGame
         public static float choiceDelayTimer = 0f;
         public const float choiceDelayTimerGoal = 0.3f;
 
+        private static int _fontHeight = 0;
+        public static int FontHeight
+        {
+            get
+            {
+                if (_fontHeight == 0)
+                {
+                    _fontHeight = (Font.MeasureString("T").Y * textScale).ToInt();
+                }
+                return _fontHeight;
+            }
+        }
+
+        // Amount of pixels between horizontal lines of text.
+        public static int LinePadding => 2 * Game1.TileScale;
+
         public static void AddMessage(
             string text, 
             Rectangle? imageSource = null, 
@@ -115,10 +137,10 @@ namespace MacGame
             }
 
             // Calculate the number of lines we can display.
-            var wordHeight = Game1.TileSize; // Game will only work with tile size fonts.
-            var linesToDisplay = (int)((float)textHeight / (float)wordHeight);
+            var wordHeight = FontHeight + LinePadding;
+            var linesToDisplay = (int)((float)totalTextBubbleHeight / (float)wordHeight);
 
-            var lineWidth = textWidth;
+            var lineWidth = totalTextBubbleWidth;
             if (imageSource != null)
             {
                 lineWidth -= imageSource.Value.Width;
@@ -187,8 +209,11 @@ namespace MacGame
             bubbleWidth = 16 * Game1.TileSize;
             bubbleHeight = 5 * Game1.TileSize;
 
-            textWidth = bubbleWidth - 2 * Game1.TileSize;
-            textHeight = bubbleHeight - 2 * Game1.TileSize;
+            // Leave 2 tiles for the character who is speaking plus another half a tile for padding.
+            totalTextBubbleWidth = bubbleWidth - (2 * Game1.TileSize) - (Game1.TileSize / 2);
+
+            // Leave a half a tile on the top and bottom for padding.
+            totalTextBubbleHeight = bubbleHeight - Game1.TileSize;
 
             ChoicePointerWidth = Game1.Font.MeasureString(ChoicePointerString).X * textScale;
 
@@ -384,14 +409,14 @@ namespace MacGame
                 textLeftMargin += currentMessage.ImageSourceRectangle.Value.Width;
             }
 
-            // We could use the font height but instead this game will only work with TileSize height fonts.
-            var wordHeight = Game1.TileSize + 4;
+            // Add a bit of padding from the top left of the dialog box.
+            var textStartLocation = new Vector2(textLeftMargin + 24, topMargin + 26);
 
             // draw the text
-            DrawTexts(spriteBatch, currentMessage.Texts, new Vector2(textLeftMargin + 24, topMargin + 26), textScale, textDepth, wordHeight, currentLetterIndex);
+            DrawTexts(spriteBatch, currentMessage.Texts, textStartLocation, textScale, textDepth, FontHeight, currentLetterIndex);
 
             // Draw the choices.
-            var location = new Vector2(textLeftMargin + 16, topMargin + wordHeight + wordHeight - 8);
+            var location = textStartLocation + new Vector2(0, ((FontHeight + LinePadding) * currentMessage.Texts.Count) + LinePadding);
 
             if (currentMessage.Choices.Any() && IsMessageFullyDisplayed)
             {
@@ -406,7 +431,7 @@ namespace MacGame
                     }
                     
                     spriteBatch.DrawString(Game1.Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
-                    location.Y += wordHeight;
+                    location.Y += FontHeight + LinePadding;
                 }
             }
 
@@ -498,7 +523,7 @@ namespace MacGame
                 }
                 previousLinesLetterCount += currentLine.Length;
                 spriteBatch.DrawString(Font, lineToDraw, drawLocation, Pallette.White, 0f, Vector2.Zero, scale, SpriteEffects.None, depth);
-                drawLocation.Y += wordHeight + 4;
+                drawLocation.Y += wordHeight + LinePadding;
                 if (previousLinesLetterCount > maxLetters)
                 {
                     return;

@@ -206,8 +206,8 @@ namespace MacGame
         public static void Initialize(ContentManager content)
         {
             // Controls how many 8x8 blocks the text bubble is.
-            bubbleWidth = 16 * Game1.TileSize;
-            bubbleHeight = 5 * Game1.TileSize;
+            bubbleWidth = 14 * Game1.TileSize;
+            bubbleHeight = 4 * Game1.TileSize;
 
             // Leave 2 tiles for the character who is speaking plus another half a tile for padding.
             totalTextBubbleWidth = bubbleWidth - (2 * Game1.TileSize) - (Game1.TileSize / 2);
@@ -444,7 +444,8 @@ namespace MacGame
             // draw the image of the person talking. We expect conversation texture to be a spritesheet of squares so we'll use height for everything.
             if (currentMessage.ImageSourceRectangle != null)
             {
-                spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, topMargin + Game1.TileSize + 16), currentMessage.ImageSourceRectangle.Value, Color.White, 0f, Vector2.Zero, 1f, personSpriteEffect, textDepth);
+                var personYOffset = topMargin + bubbleHeight - currentMessage.ImageSourceRectangle.Value.Height - 16;
+                spriteBatch.Draw(conversationTexture, new Vector2(personXOffset, personYOffset), currentMessage.ImageSourceRectangle.Value, Color.White, 0f, Vector2.Zero, 1f, personSpriteEffect, textDepth);
             }
         }
 

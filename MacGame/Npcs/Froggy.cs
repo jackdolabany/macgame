@@ -604,9 +604,9 @@ namespace MacGame.Npcs
                 if (numberToShow <= FIRST_COUNTDOWN_NUMBER_TO_SHOW)
                 {
                     var countdownText = numbers[numberToShow];
-                    var textSize = Game1.Font.MeasureString(countdownText);
+                    var textSize = Game1.FontLarge.MeasureString(countdownText);
                     var textPosition = Game1.Camera.ViewPort.Center.ToVector2() + new Vector2(0, -TileMap.TileSize * 2);
-                    spriteBatch.DrawString(Game1.Font, countdownText, textPosition, Pallette.Yellow, 0f, textSize / 2, Game1.FontScale, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
+                    spriteBatch.DrawString(Game1.FontLarge, countdownText, textPosition, Pallette.Yellow, 0f, textSize / 2, Game1.FontScale, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
                 }
             }
 

@@ -1,16 +1,21 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
 {
     public class AlertBoxMenu : Menu
     {
+
+        public override SpriteFont TitleFont => Game1.FontSmall;
+        public override SpriteFont MenuItemFont => Game1.FontSmall;
+
         public AlertBoxMenu(Game1 game, string title, EventHandler<MenuEventArgs> acceptEvent)
             : base(game)
         {
             this.menuTitle = title;
 
-            var ok = new MenuOption("OK", this);
+            var ok = new MenuOption("OK", this, this.MenuItemFont);
 
             ok.Chosen += acceptEvent;
 

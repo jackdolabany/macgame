@@ -98,7 +98,7 @@ namespace MacGame
 
             // From the heart
             var message = new List<string>();
-            message.Add("This game was made");
+            message.Add("I made this game");
             message.Add("for my kids Sophia");
             message.Add("and Jack.");
             message.Add("");
@@ -167,19 +167,21 @@ namespace MacGame
 
         public static void Draw(SpriteBatch spriteBatch)
         {
+            var font = Game1.FontLarge;
+
             var creditLines = Lines[lineIndex];
             float scale = Game1.FontScale;
 
-            var lineHeight = Game1.Font.MeasureString(creditLines[0]).Y * scale + 8;
+            var lineHeight = font.MeasureString(creditLines[0]).Y * scale + 8;
             var totalHeight = lineHeight * creditLines.Count;
 
             var yOffset = -totalHeight / 2;
 
             foreach (var line in creditLines)
             {
-                var size = Game1.Font.MeasureString(line);
+                var size = font.MeasureString(line);
                 
-                spriteBatch.DrawString(Game1.Font, line, new Vector2(positionX, positionY + yOffset), Pallette.White, 0f, new Vector2((size.X / 2f).ToInt(), (size.Y / 2f).ToInt()), scale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(font, line, new Vector2(positionX, positionY + yOffset), Pallette.White, 0f, new Vector2((size.X / 2f).ToInt(), (size.Y / 2f).ToInt()), scale, SpriteEffects.None, 0);
             
                 yOffset += lineHeight;
 

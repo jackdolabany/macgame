@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace MacGame
@@ -8,16 +9,21 @@ namespace MacGame
 
         MenuOption backToHub;
 
+        public override SpriteFont MenuItemFont => Game1.FontSmall;
+
         public PauseMenu(Game1 game)
             : base(game)
         {
 
+
+            menuTitle = "Paused";
+
             IsDismissable = true;
             this.IsOverlay = false;
 
-            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, (Game1.GAME_Y_RESOLUTION * 0.25f).ToInt());
+            this.Position = new Vector2(Game1.GAME_X_RESOLUTION / 2, 0);
 
-            var confirmExitGame = new YesNoMenu(Game, "Exit to title screen.\n   Are you sure?", (a, b) =>
+            var confirmExitGame = new YesNoMenu(Game, "Exit to title screen.\n      Are you sure?", (a, b) =>
             {
                 this.Game.GoToTitleScreen();
             });

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace MacGame
@@ -7,6 +8,8 @@ namespace MacGame
     {
         MenuOption toggleFullScreen;
         MenuOption shaderOption;
+
+        public override SpriteFont MenuItemFont => Game1.FontSmall;
 
         public GraphicsMenu(Game1 game)
             : base(game)

@@ -50,7 +50,7 @@
   </object>
   <object id="16" x="284.008" y="51.0038" width="17.3333" height="15.3333">
    <properties>
-    <property name="Convo" value="Me:To my right are special platform blocks. Press down and jump to fall through them.;Mac:Great, this is the part of the game where you coach me through the minutiae of each gameplay mechanic!;Me:On second thought, you've played games before. press buttons and figure stuff out.;Mac: Oh, thanks!;"/>
+    <property name="Convo" value="Me:To my right are special platform blocks. Press down and jump to fall through them.;Mac:Great, this is the part of the game where you coach me through the minutiae of each gameplay mechanic!;Me:On second thought, you've played games before. Just press buttons and stuff. You'll figure it out.;Mac: thanks!;"/>
    </properties>
   </object>
   <object id="17" name="IntroDoor1" x="261.83" y="84.0114" width="13" height="22">

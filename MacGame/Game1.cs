@@ -262,7 +262,16 @@ namespace MacGame
         public static Camera Camera;
         private static KeyboardState previousKeyState;
 
-        public static SpriteFont Font;
+        /// <summary>
+        /// A 5 pixel by 5 pixel font.
+        /// </summary>
+        public static SpriteFont FontSmall;
+
+        /// <summary>
+        /// A larger 8 pixel by 8 pixel font where letters are always 1 tile size.
+        /// </summary>
+        public static SpriteFont FontLarge;
+
         public static float FontScale = 4f;
         private PauseMenu pauseMenu;
         private MainMenu mainMenu;
@@ -487,11 +496,13 @@ namespace MacGame
             dolaSoftSplashScreen = Content.Load<Texture2D>(@"Textures\LogoScreen");
             controllerSplashScreen = Content.Load<Texture2D>(@"Textures\Controller");
 
-            //Font = Content.Load<SpriteFont>(@"Fonts\KenPixel");
+            //Font = Content.Load<pk>(@"Fonts\KenPixel");
             //Font = Content.Load<SpriteFont>(@"Fonts\emulogic");
             //Font = Content.Load<SpriteFont>(@"Fonts\MacFont");
-            //Font = Content.Load<SpriteFont>(@"Fonts\NesFontCaps");
-            Font = Content.Load<SpriteFont>(@"Fonts\MacFontSmall");
+            FontLarge = Content.Load<SpriteFont>(@"Fonts\NesFontCaps");
+            FontLarge.LineSpacing += 2;
+            FontSmall = Content.Load<SpriteFont>(@"Fonts\MacFontSmall");
+            FontSmall.LineSpacing += 2;
 
             inputManager = new InputManager();
             var deadMenu = new DeadMenu(this);
@@ -1146,8 +1157,8 @@ namespace MacGame
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(controllerSplashScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
 
-                    spriteBatch.DrawString(Font, "Controller", new Vector2(174, 32), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
-                    spriteBatch.DrawString(Font, "Recommended", new Vector2(154, GAME_Y_RESOLUTION - 64), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(FontLarge, "Controller", new Vector2(174, 32), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(FontLarge, "Recommended", new Vector2(154, GAME_Y_RESOLUTION - 64), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
 
                     spriteBatch.End();
                     break;
@@ -1157,9 +1168,10 @@ namespace MacGame
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                     spriteBatch.Draw(titleScreen, new Rectangle(0, 0, GAME_X_RESOLUTION, GAME_Y_RESOLUTION), Color.White);
 
-                   // Draw the copyright cirlced C thing.
-                    spriteBatch.Draw(TileTextures, new Rectangle(102, GAME_Y_RESOLUTION - 46, TileSize, TileSize), Helpers.GetTileRect(8, 4), Color.White);
-                    spriteBatch.DrawString(Font, "2025 Dolasoft", new Vector2(138, GAME_Y_RESOLUTION - 46), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
+                    // Draw the copyright cirlced C thing.
+                    var copywriteDestRect = new Rectangle(182, GAME_Y_RESOLUTION - 46, TileSize, TileSize);
+                    spriteBatch.Draw(TileTextures, copywriteDestRect, Helpers.GetTileRect(8, 4), Color.White);
+                    spriteBatch.DrawString(FontSmall, "2025 Dolasoft", new Vector2(copywriteDestRect.X + 40, GAME_Y_RESOLUTION - 42), Pallette.White, 0f, Vector2.Zero, Game1.FontScale, SpriteEffects.None, 0f);
                     spriteBatch.End();
                     break;
 
@@ -1260,10 +1272,10 @@ namespace MacGame
                 // Draw hearts for bosses that take a few hits.
                 int bossHealthYPosition = 10;
                 
-                var textWidth = Font.MeasureString(BossName).X * FontScale;
+                var textWidth = FontLarge.MeasureString(BossName).X * FontScale;
                 var startingTextXPos = (GAME_X_RESOLUTION / 2) - (textWidth / 2);
 
-                spriteBatch.DrawString(Font, BossName, new Vector2(startingTextXPos + 6, bossHealthYPosition), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(FontLarge, BossName, new Vector2(startingTextXPos + 6, bossHealthYPosition), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
                 bossHealthYPosition += TileSize;
 
                 if (MaxBossHealth <= 8)
@@ -1396,11 +1408,11 @@ namespace MacGame
                 var inputString = TimeSpan.FromSeconds(CurrentLevel.BombTimer).ToString(@"mm\:ss\:ff");
                 if (_timerOrigin == Vector2.Zero)
                 {
-                    var size = Font.MeasureString(inputString);
+                    var size = FontLarge.MeasureString(inputString);
                     _timerOrigin = new Vector2(size.X / 2, size.Y / 2); 
                 }
                 
-                spriteBatch.DrawString(Font, inputString, new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION - 32), Pallette.White, 0f, _timerOrigin, FontScale, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(FontLarge, inputString, new Vector2(Game1.GAME_X_RESOLUTION / 2, Game1.GAME_Y_RESOLUTION - 32), Pallette.White, 0f, _timerOrigin, FontScale, SpriteEffects.None, 0.5f);
             }
 
             if (Player.ShotPower == ShotPower.Charge)
@@ -1443,21 +1455,21 @@ namespace MacGame
         {
             int onesPlace = count % 10;
 
-            spriteBatch.DrawString(Font, Numbers[onesPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(FontLarge, Numbers[onesPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
 
             if (count > 9)
             {
                 int tensPlace = (count / 10) % 10;
-                int width = (Font.MeasureString(Numbers[tensPlace]).X * Game1.FontScale).ToInt();
+                int width = (FontLarge.MeasureString(Numbers[tensPlace]).X * Game1.FontScale).ToInt();
                 rightMostX -= width;
-                spriteBatch.DrawString(Font, Numbers[tensPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(FontLarge, Numbers[tensPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
             }
             if (count > 99)
             {
                 int hundredsPlace = (count / 100) % 10;
-                int width = (Font.MeasureString(Numbers[hundredsPlace]).X * Game1.FontScale).ToInt();
+                int width = (FontLarge.MeasureString(Numbers[hundredsPlace]).X * Game1.FontScale).ToInt();
                 rightMostX -= width;
-                spriteBatch.DrawString(Font, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(FontLarge, Numbers[hundredsPlace], new Vector2(rightMostX, yPos), Pallette.White, 0, Vector2.Zero, FontScale, SpriteEffects.None, 0);
             }
 
             // Draw the icon image

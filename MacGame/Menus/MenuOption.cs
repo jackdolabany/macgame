@@ -41,6 +41,8 @@ namespace MacGame
 
         protected Menu Menu;
 
+        protected SpriteFont Font;
+
         /// <summary>
         /// Method for raising the Chosen event.
         /// </summary>
@@ -66,10 +68,11 @@ namespace MacGame
         /// <summary>
         /// Constructs a new menu entry with the specified text.
         /// </summary>
-        public MenuOption(string text, Menu menu)
+        public MenuOption(string text, Menu menu, SpriteFont font)
         {
             this.Text = text;
             this.Menu = menu;
+            this.Font = font;
         }
 
         /// <summary>
@@ -99,8 +102,6 @@ namespace MacGame
             }
 
             pulsateTime += elapsed;
-            //float pulsate = (float)Math.Sin(pulsateTime * 6f) + 1;
-            //this.pulsateScale = 1 + pulsate * 0.02f * selectionFade;
 
             wasSelected = isSelected;
         }
@@ -113,11 +114,11 @@ namespace MacGame
             // Draw the selected entry in yellow, otherwise white.
             Color color = IsSelected ? SelectedColor : Color;
 
-            var unscaledWidth = Game1.Font.MeasureString(Text).X;
-            var unscaledHeight = (float)Game1.Font.LineSpacing;
+            var unscaledWidth = Font.MeasureString(Text).X;
+            var unscaledHeight = (float)Font.LineSpacing;
             var origin = new Vector2((int)(unscaledWidth / 2), (int)(unscaledHeight / 2));
 
-            spriteBatch.DrawString(Game1.Font, Text, Menu.Position + Position, color, 0,
+            spriteBatch.DrawString(Font, Text, Menu.Position + Position, color, 0,
                 origin, DrawScale, SpriteEffects.None, DrawDepth);
         }
 
@@ -126,7 +127,7 @@ namespace MacGame
         /// </summary>
         public int GetHeight()
         {
-            return (int)((float)Game1.Font.LineSpacing * this.DrawScale);
+            return (int)((float)Font.LineSpacing * this.DrawScale);
         }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace MacGame
         /// </summary>
         public int GetWidth()
         {
-            return (int)(Game1.Font.MeasureString(Text).X * this.DrawScale);
+            return (int)(Font.MeasureString(Text).X * this.DrawScale);
         }
 
     }

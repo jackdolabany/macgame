@@ -38,6 +38,9 @@ namespace MacGame
         /// </summary>
         public bool IsDismissable = false;
 
+        public virtual SpriteFont TitleFont => Game1.FontLarge;
+        public virtual SpriteFont MenuItemFont => Game1.FontLarge;
+
         public Menu(Game1 game)
         {
             this.Game = game;
@@ -200,7 +203,7 @@ namespace MacGame
             // Start the menu items pushed down by the height of the menu title.
             if (!string.IsNullOrEmpty(menuTitle))
             {
-                var titleSize = Game1.Font.MeasureString(menuTitle);
+                var titleSize = TitleFont.MeasureString(menuTitle);
                 position.Y += (titleSize.Y * Scale * 2f).ToInt();
             }
 
@@ -218,7 +221,7 @@ namespace MacGame
                     option.Position = position;
 
                     // move down for the next entry the size of this entry
-                    position.Y += option.GetHeight() + 8;
+                    position.Y += option.GetHeight() + 2;
                 }
             }
         }
@@ -231,14 +234,14 @@ namespace MacGame
             if (!string.IsNullOrEmpty(menuTitle))
             {
                 // Start with a fudge factor to favor the top of the screen and give room for the title.
-                totalMenuHeight += 100 + Game1.Font.MeasureString(menuTitle).Y * Scale;
+                totalMenuHeight += 100 + TitleFont.MeasureString(menuTitle).Y * Scale;
             }
 
             foreach (var choice in this.menuOptions)
             {
                 if (!choice.Hidden)
                 {
-                    totalMenuHeight += Game1.Font.MeasureString(choice.Text).Y * Scale;
+                    totalMenuHeight += MenuItemFont.MeasureString(choice.Text).Y * Scale;
                 }
             }
 
@@ -260,10 +263,10 @@ namespace MacGame
             // Menu title
             if (!string.IsNullOrEmpty(menuTitle))
             {
-                Vector2 size = Game1.Font.MeasureString(menuTitle);
+                Vector2 size = TitleFont.MeasureString(menuTitle);
                 if (!string.IsNullOrEmpty(this.menuTitle))
                 {
-                    spriteBatch.DrawString(Game1.Font,
+                    spriteBatch.DrawString(TitleFont,
                         menuTitle,
                         Position,
                         Color.White,
@@ -296,7 +299,7 @@ namespace MacGame
 
         public MenuOption AddOption(string text, Action<object, MenuEventArgs> action)
         {
-            var option = new MenuOption(text, this);
+            var option = new MenuOption(text, this, MenuItemFont);
             option.Chosen += (sender, args) => action(sender, args);
             this.menuOptions.Add(option);
             return option;

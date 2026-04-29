@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,9 @@ namespace MacGame
         private float menuScrollOffset = 0f;
         private float navigationTimer = 0f;
         private const float NavigationDelay = 0.15f; // Time between auto-advances when holding button
+
+        public override SpriteFont TitleFont => Game1.FontSmall;
+        public override SpriteFont MenuItemFont => Game1.FontSmall;
 
         public SoundEffectsMenu(Game1 game)
             : base(game)
@@ -176,7 +180,7 @@ namespace MacGame
         {
             // Calculate the offset needed to center the selected item
             // Each menu item has a height + spacing
-            var itemHeight = Game1.Font.MeasureString("A").Y * Scale + 8;
+            var itemHeight = Game1.FontSmall.MeasureString("A").Y * Scale + 8;
 
             // Calculate offset to center selected item
             // We want the selected item at screen center (Game1.GAME_Y_RESOLUTION / 2)
@@ -184,7 +188,7 @@ namespace MacGame
             var titleHeight = 0f;
             if (!string.IsNullOrEmpty(menuTitle))
             {
-                var titleSize = Game1.Font.MeasureString(menuTitle);
+                var titleSize = Game1.FontSmall.MeasureString(menuTitle);
                 titleHeight = titleSize.Y * Scale * 2f;
             }
 

@@ -26,7 +26,7 @@ namespace MacGame
             ConsoleManager.contentManager = contentManager;
             ConsoleManager.player = player;
             Message.Capacity = 200;
-            Message.AppendLine("Welcome to the Console. If you know the secret keys you can type them here and do some magical things. Oh boy!");
+            Message.AppendLine("Welcome to the Console. If you know the secret keys you can\ntype them here and do some magical things. Oh boy!");
             Message.Append(" >> ");
             game = currentGame;
         }
@@ -315,7 +315,7 @@ namespace MacGame
 
             if (ShowConsole)
             {
-                spriteBatch.DrawString(Game1.Font, Message.ToString().Substring(0, Message.Length - 1) + input, Vector2.Zero, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.1f);
+                spriteBatch.DrawString(Game1.FontLarge, Message.ToString().Substring(0, Message.Length - 1) + input, new Vector2(8, 8), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.1f);
             }
         }
     }

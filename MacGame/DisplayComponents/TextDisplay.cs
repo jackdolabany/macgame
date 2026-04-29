@@ -12,12 +12,14 @@ namespace MacGame.DisplayComponents
 
         public string Text;
 
+        SpriteFont Font => Game1.FontLarge;
+
         /// <summary>
         /// Queries how much space this menu entry requires.
         /// </summary>
         public float GetHeight()
         {
-            return Game1.Font.LineSpacing * Scale;
+            return Font.LineSpacing * Scale;
         }
 
         /// <summary>
@@ -25,7 +27,7 @@ namespace MacGame.DisplayComponents
         /// </summary>
         public float GetWidth()
         {
-            return Game1.Font.MeasureString(Text).X * Scale;
+            return Font.MeasureString(Text).X * Scale;
         }
 
         public TextDisplay(string text)
@@ -44,7 +46,7 @@ namespace MacGame.DisplayComponents
         {
             if (!string.IsNullOrEmpty(Text))
             {
-                spriteBatch.DrawString(Game1.Font,
+                spriteBatch.DrawString(Font,
                     Text,
                     (Offset + position).ToIntegerVector(),
                     TintColor,

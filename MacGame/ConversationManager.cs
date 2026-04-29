@@ -103,9 +103,6 @@ namespace MacGame
             }
         }
 
-        // Amount of pixels between horizontal lines of text.
-        public static int LinePadding => 2 * Game1.TileScale;
-
         public static void AddMessage(
             string text, 
             Rectangle? imageSource = null, 
@@ -137,8 +134,7 @@ namespace MacGame
             }
 
             // Calculate the number of lines we can display.
-            var wordHeight = FontHeight + LinePadding;
-            var linesToDisplay = (int)((float)totalTextBubbleHeight / (float)wordHeight);
+            var linesToDisplay = (int)((float)totalTextBubbleHeight / (float)FontHeight);
 
             var lineWidth = totalTextBubbleWidth;
             if (imageSource != null)
@@ -215,9 +211,9 @@ namespace MacGame
             // Leave a half a tile on the top and bottom for padding.
             totalTextBubbleHeight = bubbleHeight - Game1.TileSize;
 
-            ChoicePointerWidth = Game1.Font.MeasureString(ChoicePointerString).X * textScale;
+            Font = Game1.FontSmall;
 
-            Font = Game1.Font;
+            ChoicePointerWidth = Font.MeasureString(ChoicePointerString).X * textScale;
 
             borderCornerSourceRect = Helpers.GetTileRect(0, 11);
             borderLeftEdgeSourceRect = Helpers.GetTileRect(0, 12);
@@ -416,7 +412,7 @@ namespace MacGame
             DrawTexts(spriteBatch, currentMessage.Texts, textStartLocation, textScale, textDepth, FontHeight, currentLetterIndex);
 
             // Draw the choices.
-            var location = textStartLocation + new Vector2(0, ((FontHeight + LinePadding) * currentMessage.Texts.Count) + LinePadding);
+            var location = textStartLocation + new Vector2(0, FontHeight * currentMessage.Texts.Count);
 
             if (currentMessage.Choices.Any() && IsMessageFullyDisplayed)
             {
@@ -427,11 +423,11 @@ namespace MacGame
                     bool isSelected = i == currentMessage.selectedChoice;
                     if (isSelected)
                     {
-                        spriteBatch.DrawString(Game1.Font, ChoicePointerString, location, Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
+                        spriteBatch.DrawString(Font, ChoicePointerString, location, Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
                     }
                     
-                    spriteBatch.DrawString(Game1.Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
-                    location.Y += FontHeight + LinePadding;
+                    spriteBatch.DrawString(Font, choice.Text, location + new Vector2(ChoicePointerWidth, 0), Pallette.White, 0f, Vector2.Zero, textScale, SpriteEffects.None, textDepth);
+                    location.Y += FontHeight;
                 }
             }
 
@@ -524,7 +520,7 @@ namespace MacGame
                 }
                 previousLinesLetterCount += currentLine.Length;
                 spriteBatch.DrawString(Font, lineToDraw, drawLocation, Pallette.White, 0f, Vector2.Zero, scale, SpriteEffects.None, depth);
-                drawLocation.Y += wordHeight + LinePadding;
+                drawLocation.Y += wordHeight;
                 if (previousLinesLetterCount > maxLetters)
                 {
                     return;
@@ -603,11 +599,13 @@ namespace MacGame
             this.Text = text;
             this.Event = action;
 
-            Width = Game1.Font.MeasureString(text).X * ConversationManager.textScale;
-
+            Width = Game1.FontSmall.MeasureString(text).X * ConversationManager.textScale;
         }
+
         public float Width { get; private set; }
+        
         public string Text { get; private set; }
+        
         public System.Action? Event { get; set; }
     }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
 {
@@ -6,6 +7,9 @@ namespace MacGame
     {
 
         MenuOption backToHub;
+
+        public override SpriteFont MenuItemFont => Game1.FontSmall;
+
         public DeadMenu(Game1 game)
             : base(game)
         {

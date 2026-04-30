@@ -659,7 +659,9 @@ namespace MacGame
         {
             MenuManager.ClearMenus();
             ConversationManager.Clear();
-            TransitionToState(GameState.Playing);
+
+            TransitionToStateInstantFromBlack(GameState.Playing, TransitionType.SlowFade);
+
             pauseMenu.SetupTitle("Paused");
             Player.ResetStateForLevelTransition(true);
             LevelState.Reset();
@@ -766,10 +768,11 @@ namespace MacGame
         /// <summary>
         /// Instantly blacks the screen and then fades the scene in.
         /// </summary>
-        public void TransitionToStateInstantFromBlack(GameState transitionToState)
+        public void TransitionToStateInstantFromBlack(GameState transitionToState, TransitionType transitionType = TransitionType.FastFade)
         {
             IsFading = true;
             this.transitionToState = transitionToState;
+            this.transitionType = transitionType;
             CurrentGameState = transitionToState;
             transitionTimer = totalTransitionTime;
         }

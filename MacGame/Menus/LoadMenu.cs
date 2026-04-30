@@ -96,8 +96,8 @@ namespace MacGame
 
         public void LoadGame(int slot)
         {
-            StorageManager.TryLoadGame(slot);
             Game.Unpause();
+            StorageManager.TryLoadGame(slot);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

@@ -424,6 +424,46 @@
 /processor:PassThroughProcessor
 /build:Maps/World4.tmx
 
+#begin Maps/World4House1.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House1.tmx
+
+#begin Maps/World4House2.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House2.tmx
+
+#begin Maps/World4House3.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House3.tmx
+
+#begin Maps/World4House4.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House4.tmx
+
+#begin Maps/World4House5.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House5.tmx
+
+#begin Maps/World4House6.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House6.tmx
+
+#begin Maps/World4House7.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House7.tmx
+
+#begin Maps/World4House8.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/World4House8.tmx
+
 #begin Maps/World4SpaceShip1.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor

@@ -177,7 +177,7 @@ namespace MacGame.Enemies
                 var shipLeft = (float)CollisionRectangle.Left;
                 var shipRight = (float)CollisionRectangle.Right;
                 var shipCenterX = (shipLeft + shipRight) / 2f;
-                const float maxOffset = 80;
+                const float maxOffset = 100;
 
                 float t;
                 if (camCenterX <= shipLeft || camCenterX >= shipRight)
@@ -208,6 +208,7 @@ namespace MacGame.Enemies
                     var shotLocation = CollisionCenter + new Vector2(0, 12 * Game1.TileScale);
                     _shotLeft.Launch(shotLocation + new Vector2(-260, 0), goLeft: true);
                     _shotRight.Launch(shotLocation, goLeft: false);
+                    SoundManager.PlaySound("BigShipShot");
                 }
             }
             else

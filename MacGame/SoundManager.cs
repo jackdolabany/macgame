@@ -266,6 +266,8 @@ namespace MacGame
             LoadSound("WinRace");
             LoadSound("LoseRace");
             LoadSound("AppleBreak");
+            LoadSound("BigShipShot");
+            LoadSound("ShipTurn");
 
             // Charging the ship's mega laser.
             LoadSound("Charging");

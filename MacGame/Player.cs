@@ -100,6 +100,7 @@ namespace MacGame
         {
             _shipFlipped = !_shipFlipped;
             Game1.CurrentLevel.AutoScrollSpeed = new Vector2(-Game1.CurrentLevel.AutoScrollSpeed.X, Game1.CurrentLevel.AutoScrollSpeed.Y);
+            SoundManager.PlaySound("ShipTurn");
         }
 
         /// <summary>

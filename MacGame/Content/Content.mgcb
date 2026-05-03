@@ -511,6 +511,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/BatChirp.wav
 
+#begin SoundEffects/BigShipShot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/BigShipShot.wav
+
 #begin SoundEffects/BlockAppear.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -828,6 +834,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/Reveal.wav
+
+#begin SoundEffects/ShipTurn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ShipTurn.wav
 
 #begin SoundEffects/Shoot.wav
 /importer:WavImporter

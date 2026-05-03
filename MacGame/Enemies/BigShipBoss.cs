@@ -31,11 +31,25 @@ namespace MacGame.Enemies
         private float _shotTimer = 0f;
         private const float ShotInterval = 4f;
 
+        private ShootEverywhereCannon _cannonFrontTop;
+        private ShootEverywhereCannon _cannonFrontBottom;
+
+        private MiniSpaceCannon _miniCannonFrontTop;
+        private MiniSpaceCannon _miniCannonFrontBottom;
+
         // Offsets from WorldLocation — tune these to match the ship art.
-        private  Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
+        private Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
         private Vector2 WeakSpotBackOffset = new Vector2(22, -136);
         private Vector2 WeakSpotTopOffset = new Vector2(-22, -276);
         private Vector2 WeakSpotBottomOffset = new Vector2(-22, 4);
+
+        // Cannons sit directly above/below the front weak spot (weak spot is 64px tall, cannons 32px).
+        private Vector2 CannonFrontTopOffset    = new Vector2(-330, -200);
+        private Vector2 CannonFrontBottomOffset = new Vector2(-330, -104);
+
+        // MiniSpaceCannons sit just behind the ShootEverywhereCannnons.
+        private Vector2 MiniCannonFrontTopOffset    = new Vector2(-298, -200);
+        private Vector2 MiniCannonFrontBottomOffset = new Vector2(-298, -104);
 
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -101,6 +115,18 @@ namespace MacGame.Enemies
             _shotRight = new BigShipShot(content, cellX, cellY, player, camera);
             ExtraEnemiesToAddAfterConstructor.Add(_shotLeft);
             ExtraEnemiesToAddAfterConstructor.Add(_shotRight);
+
+            _cannonFrontTop    = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
+            _cannonFrontBottom = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
+            _cannonFrontBottom.UpsideDown = true;
+            ExtraEnemiesToAddAfterConstructor.Add(_cannonFrontTop);
+            ExtraEnemiesToAddAfterConstructor.Add(_cannonFrontBottom);
+
+            _miniCannonFrontTop    = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniCannonFrontBottom = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniCannonFrontBottom.UpsideDown = true;
+            ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontTop);
+            ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontBottom);
         }
 
         /// <summary>
@@ -132,6 +158,12 @@ namespace MacGame.Enemies
             float shotDepth = DrawDepth + Game1.MIN_DRAW_INCREMENT;
             _shotLeft.SetDrawDepth(shotDepth);
             _shotRight.SetDrawDepth(shotDepth);
+
+            float cannonDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
+            _cannonFrontTop.SetDrawDepth(cannonDepth);
+            _cannonFrontBottom.SetDrawDepth(cannonDepth);
+            _miniCannonFrontTop.SetDrawDepth(cannonDepth);
+            _miniCannonFrontBottom.SetDrawDepth(cannonDepth);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -200,6 +232,12 @@ namespace MacGame.Enemies
                 _weakSpotBack.WorldLocation   = worldLocation + WeakSpotBackOffset;
                 _weakSpotTop.WorldLocation    = worldLocation + WeakSpotTopOffset;
                 _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
+
+                _cannonFrontTop.WorldLocation    = worldLocation + CannonFrontTopOffset;
+                _cannonFrontBottom.WorldLocation = worldLocation + CannonFrontBottomOffset;
+
+                _miniCannonFrontTop.WorldLocation    = worldLocation + MiniCannonFrontTopOffset;
+                _miniCannonFrontBottom.WorldLocation = worldLocation + MiniCannonFrontBottomOffset;
 
                 _shotTimer += elapsed;
                 if (_shotTimer >= ShotInterval)

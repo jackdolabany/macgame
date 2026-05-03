@@ -310,7 +310,7 @@ namespace MacGame.Enemies
                     _tailPieces[i].WorldLocation = new Vector2(_tailPieces[i].WorldLocation.X, _tailPieces[i].WorldLocation.Y + percentage * middleOffset);
                 }
 
-                // Check custom rectangle collisions
+                // The extra collision rectangles will break shots and bombs, but the enemy won't take damange.
                 foreach (var rect in collisionRectangles)
                 {
                     if (rect.Intersects(_player.CollisionRectangle))
@@ -323,6 +323,14 @@ namespace MacGame.Enemies
                         if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
                         {
                             shot.Break();
+                        }
+                    }
+
+                    foreach (var bomb in _player.Bombs.RawList)
+                    {
+                        if (bomb.Enabled && bomb.CollisionRectangle.Intersects(rect))
+                        {
+                            bomb.Break();
                         }
                     }
                 }
@@ -437,13 +445,6 @@ namespace MacGame.Enemies
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            // draw head and tail
-            //_head.Draw(spriteBatch);
-            //foreach (var tailPiece in _tailPieces)
-            //{
-            //    tailPiece.Draw(spriteBatch);
-            //}
-
             // Draw Collision Rectangle in reddish
             if (DrawCollisionRect || Game1.DrawAllCollisionRects)
             {

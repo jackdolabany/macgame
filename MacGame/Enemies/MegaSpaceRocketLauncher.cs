@@ -111,7 +111,7 @@ namespace MacGame.Enemies
             _head.Velocity = new Vector2(0, HeadVelocity);
 
             this.IsPlayerColliding = false;
-            _head.IsPlayerColliding = false;
+            this.CanBeHitWithWeapons = false;
             _head.Kill();
 
             Game1.Camera.MaxX = null;

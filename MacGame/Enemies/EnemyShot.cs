@@ -11,7 +11,7 @@ namespace MacGame.Enemies
             : base(content, 0, 0, null, null)
         {
             isEnemyTileColliding = false;
-            IsAbleToMoveOutsideOfWorld = false;
+            IsAbleToMoveOutsideOfWorld = true;
             isTileColliding = false;
             IsAbleToSurviveOutsideOfWorld = false;
             IsAffectedByForces = false;

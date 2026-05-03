@@ -12,6 +12,9 @@ namespace MacGame.Items
 
         private float AirBrake = 300f;
 
+        /// <summary>
+        /// A little bomb the player drops from his ship in addition to the regular shot.
+        /// </summary>
         public SpaceshipBomb(ContentManager content, int cellX, int cellY, Player player, Camera camera)
         {
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");

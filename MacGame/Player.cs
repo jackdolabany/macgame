@@ -1259,7 +1259,7 @@ namespace MacGame
             if (!enemy.HasCollisionRectangle) return;
 
             // Check body collisions
-            if (CollisionRectangle.Intersects(enemy.CollisionRectangle))
+            if (enemy.IsPlayerColliding && CollisionRectangle.Intersects(enemy.CollisionRectangle))
             {
                 // Make sure you're moving towards the enemy, or they're moving towards you.
                 var isMovingDown = ((this.velocity.Y - enemy.Velocity.Y) > 0);
@@ -1298,7 +1298,9 @@ namespace MacGame
                     enemy.AfterHittingPlayer();
                 }
             }
-            else if (enemy.CanBeHitWithWeapons)
+            
+            // Check shots
+            if (enemy.CanBeHitWithWeapons)
             {
                 foreach (var apple in Apples.RawList)
                 {

@@ -2,6 +2,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Threading;
 
 namespace MacGame.Enemies
 {
@@ -40,6 +41,7 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
+            IsPlayerColliding = false;
             CanBeHitWithWeapons = false;
         }
 

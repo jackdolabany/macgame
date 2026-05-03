@@ -29,7 +29,7 @@
  <objectgroup id="4" name="Object Layer 1">
   <object id="1" name="Door" x="46.25" y="46.75" width="12.5" height="17.875">
    <properties>
-    <property name="GoToDoor" value="World4House1"/>
+    <property name="GoToDoor" value="World4House3"/>
     <property name="GoToMap" value="World4"/>
    </properties>
   </object>

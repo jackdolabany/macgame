@@ -26,6 +26,11 @@ namespace MacGame.Enemies
         private BigShipWeakSpotTop _weakSpotTop;
         private BigShipWeakSpotBottom _weakSpotBottom;
 
+        private BigShipShot _shotLeft;
+        private BigShipShot _shotRight;
+        private float _shotTimer = 0f;
+        private const float ShotInterval = 4f;
+
         // Offsets from WorldLocation — tune these to match the ship art.
         private  Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
         private Vector2 WeakSpotBackOffset = new Vector2(22, -136);
@@ -91,6 +96,11 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.Add(_weakSpotBack);
             ExtraEnemiesToAddAfterConstructor.Add(_weakSpotTop);
             ExtraEnemiesToAddAfterConstructor.Add(_weakSpotBottom);
+
+            _shotLeft  = new BigShipShot(content, cellX, cellY, player, camera);
+            _shotRight = new BigShipShot(content, cellX, cellY, player, camera);
+            ExtraEnemiesToAddAfterConstructor.Add(_shotLeft);
+            ExtraEnemiesToAddAfterConstructor.Add(_shotRight);
         }
 
         /// <summary>
@@ -118,6 +128,10 @@ namespace MacGame.Enemies
             _weakSpotBack.SetDrawDepth(weakSpotDepth);
             _weakSpotTop.SetDrawDepth(weakSpotDepth);
             _weakSpotBottom.SetDrawDepth(weakSpotDepth);
+
+            float shotDepth = DrawDepth + Game1.MIN_DRAW_INCREMENT;
+            _shotLeft.SetDrawDepth(shotDepth);
+            _shotRight.SetDrawDepth(shotDepth);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -186,6 +200,15 @@ namespace MacGame.Enemies
                 _weakSpotBack.WorldLocation   = worldLocation + WeakSpotBackOffset;
                 _weakSpotTop.WorldLocation    = worldLocation + WeakSpotTopOffset;
                 _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
+
+                _shotTimer += elapsed;
+                if (_shotTimer >= ShotInterval)
+                {
+                    _shotTimer = 0f;
+                    var shotLocation = CollisionCenter + new Vector2(0, 12 * Game1.TileScale);
+                    _shotLeft.Launch(shotLocation + new Vector2(-260, 0), goLeft: true);
+                    _shotRight.Launch(shotLocation, goLeft: false);
+                }
             }
             else
             {

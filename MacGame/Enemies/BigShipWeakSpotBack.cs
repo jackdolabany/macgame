@@ -1,6 +1,5 @@
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework.Content;
-using TileEngine;
 
 namespace MacGame.Enemies
 {

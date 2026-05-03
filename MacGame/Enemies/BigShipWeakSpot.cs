@@ -31,7 +31,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
-            IsPlayerColliding = false;
+            IsPlayerColliding = true;
             Attack = 0;
             Health = int.MaxValue;
             InvincibleTimeAfterBeingHit = 0.1f;
@@ -64,26 +64,25 @@ namespace MacGame.Enemies
 
             Enabled = true;
 
-            if (IsTempInvincibleFromBeingHit)
+
+            _flashTimer += elapsed;
+            if (_flashTimer >= FlashInterval)
             {
-                animations.PlayIfNotAlreadyPlaying("white");
+                _flashTimer -= FlashInterval;
+            }
+
+            if (_flashTimer >= FlashInterval - FlashDuration)
+            {
+                animations.PlayIfNotAlreadyPlaying("orange");
             }
             else
             {
-                _flashTimer += elapsed;
-                if (_flashTimer >= FlashInterval)
-                {
-                    _flashTimer -= FlashInterval;
-                }
+                animations.PlayIfNotAlreadyPlaying("normal");
+            }
 
-                if (_flashTimer >= FlashInterval - FlashDuration)
-                {
-                    animations.PlayIfNotAlreadyPlaying("orange");
-                }
-                else
-                {
-                    animations.PlayIfNotAlreadyPlaying("normal");
-                }
+            if (IsTempInvincibleFromBeingHit)
+            {
+                animations.PlayIfNotAlreadyPlaying("white");
             }
 
             base.Update(gameTime, elapsed);

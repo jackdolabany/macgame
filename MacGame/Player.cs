@@ -93,6 +93,15 @@ namespace MacGame
         private bool IsDisablingWaterBomb => _state == MacState.DisablingWaterBomb;
         private bool IsInSpaceShip => _state == MacState.SpaceShip;
 
+        private bool _shipFlipped = false;
+        public bool IsShipFlipped => _shipFlipped;
+
+        public void FlipShip()
+        {
+            _shipFlipped = !_shipFlipped;
+            Game1.CurrentLevel.AutoScrollSpeed = new Vector2(-Game1.CurrentLevel.AutoScrollSpeed.X, Game1.CurrentLevel.AutoScrollSpeed.Y);
+        }
+
         /// <summary>
         /// The PickUpObject you are currently holding.
         /// </summary>
@@ -940,7 +949,7 @@ namespace MacGame
 
             IsAffectedByGravity = false;
 
-            Flipped = false;
+            Flipped = _shipFlipped;
 
             float moveSpeed = 200f;
 
@@ -1025,8 +1034,8 @@ namespace MacGame
                 {
                     // Handle charge shot
                     chargedShot.Reset();
-                    chargedShot.WorldLocation = this.WorldLocation + new Vector2(-20, 16);
-                    chargedShot.Velocity = new Vector2(500, 0);
+                    chargedShot.WorldLocation = this.WorldLocation + new Vector2(_shipFlipped ? 20 : -20, 16);
+                    chargedShot.Velocity = new Vector2(_shipFlipped ? -500 : 500, 0);
                     spaceshipShotCooldownTimer = 0;
                     chargeShotTimer = 0;
                     SoundManager.PlaySound("ChargedShot", 1f, -0.2f);
@@ -1077,7 +1086,7 @@ namespace MacGame
                 {
                     bomb.Enabled = true;
                     bomb.WorldLocation = this.WorldLocation;
-                    bomb.Velocity = new Vector2(400, 0);
+                    bomb.Velocity = new Vector2(_shipFlipped ? -400 : 400, 0);
                     bombCooldownTimer = 0;
                     SoundManager.PlaySound("Shoot", 0.5f, -0.5f);
                 }
@@ -1125,8 +1134,8 @@ namespace MacGame
                 var fire = ShipFires.GetNextObject();
                 fire.Reset();
                 fire.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
-                fire.WorldLocation = this.WorldLocation + new Vector2(-12, 0);
-                fire.Velocity = initialSpeed + new Vector2(-120, 0);
+                fire.WorldLocation = this.WorldLocation + new Vector2(_shipFlipped ? 12 : -12, 0);
+                fire.Velocity = initialSpeed + new Vector2(_shipFlipped ? 120 : -120, 0);
             }
 
             // When you're the ship you can fly through solid objects but
@@ -1214,9 +1223,11 @@ namespace MacGame
             Bombs.Reset();
             chargedShot.Enabled = false;
 
-            SoundManager.StopMinecart(); 
+            SoundManager.StopMinecart();
             SoundManager.StopCharging();
             SoundManager.StopFullyCharged();
+
+            _shipFlipped = false;
         }
 
         /// <summary>

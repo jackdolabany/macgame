@@ -2,6 +2,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using TileEngine;
 
@@ -13,6 +14,7 @@ namespace MacGame.Enemies
 
         private int _maxHealth;
         private bool _hasBeenSeen = false;
+        private float _normalY;
 
         private List<Rectangle> collisionRectangles = new List<Rectangle>();
         private Player _player;
@@ -98,12 +100,49 @@ namespace MacGame.Enemies
                         return;
                     }
                     _hasBeenSeen = true;
+                    _normalY = worldLocation.Y;
                 }
 
                 Game1.DrawBossHealth = true;
                 Game1.MaxBossHealth = _maxHealth;
                 Game1.BossHealth = Health;
                 Game1.BossName = "Big Ship";
+
+                const int flipShipDistance = 264;
+                if (!_player.IsShipFlipped && _player.WorldLocation.X > CollisionRectangle.Right + flipShipDistance)
+                {
+                    _player.FlipShip();
+                }
+
+                else if (_player.IsShipFlipped && _player.WorldLocation.X < CollisionRectangle.Left - flipShipDistance)
+                {
+                    _player.FlipShip();
+                }
+
+                // Slide the ship above/below based on camera center X relative to the ship.
+                // Triangle: 0 at shipLeft, peak at shipCenterX, back to 0 at shipRight.
+                var camCenterX = (Game1.Camera.ViewPort.Left + Game1.Camera.ViewPort.Right) / 2f;
+                var shipLeft = (float)CollisionRectangle.Left;
+                var shipRight = (float)CollisionRectangle.Right;
+                var shipCenterX = (shipLeft + shipRight) / 2f;
+                const float maxOffset = 80;
+
+                float t;
+                if (camCenterX <= shipLeft || camCenterX >= shipRight)
+                {
+                    t = 0f;
+                }
+                else if (camCenterX <= shipCenterX)
+                {
+                    t = (camCenterX - shipLeft) / (shipCenterX - shipLeft);
+                }
+                else
+                {
+                    t = 1f - (camCenterX - shipCenterX) / (shipRight - shipCenterX);
+                }
+
+                float bob = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 1.2f) * 16f;
+                worldLocation.Y = _normalY + (_player.IsShipFlipped ? maxOffset : -maxOffset) * t + bob;
             }
             else
             {

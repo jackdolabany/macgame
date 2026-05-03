@@ -82,6 +82,13 @@ namespace MacGame.Enemies
         private float _invincibleFlashTimer = 0;
         protected float InvincibleTimeAfterBeingHit { get; set; } = 0.75f;
 
+        /// <summary>
+        /// The default is to flash invisible for a moment when hit. Some enemies might want to
+        /// override this. If enemies don't have a period of invincibility after being hit they
+        /// won't flash.
+        /// </summary>
+        protected bool FlashesInvisibleWhenHit { get; set; } = true;
+
         public Vector2 GetPlayerDirection(Player player)
         {
             return GetDirectionTo(player);
@@ -184,10 +191,7 @@ namespace MacGame.Enemies
             else
             {
                 PlayTakeHitSound();
-                if (!IsTempInvincibleFromBeingHit)
-                {
-                    InvincibleTimer += InvincibleTimeAfterBeingHit;
-                }
+                InvincibleTimer += InvincibleTimeAfterBeingHit;
             }
         }
 
@@ -221,20 +225,22 @@ namespace MacGame.Enemies
 
             if (InvincibleTimer > 0)
             {
+                if (FlashesInvisibleWhenHit)
+                {
+                    _invincibleFlashTimer -= elapsed;
 
-                _invincibleFlashTimer -= elapsed;
-
-                if (_invincibleFlashTimer < 0)
-                {
-                    DisplayComponent.TintColor = Color.White * 0.4f;
-                }
-                else
-                {
-                    DisplayComponent.TintColor = Color.White;
-                }
-                if (_invincibleFlashTimer <= -0.1f)
-                {
-                    _invincibleFlashTimer = 0.1f;
+                    if (_invincibleFlashTimer < 0)
+                    {
+                        DisplayComponent.TintColor = Color.White * 0.4f;
+                    }
+                    else
+                    {
+                        DisplayComponent.TintColor = Color.White;
+                    }
+                    if (_invincibleFlashTimer <= -0.1f)
+                    {
+                        _invincibleFlashTimer = 0.1f;
+                    }
                 }
 
                 InvincibleTimer -= elapsed;

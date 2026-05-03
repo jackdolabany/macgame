@@ -9,7 +9,8 @@
       "Bash(gunzip:*)",
       "Bash(echo:*)",
       "Bash(grep:*)",
-      "Bash(csc:*)"
+      "Bash(csc:*)",
+      "Skill(update-config)"
     ]
   }
 }

@@ -14,10 +14,23 @@ namespace MacGame.Enemies
 
         private int _maxHealth;
         private bool _hasBeenSeen = false;
+        public bool HasBeenSeen => _hasBeenSeen;
         private float _normalY;
+        private bool _isInitialized = false;
 
         private List<Rectangle> collisionRectangles = new List<Rectangle>();
         private Player _player;
+
+        private BigShipWeakSpotFront _weakSpotFront;
+        private BigShipWeakSpotBack _weakSpotBack;
+        private BigShipWeakSpotTop _weakSpotTop;
+        private BigShipWeakSpotBottom _weakSpotBottom;
+
+        // Offsets from WorldLocation — tune these to match the ship art.
+        private  Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
+        private Vector2 WeakSpotBackOffset = new Vector2(22, -136);
+        private Vector2 WeakSpotTopOffset = new Vector2(-22, -276);
+        private Vector2 WeakSpotBottomOffset = new Vector2(-22, 4);
 
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -30,7 +43,7 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
-            InvincibleTimeAfterBeingHit = 0.1f;
+            InvincibleTimeAfterBeingHit = 0f;
             Attack = 1;
             Health = 200;
             _maxHealth = Health;
@@ -68,6 +81,16 @@ namespace MacGame.Enemies
             collisionRectangles.Add(new Rectangle(87, 82, 12, 5));
             collisionRectangles.Add(new Rectangle(105, 82, 15, 4));
             collisionRectangles.Add(new Rectangle(107, 86, 5, 7));
+
+            _weakSpotFront  = new BigShipWeakSpotFront (content, cellX, cellY, player, camera, this);
+            _weakSpotBack   = new BigShipWeakSpotBack  (content, cellX, cellY, player, camera, this);
+            _weakSpotTop    = new BigShipWeakSpotTop   (content, cellX, cellY, player, camera, this);
+            _weakSpotBottom = new BigShipWeakSpotBottom(content, cellX, cellY, player, camera, this);
+
+            ExtraEnemiesToAddAfterConstructor.Add(_weakSpotFront);
+            ExtraEnemiesToAddAfterConstructor.Add(_weakSpotBack);
+            ExtraEnemiesToAddAfterConstructor.Add(_weakSpotTop);
+            ExtraEnemiesToAddAfterConstructor.Add(_weakSpotBottom);
         }
 
         /// <summary>
@@ -88,8 +111,23 @@ namespace MacGame.Enemies
                 rect.Height * Game1.TileScale);
         }
 
+        private void Initialize()
+        {
+            float weakSpotDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
+            _weakSpotFront.SetDrawDepth(weakSpotDepth);
+            _weakSpotBack.SetDrawDepth(weakSpotDepth);
+            _weakSpotTop.SetDrawDepth(weakSpotDepth);
+            _weakSpotBottom.SetDrawDepth(weakSpotDepth);
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
+            if (!_isInitialized)
+            {
+                _isInitialized = true;
+                Initialize();
+            }
+
             if (Alive)
             {
                 if (!_hasBeenSeen)
@@ -143,6 +181,11 @@ namespace MacGame.Enemies
 
                 float bob = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 1.2f) * 16f;
                 worldLocation.Y = _normalY + (_player.IsShipFlipped ? maxOffset : -maxOffset) * t + bob;
+
+                _weakSpotFront.WorldLocation  = worldLocation + WeakSpotFrontOffset;
+                _weakSpotBack.WorldLocation   = worldLocation + WeakSpotBackOffset;
+                _weakSpotTop.WorldLocation    = worldLocation + WeakSpotTopOffset;
+                _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
             }
             else
             {
@@ -174,6 +217,8 @@ namespace MacGame.Enemies
                     }
                 }
             }
+
+            
 
             base.Update(gameTime, elapsed);
         }

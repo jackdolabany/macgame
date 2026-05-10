@@ -10,7 +10,10 @@
       "Bash(echo:*)",
       "Bash(grep:*)",
       "Bash(csc:*)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(powershell -Command ' *)"
     ]
   }
 }

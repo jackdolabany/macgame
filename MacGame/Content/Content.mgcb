@@ -955,6 +955,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/BigTextures.png
 
+#begin Textures/Bomber.png
+/importer:TextureImporter
+/processor:ScaleImageProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Bomber.png
+
 #begin Textures/Controller.png
 /importer:TextureImporter
 /processor:TextureProcessor

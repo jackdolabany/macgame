@@ -37,6 +37,8 @@ namespace MacGame.Enemies
         private MiniSpaceCannon _miniCannonFrontTop;
         private MiniSpaceCannon _miniCannonFrontBottom;
 
+        private BomberCarriage _bomberCarriage;
+
         // Offsets from WorldLocation — tune these to match the ship art.
         private Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
         private Vector2 WeakSpotBackOffset = new Vector2(22, -136);
@@ -50,6 +52,8 @@ namespace MacGame.Enemies
         // MiniSpaceCannons sit just behind the ShootEverywhereCannnons.
         private Vector2 MiniCannonFrontTopOffset    = new Vector2(-298, -200);
         private Vector2 MiniCannonFrontBottomOffset = new Vector2(-298, -104);
+
+        private Vector2 BomberCarriageOffset = new Vector2(-40, 20);
 
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -127,6 +131,13 @@ namespace MacGame.Enemies
             _miniCannonFrontBottom.UpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontTop);
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontBottom);
+
+            _bomberCarriage = new BomberCarriage(content, cellX, cellY, player, camera);
+
+            // To be enabled when seen.
+            _bomberCarriage.Enabled = false;
+
+            ExtraEnemiesToAddAfterConstructor.Add(_bomberCarriage);
         }
 
         /// <summary>
@@ -149,21 +160,27 @@ namespace MacGame.Enemies
 
         private void Initialize()
         {
+            // weak spots in front of the main ship
             float weakSpotDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
             _weakSpotFront.SetDrawDepth(weakSpotDepth);
             _weakSpotBack.SetDrawDepth(weakSpotDepth);
             _weakSpotTop.SetDrawDepth(weakSpotDepth);
             _weakSpotBottom.SetDrawDepth(weakSpotDepth);
 
+            // Shots are behind so it seems like they are coming out of the weak spots.
             float shotDepth = DrawDepth + Game1.MIN_DRAW_INCREMENT;
             _shotLeft.SetDrawDepth(shotDepth);
             _shotRight.SetDrawDepth(shotDepth);
 
+            // Cannons are in front for now.
             float cannonDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
             _cannonFrontTop.SetDrawDepth(cannonDepth);
             _cannonFrontBottom.SetDrawDepth(cannonDepth);
             _miniCannonFrontTop.SetDrawDepth(cannonDepth);
             _miniCannonFrontBottom.SetDrawDepth(cannonDepth);
+
+            // carriage should be behind the main ship
+            _bomberCarriage.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -185,6 +202,9 @@ namespace MacGame.Enemies
                     }
                     _hasBeenSeen = true;
                     _normalY = worldLocation.Y;
+
+                    _bomberCarriage.Enabled = true;
+
                 }
 
                 Game1.DrawBossHealth = true;
@@ -280,9 +300,13 @@ namespace MacGame.Enemies
                 }
             }
 
-            
-
             base.Update(gameTime, elapsed);
+
+            if (_bomberCarriage.Alive)
+            {
+                _bomberCarriage.WorldLocation = worldLocation + BomberCarriageOffset;
+            }
+
         }
 
         public override void Kill()

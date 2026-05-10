@@ -24,14 +24,14 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             Attack = 1;
-            Health = 40;
+            Health = 30;
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
             InvincibleTimeAfterBeingHit = 0.1f;
 
             // Bomber sprite is 71x51 px (~18x13 art units at TileScale=4)
-            SetCenteredCollisionRectangle(71, 51, 70, 50);
+            SetCenteredCollisionRectangle(71, 51, 68, 48);
         }
 
         public override void Kill()

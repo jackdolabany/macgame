@@ -38,6 +38,7 @@ namespace MacGame.Enemies
         private MiniSpaceCannon _miniCannonFrontBottom;
 
         private BomberCarriage _bomberCarriage;
+        private BigShipSatellite _satellite;
 
         // Offsets from WorldLocation — tune these to match the ship art.
         private Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
@@ -54,6 +55,7 @@ namespace MacGame.Enemies
         private Vector2 MiniCannonFrontBottomOffset = new Vector2(-298, -104);
 
         private Vector2 BomberCarriageOffset = new Vector2(-40, 20);
+        private Vector2 SatelliteOffset = new Vector2(154, -229);
 
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -133,11 +135,14 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontBottom);
 
             _bomberCarriage = new BomberCarriage(content, cellX, cellY, player, camera);
+            _satellite = new BigShipSatellite(content, cellX, cellY, player, camera);
 
             // To be enabled when seen.
             _bomberCarriage.Enabled = false;
+            _satellite.Enabled = false;
 
             ExtraEnemiesToAddAfterConstructor.Add(_bomberCarriage);
+            ExtraEnemiesToAddAfterConstructor.Add(_satellite);
         }
 
         /// <summary>
@@ -179,8 +184,9 @@ namespace MacGame.Enemies
             _miniCannonFrontTop.SetDrawDepth(cannonDepth);
             _miniCannonFrontBottom.SetDrawDepth(cannonDepth);
 
-            // carriage should be behind the main ship
+            // carriage and satellite should be behind the main ship
             _bomberCarriage.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            _satellite.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -204,6 +210,7 @@ namespace MacGame.Enemies
                     _normalY = worldLocation.Y;
 
                     _bomberCarriage.Enabled = true;
+                    _satellite.Enabled = true;
 
                 }
 
@@ -305,6 +312,11 @@ namespace MacGame.Enemies
             if (_bomberCarriage.Alive)
             {
                 _bomberCarriage.WorldLocation = worldLocation + BomberCarriageOffset;
+            }
+
+            if (_satellite.Enabled)
+            {
+                _satellite.WorldLocation = worldLocation + SatelliteOffset;
             }
 
         }

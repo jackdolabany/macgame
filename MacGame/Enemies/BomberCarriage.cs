@@ -39,8 +39,10 @@ namespace MacGame.Enemies
             _isFalling = true;
             _fallVelocity = new Vector2(RightDriftSpeed, 0f);
             Dead = true;
-            DisplayComponent.TintColor = Color.White;
             PlayDeathSound();
+
+            // Make sure it's behind the player
+            SetDrawDepth(MathHelper.Max(this.DrawDepth, Game1.Player.DrawDepth + Game1.MIN_DRAW_INCREMENT));
         }
 
         public override void Update(GameTime gameTime, float elapsed)

@@ -49,9 +49,7 @@ namespace MacGame
 
         public bool IsNerdHitByMac { get; set; } = false;
 
-        public bool HasPilgrimHat { get; set; } = false;
-
-        public bool HasNinjaHat { get; set; } = false;
+        public HashSet<string> CollectedHats { get; set; } = new HashSet<string>();
 
         public string SelectedHat { get; set; } = "None";
 
@@ -100,8 +98,7 @@ namespace MacGame
             clone.IsNerdHitByMac = this.IsNerdHitByMac;
             clone.HasBeatenDracula = this.HasBeatenDracula;
             clone.HasKilledMurderer = this.HasKilledMurderer;
-            clone.HasPilgrimHat = this.HasPilgrimHat;
-            clone.HasNinjaHat = this.HasNinjaHat;
+            clone.CollectedHats = this.CollectedHats.ToHashSet();
             clone.SelectedHat = this.SelectedHat;
             return clone;
         }

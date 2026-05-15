@@ -81,7 +81,7 @@ namespace MacGame
         public override void AddedToMenuManager()
         {
             backToHub.Hidden = Game1.CurrentLevel.LevelNumber <= 0;
-            changeHat.Hidden = !Game1.StorageState.HasPilgrimHat && !Game1.StorageState.HasNinjaHat;
+            changeHat.Hidden = !Game1.Player.HasAnyHat;
             CenterMenuAndChoices();
             base.AddedToMenuManager();
         }

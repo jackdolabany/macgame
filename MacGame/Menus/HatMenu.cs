@@ -4,9 +4,6 @@ namespace MacGame
 {
     public class HatMenu : Menu
     {
-        private MenuOption _pilgrimOption;
-        private MenuOption _ninjaOption;
-
         public override SpriteFont MenuItemFont => Game1.FontSmall;
 
         public HatMenu(Game1 game) : base(game)
@@ -21,23 +18,25 @@ namespace MacGame
                 Game1.Player.CurrentHat = null;
             });
 
-            _pilgrimOption = AddOption("Pilgrim Hat", (a, b) =>
+            foreach (var hat in Game1.Player.Hats)
             {
-                PlayOptionSelectedSound();
-                Game1.Player.CurrentHat = Game1.Player.PilgrimHat;
-            });
-
-            _ninjaOption = AddOption("Ninja Hat", (a, b) =>
-            {
-                PlayOptionSelectedSound();
-                Game1.Player.CurrentHat = Game1.Player.NinjaHat;
-            });
+                var h = hat;
+                AddOption(h.HatName, (a, b) =>
+                {
+                    PlayOptionSelectedSound();
+                    Game1.Player.CurrentHat = h;
+                });
+            }
         }
 
         public override void AddedToMenuManager()
         {
-            _pilgrimOption.Hidden = !Game1.StorageState.HasPilgrimHat;
-            _ninjaOption.Hidden = !Game1.StorageState.HasNinjaHat;
+            // menuOptions[0] is "None" — always visible
+            // menuOptions[i+1] corresponds to Hats[i]
+            for (int i = 0; i < Game1.Player.Hats.Count; i++)
+            {
+                menuOptions[i + 1].Hidden = !Game1.StorageState.CollectedHats.Contains(Game1.Player.Hats[i].HatName);
+            }
             CenterMenuAndChoices();
             base.AddedToMenuManager();
         }

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using TileEngine;
 
@@ -285,11 +286,11 @@ namespace MacGame
         float shipFireTimer = 0f;
 
         // Hats!
-        private PilgrimHat _pilgrimHat;
-        private NinjaHat _ninjaHat;
+        private List<PlayerHat> _hats = new List<PlayerHat>();
+        public IReadOnlyList<PlayerHat> Hats => _hats;
         public PlayerHat? CurrentHat { get; set; }
-        public PilgrimHat PilgrimHat => _pilgrimHat;
-        public NinjaHat NinjaHat => _ninjaHat;
+        public bool HasAnyHat => _hats.Any(h => Game1.StorageState.CollectedHats.Contains(h.HatName));
+        public PlayerHat? GetHat(string name) => _hats.FirstOrDefault(h => h.HatName == name);
 
         public Item? CurrentItem = null;
 
@@ -559,8 +560,8 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
 
-            _pilgrimHat = new PilgrimHat(this, content);
-            _ninjaHat = new NinjaHat(this, content);
+            _hats.Add(new PilgrimHat(this, content));
+            _hats.Add(new NinjaHat(this, content));
 
             _moveToLocation = new MoveToLocation(this, 250, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");
@@ -577,8 +578,10 @@ namespace MacGame
             this.DisplayComponent.DrawDepth = depth;
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-            this._pilgrimHat.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
-            this._ninjaHat.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
+            foreach (var hat in _hats)
+            {
+                hat.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
+            }
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
@@ -2878,12 +2881,7 @@ namespace MacGame
 
         public void SyncHatWithSaveState()
         {
-            CurrentHat = Game1.StorageState.SelectedHat switch
-            {
-                "Pilgrim" => _pilgrimHat,
-                "Ninja" => _ninjaHat,
-                _ => null
-            };
+            CurrentHat = GetHat(Game1.StorageState.SelectedHat);
         }
 
         public bool IsFacingRight()

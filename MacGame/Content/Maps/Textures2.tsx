@@ -320,6 +320,41 @@
    <property name="LoadClass" value="Item.NinjaHatItem"/>
   </properties>
  </tile>
+ <tile id="466">
+  <properties>
+   <property name="LoadClass" value="Item.WinterHatItem"/>
+  </properties>
+ </tile>
+ <tile id="467">
+  <properties>
+   <property name="LoadClass" value="Item.CowboyHatItem"/>
+  </properties>
+ </tile>
+ <tile id="468">
+  <properties>
+   <property name="LoadClass" value="Item.HairHatItem"/>
+  </properties>
+ </tile>
+ <tile id="469">
+  <properties>
+   <property name="LoadClass" value="Item.TophatHatItem"/>
+  </properties>
+ </tile>
+ <tile id="470">
+  <properties>
+   <property name="LoadClass" value="Item.BaseballHatItem"/>
+  </properties>
+ </tile>
+ <tile id="471">
+  <properties>
+   <property name="LoadClass" value="Item.YellowHatItem"/>
+  </properties>
+ </tile>
+ <tile id="472">
+  <properties>
+   <property name="LoadClass" value="Item.RussianHatItem"/>
+  </properties>
+ </tile>
  <tile id="500">
   <properties>
    <property name="LoadClass" value="Npc.Bully1"/>

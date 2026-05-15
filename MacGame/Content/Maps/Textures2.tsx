@@ -337,7 +337,7 @@
  </tile>
  <tile id="469">
   <properties>
-   <property name="LoadClass" value="Item.TophatHatItem"/>
+   <property name="LoadClass" value="Item.TopHatItem"/>
   </properties>
  </tile>
  <tile id="470">

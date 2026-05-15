@@ -1,4 +1,5 @@
 using MacGame.DisplayComponents;
+using MacGame.Enemies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,6 +24,16 @@ namespace MacGame
             BackDisplay = new StaticImageDisplay(hatTexture, backSource);
             DisplayComponent = FrontDisplay;
             Enabled = true;
+        }
+
+        public void Front()
+        {
+            DisplayComponent = FrontDisplay;
+        }
+
+        public void Back()
+        {
+            DisplayComponent = BackDisplay;
         }
 
         public override void SetDrawDepth(float depth)

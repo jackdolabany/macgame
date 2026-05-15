@@ -562,6 +562,13 @@ namespace MacGame
 
             _hats.Add(new PilgrimHat(this, content));
             _hats.Add(new NinjaHat(this, content));
+            _hats.Add(new WinterHat(this, content));
+            _hats.Add(new CowboyHat(this, content));
+            _hats.Add(new HairHat(this, content));
+            _hats.Add(new TopHat(this, content));
+            _hats.Add(new BaseballHat(this, content));
+            _hats.Add(new YellowHat(this, content));
+            _hats.Add(new RussianHat(this, content));
 
             _moveToLocation = new MoveToLocation(this, 250, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");
@@ -2860,16 +2867,49 @@ namespace MacGame
 
             if (CurrentHat != null)
             {
-                CurrentHat.WorldLocation = this.WorldLocation + new Vector2(0, -12);
+                CurrentHat.WorldLocation = this.WorldLocation + new Vector2(4, -12);
+                CurrentHat.Flipped = this.Flipped;
 
-                if (!Flipped)
+                if (Flipped)
                 {
-                    CurrentHat.WorldLocation += new Vector2(4, 0);
+                    CurrentHat.WorldLocation += new Vector2(-8, 0);
                 }
 
                 if (animations.CurrentAnimationName == "jump" || animations.CurrentAnimationName == "fall")
                 {
                     CurrentHat.WorldLocation += new Vector2(0, -4);
+                }
+                else if (animations.CurrentAnimationName == "climbLadder")
+                {
+                    CurrentHat.Back();
+                    if (Flipped)
+                    {
+                        CurrentHat.WorldLocation += new Vector2(4, 0);
+                    }
+                    else
+                    {
+                        CurrentHat.WorldLocation -= new Vector2(4, 0);
+                    }
+                }
+                else if (animations.CurrentAnimationName == "knockedDown")
+                {
+                    CurrentHat.WorldLocation += new Vector2(0, 4);
+                }
+                else
+                {
+                    CurrentHat.Front();
+                }
+
+                if (IsInWater)
+                {
+                    if (Flipped)
+                    {
+                        CurrentHat.WorldLocation += new Vector2(-4, 0);
+                    }
+                    else
+                    {
+                        CurrentHat.WorldLocation += new Vector2(4, 0);
+                    }
                 }
 
                 CurrentHat.Draw(spriteBatch);

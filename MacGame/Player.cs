@@ -585,10 +585,6 @@ namespace MacGame
             this.DisplayComponent.DrawDepth = depth;
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-            foreach (var hat in _hats)
-            {
-                hat.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
-            }
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
@@ -2764,7 +2760,7 @@ namespace MacGame
                 // Mac's animation is the submarine when he's in it. 
                 // Draw the player sprite just behind it.
                 Vector2 position = this.WorldLocation.ToIntegerVector() + new Vector2(-16, -40);
-                var depth = this.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
+                var depth = this.DisplayComponent.DrawDepth + 2 * Game1.MIN_DRAW_INCREMENT;
                 var effect = this.Flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                 spriteBatch.Draw(textures, position, Helpers.GetTileRect(1, 0), Color.White, 0f, Vector2.Zero, 1f, effect, depth);
             }
@@ -2865,8 +2861,10 @@ namespace MacGame
                 spriteBatch.Draw(textures2, markerPosition, Helpers.GetTileRect(10, 6), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
             }
 
-            if (CurrentHat != null)
+            if (CurrentHat != null && !IsInCannon && !IsInSpaceShip)
             {
+                // Draw in front of the player
+                CurrentHat.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
                 CurrentHat.WorldLocation = this.WorldLocation + new Vector2(4, -12);
                 CurrentHat.Flipped = this.Flipped;
 
@@ -2875,13 +2873,13 @@ namespace MacGame
                     CurrentHat.WorldLocation += new Vector2(-8, 0);
                 }
 
+                // Offset the hat for certain animations
                 if (animations.CurrentAnimationName == "jump" || animations.CurrentAnimationName == "fall")
                 {
                     CurrentHat.WorldLocation += new Vector2(0, -4);
                 }
                 else if (animations.CurrentAnimationName == "climbLadder")
                 {
-                    CurrentHat.Back();
                     if (Flipped)
                     {
                         CurrentHat.WorldLocation += new Vector2(4, 0);
@@ -2895,12 +2893,29 @@ namespace MacGame
                 {
                     CurrentHat.WorldLocation += new Vector2(0, 4);
                 }
-                else
+                else if (IsInMineCart)
                 {
-                    CurrentHat.Front();
+                    CurrentHat.WorldLocation += new Vector2(0, -4);
                 }
+                else if (animations.CurrentAnimationName == "disableWaterBomb")
+                {
+                    if (Flipped)
+                    {
+                        CurrentHat.WorldLocation += new Vector2(4, 0);
+                    }
+                    else
+                    {
+                        CurrentHat.WorldLocation += new Vector2(-4, 0);
+                    }
+                }
+                else if (IsInSub)
+                {
+                    CurrentHat.WorldLocation += new Vector2(0, -8);
 
-                if (IsInWater)
+                    // Draw behind the player in the sub because the player becomes the sub and a player sprite is drawn behind that.
+                    CurrentHat.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+                }
+                else if (IsInWater)
                 {
                     if (Flipped)
                     {
@@ -2910,6 +2925,16 @@ namespace MacGame
                     {
                         CurrentHat.WorldLocation += new Vector2(4, 0);
                     }
+                }
+
+                // Front or back
+                if (animations.CurrentAnimationName == "climbLadder" || animations.CurrentAnimationName == "disableWaterBomb")
+                {
+                    CurrentHat.Back();
+                }
+                else
+                {
+                    CurrentHat.Front();
                 }
 
                 CurrentHat.Draw(spriteBatch);

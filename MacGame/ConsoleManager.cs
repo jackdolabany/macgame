@@ -137,6 +137,12 @@ namespace MacGame
                 var thingToGet = input.Substring("get ".Length).ToLowerInvariant();
                 switch (thingToGet)
                 {
+                    case "hats":
+                        foreach (var hat in player.Hats)
+                        {
+                            Game1.StorageState.CollectedHats.Add(hat.HatName);
+                        }
+                        return "You got all the hats!";
                     case "keys":
                         var redKey = new RedKey(contentManager, 0, 0, player);
                         redKey.Collect(player);

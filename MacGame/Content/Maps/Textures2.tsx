@@ -310,6 +310,16 @@
    <property name="LoadClass" value="Npc.AlienMom"/>
   </properties>
  </tile>
+ <tile id="464">
+  <properties>
+   <property name="LoadClass" value="Item.PilgrimHatItem"/>
+  </properties>
+ </tile>
+ <tile id="465">
+  <properties>
+   <property name="LoadClass" value="Item.NinjaHatItem"/>
+  </properties>
+ </tile>
  <tile id="500">
   <properties>
    <property name="LoadClass" value="Npc.Bully1"/>

@@ -294,6 +294,15 @@ namespace MacGame.Enemies
             }
         }
 
+        /// <summary>
+        /// Some bosses or whatever set their draw depth behind the player when they die.
+        /// </summary>
+        public void SetDepthBehindPlayer()
+        {
+            var depth = MathHelper.Max(DrawDepth, Game1.Player.DrawDepth + 10 * Game1.MIN_DRAW_INCREMENT);
+            SetDrawDepth(depth);
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (IsOnScreen())

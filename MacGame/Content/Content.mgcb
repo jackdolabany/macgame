@@ -979,6 +979,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Controller.png
 
+#begin Textures/Hats.png
+/importer:TextureImporter
+/processor:SmallTileBorderImageProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Hats.png
+
 #begin Textures/LogoScreen.png
 /importer:TextureImporter
 /processor:TextureProcessor

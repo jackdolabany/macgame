@@ -41,8 +41,7 @@ namespace MacGame.Enemies
             Dead = true;
             PlayDeathSound();
 
-            // Make sure it's behind the player
-            SetDrawDepth(MathHelper.Max(this.DrawDepth, Game1.Player.DrawDepth + Game1.MIN_DRAW_INCREMENT));
+            SetDepthBehindPlayer();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

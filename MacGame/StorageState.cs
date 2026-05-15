@@ -49,6 +49,12 @@ namespace MacGame
 
         public bool IsNerdHitByMac { get; set; } = false;
 
+        public bool HasPilgrimHat { get; set; } = false;
+
+        public bool HasNinjaHat { get; set; } = false;
+
+        public string SelectedHat { get; set; } = "None";
+
         /// <param name="saveSlot">1 through 3</param>
         public StorageState(int saveSlot)
         {
@@ -94,6 +100,9 @@ namespace MacGame
             clone.IsNerdHitByMac = this.IsNerdHitByMac;
             clone.HasBeatenDracula = this.HasBeatenDracula;
             clone.HasKilledMurderer = this.HasKilledMurderer;
+            clone.HasPilgrimHat = this.HasPilgrimHat;
+            clone.HasNinjaHat = this.HasNinjaHat;
+            clone.SelectedHat = this.SelectedHat;
             return clone;
         }
 

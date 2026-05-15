@@ -284,6 +284,13 @@ namespace MacGame
         public CircularBuffer<ShipFire> ShipFires;
         float shipFireTimer = 0f;
 
+        // Hats!
+        private PilgrimHat _pilgrimHat;
+        private NinjaHat _ninjaHat;
+        public PlayerHat? CurrentHat { get; set; }
+        public PilgrimHat PilgrimHat => _pilgrimHat;
+        public NinjaHat NinjaHat => _ninjaHat;
+
         public Item? CurrentItem = null;
 
         private bool HasShovel
@@ -552,6 +559,9 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
 
+            _pilgrimHat = new PilgrimHat(this, content);
+            _ninjaHat = new NinjaHat(this, content);
+
             _moveToLocation = new MoveToLocation(this, 250, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");
         }
@@ -567,6 +577,8 @@ namespace MacGame
             this.DisplayComponent.DrawDepth = depth;
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            this._pilgrimHat.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
+            this._ninjaHat.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
@@ -2843,10 +2855,37 @@ namespace MacGame
                 spriteBatch.Draw(textures2, markerPosition, Helpers.GetTileRect(10, 6), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
             }
 
+            if (CurrentHat != null)
+            {
+                CurrentHat.WorldLocation = this.WorldLocation + new Vector2(0, -12);
+
+                if (!Flipped)
+                {
+                    CurrentHat.WorldLocation += new Vector2(4, 0);
+                }
+
+                if (animations.CurrentAnimationName == "jump" || animations.CurrentAnimationName == "fall")
+                {
+                    CurrentHat.WorldLocation += new Vector2(0, -4);
+                }
+
+                CurrentHat.Draw(spriteBatch);
+            }
+
             base.Draw(spriteBatch);
 
         }
-        
+
+        public void SyncHatWithSaveState()
+        {
+            CurrentHat = Game1.StorageState.SelectedHat switch
+            {
+                "Pilgrim" => _pilgrimHat,
+                "Ninja" => _ninjaHat,
+                _ => null
+            };
+        }
+
         public bool IsFacingRight()
         {
             return !this.Flipped;

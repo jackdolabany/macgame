@@ -8,6 +8,7 @@ namespace MacGame
     {
 
         MenuOption backToHub;
+        MenuOption changeHat;
 
         public override SpriteFont MenuItemFont => Game1.FontSmall;
 
@@ -32,8 +33,9 @@ namespace MacGame
 
             var graphicsMenu = new GraphicsMenu(Game);
             var soundEffectsMenu = new SoundEffectsMenu(Game);
+            var hatMenu = new HatMenu(Game);
 
-            AddOption("Back", (a, b) => {
+            AddOption("Resume", (a, b) => {
                 PlayOptionSelectedSound();
                 game.Unpause();
             });
@@ -49,6 +51,11 @@ namespace MacGame
             backToHub = AddOption("Back to Hub", (a, b) => {
                 PlayOptionSelectedSound();
                 Game.GoToHub(true);
+            });
+
+            changeHat = AddOption("Change Hat", (a, b) => {
+                PlayOptionSelectedSound();
+                MenuManager.AddMenu(hatMenu);
             });
 
             AddOption("Graphics", (a, b) => {
@@ -74,6 +81,7 @@ namespace MacGame
         public override void AddedToMenuManager()
         {
             backToHub.Hidden = Game1.CurrentLevel.LevelNumber <= 0;
+            changeHat.Hidden = !Game1.StorageState.HasPilgrimHat && !Game1.StorageState.HasNinjaHat;
             CenterMenuAndChoices();
             base.AddedToMenuManager();
         }

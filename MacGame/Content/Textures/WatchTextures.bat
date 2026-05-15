@@ -1,1 +1,1 @@
-python SavePng.py Textures.pdn "Characters" Textures2.pdn "Characters" BigTextures.pdn "Characters" ReallyBigTextures.pdn "Characters" MegaTextures.pdn "Characters" SpaceTextures.pdn "Characters" 
+python SavePng.py Textures.pdn "Characters" Textures2.pdn "Characters" BigTextures.pdn "Characters" ReallyBigTextures.pdn "Characters" MegaTextures.pdn "Characters" SpaceTextures.pdn "Characters" Hats.pdn "Hats"

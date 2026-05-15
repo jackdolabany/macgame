@@ -17,9 +17,6 @@ namespace MacGame.Enemies
         private const float DyingDuration = 3f;
         private const float ExplosionInterval = 0.07f;
 
-        private const float SinkVelocity = 30f;
-        private const int SinkPixels = 300;
-
         private Texture2D _megaTextures;
 
         private StaticImageDisplay _bodyDisplay;
@@ -33,7 +30,7 @@ namespace MacGame.Enemies
 
         private float _stateTimer;
         private float _explosionTimer = 0f;
-        private float _sinkOffset = 0f;
+        //private float _sinkOffset = 0f;
         private bool _hasFired = false;
         private bool _hasLockedCamera = false;
 
@@ -63,7 +60,7 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = false;
             isTileColliding = false;
-            Attack = 2;
+            Attack = 1;
             Health = 40;
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
@@ -118,6 +115,7 @@ namespace MacGame.Enemies
             Game1.CurrentLevel.StartSpaceAutoScrolling();
 
             PlayDeathSound();
+            SetDepthBehindPlayer();
 
             Dead = true;
         }
@@ -252,7 +250,7 @@ namespace MacGame.Enemies
                             {
                                 // Start sinking both head and body
                                 _head.WorldLocation = new Vector2(_head.WorldLocation.X, _headDownY);
-                                this.Velocity = new Vector2(0, 70);
+                                //this.Velocity = new Vector2(0, 70);
                                 _head.Velocity = this.Velocity;
                             }
                         }
@@ -290,12 +288,12 @@ namespace MacGame.Enemies
                         break;
 
                     case LauncherState.Dead:
-                        _sinkOffset += SinkVelocity * elapsed;
-                        _destroyedDisplay.Offset = new Vector2(0, _sinkOffset);
-                        if (_sinkOffset >= SinkPixels)
-                        {
-                            Enabled = false;
-                        }
+                        //_sinkOffset += SinkVelocity * elapsed;
+                        //_destroyedDisplay.Offset = new Vector2(0, _sinkOffset);
+                        //if (_sinkOffset >= SinkPixels)
+                        //{
+                        //    Enabled = false;
+                        //}
                         break;
                 }
             }

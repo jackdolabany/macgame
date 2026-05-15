@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "BigShipBossTest";
+        public const string StartingWorld = "World4";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -1498,6 +1498,7 @@ namespace MacGame
             Game1.StorageState = (StorageState)ss.Clone();
 
             Player.SockCount = Game1.StorageState.Levels.Select(l => l.Value).Sum(l => l.CollectedSocks.Count);
+            Player.SyncHatWithSaveState();
 
             _goToMap = "";
             _putPlayerAtDoor = "";

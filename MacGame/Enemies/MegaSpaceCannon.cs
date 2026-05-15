@@ -15,8 +15,6 @@ namespace MacGame.Enemies
 
         private const float DyingDuration = 3f;
         private const float ExplosionInterval = 0.07f;
-        private const float SinkVelocity = 30f;
-        private const int SinkPixels = 300;
 
         private float _shootTimer;
 
@@ -64,7 +62,7 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = false;
             isTileColliding = false;
-            Attack = 2;
+            Attack = 1;
             Health = 30;
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
@@ -143,6 +141,7 @@ namespace MacGame.Enemies
             Game1.Camera.MaxX = null;
             Game1.CurrentLevel.StartSpaceAutoScrolling();
             PlayDeathSound();
+            SetDepthBehindPlayer();
             Dead = true;
         }
 
@@ -152,7 +151,7 @@ namespace MacGame.Enemies
             {
                 _barrelRotationCenter = new Vector2(WorldLocation.X, WorldLocation.Y - CollisionRectangle.Height + 32);
 
-                if (!_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
+                if (!_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle) && Alive)
                 {
                     Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
                     Game1.CurrentLevel.StopSpaceAutoScrolling();
@@ -190,11 +189,6 @@ namespace MacGame.Enemies
                             _isDestroyed = true;
                         }
 
-                        if (_isDestroyed)
-                        {
-                            _sinkOffset += SinkVelocity * elapsed;
-                        }
-
                         if (_stateTimer <= 0f)
                         {
                             _cannonState = CannonState.Dead;
@@ -202,11 +196,7 @@ namespace MacGame.Enemies
                         break;
 
                     case CannonState.Dead:
-                        _sinkOffset += SinkVelocity * elapsed;
-                        if (_sinkOffset >= SinkPixels)
-                        {
-                            Enabled = false;
-                        }
+
                         break;
                 }
             }

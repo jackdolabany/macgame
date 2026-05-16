@@ -173,6 +173,8 @@ namespace MacGame
 
         private float invincibleTimeRemaining = 0.0f;
         private float invincibleFlashTimer = 0.0f;
+        private float _hitFlashTimer = 0f;
+        private const float HitFlashDuration = 0.1f;
 
         public bool InteractButtonPressedThisFrame = false;
 
@@ -777,7 +779,16 @@ namespace MacGame
                 Kill();
             }
 
-            if (invincibleTimeRemaining > 0)
+            if (_hitFlashTimer > 0)
+            {
+                _hitFlashTimer -= elapsed;
+                DisplayComponent.TintColor = Color.White;
+                if (invincibleTimeRemaining > 0)
+                {
+                    invincibleTimeRemaining -= elapsed;
+                }
+            }
+            else if (invincibleTimeRemaining > 0)
             {
                 invincibleTimeRemaining -= elapsed;
                 invincibleFlashTimer -= elapsed;
@@ -1443,6 +1454,8 @@ namespace MacGame
                 }
 
                 invincibleTimeRemaining = 1.5f;
+                _hitFlashTimer = HitFlashDuration;
+                invincibleFlashTimer = 0.1f;
                 SoundManager.PlaySound("TakeHit");
                 Game1.Camera.Shake(3f, 0.18f);
 
@@ -2703,8 +2716,13 @@ namespace MacGame
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (!Enabled) return;
-            
+
             if (IsInvisibleAndCantMove) return;
+
+            if (_hitFlashTimer > 0)
+            {
+                WhiteFlashManager.Register(this);
+            }
 
             // Calculate bobbing offset using sine wave for any button icons drawn.
             // This logic is copied in Level.cs, maybe it should be centralized. Rule of 3?

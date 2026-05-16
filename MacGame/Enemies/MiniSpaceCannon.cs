@@ -153,8 +153,7 @@ namespace MacGame.Enemies
         public override void Kill()
         {
             EffectsManager.AddExplosion(WorldCenter, false);
-            Dead = true;
-            PlayDeathSound();
+            base.Kill();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

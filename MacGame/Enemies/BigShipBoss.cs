@@ -31,8 +31,8 @@ namespace MacGame.Enemies
         private float _shotTimer = 0f;
         private const float ShotInterval = 4f;
 
-        private ShootEverywhereCannon _cannonFrontTop;
-        private ShootEverywhereCannon _cannonFrontBottom;
+        private ShootEverywhereCannon _shootEverywhereFrontTop;
+        private ShootEverywhereCannon _shootEverywhereFrontBottom;
 
         private MiniSpaceCannon _miniCannonFrontTop;
         private MiniSpaceCannon _miniCannonFrontBottom;
@@ -40,19 +40,20 @@ namespace MacGame.Enemies
         private BomberCarriage _bomberCarriage;
         private BigShipSatellite _satellite;
 
+        private MiniSpaceCannon _miniSpaceCannonTopFinOne;
+        private MiniSpaceCannon _miniSpaceCannonTopFinTwo;
+        private MiniSpaceCannon _miniSpaceCannonTopFinThree;
+        private MiniSpaceCannon _miniSpaceCannonBottomFinOne;
+        private MiniSpaceCannon _miniSpaceCannonBottomFinTwo;
+        private MiniSpaceCannon _miniSpaceCannonBottomFinThree;
+
+        private ShootEverywhereCannon _shootEverywhereMiddleTop;
+
         // Offsets from WorldLocation — tune these to match the ship art.
         private Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
         private Vector2 WeakSpotBackOffset = new Vector2(22, -136);
         private Vector2 WeakSpotTopOffset = new Vector2(-22, -276);
         private Vector2 WeakSpotBottomOffset = new Vector2(-22, 4);
-
-        // Cannons sit directly above/below the front weak spot (weak spot is 64px tall, cannons 32px).
-        private Vector2 CannonFrontTopOffset    = new Vector2(-330, -200);
-        private Vector2 CannonFrontBottomOffset = new Vector2(-330, -104);
-
-        // MiniSpaceCannons sit just behind the ShootEverywhereCannnons.
-        private Vector2 MiniCannonFrontTopOffset    = new Vector2(-298, -200);
-        private Vector2 MiniCannonFrontBottomOffset = new Vector2(-298, -104);
 
         private Vector2 BomberCarriageOffset = new Vector2(-40, 20);
         private Vector2 SatelliteOffset = new Vector2(154, -229);
@@ -70,7 +71,7 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0f;
             Attack = 1;
-            Health = 200;
+            Health = 20;
             _maxHealth = Health;
             _player = player;
 
@@ -122,11 +123,11 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.Add(_shotLeft);
             ExtraEnemiesToAddAfterConstructor.Add(_shotRight);
 
-            _cannonFrontTop    = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
-            _cannonFrontBottom = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
-            _cannonFrontBottom.UpsideDown = true;
-            ExtraEnemiesToAddAfterConstructor.Add(_cannonFrontTop);
-            ExtraEnemiesToAddAfterConstructor.Add(_cannonFrontBottom);
+            _shootEverywhereFrontTop    = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
+            _shootEverywhereFrontBottom = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
+            _shootEverywhereFrontBottom.UpsideDown = true;
+            ExtraEnemiesToAddAfterConstructor.Add(_shootEverywhereFrontTop);
+            ExtraEnemiesToAddAfterConstructor.Add(_shootEverywhereFrontBottom);
 
             _miniCannonFrontTop    = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniCannonFrontBottom = new MiniSpaceCannon(content, cellX, cellY, player, camera);
@@ -143,6 +144,39 @@ namespace MacGame.Enemies
 
             ExtraEnemiesToAddAfterConstructor.Add(_bomberCarriage);
             ExtraEnemiesToAddAfterConstructor.Add(_satellite);
+
+            // Add three minispace cannons along the bottom and top back fins
+            _miniSpaceCannonTopFinOne = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniSpaceCannonTopFinTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniSpaceCannonTopFinThree = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniSpaceCannonBottomFinOne = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniSpaceCannonBottomFinOne.UpsideDown = true;
+            _miniSpaceCannonBottomFinTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniSpaceCannonBottomFinTwo.UpsideDown = true;
+            _miniSpaceCannonBottomFinThree = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniSpaceCannonBottomFinThree.UpsideDown = true;
+            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinOne);
+            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinTwo);
+            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinThree);
+            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonBottomFinOne);
+            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonBottomFinTwo);
+            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonBottomFinThree);
+
+            _shootEverywhereMiddleTop = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
+            ExtraEnemiesToAddAfterConstructor.Add(_shootEverywhereMiddleTop);
+        }
+
+        /// <summary>
+        /// Takes a point on the original unscaled ship image and adjusts it based on the 
+        /// Ship's current location, WorldLocation offset, and scale.
+        /// </summary>
+        private Vector2 GetShipAdjustedPosition(Vector2 offset)
+        {
+            // Adjust for WorldLocation being the bottom middle point and the image being a subset of the original
+            // image.
+            var startingX = this.WorldLocation.X - (ShipSourceRect.Width / 2) - ShipSourceRect.X;
+            var startingY = this.WorldLocation.Y - (ShipSourceRect.Height) - ShipSourceRect.Y;
+            return new Vector2(startingX, startingY) + offset * Game1.TileScale;
         }
 
         /// <summary>
@@ -152,13 +186,10 @@ namespace MacGame.Enemies
         /// </summary>
         private Rectangle GetShipAdjustedRectangle(Rectangle rect)
         {
-            // Adjust for WorldLocation being the bottom middle point and the image being a subset of the original
-            // image.
-            var startingX = this.WorldLocation.X.ToInt() - (ShipSourceRect.Width / 2) - ShipSourceRect.X;
-            var startingY = this.WorldLocation.Y.ToInt() - (ShipSourceRect.Height) - ShipSourceRect.Y;
+            var position = GetShipAdjustedPosition(new Vector2(rect.X, rect.Y));
 
-            return new Rectangle(startingX + (rect.X * Game1.TileScale), 
-                startingY + (rect.Y * Game1.TileScale), 
+            return new Rectangle(position.X.ToInt(), 
+                position.Y.ToInt(), 
                 rect.Width * Game1.TileScale, 
                 rect.Height * Game1.TileScale);
         }
@@ -179,8 +210,8 @@ namespace MacGame.Enemies
 
             // Cannons are in front for now.
             float cannonDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
-            _cannonFrontTop.SetDrawDepth(cannonDepth);
-            _cannonFrontBottom.SetDrawDepth(cannonDepth);
+            _shootEverywhereFrontTop.SetDrawDepth(cannonDepth);
+            _shootEverywhereFrontBottom.SetDrawDepth(cannonDepth);
             _miniCannonFrontTop.SetDrawDepth(cannonDepth);
             _miniCannonFrontBottom.SetDrawDepth(cannonDepth);
 
@@ -255,17 +286,6 @@ namespace MacGame.Enemies
                 float bob = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 1.2f) * 16f;
                 worldLocation.Y = _normalY + (_player.IsShipFlipped ? maxOffset : -maxOffset) * t + bob;
 
-                _weakSpotFront.WorldLocation  = worldLocation + WeakSpotFrontOffset;
-                _weakSpotBack.WorldLocation   = worldLocation + WeakSpotBackOffset;
-                _weakSpotTop.WorldLocation    = worldLocation + WeakSpotTopOffset;
-                _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
-
-                _cannonFrontTop.WorldLocation    = worldLocation + CannonFrontTopOffset;
-                _cannonFrontBottom.WorldLocation = worldLocation + CannonFrontBottomOffset;
-
-                _miniCannonFrontTop.WorldLocation    = worldLocation + MiniCannonFrontTopOffset;
-                _miniCannonFrontBottom.WorldLocation = worldLocation + MiniCannonFrontBottomOffset;
-
                 _shotTimer += elapsed;
                 if (_shotTimer >= ShotInterval)
                 {
@@ -282,32 +302,54 @@ namespace MacGame.Enemies
             }
 
             // The extra collision rectangles will break shots and bombs, but the enemy won't take damange.
-            foreach (var rawRect in collisionRectangles)
+            if (Alive)
             {
-                var rect = GetShipAdjustedRectangle(rawRect);
-                if (rect.Intersects(_player.CollisionRectangle))
+                foreach (var rawRect in collisionRectangles)
                 {
-                    _player.TakeHit(this);
-                }
-
-                foreach (var shot in _player.Shots.RawList)
-                {
-                    if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
+                    var rect = GetShipAdjustedRectangle(rawRect);
+                    if (rect.Intersects(_player.CollisionRectangle))
                     {
-                        shot.Break();
+                        _player.TakeHit(this);
                     }
-                }
 
-                foreach (var bomb in _player.Bombs.RawList)
-                {
-                    if (bomb.Enabled && bomb.CollisionRectangle.Intersects(rect))
+                    foreach (var shot in _player.Shots.RawList)
                     {
-                        bomb.Break();
+                        if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
+                        {
+                            shot.Break();
+                        }
+                    }
+
+                    foreach (var bomb in _player.Bombs.RawList)
+                    {
+                        if (bomb.Enabled && bomb.CollisionRectangle.Intersects(rect))
+                        {
+                            bomb.Break();
+                        }
                     }
                 }
             }
 
             base.Update(gameTime, elapsed);
+
+            _weakSpotFront.WorldLocation = worldLocation + WeakSpotFrontOffset;
+            _weakSpotBack.WorldLocation = worldLocation + WeakSpotBackOffset;
+            _weakSpotTop.WorldLocation = worldLocation + WeakSpotTopOffset;
+            _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
+
+            _shootEverywhereFrontTop.WorldLocation = GetShipAdjustedPosition(new Vector2(34, 44));
+            _shootEverywhereFrontBottom.WorldLocation = GetShipAdjustedPosition(new Vector2(34, 70));
+            _miniCannonFrontTop.WorldLocation = GetShipAdjustedPosition(new Vector2(48, 34));
+            _miniCannonFrontBottom.WorldLocation = GetShipAdjustedPosition(new Vector2(48, 78));
+
+            _miniSpaceCannonTopFinOne.WorldLocation = GetShipAdjustedPosition(new Vector2(139, 37));
+            _miniSpaceCannonTopFinTwo.WorldLocation = GetShipAdjustedPosition(new Vector2(158, 36));
+            _miniSpaceCannonTopFinThree.WorldLocation = GetShipAdjustedPosition(new Vector2(178, 35));
+            _miniSpaceCannonBottomFinOne.WorldLocation = GetShipAdjustedPosition(new Vector2(139, 75));
+            _miniSpaceCannonBottomFinTwo.WorldLocation = GetShipAdjustedPosition(new Vector2(158, 76));
+            _miniSpaceCannonBottomFinThree.WorldLocation = GetShipAdjustedPosition(new Vector2(178, 77));
+
+            _shootEverywhereMiddleTop.WorldLocation = GetShipAdjustedPosition(new Vector2(91, 19));
 
             if (_bomberCarriage.Alive)
             {
@@ -327,6 +369,10 @@ namespace MacGame.Enemies
             EffectsManager.AddExplosion(WorldCenter, false);
             Dead = true;
             PlayDeathSound();
+            if (_player.IsShipFlipped)
+            {
+                _player.FlipShip();
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

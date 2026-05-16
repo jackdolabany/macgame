@@ -56,33 +56,35 @@ namespace MacGame.Enemies
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (!_bigShip.HasBeenSeen || _bigShip.Dead)
+            if (_bigShip.HasBeenSeen)
             {
-                Enabled = false;
-                return;
-            }
+                if (_bigShip.Alive)
+                {
 
-            Enabled = true;
+                    _flashTimer += elapsed;
+                    if (_flashTimer >= FlashInterval)
+                    {
+                        _flashTimer -= FlashInterval;
+                    }
 
+                    if (_flashTimer >= FlashInterval - FlashDuration)
+                    {
+                        animations.PlayIfNotAlreadyPlaying("orange");
+                    }
+                    else
+                    {
+                        animations.PlayIfNotAlreadyPlaying("normal");
+                    }
 
-            _flashTimer += elapsed;
-            if (_flashTimer >= FlashInterval)
-            {
-                _flashTimer -= FlashInterval;
-            }
-
-            if (_flashTimer >= FlashInterval - FlashDuration)
-            {
-                animations.PlayIfNotAlreadyPlaying("orange");
-            }
-            else
-            {
-                animations.PlayIfNotAlreadyPlaying("normal");
-            }
-
-            if (IsTempInvincibleFromBeingHit)
-            {
-                animations.PlayIfNotAlreadyPlaying("white");
+                    if (IsTempInvincibleFromBeingHit)
+                    {
+                        animations.PlayIfNotAlreadyPlaying("white");
+                    }
+                }
+                else
+                {
+                    animations.PlayIfNotAlreadyPlaying("normal");
+                }
             }
 
             base.Update(gameTime, elapsed);

@@ -31,7 +31,7 @@ namespace MacGame.Enemies
             InvincibleTimeAfterBeingHit = 0.1f;
 
             // Bomber sprite is 71x51 px (~18x13 art units at TileScale=4)
-            SetCenteredCollisionRectangle(71, 51, 68, 48);
+            SetWorldLocationCollisionRectangle(68, 40);
         }
 
         public override void Kill()

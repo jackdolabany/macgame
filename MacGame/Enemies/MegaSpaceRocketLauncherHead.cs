@@ -25,17 +25,16 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
-            InvincibleTimeAfterBeingHit = 0f;
+            InvincibleTimeAfterBeingHit = 0.1f;
 
             SetWorldLocationCollisionRectangle(30, 40);
         }
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            if (IsTempInvincibleFromBeingHit || Dead || !Enabled) return;
+            if (!CanTakeHit()) return;
 
-            InvincibleTimer += InvincibleTimeAfterBeingHit;
-            PlayTakeHitSound();
+            base.TakeHit(attacker, damage, force);
             _launcher.TakeHit(attacker, damage, force);
         }
 

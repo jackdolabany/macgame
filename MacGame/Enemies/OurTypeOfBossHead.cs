@@ -62,7 +62,7 @@ namespace MacGame.Enemies
 
             isEnemyTileColliding = false;
             Attack = 1;
-            Health = 1;
+            Health = 100;
 
             IsAffectedByGravity = false;
 
@@ -124,13 +124,16 @@ namespace MacGame.Enemies
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            // Only take hits if you're on screen. Otherwise you might be attacked from across the map.
-            if (IsOnScreen())
-            {
-                // hitting the head really hits the boss.
-                _boss.TakeHit(attacker, damage, force);
-                InvincibleTimer += InvincibleTimeAfterBeingHit;
-            }
+            if (!CanTakeHit()) return;
+            if (!IsOnScreen()) return;
+
+            base.TakeHit(attacker, damage, force);
+
+            // The head doesn't really have health. That'll
+            // be tracked on the main body boss.
+            Health = 100;
+
+            _boss.TakeHit(attacker, damage, force);
         }
 
         public override void Kill()

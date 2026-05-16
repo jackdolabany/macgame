@@ -67,7 +67,7 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
-            InvincibleTimeAfterBeingHit = 0f;
+            InvincibleTimeAfterBeingHit = 0.1f;
 
             // Collision rect in logical units (multiplied by TileScale=4 internally)
             SetWorldLocationCollisionRectangle(36, 44);

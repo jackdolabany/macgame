@@ -56,7 +56,6 @@ namespace MacGame.Enemies
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
-            InvincibleTimeAfterBeingHit = 0f;
 
             SetCenteredCollisionRectangle(8, 8, 6, 6);
         }

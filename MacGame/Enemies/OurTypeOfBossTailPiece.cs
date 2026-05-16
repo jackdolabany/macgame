@@ -37,12 +37,17 @@ namespace MacGame.Enemies
             Attack = 1;
             Health = 1000;
 
-
             IsAffectedByGravity = false;
 
             SetCenteredCollisionRectangle(8, 8, 6, 6);
 
             InvincibleTimeAfterBeingHit = 0f;
+        }
+
+        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        {
+            // Do nothing, shots should just break off.
+            return;
         }
 
         public override void Kill()

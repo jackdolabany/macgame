@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MacGame.DisplayComponents;
+﻿using MacGame.DisplayComponents;
 using MacGame.Items;
-using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using static MacGame.Enemies.Blowfish;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MacGame.Enemies
 {
@@ -434,7 +432,8 @@ namespace MacGame.Enemies
 
                 if (dyingTimer >= dyingTimerGoal)
                 {
-                    this.Kill();
+                    this.Dead = true;
+                    this.Enabled = false;
                     _head.Kill();
                     _state = OurTypeOfBossState.Dead;
 
@@ -460,11 +459,16 @@ namespace MacGame.Enemies
             base.Draw(spriteBatch);
         }
 
+        public override void PlayTakeHitSound()
+        {
+            SoundManager.PlaySound("HitEnemy2");
+        }
+
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            Health -= damage;
+            if (!CanTakeHit()) return;
 
-            SoundManager.PlaySound("HitEnemy2");
+            base.TakeHit(attacker, damage, force);
 
             if (Health <= 0)
             {
@@ -495,6 +499,36 @@ namespace MacGame.Enemies
 
                 _shot.Kill();
             }
+        }
+
+        public override void Kill()
+        {
+            _state = OurTypeOfBossState.DyingTailBlowingUp;
+
+            // Blow up the tail like a wick on a bomb.
+            float tailExplosionTime = 0.2f;
+            for (int i = _tailPieces.Count - 1; i >= 0; i--)
+            {
+                var tailPiece = _tailPieces[i];
+                TimerManager.AddNewTimer(tailExplosionTime, () => { tailPiece.Kill(); });
+                tailExplosionTime += 0.2f;
+            }
+
+            TimerManager.AddNewTimer(tailExplosionTime, () => _state = OurTypeOfBossState.DyingBodyBlowingUp);
+
+            _head.Kill();
+
+            foreach (var eyeball in spaceEyeballs)
+            {
+                eyeball.Kill();
+            }
+
+            foreach (var mouth in spaceMouths)
+            {
+                mouth.Kill();
+            }
+
+            _shot.Kill();
         }
 
         public override void PlayDeathSound()

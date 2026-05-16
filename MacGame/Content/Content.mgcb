@@ -17,6 +17,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Effects/WhiteFlash.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/WhiteFlash.fx
+
 #begin Effects/CRT.fx
 /importer:EffectImporter
 /processor:EffectProcessor

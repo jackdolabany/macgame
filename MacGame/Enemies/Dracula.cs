@@ -121,6 +121,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             CanBeJumpedOn = true;
             CanBeHitWithWeapons = true;
+            InvincibleTimeAfterBeingHit = 2f;
 
             SetWorldLocationCollisionRectangle(8, 20);
 
@@ -168,16 +169,16 @@ namespace MacGame.Enemies
             _wineGlass = new WineGlass(content, 0 , 0);
         }
 
+        public override void PlayTakeHitSound()
+        {
+            SoundManager.PlaySound("HitEnemy2");
+        }
+
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            if (IsTempInvincibleFromBeingHit)
-            {
-                return;
-            }
+            if (!CanTakeHit()) return;
 
-            SoundManager.PlaySound("HitEnemy2");
-
-            Health -= damage;
+            base.TakeHit(attacker, damage, force);
 
             if (Health == 4)
             {
@@ -196,51 +197,38 @@ namespace MacGame.Enemies
                 Bats[1].Velocity = new Vector2(-200, 200);
                 SoundManager.PlaySound("BatChirp");
             }
-
-            if (!IsTempInvincibleFromBeingHit)
-            {
-                InvincibleTimer += 2f;
-            }
-
-            if (Health <= 0)
-            {
-                // DEATH!!!
-                _state = DraculaState.Dying;
-                Dead = true;
-                Enabled = false;
-                this.velocity = Vector2.Zero;
-
-                foreach (var fireBall in FireBalls)
-                {
-                    fireBall.Kill();
-                }
-                foreach (var bat in Bats)
-                {
-                    bat.Kill();
-                }
-
-                SoundManager.PlaySound("DracDeath");
-
-                foreach (var bat in DeathBats)
-                {
-                    bat.Enabled = true;
-                    bat.Alive = true;
-                    bat.WorldLocation = this.CollisionCenter;
-                    var speed = Game1.Randy.Next(150, 400);
-                    var randomDirection = Game1.Randy.NextVector();
-                    bat.Velocity = randomDirection * speed;
-                }
-
-                // We'll set this for now, but we can wait until they collect the sock to save it.
-                Game1.StorageState.HasBeatenDracula = true;
-
-            }
         }
 
         public override void Kill()
         {
+            _state = DraculaState.Dying;
+            Dead = true;
             Enabled = false;
-            base.Kill();
+            this.velocity = Vector2.Zero;
+
+            foreach (var fireBall in FireBalls)
+            {
+                fireBall.Kill();
+            }
+            foreach (var bat in Bats)
+            {
+                bat.Kill();
+            }
+
+            SoundManager.PlaySound("DracDeath");
+
+            foreach (var bat in DeathBats)
+            {
+                bat.Enabled = true;
+                bat.Alive = true;
+                bat.WorldLocation = this.CollisionCenter;
+                var speed = Game1.Randy.Next(150, 400);
+                var randomDirection = Game1.Randy.NextVector();
+                bat.Velocity = randomDirection * speed;
+            }
+
+            // We'll set this for now, but we can wait until they collect the sock to save it.
+            Game1.StorageState.HasBeatenDracula = true;
         }
 
         public void Initialize()

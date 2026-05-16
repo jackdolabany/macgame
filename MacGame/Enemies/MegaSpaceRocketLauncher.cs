@@ -65,7 +65,7 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
-            InvincibleTimeAfterBeingHit = 0f;
+            InvincibleTimeAfterBeingHit = 0.1f;
 
             SetWorldLocationCollisionRectangle(36, 46);
 
@@ -92,6 +92,14 @@ namespace MacGame.Enemies
 
             // Missiles are in front
             missileDrawDepth = depth - (3f * Game1.MIN_DRAW_INCREMENT);
+        }
+
+        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        {
+            if (!CanTakeHit()) return;
+
+            base.TakeHit(attacker, damage, force);
+            _head.TakeHit(attacker, damage, force);
         }
 
         public override void Kill()

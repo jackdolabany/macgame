@@ -83,6 +83,7 @@ namespace MacGame
         private static Effect crtEffectSubtle;
         private static Effect crtEffectFull;
         private static Effect crtEffectGreen;
+        private static Effect whiteFlashEffect;
 
         private static CRTMode currentCRTMode = CRTMode.Subtle;
         private static GameSettings gameSettings;
@@ -527,6 +528,7 @@ namespace MacGame
             crtEffectSubtle = Content.Load<Effect>(@"Effects\CRTSubtle");
             crtEffectFull = Content.Load<Effect>(@"Effects\CRT");
             crtEffectGreen = Content.Load<Effect>(@"Effects\CRTGreen");
+            whiteFlashEffect = Content.Load<Effect>(@"Effects\WhiteFlash");
 
             // Apply saved CRT mode setting
             LoadAndApplySettings();
@@ -1088,6 +1090,7 @@ namespace MacGame
                 case GameState.Conversation:
                 case GameState.PausedForAction:
 
+                    WhiteFlashManager.Clear();
                     spriteBatch.Begin(SpriteSortMode.BackToFront,
                         BlendState.AlphaBlend,
                         SamplerState.PointClamp,
@@ -1104,6 +1107,16 @@ namespace MacGame
                     ShotManager.Draw(spriteBatch);
                     BackgroundEffectsManager.Draw(spriteBatch);
 
+                    spriteBatch.End();
+
+                    spriteBatch.Begin(SpriteSortMode.BackToFront,
+                        BlendState.AlphaBlend,
+                        SamplerState.PointClamp,
+                        null,
+                        null,
+                        whiteFlashEffect,
+                        cameraTransformation);
+                    WhiteFlashManager.Draw(spriteBatch);
                     spriteBatch.End();
 
                     // Draw the HUD over everything.

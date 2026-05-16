@@ -57,7 +57,7 @@ namespace MacGame.Enemies
                     if (_explosionTimer <= 0f)
                     {
                         _explosionTimer = ExplosionInterval;
-                        EffectsManager.AddExplosion(CollisionRectangle.GetRandomLocation(), false);
+                        EffectsManager.AddExplosion(CollisionRectangle.GetRandomLocation(), true);
                     }
                 }
 

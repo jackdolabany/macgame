@@ -102,6 +102,8 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
+            InvincibleTimeAfterBeingHit = 2f;
+
             SetWorldLocationCollisionRectangle(14, 14);
 
             // Cat has yarn balls.
@@ -113,38 +115,26 @@ namespace MacGame.Enemies
             }
         }
 
+        public override void PlayTakeHitSound()
+        {
+            SoundManager.PlaySound("CatBossHit");
+        }
+
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            var previousPhase = attackPhase;
+            if (!CanTakeHit()) return;
 
-            Health -= damage;
+            base.TakeHit(attacker, damage, force);
+        }
 
-            SoundManager.PlaySound("CatBossHit");
-
-            if (!IsTempInvincibleFromBeingHit)
+        public override void Kill()
+        {
+            state = CatState.Dying;
+            Dead = true;
+            this.velocity = Vector2.Zero;
+            foreach (var yarnball in yarnBalls)
             {
-                InvincibleTimer += 2f;
-            }
-
-            if (Alive && previousPhase == AttackPhase.Phase2 && attackPhase == AttackPhase.Phase3)
-            {
-                // Kill the yarn balls between attack phase 2 and 3.
-                foreach (var yarnball in yarnBalls)
-                {
-                    yarnball.Kill();
-                }
-            }
-
-            if (Health <= 0)
-            {
-                // DEATH!!!
-                state = CatState.Dying;
-                Dead = true;
-                this.velocity = Vector2.Zero;
-                foreach (var yarnball in yarnBalls)
-                {
-                    yarnball.Kill();
-                }
+                yarnball.Kill();
             }
         }
 

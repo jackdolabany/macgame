@@ -202,12 +202,16 @@ namespace MacGame.Enemies
             }
         }
 
+        public override void PlayTakeHitSound()
+        {
+            SoundManager.PlaySound("ShootFromCannon", 1f, -0.2f);
+        }
+
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            if (IsTempInvincibleFromBeingHit || isAngry)
-            {
-                return;
-            }
+            if (!CanTakeHit()) return;
+
+            if (isAngry) return;
 
             if (attacker is Cannonball)
             {
@@ -219,30 +223,9 @@ namespace MacGame.Enemies
                 }
             }
 
-            Health -= damage;
+            base.TakeHit(attacker, damage, force);
 
-            SoundManager.PlaySound("ShootFromCannon", 1f, -0.2f);
-
-            if (!IsTempInvincibleFromBeingHit)
-            {
-                InvincibleTimer += 2f;
-            }
-
-            if (Health <= 0)
-            {
-                // DEATH!!!
-                state = QuadState.Dying;
-                Dead = true;
-                this.velocity = Vector2.Zero;
-                currentTargetLocation = Sock.WorldCenter;
-
-                foreach (var bomb in Bombs)
-                {
-                    bomb.Kill();
-                }
-
-            }
-            else
+            if (Alive)
             {
                 isAngry = true;
 
@@ -273,8 +256,15 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            Enabled = false;
-            base.Kill();
+            state = QuadState.Dying;
+            Dead = true;
+            this.velocity = Vector2.Zero;
+            currentTargetLocation = Sock.WorldCenter;
+
+            foreach (var bomb in Bombs)
+            {
+                bomb.Kill();
+            }
         }
 
         public void Initialize()
@@ -467,7 +457,7 @@ namespace MacGame.Enemies
                 if (dyingTimer >= 4f)
                 {
 
-                    this.Kill();
+                    this.Enabled = false;
                     state = QuadState.Dead;
                     Sock.FadeIn();
                 }

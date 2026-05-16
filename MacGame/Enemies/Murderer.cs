@@ -389,8 +389,6 @@ namespace MacGame.Enemies
                     // TODO: Reveal dracula part.
                 }
             }
-
-           
         }
 
         public override void PlayTakeHitSound()
@@ -400,37 +398,24 @@ namespace MacGame.Enemies
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
+            if (!CanTakeHit()) return;
+            if (_state != MurdererState.Attacking) return;
 
-            if (_state != MurdererState.Attacking)
-            {
-                return;
-            }
-
-            Health -= damage;
+            base.TakeHit(attacker, damage, force);
 
             Game1.LevelState.MurdererHealth = Health;
+        }
 
-            if (Health > 0)
-            {
-                PlayTakeHitSound();
-
-                if (!IsTempInvincibleFromBeingHit)
-                {
-                    InvincibleTimer += InvincibleTimeAfterBeingHit;
-                }
-            }
-            else
-            {
-                _state = MurdererState.Dying;
-                animations.Play("face");
-                _sickle.Enabled = false;
-                EffectsManager.SmallEnemyPop(_sickle.CollisionCenter);
-                SoundManager.PlaySound("MurdererDeath");
-                Dead = true;
-                Game1.StorageState.HasKilledMurderer = true;
-                StorageManager.TrySaveGame();
-
-            }
+        public override void Kill()
+        {
+            _state = MurdererState.Dying;
+            animations.Play("face");
+            _sickle.Enabled = false;
+            EffectsManager.SmallEnemyPop(_sickle.CollisionCenter);
+            SoundManager.PlaySound("MurdererDeath");
+            Dead = true;
+            Game1.StorageState.HasKilledMurderer = true;
+            StorageManager.TrySaveGame();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

@@ -44,27 +44,6 @@ namespace MacGame.Enemies
             SetWorldLocationCollisionRectangle(14, 14);
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
-        {
-         
-            Health -= damage;
-
-            SoundManager.PlaySound("CatBossHit");
-
-            if (!IsTempInvincibleFromBeingHit)
-            {
-                InvincibleTimer += 2f;
-            }
-
-            if (Health <= 0)
-            {
-                // DEATH!!!
-                Dead = true;
-                this.velocity = Vector2.Zero;
-                Kill();
-            }
-        }
-
         public override void Kill()
         {
             Enabled = false;

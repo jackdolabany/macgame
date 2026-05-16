@@ -82,6 +82,9 @@ namespace MacGame.Enemies
         private float _invincibleFlashTimer = 0;
         protected float InvincibleTimeAfterBeingHit { get; set; } = 0.75f;
 
+        private float _hitFlashTimer = 0f;
+        private const float HitFlashDuration = 0.1f;
+
         /// <summary>
         /// The default is to flash invisible for a moment when hit. Some enemies might want to
         /// override this. If enemies don't have a period of invincibility after being hit they
@@ -174,9 +177,11 @@ namespace MacGame.Enemies
 
         }
 
+        protected bool CanTakeHit() => !IsTempInvincibleFromBeingHit && !Dead && Enabled;
+
         public virtual void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            if (IsTempInvincibleFromBeingHit || Dead || !Enabled)
+            if (!CanTakeHit())
             {
                 return;
             }
@@ -192,6 +197,8 @@ namespace MacGame.Enemies
             {
                 PlayTakeHitSound();
                 InvincibleTimer += InvincibleTimeAfterBeingHit;
+                _hitFlashTimer = HitFlashDuration;
+                _invincibleFlashTimer = 0.1f;
             }
         }
 
@@ -223,7 +230,20 @@ namespace MacGame.Enemies
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (InvincibleTimer > 0)
+            if (_hitFlashTimer > 0)
+            {
+                _hitFlashTimer -= elapsed;
+                DisplayComponent.TintColor = Color.White;
+                if (InvincibleTimer > 0)
+                {
+                    InvincibleTimer -= elapsed;
+                    if (InvincibleTimer <= 0)
+                    {
+                        InvincibleTimer = 0;
+                    }
+                }
+            }
+            else if (InvincibleTimer > 0)
             {
                 if (FlashesInvisibleWhenHit)
                 {
@@ -307,6 +327,10 @@ namespace MacGame.Enemies
         {
             if (IsOnScreen())
             {
+                if (_hitFlashTimer > 0)
+                {
+                    WhiteFlashManager.Register(this);
+                }
                 base.Draw(spriteBatch);
             }
         }

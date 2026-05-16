@@ -173,6 +173,8 @@ namespace MacGame.Enemies
             CanBeHitWithWeapons = false;
             CanBeJumpedOn = true;
 
+            InvincibleTimeAfterBeingHit = 3f;
+
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\MegaTextures");
@@ -691,20 +693,19 @@ namespace MacGame.Enemies
             _player.Velocity = new Vector2(500, -800);
         }
 
+        public override void PlayTakeHitSound()
+        {
+            SoundManager.PlaySound("GooseHit");
+        }
+
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
+            if (!CanTakeHit()) return;
 
-            var initialPhase = this.attackPhase;
-
-            Health -= damage;
-
-            SoundManager.PlaySound("GooseHit");
+            base.TakeHit(attacker, damage, force);
 
             // Set the brick delay timer as we transition from phase 1 to 2, so the breaking bricks don't show up right away.
-            if (initialPhase == AttackPhase.Phase1 && attackPhase == AttackPhase.Phase2)
-            {
-                brickDelayTimer += 6f;
-            }
+            brickDelayTimer += 6f;
 
             // Yeet the player to the right.
             _player.Velocity = new Vector2(500, -800);
@@ -712,7 +713,6 @@ namespace MacGame.Enemies
             if (Health > 0)
             {
                 this.state = GooseState.TakingHit;
-
 
                 if (animations.CurrentAnimationName == "neckAttack" || animations.CurrentAnimationName == "neckAttackUp")
                 {
@@ -724,19 +724,6 @@ namespace MacGame.Enemies
                 }
 
                 takeHitTimer = 0f;
-
-                if (!IsTempInvincibleFromBeingHit)
-                {
-                    InvincibleTimer += 3f;
-                }
-            }
-            else
-            {
-                this.state = GooseState.Dying;
-                this.Dead = true;
-                explosionTimer = 0f;
-                stillBeforeFallingAfterDeathTimer = 0;
-
             }
 
             // Break the spring and goose balls
@@ -748,6 +735,14 @@ namespace MacGame.Enemies
                     ball.Kill();
                 }
             }
+        }
+
+        public override void Kill()
+        {
+            this.state = GooseState.Dying;
+            this.Dead = true;
+            explosionTimer = 0f;
+            stillBeforeFallingAfterDeathTimer = 0;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

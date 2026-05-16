@@ -4,8 +4,6 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TileEngine;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MacGame.Enemies
 {

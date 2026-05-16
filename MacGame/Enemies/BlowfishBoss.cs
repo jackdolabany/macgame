@@ -354,7 +354,9 @@ namespace MacGame.Enemies
                 dyingTimer += elapsed;
                 if (dyingTimer >= 4f)
                 {
-                    this.Kill();
+                    EffectsManager.SmallEnemyPop(WorldCenter);
+                    Enabled = false;
+                    Dead = true;
                     state = FishState.Dead;
                     Sock.FadeIn();
 
@@ -376,7 +378,10 @@ namespace MacGame.Enemies
 
         public override void TakeHit(GameObject attacker, int damage, Vector2 force)
         {
-            if (IsTempInvincibleFromBeingHit) return;
+            if (IsTempInvincibleFromBeingHit || Dead || !Enabled)
+            {
+                return;
+            }
 
             if (Health == MaxHealth)
             {
@@ -384,17 +389,12 @@ namespace MacGame.Enemies
                 Grow();
             }
 
-            Health -= damage;
+            base.TakeHit(attacker, damage, force);
 
-            SoundManager.PlaySound("HitEnemy2");
-
-            InvincibleTimer += 0.2f;
-
-            if (Health <= 0)
+            if (Dead)
             {
                 // DEATH!!!
                 state = FishState.Dying;
-                Dead = true;
                 this.velocity = Vector2.Zero;
 
                 foreach (BlowfishSpike spike in spikes)
@@ -404,12 +404,15 @@ namespace MacGame.Enemies
             }
         }
 
+        public override void PlayTakeHitSound()
+        {
+            SoundManager.PlaySound("HitEnemy2");
+        }
+
         public override void Kill()
         {
-            EffectsManager.SmallEnemyPop(WorldCenter);
-
-            Enabled = false;
-            base.Kill();
+            // Don't disable because they'll transiton to a dying state.
+            Dead = true;
         }
 
         public void Shrink()

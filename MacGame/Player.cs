@@ -1798,9 +1798,9 @@ namespace MacGame
             }
 
             // Enemy Bounce Jump Buffer - track jump presses for active enemy bounces
-            if (jumpPressed)
+            if (jumpPressed && IsFalling)
             {
-                _enemyBounceJumpBufferTimeRemaining = 0.1f;
+                _enemyBounceJumpBufferTimeRemaining = 0.15f;
             }
             else
             {

@@ -35,7 +35,6 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsPlayerColliding = false;
             CanBeHitWithWeapons = false;

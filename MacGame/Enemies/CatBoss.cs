@@ -120,11 +120,11 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("CatBossHit");
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
         }
 
         public override void Kill()

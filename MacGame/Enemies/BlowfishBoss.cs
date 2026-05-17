@@ -376,7 +376,7 @@ namespace MacGame.Enemies
 
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (IsTempInvincibleFromBeingHit || Dead || !Enabled)
             {
@@ -389,7 +389,7 @@ namespace MacGame.Enemies
                 Grow();
             }
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
 
             if (Dead)
             {

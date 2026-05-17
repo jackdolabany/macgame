@@ -14,7 +14,6 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             isTileColliding = false;
             IsAbleToSurviveOutsideOfWorld = false;
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = false;

@@ -58,7 +58,6 @@ namespace MacGame.Enemies
             Attack = 1;
             Health = 3;
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0.1f;
 

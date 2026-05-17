@@ -73,7 +73,7 @@ namespace MacGame
             {
                 if (enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                 {
-                    enemy.TakeHit(this, 10000, Vector2.Zero);
+                    enemy.TakeHit(this, 10000);
                 }
             }
 

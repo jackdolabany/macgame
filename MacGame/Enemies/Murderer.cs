@@ -396,12 +396,12 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("Hurt");
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
             if (_state != MurdererState.Attacking) return;
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
 
             Game1.LevelState.MurdererHealth = Health;
         }

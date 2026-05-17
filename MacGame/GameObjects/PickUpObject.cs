@@ -84,7 +84,7 @@ namespace MacGame
                 {
                     if (enemy.Enabled && enemy.Alive && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(this.CollisionRectangle))
                     {
-                        enemy.TakeHit(this, 1, this.Velocity);
+                        enemy.TakeHit(this, 1);
                     }
 
                     // Spikes destroy pick up objects.

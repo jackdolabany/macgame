@@ -42,7 +42,6 @@ namespace MacGame.GameObjects
 
             Enabled = true;
 
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             IsAbleToMoveOutsideOfWorld = true;

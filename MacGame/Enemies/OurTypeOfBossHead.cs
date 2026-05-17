@@ -38,7 +38,6 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             isTileColliding = false;
             IsAbleToSurviveOutsideOfWorld = true;
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = true;
@@ -122,18 +121,18 @@ namespace MacGame.Enemies
             base.Update(gameTime, elapsed);
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
             if (!IsOnScreen()) return;
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
 
             // The head doesn't really have health. That'll
             // be tracked on the main body boss.
             Health = 100;
 
-            _boss.TakeHit(attacker, damage, force);
+            _boss.TakeHit(attacker, damage);
         }
 
         public override void Kill()

@@ -66,7 +66,6 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0f;
             Attack = 1;

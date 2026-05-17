@@ -207,7 +207,7 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("ShootFromCannon", 1f, -0.2f);
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
 
@@ -223,7 +223,7 @@ namespace MacGame.Enemies
                 }
             }
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
 
             if (Alive)
             {

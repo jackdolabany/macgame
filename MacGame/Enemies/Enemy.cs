@@ -179,14 +179,13 @@ namespace MacGame.Enemies
 
         protected bool CanTakeHit() => !IsTempInvincibleFromBeingHit && !Dead && Enabled;
 
-        public virtual void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public virtual void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit())
             {
                 return;
             }
 
-            ForceVelocity += force;
             isEnemyTileColliding = false;
             Health -= damage;
             if (Health <= 0)
@@ -281,37 +280,6 @@ namespace MacGame.Enemies
                 velocity = Vector2.Zero;
             }
 
-            // decelerate the force from an impact
-            var decelerateAmount = 2f;
-            if (ForceVelocity != Vector2.Zero)
-            {
-                float newX = 0;
-                float newY = 0;
-                if (ForceVelocity.X > 0)
-                {
-                    newX = Math.Max(0f, ForceVelocity.X - decelerateAmount);
-                }
-                else
-                {
-                    newX = Math.Min(0f, ForceVelocity.X + decelerateAmount);
-                }
-                if (ForceVelocity.Y > 0)
-                {
-                    newY = Math.Max(0f, ForceVelocity.Y - decelerateAmount);
-                }
-                else
-                {
-                    newY = Math.Min(0f, ForceVelocity.Y + decelerateAmount);
-                }
-
-                // Prevent enemies from sticking on the ceiling
-                if (onCeiling && newY < 0)
-                {
-                    newY = 0;
-                }
-
-                ForceVelocity = new Vector2(newX, newY);
-            }
         }
 
         /// <summary>

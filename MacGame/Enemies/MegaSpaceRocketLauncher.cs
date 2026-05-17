@@ -63,7 +63,6 @@ namespace MacGame.Enemies
             Attack = 1;
             Health = 40;
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0.1f;
 
@@ -94,12 +93,12 @@ namespace MacGame.Enemies
             missileDrawDepth = depth - (3f * Game1.MIN_DRAW_INCREMENT);
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
 
-            base.TakeHit(attacker, damage, force);
-            _head.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
+            _head.TakeHit(attacker, damage);
         }
 
         public override void Kill()

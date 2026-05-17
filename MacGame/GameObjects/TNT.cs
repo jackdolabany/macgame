@@ -92,7 +92,7 @@ namespace MacGame
             {
                 if (enemy.Alive && enemy.Enabled && enemy.CollisionRectangle.Intersects(explosionRectangle))
                 {
-                    enemy.TakeHit(this, 10, Vector2.Zero);
+                    enemy.TakeHit(this, 10);
                 }
             }
             

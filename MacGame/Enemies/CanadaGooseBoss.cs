@@ -167,7 +167,6 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             isTileColliding = false;
             IsAbleToSurviveOutsideOfWorld = true;
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = false;
@@ -544,7 +543,7 @@ namespace MacGame.Enemies
                 {
                     if (_player.JumpedOnEnemyRectangle(standingHeadRectangle))
                     {
-                        TakeHit(_player, 1, Vector2.Zero);
+                        TakeHit(_player, 1);
                         interactedWithHead = true;
                     }
                     else
@@ -698,11 +697,11 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("GooseHit");
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
 
             // Set the brick delay timer as we transition from phase 1 to 2, so the breaking bricks don't show up right away.
             brickDelayTimer += 6f;

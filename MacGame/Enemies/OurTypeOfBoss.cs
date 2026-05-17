@@ -88,7 +88,6 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             isTileColliding = false;
             IsAbleToSurviveOutsideOfWorld = true;
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = false;
@@ -464,11 +463,11 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("HitEnemy2");
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
 
-            base.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
 
             if (Health <= 0)
             {

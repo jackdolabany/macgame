@@ -22,7 +22,6 @@ namespace MacGame.Enemies
             Attack = 1;
             Health = 1000;
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = false;
             CanBeHitWithWeapons = false;

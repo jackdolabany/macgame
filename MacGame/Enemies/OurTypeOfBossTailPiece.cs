@@ -21,7 +21,6 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = true;
             isTileColliding = false;
             IsAbleToSurviveOutsideOfWorld = true;
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = true;
@@ -44,7 +43,7 @@ namespace MacGame.Enemies
             InvincibleTimeAfterBeingHit = 0f;
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             // Do nothing, shots should just break off.
             return;

@@ -61,7 +61,6 @@ namespace MacGame
 
             _state = SpaceShipState.Idle;
 
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;

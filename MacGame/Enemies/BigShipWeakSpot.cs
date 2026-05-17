@@ -26,7 +26,6 @@ namespace MacGame.Enemies
             DisplayComponent = new AnimationDisplay();
 
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             isEnemyTileColliding = false;
             isTileColliding = false;
             IsAbleToMoveOutsideOfWorld = true;
@@ -38,14 +37,14 @@ namespace MacGame.Enemies
             FlashesInvisibleWhenHit = false;
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (IsTempInvincibleFromBeingHit || Dead || !Enabled)
             {
                 return;
             }
-   
-            _bigShip.TakeHit(attacker, damage, force);
+
+            _bigShip.TakeHit(attacker, damage);
             InvincibleTimer += InvincibleTimeAfterBeingHit;
         }
 

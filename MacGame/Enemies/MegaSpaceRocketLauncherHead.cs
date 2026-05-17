@@ -23,19 +23,18 @@ namespace MacGame.Enemies
             Attack = 0;
             Health = 1000;
             IsAffectedByGravity = false;
-            IsAffectedByForces = false;
             IsAbleToMoveOutsideOfWorld = true;
             InvincibleTimeAfterBeingHit = 0.1f;
 
             SetWorldLocationCollisionRectangle(30, 40);
         }
 
-        public override void TakeHit(GameObject attacker, int damage, Vector2 force)
+        public override void TakeHit(GameObject attacker, int damage)
         {
             if (!CanTakeHit()) return;
 
-            base.TakeHit(attacker, damage, force);
-            _launcher.TakeHit(attacker, damage, force);
+            base.TakeHit(attacker, damage);
+            _launcher.TakeHit(attacker, damage);
         }
 
         public override void Kill()

@@ -96,7 +96,6 @@ namespace MacGame
             _buttonType = type;
 
             // This is a button. It doesn't do anything.
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             IsAbleToMoveOutsideOfWorld = true;

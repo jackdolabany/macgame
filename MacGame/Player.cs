@@ -509,7 +509,6 @@ namespace MacGame
 
             this.IsAbleToMoveOutsideOfWorld = true;
             this.IsAbleToSurviveOutsideOfWorld = true;
-            this.IsAffectedByForces = false;
             this.isEnemyTileColliding = false;
 
             this.IsAffectedByGravity = true;
@@ -654,7 +653,6 @@ namespace MacGame
         private void ResetAllMovementState()
         {
             this.velocity = Vector2.Zero;
-            this.ForceVelocity = Vector2.Zero;
             _jumpBufferTimeRemaining = 0f;
             _enemyBounceJumpBufferTimeRemaining = 0f;
             _jumpReleased = true;
@@ -1308,7 +1306,7 @@ namespace MacGame
                 if (isMovingDown && enemy.CanBeJumpedOn && JumpedOnEnemyRectangle(enemy.CollisionRectangle))
                 {
                     // If the player was above the enemy, the enemy was jumped on and takes a hit.
-                    enemy.TakeHit(this, 1, Vector2.Zero);
+                    enemy.TakeHit(this, 1);
 
                     // Check if player pressed jump recently for active bounce
                     if (_enemyBounceJumpBufferTimeRemaining > 0)
@@ -1350,7 +1348,7 @@ namespace MacGame
                         if(apple.CollisionRectangle.Intersects(enemy.CollisionRectangle))
                         {
                             apple.Smash();
-                            enemy.TakeHit(apple, 1, Vector2.Zero);
+                            enemy.TakeHit(apple, 1);
                         }
                     }
                 }
@@ -1361,7 +1359,7 @@ namespace MacGame
                         if (harpoon.CollisionRectangle.Intersects(enemy.CollisionRectangle))
                         {
                             harpoon.Break();
-                            enemy.TakeHit(harpoon, 1, Vector2.Zero);
+                            enemy.TakeHit(harpoon, 1);
                         }
                     }
                 }
@@ -1374,7 +1372,7 @@ namespace MacGame
                             if (shot.CollisionRectangle.Intersects(enemy.CollisionRectangle))
                             {
                                 shot.Break();
-                                enemy.TakeHit(shot, 1, Vector2.Zero);
+                                enemy.TakeHit(shot, 1);
                             }
                         }
                     }
@@ -1386,7 +1384,7 @@ namespace MacGame
                             if (bomb.CollisionRectangle.Intersects(enemy.CollisionRectangle))
                             {
                                 bomb.Break();
-                                enemy.TakeHit(bomb, 1, Vector2.Zero);
+                                enemy.TakeHit(bomb, 1);
                             }
                         }
                     }
@@ -1407,7 +1405,7 @@ namespace MacGame
                             if (!alreadyHit)
                             {
                                 chargedShot.EnemiesHit.Add(enemy);
-                                enemy.TakeHit(chargedShot, chargedShot.Strength, Vector2.Zero);
+                                enemy.TakeHit(chargedShot, chargedShot.Strength);
                             }
                         }
                     }

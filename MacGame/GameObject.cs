@@ -187,26 +187,8 @@ namespace MacGame
         protected Vector2 velocity;
         public Vector2 Velocity
         {
-            get { return velocity + ForceVelocity; }
+            get { return velocity; }
             set { velocity = value; }
-        }
-
-        public bool IsAffectedByForces = true;
-
-        private Vector2 forceVelocity;
-        public Vector2 ForceVelocity
-        {
-            get
-            {
-                return forceVelocity;
-            }
-            set
-            {
-                if (IsAffectedByForces)
-                {
-                    forceVelocity = value;
-                }
-            }
         }
 
         /// <summary>

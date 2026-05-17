@@ -37,7 +37,6 @@ namespace MacGame
 
             Enabled = true;
 
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             IsAbleToMoveOutsideOfWorld = true;
@@ -66,7 +65,6 @@ namespace MacGame
             CellX = cellX;
             CellY = cellY;
             Enabled = true;
-            IsAffectedByForces = false;
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             IsAbleToMoveOutsideOfWorld = true;

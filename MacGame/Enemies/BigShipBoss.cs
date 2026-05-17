@@ -10,7 +10,7 @@ namespace MacGame.Enemies
 {
     public class BigShipBoss : Enemy
     {
-        private static readonly Rectangle ShipSourceRect = new Rectangle(22 * Game1.TileScale, 10 * Game1.TileScale, 175 * Game1.TileScale, 84 * Game1.TileScale);
+        private static readonly Rectangle ShipSourceRect = new Rectangle(22 * Game1.TileScale, 10 * Game1.TileScale, 176 * Game1.TileScale, 84 * Game1.TileScale);
 
         private int _maxHealth;
         private bool _hasBeenSeen = false;
@@ -56,7 +56,6 @@ namespace MacGame.Enemies
         private Vector2 WeakSpotBottomOffset = new Vector2(-22, 4);
 
         private Vector2 BomberCarriageOffset = new Vector2(-40, 20);
-        private Vector2 SatelliteOffset = new Vector2(154, -229);
 
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -170,13 +169,13 @@ namespace MacGame.Enemies
         /// Takes a point on the original unscaled ship image and adjusts it based on the 
         /// Ship's current location, WorldLocation offset, and scale.
         /// </summary>
-        private Vector2 GetShipAdjustedPosition(Vector2 offset)
+        private Vector2 GetShipAdjustedPosition(int x, int y)
         {
             // Adjust for WorldLocation being the bottom middle point and the image being a subset of the original
             // image.
             var startingX = this.WorldLocation.X - (ShipSourceRect.Width / 2) - ShipSourceRect.X;
             var startingY = this.WorldLocation.Y - (ShipSourceRect.Height) - ShipSourceRect.Y;
-            return new Vector2(startingX, startingY) + offset * Game1.TileScale;
+            return new Vector2(startingX, startingY) + new Vector2(x, y) * Game1.TileScale;
         }
 
         /// <summary>
@@ -186,7 +185,7 @@ namespace MacGame.Enemies
         /// </summary>
         private Rectangle GetShipAdjustedRectangle(Rectangle rect)
         {
-            var position = GetShipAdjustedPosition(new Vector2(rect.X, rect.Y));
+            var position = GetShipAdjustedPosition(rect.X, rect.Y);
 
             return new Rectangle(position.X.ToInt(), 
                 position.Y.ToInt(), 
@@ -337,19 +336,19 @@ namespace MacGame.Enemies
             _weakSpotTop.WorldLocation = worldLocation + WeakSpotTopOffset;
             _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
 
-            _shootEverywhereFrontTop.WorldLocation = GetShipAdjustedPosition(new Vector2(34, 44));
-            _shootEverywhereFrontBottom.WorldLocation = GetShipAdjustedPosition(new Vector2(34, 70));
-            _miniCannonFrontTop.WorldLocation = GetShipAdjustedPosition(new Vector2(48, 34));
-            _miniCannonFrontBottom.WorldLocation = GetShipAdjustedPosition(new Vector2(48, 78));
+            _shootEverywhereFrontTop.WorldLocation = GetShipAdjustedPosition(34, 44);
+            _shootEverywhereFrontBottom.WorldLocation = GetShipAdjustedPosition(34, 70);
+            _miniCannonFrontTop.WorldLocation = GetShipAdjustedPosition(48, 34);
+            _miniCannonFrontBottom.WorldLocation = GetShipAdjustedPosition(48, 78);
 
-            _miniSpaceCannonTopFinOne.WorldLocation = GetShipAdjustedPosition(new Vector2(139, 37));
-            _miniSpaceCannonTopFinTwo.WorldLocation = GetShipAdjustedPosition(new Vector2(158, 36));
-            _miniSpaceCannonTopFinThree.WorldLocation = GetShipAdjustedPosition(new Vector2(178, 35));
-            _miniSpaceCannonBottomFinOne.WorldLocation = GetShipAdjustedPosition(new Vector2(139, 75));
-            _miniSpaceCannonBottomFinTwo.WorldLocation = GetShipAdjustedPosition(new Vector2(158, 76));
-            _miniSpaceCannonBottomFinThree.WorldLocation = GetShipAdjustedPosition(new Vector2(178, 77));
+            _miniSpaceCannonTopFinOne.WorldLocation = GetShipAdjustedPosition(139, 37);
+            _miniSpaceCannonTopFinTwo.WorldLocation = GetShipAdjustedPosition(158, 36);
+            _miniSpaceCannonTopFinThree.WorldLocation = GetShipAdjustedPosition(178, 35);
+            _miniSpaceCannonBottomFinOne.WorldLocation = GetShipAdjustedPosition(139, 75);
+            _miniSpaceCannonBottomFinTwo.WorldLocation = GetShipAdjustedPosition(158, 76);
+            _miniSpaceCannonBottomFinThree.WorldLocation = GetShipAdjustedPosition(178, 77);
 
-            _shootEverywhereMiddleTop.WorldLocation = GetShipAdjustedPosition(new Vector2(91, 19));
+            _shootEverywhereMiddleTop.WorldLocation = GetShipAdjustedPosition(91, 19);
 
             if (_bomberCarriage.Alive)
             {
@@ -358,7 +357,7 @@ namespace MacGame.Enemies
 
             if (_satellite.Enabled)
             {
-                _satellite.WorldLocation = worldLocation + SatelliteOffset;
+                _satellite.WorldLocation = GetShipAdjustedPosition(147, 37) + new Vector2(0, 3);
             }
 
         }

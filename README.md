@@ -2,6 +2,6 @@
 
 Help a lost bearded dragon named Mac to get back home.
 
-![image](https://github.com/user-attachments/assets/9111fcc4-eb99-42df-bb6f-e630fcf6d4b7)
+<img width="1251" height="886" alt="image" src="https://github.com/user-attachments/assets/185122be-427d-46fa-8649-1b0dfcd1bd7a" />
 
-![image](https://github.com/user-attachments/assets/bed274dc-68b2-4d3f-a5d7-1aa5a5e3e5b2)
+<img width="1263" height="888" alt="image" src="https://github.com/user-attachments/assets/b0e1712d-a57d-4a96-b0df-b5ec07928459" />

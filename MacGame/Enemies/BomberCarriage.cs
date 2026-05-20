@@ -15,7 +15,9 @@ namespace MacGame.Enemies
         private float _explosionTimer = 0f;
         private const float ExplosionInterval = 0.1f;
 
-        public BomberCarriage(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        private BigShipBoss _bigShipBoss;
+
+        public BomberCarriage(ContentManager content, int cellX, int cellY, Player player, Camera camera, BigShipBoss bigShipBoss)
             : base(content, cellX, cellY, player, camera)
         {
             var texture = content.Load<Texture2D>(@"Textures\Bomber");
@@ -31,6 +33,8 @@ namespace MacGame.Enemies
 
             // Bomber sprite is 71x51 px (~18x13 art units at TileScale=4)
             SetWorldLocationCollisionRectangle(68, 40);
+
+            _bigShipBoss = bigShipBoss;
         }
 
         public override void Kill()
@@ -41,6 +45,8 @@ namespace MacGame.Enemies
             PlayDeathSound();
 
             SetDepthBehindPlayer();
+
+            _bigShipBoss.HandleCarriageDestroyed();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

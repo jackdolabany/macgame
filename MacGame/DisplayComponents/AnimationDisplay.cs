@@ -12,6 +12,8 @@ namespace MacGame.DisplayComponents
         protected DrawObject drawObject;
         public Dictionary<string, AnimationStrip> animations = new Dictionary<string, AnimationStrip>();
 
+        public SpriteEffects ExtraEffects { get; set; } = SpriteEffects.None;
+
         public AnimationDisplay()
             : base()
         {
@@ -51,10 +53,10 @@ namespace MacGame.DisplayComponents
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, bool flipped)
         {
-            SpriteEffects effect = SpriteEffects.None;
+            SpriteEffects effect = ExtraEffects;
             if (flipped)
             {
-                effect = SpriteEffects.FlipHorizontally;
+                effect |= SpriteEffects.FlipHorizontally;
             }
             drawObject.Effect = effect;
 

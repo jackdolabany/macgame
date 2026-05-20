@@ -2,6 +2,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace MacGame.Enemies
 {
@@ -18,7 +19,7 @@ namespace MacGame.Enemies
         /// damaged sprite.
         /// </summary>
         private float _firstDeathPhaseTimer;
-        private const float _firstDeathPhaseTimerGoal = 2f;
+        private const float _firstDeathPhaseTimerGoal = 0.5f;
         
         /// <summary>
         /// This is the time it will continue to explode after it has swaped over
@@ -35,7 +36,9 @@ namespace MacGame.Enemies
         StaticImageDisplay _normalImage;
         StaticImageDisplay _destroyedImage;
 
-        public BigShipSatellite(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        private BigShipBoss _bigShipBoss; 
+
+        public BigShipSatellite(ContentManager content, int cellX, int cellY, Player player, Camera camera, BigShipBoss boss)
             : base(content, cellX, cellY, player, camera)
         {
             _megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
@@ -56,6 +59,8 @@ namespace MacGame.Enemies
             InvincibleTimeAfterBeingHit = 0.1f;
 
             SetWorldLocationCollisionRectangle(20, 34);
+
+            _bigShipBoss = boss;
         }
 
         public override void Kill()
@@ -66,6 +71,7 @@ namespace MacGame.Enemies
             IsPlayerColliding = false;
             CanBeHitWithWeapons = false;
             PlayDeathSound();
+            _bigShipBoss.HandleSatelliteDestroyed();
         }
 
         public override void Update(GameTime gameTime, float elapsed)

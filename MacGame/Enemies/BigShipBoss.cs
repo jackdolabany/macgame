@@ -48,6 +48,12 @@ namespace MacGame.Enemies
         private MiniSpaceCannon _miniSpaceCannonBottomFinThree;
 
         private ShootEverywhereCannon _shootEverywhereMiddleTop;
+        
+        private BigShipHomingLauncher _topBigShipHomingLauncher;
+        private BigShipHomingLauncher _bottomBigShipHomingLauncher;
+
+        private MiniSpaceCannon _miniCannonUnderCarriageOne;
+        private MiniSpaceCannon _miniCannonUnderCarriageTwo;
 
         // Offsets from WorldLocation — tune these to match the ship art.
         private Vector2 WeakSpotFrontOffset = new Vector2(-330, -136);
@@ -133,8 +139,8 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontTop);
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontBottom);
 
-            _bomberCarriage = new BomberCarriage(content, cellX, cellY, player, camera);
-            _satellite = new BigShipSatellite(content, cellX, cellY, player, camera);
+            _bomberCarriage = new BomberCarriage(content, cellX, cellY, player, camera, this);
+            _satellite = new BigShipSatellite(content, cellX, cellY, player, camera, this);
 
             // To be enabled when seen.
             _bomberCarriage.Enabled = false;
@@ -162,6 +168,31 @@ namespace MacGame.Enemies
 
             _shootEverywhereMiddleTop = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
             ExtraEnemiesToAddAfterConstructor.Add(_shootEverywhereMiddleTop);
+
+            _topBigShipHomingLauncher = new BigShipHomingLauncher(content, cellX, cellY, player, camera);
+            _bottomBigShipHomingLauncher = new BigShipHomingLauncher(content, cellX, cellY, player, camera);
+            _bottomBigShipHomingLauncher.FlipUpsideDown();
+            ExtraEnemiesToAddAfterConstructor.Add(_topBigShipHomingLauncher);
+            ExtraEnemiesToAddAfterConstructor.Add(_bottomBigShipHomingLauncher);
+
+
+            _miniCannonUnderCarriageOne = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniCannonUnderCarriageOne.UpsideDown = true;
+            ExtraEnemiesToAddAfterConstructor.Add(_miniCannonUnderCarriageOne);
+            _miniCannonUnderCarriageTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniCannonUnderCarriageTwo.UpsideDown = true;
+            ExtraEnemiesToAddAfterConstructor.Add(_miniCannonUnderCarriageTwo);
+
+            // Disable these guys, they'll be re-enabled when you destroy the carriage
+            _miniCannonUnderCarriageOne.Enabled = false;
+            _miniCannonUnderCarriageTwo.Enabled = false;
+            _bottomBigShipHomingLauncher.Enabled = false;
+
+            // Disable these until you destroy the Satelitte.
+            _miniSpaceCannonTopFinOne.Enabled = false;
+            _miniSpaceCannonTopFinTwo.Enabled = false;
+            _topBigShipHomingLauncher.Active = false;
+
         }
 
         /// <summary>
@@ -349,6 +380,14 @@ namespace MacGame.Enemies
 
             _shootEverywhereMiddleTop.WorldLocation = GetShipAdjustedPosition(91, 19);
 
+            // Homing missile launchers
+            _topBigShipHomingLauncher.WorldLocation = GetShipAdjustedPosition(128, 22);
+            _bottomBigShipHomingLauncher.WorldLocation = GetShipAdjustedPosition(91, 95);
+
+            // Cannons hidden behind the carraige thing
+            _miniCannonUnderCarriageOne.WorldLocation = GetShipAdjustedPosition(75, 87);
+            _miniCannonUnderCarriageTwo.WorldLocation = GetShipAdjustedPosition(127, 90);
+
             if (_bomberCarriage.Alive)
             {
                 _bomberCarriage.WorldLocation = worldLocation + BomberCarriageOffset;
@@ -359,6 +398,23 @@ namespace MacGame.Enemies
                 _satellite.WorldLocation = GetShipAdjustedPosition(147, 37) + new Vector2(0, 3);
             }
 
+        }
+
+        public void HandleSatelliteDestroyed()
+        {
+            _miniSpaceCannonTopFinOne.Enabled = true;
+            _miniSpaceCannonTopFinTwo.Enabled = true;
+            _topBigShipHomingLauncher.Active = true;
+        }
+
+        public void HandleCarriageDestroyed()
+        {
+            if (Alive)
+            {
+                _miniCannonUnderCarriageOne.Enabled = true;
+                _miniCannonUnderCarriageTwo.Enabled = true;
+                _bottomBigShipHomingLauncher.Enabled = true;
+            }
         }
 
         public override void Kill()

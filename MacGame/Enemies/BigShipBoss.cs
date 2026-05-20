@@ -43,7 +43,6 @@ namespace MacGame.Enemies
         private MiniSpaceCannon _miniSpaceCannonTopFinOne;
         private MiniSpaceCannon _miniSpaceCannonTopFinTwo;
         private MiniSpaceCannon _miniSpaceCannonTopFinThree;
-        private MiniSpaceCannon _miniSpaceCannonBottomFinOne;
         private MiniSpaceCannon _miniSpaceCannonBottomFinTwo;
         private MiniSpaceCannon _miniSpaceCannonBottomFinThree;
 
@@ -63,6 +62,9 @@ namespace MacGame.Enemies
 
         private Vector2 BomberCarriageOffset = new Vector2(-40, 20);
 
+        private float _explosionTimer = 0f;
+        private const float ExplosionInterval = 0.1f;
+
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -75,7 +77,7 @@ namespace MacGame.Enemies
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0f;
             Attack = 1;
-            Health = 20;
+            Health = 100;
             _maxHealth = Health;
             _player = player;
 
@@ -153,8 +155,6 @@ namespace MacGame.Enemies
             _miniSpaceCannonTopFinOne = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniSpaceCannonTopFinTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniSpaceCannonTopFinThree = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniSpaceCannonBottomFinOne = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniSpaceCannonBottomFinOne.UpsideDown = true;
             _miniSpaceCannonBottomFinTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniSpaceCannonBottomFinTwo.UpsideDown = true;
             _miniSpaceCannonBottomFinThree = new MiniSpaceCannon(content, cellX, cellY, player, camera);
@@ -162,7 +162,6 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinOne);
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinTwo);
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinThree);
-            ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonBottomFinOne);
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonBottomFinTwo);
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonBottomFinThree);
 
@@ -238,11 +237,19 @@ namespace MacGame.Enemies
             _shotRight.SetDrawDepth(shotDepth);
 
             // Cannons are in front for now.
-            float cannonDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
-            _shootEverywhereFrontTop.SetDrawDepth(cannonDepth);
-            _shootEverywhereFrontBottom.SetDrawDepth(cannonDepth);
-            _miniCannonFrontTop.SetDrawDepth(cannonDepth);
-            _miniCannonFrontBottom.SetDrawDepth(cannonDepth);
+            float gunDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
+            _shootEverywhereFrontTop.SetDrawDepth(gunDepth);
+            _shootEverywhereFrontBottom.SetDrawDepth(gunDepth);
+            _miniCannonFrontTop.SetDrawDepth(gunDepth);
+            _miniCannonFrontBottom.SetDrawDepth(gunDepth);
+            _miniSpaceCannonBottomFinTwo.SetDrawDepth(gunDepth);
+            _miniSpaceCannonBottomFinThree.SetDrawDepth(gunDepth);
+            _shootEverywhereMiddleTop.SetDrawDepth(gunDepth);
+            _topBigShipHomingLauncher.SetDrawDepth(gunDepth);
+            _miniSpaceCannonTopFinOne.SetDrawDepth(gunDepth);
+            _miniSpaceCannonTopFinTwo.SetDrawDepth(gunDepth);
+            _miniSpaceCannonTopFinThree.SetDrawDepth(gunDepth);
+            _bottomBigShipHomingLauncher.SetDrawDepth(gunDepth);
 
             // carriage and satellite should be behind the main ship
             _bomberCarriage.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
@@ -296,7 +303,7 @@ namespace MacGame.Enemies
                 var shipLeft = (float)CollisionRectangle.Left;
                 var shipRight = (float)CollisionRectangle.Right;
                 var shipCenterX = (shipLeft + shipRight) / 2f;
-                const float maxOffset = 100;
+                const float maxOffset = 150;
 
                 float t;
                 if (camCenterX <= shipLeft || camCenterX >= shipRight)
@@ -366,7 +373,7 @@ namespace MacGame.Enemies
             _weakSpotTop.WorldLocation = worldLocation + WeakSpotTopOffset;
             _weakSpotBottom.WorldLocation = worldLocation + WeakSpotBottomOffset;
 
-            _shootEverywhereFrontTop.WorldLocation = GetShipAdjustedPosition(34, 44);
+            _shootEverywhereFrontTop.WorldLocation = GetShipAdjustedPosition(34, 42);
             _shootEverywhereFrontBottom.WorldLocation = GetShipAdjustedPosition(34, 70);
             _miniCannonFrontTop.WorldLocation = GetShipAdjustedPosition(48, 34);
             _miniCannonFrontBottom.WorldLocation = GetShipAdjustedPosition(48, 78);
@@ -374,8 +381,8 @@ namespace MacGame.Enemies
             _miniSpaceCannonTopFinOne.WorldLocation = GetShipAdjustedPosition(139, 37);
             _miniSpaceCannonTopFinTwo.WorldLocation = GetShipAdjustedPosition(158, 36);
             _miniSpaceCannonTopFinThree.WorldLocation = GetShipAdjustedPosition(178, 35);
-            _miniSpaceCannonBottomFinOne.WorldLocation = GetShipAdjustedPosition(139, 75);
-            _miniSpaceCannonBottomFinTwo.WorldLocation = GetShipAdjustedPosition(158, 76);
+            //_miniSpaceCannonBottomFinOne.WorldLocation = GetShipAdjustedPosition(139, 75);
+            _miniSpaceCannonBottomFinTwo.WorldLocation = GetShipAdjustedPosition(166, 76);
             _miniSpaceCannonBottomFinThree.WorldLocation = GetShipAdjustedPosition(178, 77);
 
             _shootEverywhereMiddleTop.WorldLocation = GetShipAdjustedPosition(91, 19);
@@ -386,7 +393,7 @@ namespace MacGame.Enemies
 
             // Cannons hidden behind the carraige thing
             _miniCannonUnderCarriageOne.WorldLocation = GetShipAdjustedPosition(75, 87);
-            _miniCannonUnderCarriageTwo.WorldLocation = GetShipAdjustedPosition(127, 90);
+            _miniCannonUnderCarriageTwo.WorldLocation = GetShipAdjustedPosition(110, 101);
 
             if (_bomberCarriage.Alive)
             {
@@ -398,13 +405,31 @@ namespace MacGame.Enemies
                 _satellite.WorldLocation = GetShipAdjustedPosition(147, 37) + new Vector2(0, 3);
             }
 
+            if (Dead)
+            {
+                this.Velocity = new Vector2(-50, 70);
+
+                if (IsOnScreen())
+                {
+                    _explosionTimer -= elapsed;
+                    if (_explosionTimer <= 0f)
+                    {
+                        _explosionTimer = ExplosionInterval;
+                        EffectsManager.AddExplosion(CollisionRectangle.GetRandomLocation(), true);
+                    }
+                }
+            }
+
         }
 
         public void HandleSatelliteDestroyed()
         {
-            _miniSpaceCannonTopFinOne.Enabled = true;
-            _miniSpaceCannonTopFinTwo.Enabled = true;
-            _topBigShipHomingLauncher.Active = true;
+            if (Alive)
+            {
+                _miniSpaceCannonTopFinOne.Enabled = true;
+                _miniSpaceCannonTopFinTwo.Enabled = true;
+                _topBigShipHomingLauncher.Active = true;
+            }
         }
 
         public void HandleCarriageDestroyed()
@@ -426,6 +451,15 @@ namespace MacGame.Enemies
             if (_player.IsShipFlipped)
             {
                 _player.FlipShip();
+            }
+
+            foreach (var enemy in ExtraEnemiesToAddAfterConstructor)
+            {
+                if (enemy.Alive && enemy.Enabled)
+                {
+                    var blowUpTimer = Game1.Randy.NextFloat();
+                    TimerManager.AddNewTimer(blowUpTimer, () => enemy.Kill());
+                }
             }
         }
 

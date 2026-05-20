@@ -99,7 +99,13 @@ namespace MacGame
                 var isSpace = map.Properties["IsSpace"].ToBoolean();
                 if (isSpace)
                 {
-                    level.AutoScrollSpeed = new Vector2(50, 0);
+                    float scrollSpeed = 50f;
+                    if (map.Properties.ContainsKey("HorizontalScrollSpeed") &&
+                        float.TryParse(map.Properties["HorizontalScrollSpeed"], out float overrideSpeed))
+                    {
+                        scrollSpeed = overrideSpeed;
+                    }
+                    level.AutoScrollSpeed = new Vector2(scrollSpeed, 0);
                     player.EnterSpaceship();
                 }
             }

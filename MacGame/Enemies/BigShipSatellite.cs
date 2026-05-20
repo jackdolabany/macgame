@@ -63,6 +63,12 @@ namespace MacGame.Enemies
             _bigShipBoss = boss;
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            _normalImage.DrawDepth = depth;
+            _destroyedImage.DrawDepth = depth;
+        }
+
         public override void Kill()
         {
             _state = SatelliteState.DyingPhase1;

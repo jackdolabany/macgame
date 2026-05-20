@@ -33,12 +33,12 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             Attack = 1;
-            Health = 4;
+            Health = 6;
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0.1f;
 
-            SetCenteredCollisionRectangle(8, 8, 6, 6);
+            SetCenteredCollisionRectangle(8, 8, 8, 8);
         }
 
         private void FireCardinal()

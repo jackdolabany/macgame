@@ -102,6 +102,7 @@ namespace MacGame
             _shipFlipped = !_shipFlipped;
             Game1.CurrentLevel.AutoScrollSpeed = new Vector2(-Game1.CurrentLevel.AutoScrollSpeed.X, Game1.CurrentLevel.AutoScrollSpeed.Y);
             SoundManager.PlaySound("ShipTurn");
+            invincibleTimeRemaining = 1.5f; // Brief invincibility after flipping the ship to avoid taking damage from enemies you just turned away from.
         }
 
         /// <summary>

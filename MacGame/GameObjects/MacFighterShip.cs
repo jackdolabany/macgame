@@ -1,0 +1,214 @@
+using MacGame.DisplayComponents;
+using MacGame.Platforms;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using TileEngine;
+
+namespace MacGame
+{
+    /// <summary>
+    /// Mac's personal fighter ship. This renders the big ship that Mac
+    /// can jump into. Not the smaller ship when he's actually in a flying level.
+    /// </summary>
+    public class MacFighterShip : GameObject
+    {
+        private AnimationDisplay _frontDisplay;
+        private StaticImageDisplay _backDisplay;
+
+        private Player _player;
+
+        private enum ShipState { Idle, Opening, Open, Closing }
+        private ShipState _state = ShipState.Idle;
+
+        private float _onScreenTimer;
+        private const float OpenDelay = 5f;
+
+        Platform shipPlatform;
+        PlayerOnlyCollisionRectangle _leftWall;
+
+        /// <summary>
+        /// Mac is considered "in the ship" if his WorldLocation (feet) is within this rectangle.
+        /// </summary>
+        Rectangle inShipRectangle;
+
+        public MacFighterShip(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+            : base()
+        {
+            _player = player;
+
+            var textures = content.Load<Texture2D>(@"Textures\MegaTextures");
+
+            _frontDisplay = new AnimationDisplay();
+
+            var idle = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 5), 1, "idle");
+            idle.LoopAnimation = true;
+            idle.FrameLength = 0.2f;
+            _frontDisplay.Add(idle);
+
+            var open = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 5), 3, "open");
+            open.LoopAnimation = false;
+            open.FrameLength = 0.1f;
+            _frontDisplay.Add(open);
+
+            var close = new AnimationStrip(textures, Helpers.GetMegaTileRect(0, 5), 3, "close");
+            close.LoopAnimation = false;
+            close.FrameLength = 0.1f;
+            close.Reverse = true;
+            _frontDisplay.Add(close);
+
+            _backDisplay = new StaticImageDisplay(textures, Helpers.GetMegaTileRect(3, 5));
+
+            // Front display is the primary component for base rendering.
+            DisplayComponent = _frontDisplay;
+
+            SetWorldLocationCollisionRectangle(6, 8);
+            WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
+
+            IsAffectedByGravity = false;
+            isTileColliding = false;
+            IsAbleToMoveOutsideOfWorld = true;
+            IsAbleToSurviveOutsideOfWorld = true;
+            Enabled = true;
+
+            _frontDisplay.Play("idle");
+        }
+
+        /// <summary>
+        /// Adds the invisible standing platform inside the cockpit. Call this after the ship's WorldLocation is set.
+        /// </summary>
+        public void AddStuffToLevel(Level level, ContentManager content)
+        {
+            shipPlatform = new Platform(content, 0, 0);
+            shipPlatform.WorldLocation = WorldLocation + new Vector2(-12, -16);
+            shipPlatform.CollisionRectangle = new Rectangle(0, -12, 60, 12);
+            shipPlatform.DisplayComponent = new NoDisplay();
+            level.Platforms.Add(shipPlatform);
+
+            // Rectangle that controls the draw depth adjustments when mac is "in" the ship.
+            inShipRectangle = new Rectangle(
+               shipPlatform.CollisionRectangle.Left,
+               shipPlatform.CollisionRectangle.Top - 24,
+               shipPlatform.CollisionRectangle.Width + 12,
+               24);
+
+            // Invisible wall flush with the left edge of the platform. Enabled only while Mac
+            // is standing on the platform so he can't walk left off the edge, but disabled the
+            // moment he jumps so he can jump away freely.
+            _leftWall = new PlayerOnlyCollisionRectangle();
+            _leftWall.WorldLocation = new Vector2(shipPlatform.CollisionRectangle.Left - 12, shipPlatform.CollisionRectangle.Top - 32);
+            _leftWall.CollisionRectangle = new Rectangle(0, 0, 12, 32);
+            _leftWall.Enabled = false;
+            level.CustomCollisionObjects.Add(_leftWall);
+        }
+
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            _backDisplay.DrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
+        }
+
+        /// <summary>
+        /// Mac renders in front of (on top of) the ship. Both ship layers are drawn behind Mac.
+        /// Used when the ship is closed or when Mac is standing inside the open cockpit.
+        /// </summary>
+        private void MacInFrontOfShip()
+        {
+            float playerDepth = _player.DrawDepth;
+            _frontDisplay.DrawDepth = playerDepth + Game1.MIN_DRAW_INCREMENT;
+            _backDisplay.DrawDepth = playerDepth + 2f * Game1.MIN_DRAW_INCREMENT;
+        }
+
+        /// <summary>
+        /// The ship's front cockpit panel renders in front of Mac; the back is behind Mac.
+        /// Used when Mac is outside the cockpit rect while the ship is open.
+        /// </summary>
+        private void MacInShip()
+        {
+            float playerDepth = _player.DrawDepth;
+            _frontDisplay.DrawDepth = playerDepth - Game1.MIN_DRAW_INCREMENT;
+            _backDisplay.DrawDepth = playerDepth + Game1.MIN_DRAW_INCREMENT;
+        }
+
+        private void UpdateDrawDepths()
+        {
+            switch (_state)
+            {
+                case ShipState.Idle:
+                    MacInFrontOfShip();
+                    break;
+
+                case ShipState.Opening:
+                case ShipState.Open:
+                case ShipState.Closing:
+                    if (inShipRectangle.Contains(this._player.WorldLocation + new Vector2(0, -2)))
+                    {
+                        MacInShip();
+                    }
+                    else
+                    {
+                        MacInFrontOfShip();
+                    }
+                    break;
+            }
+        }
+
+        public override void Update(GameTime gameTime, float elapsed)
+        {
+            UpdateDrawDepths();
+
+            // Wall is only active while Mac is grounded on the ship platform.
+            _leftWall.Enabled = _player.PlatformThatThisIsOn == shipPlatform;
+
+            bool isVisible = Game1.Camera.IsObjectVisible(CollisionRectangle);
+
+            switch (_state)
+            {
+                case ShipState.Idle:
+                    if (isVisible)
+                    {
+                        _onScreenTimer += elapsed;
+                        if (_onScreenTimer >= OpenDelay)
+                        {
+                            _state = ShipState.Opening;
+                            _frontDisplay.Play("open");
+                        }
+                    }
+                    break;
+
+                case ShipState.Opening:
+                    if (_frontDisplay.CurrentAnimation?.FinishedPlaying == true)
+                    {
+                        _state = ShipState.Open;
+                    }
+                    break;
+
+                case ShipState.Open:
+                    break;
+
+                case ShipState.Closing:
+                    if (_frontDisplay.CurrentAnimation?.FinishedPlaying == true)
+                    {
+                        _state = ShipState.Idle;
+                        _frontDisplay.Play("idle");
+                    }
+                    break;
+            }
+
+            base.Update(gameTime, elapsed);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (Game1.DrawAllCollisionRects)
+            {
+                spriteBatch.Draw(Game1.TileTextures, inShipRectangle, Game1.WhiteSourceRect, Color.Orange * 0.25f);
+                spriteBatch.Draw(Game1.TileTextures, _leftWall.CollisionRectangle, Game1.WhiteSourceRect, Color.Purple * 0.35f);
+            }
+
+            _backDisplay.Draw(spriteBatch, WorldLocation, Flipped);
+
+            base.Draw(spriteBatch);
+        }
+    }
+}

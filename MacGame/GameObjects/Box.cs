@@ -53,7 +53,6 @@ namespace MacGame
                 }
             }
             
-
             base.Update(gameTime, elapsed);
         }
 

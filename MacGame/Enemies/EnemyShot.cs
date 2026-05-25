@@ -51,7 +51,7 @@ namespace MacGame.Enemies
                 DisplayComponent.Draw(spriteBatch, WorldLocation, Flipped);
 
                 // Draw collision rectangle in debug mode
-                if ((DrawCollisionRect || Game1.DrawAllCollisionRects) && !CollisionRectangle.IsEmpty)
+                if (Game1.DrawAllCollisionRects && !CollisionRectangle.IsEmpty)
                 {
                     Color color = Color.Red * 0.25f;
                     spriteBatch.Draw(Game1.TileTextures, CollisionRectangle, Game1.WhiteSourceRect, color);

@@ -85,7 +85,6 @@ namespace MacGame
         public float RotationsPerSecond = 0;
         public bool IsRotationClockwise;
 
-        public bool DrawCollisionRect = false;
         public bool DrawLocation = false;
 
         private Point[] pixelsToTest = new Point[20];
@@ -443,6 +442,7 @@ namespace MacGame
                         var distanceToObject = leftOfObject - beforeMoveRight;
                         moveAmount.X = distanceToObject;
                         onRightWall = true;
+                        velocity.X = 0;
                     }
                 }
                 else
@@ -455,6 +455,7 @@ namespace MacGame
                         var distanceToObject = rightOfObject - beforeMoveLeft;
                         moveAmount.X = distanceToObject;
                         onLeftWall = true;
+                        velocity.X = 0;
                     }
                 }
             }
@@ -1052,7 +1053,7 @@ namespace MacGame
             }
 
             // Draw Collision Rectangle in reddish
-            if (DrawCollisionRect || Game1.DrawAllCollisionRects && !collisionRectangle.IsEmpty)
+            if (Game1.DrawAllCollisionRects && !collisionRectangle.IsEmpty)
             {
                 Color color = Color.Red * 0.25f;
                 spriteBatch.Draw(Game1.TileTextures, CollisionRectangle, Game1.WhiteSourceRect, color);

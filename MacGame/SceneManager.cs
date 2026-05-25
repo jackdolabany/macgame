@@ -34,18 +34,21 @@ namespace MacGame
             Game1.Camera.ClearRestrictions();
             Game1.BackgroundEffectsManager.Reset();
 
-            // Music is annoying for testing.
-            if (!Game1.IS_DEBUG)
-            {
-                SoundManager.PlaySong("Stage1", true, 0.2f);
-            }
-            else
-            {
-                SoundManager.StopSong();
-            }
+            //// Music is annoying for testing.
+            //if (!Game1.IS_DEBUG)
+            //{
+            //    SoundManager.PlaySong("Stage1", true, 0.2f);
+            //}
+            //else
+            //{
+            //    SoundManager.StopSong();
+            //}
 
-                // Set false on every level start. Boss enemies can set this true themselves.
-                Game1.DrawBossHealth = false;
+            // Music will come later
+            SoundManager.StopSong();
+
+            // Set false on every level start. Boss enemies can set this true themselves.
+            Game1.DrawBossHealth = false;
 
             var map = contentManager.Load<TileMap>($@"Maps/{mapName}");
 
@@ -709,6 +712,13 @@ namespace MacGame
 
                                 level.GameObjects.Add(spaceShip);
                                 layerDepthObjects[z].Add(spaceShip);
+                            }
+                            else if (loadClass == "MacFighterShip")
+                            {
+                                var macFighterShip = new MacFighterShip(contentManager, x, y, player, camera);
+                                macFighterShip.AddStuffToLevel(level, contentManager);
+                                level.GameObjects.Add(macFighterShip);
+                                layerDepthObjects[z].Add(macFighterShip);
                             }
                         }
                     }

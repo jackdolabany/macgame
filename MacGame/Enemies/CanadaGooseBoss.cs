@@ -747,14 +747,14 @@ namespace MacGame.Enemies
         public override void Draw(SpriteBatch spriteBatch)
         {
             // Draw the neck rectangle.
-            if (isStanding && DrawCollisionRect || Game1.DrawAllCollisionRects)
+            if (Game1.DrawAllCollisionRects)
             {
                 Color color = Color.Red * 0.25f;
                 spriteBatch.Draw(Game1.TileTextures, standingNeckRectangle, Game1.WhiteSourceRect, color);
             }
 
             // Draw the head rectangle.
-            if (isStanding && DrawCollisionRect || Game1.DrawAllCollisionRects)
+            if (Game1.DrawAllCollisionRects)
             {
                 Color color = Color.Red * 0.25f;
                 spriteBatch.Draw(Game1.TileTextures, standingHeadRectangle, Game1.WhiteSourceRect, color);

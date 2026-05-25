@@ -444,7 +444,7 @@ namespace MacGame.Enemies
         public override void Draw(SpriteBatch spriteBatch)
         {
             // Draw Collision Rectangle in reddish
-            if (DrawCollisionRect || Game1.DrawAllCollisionRects)
+            if (Game1.DrawAllCollisionRects)
             {
                 Color color = Color.Red * 0.25f;
 

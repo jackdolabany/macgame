@@ -211,9 +211,54 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="107">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="108">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="109">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="120">
   <properties>
    <property name="LoadClass" value="Enemy.BigShipHomingLauncher"/>
+  </properties>
+ </tile>
+ <tile id="123">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="124">
+  <properties>
+   <property name="LoadClass" value="MacFighterShip"/>
+  </properties>
+ </tile>
+ <tile id="125">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="240">
+  <properties>
+   <property name="BlockPlayer" value="SlopeUp"/>
+  </properties>
+ </tile>
+ <tile id="241">
+  <properties>
+   <property name="BlockPlayer" value="1"/>
+  </properties>
+ </tile>
+ <tile id="242">
+  <properties>
+   <property name="BlockPlayer" value="SlopeDown"/>
   </properties>
  </tile>
 </tileset>

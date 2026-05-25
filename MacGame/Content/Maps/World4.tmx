@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="256" height="180" tilewidth="8" tileheight="8" infinite="0" nextlayerid="8" nextobjectid="22">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="256" height="180" tilewidth="8" tileheight="8" infinite="0" nextlayerid="8" nextobjectid="23">
  <properties>
   <property name="Description" value="The Moon"/>
   <property name="LevelNumber" value="4"/>
@@ -98,6 +98,11 @@
   <object id="21" name="AlienConvo" x="671.5" y="948.75" width="24" height="24">
    <properties>
     <property name="Convo" value="Me:Welcome to the moon! And no Mom, it's not just a phase!"/>
+   </properties>
+  </object>
+  <object id="22" name="Spaceship2" x="413.375" y="560.5" width="30.25" height="25.875">
+   <properties>
+    <property name="GoToMap" value="GrokTest"/>
    </properties>
   </object>
  </objectgroup>

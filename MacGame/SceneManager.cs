@@ -716,6 +716,13 @@ namespace MacGame
                             else if (loadClass == "MacFighterShip")
                             {
                                 var macFighterShip = new MacFighterShip(contentManager, x, y, player, camera);
+                                HandleObjectModifiers(x, y, macFighterShip, map, (props) =>
+                                {
+                                    if (props.ContainsKey("GoToMap"))
+                                    {
+                                        macFighterShip.GoToMap = props["GoToMap"];
+                                    }
+                                });
                                 macFighterShip.AddStuffToLevel(level, contentManager);
                                 level.GameObjects.Add(macFighterShip);
                                 layerDepthObjects[z].Add(macFighterShip);

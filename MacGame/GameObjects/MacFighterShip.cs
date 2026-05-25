@@ -3,6 +3,7 @@ using MacGame.Platforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TileEngine;
 
 namespace MacGame
@@ -18,11 +19,22 @@ namespace MacGame
 
         private Player _player;
 
-        private enum ShipState { Idle, Opening, Open, Closing }
+        private enum ShipState { Idle, Opening, Open, Closing, TakingOff }
         private ShipState _state = ShipState.Idle;
 
         private float _onScreenTimer;
         private const float OpenDelay = 5f;
+
+        private float _rocketTimer;
+        private const float RocketTimerGoal = 0.1f;
+
+        private static readonly Vector2 TakeOffDirection = Vector2.Normalize(new Vector2(1f, -1f));
+
+        /// <summary>
+        /// The map to transition to when the ship blasts off. Set a GoToMap property from the
+        /// map editor.
+        /// </summary>
+        public string GoToMap { get; set; } = "";
 
         Platform shipPlatform;
         PlayerOnlyCollisionRectangle _leftWall;
@@ -62,7 +74,7 @@ namespace MacGame
             // Front display is the primary component for base rendering.
             DisplayComponent = _frontDisplay;
 
-            SetWorldLocationCollisionRectangle(6, 8);
+            SetWorldLocationCollisionRectangle(32, 24);
             WorldLocation = new Vector2(cellX * TileMap.TileSize + TileMap.TileSize / 2, (cellY + 1) * TileMap.TileSize);
 
             IsAffectedByGravity = false;
@@ -134,6 +146,8 @@ namespace MacGame
         {
             if (_state == ShipState.Idle) return false;
 
+            if (_state == ShipState.TakingOff) return true;
+
             var isInShipRectangle = inShipRectangle.Contains(this._player.WorldLocation + new Vector2(0, -2));
 
             // Make sure Mac is also to the right of the collision wall or weird visual things will happen.
@@ -183,13 +197,41 @@ namespace MacGame
                     break;
 
                 case ShipState.Open:
+                    // Blast off if the Player presses up.
+                    if (_player.PlatformThatThisIsOn == shipPlatform
+                        && _player.InputManager.CurrentAction.up
+                        && !_player.InputManager.PreviousAction.up)
+                    {
+                        _state = ShipState.Closing;
+                        _frontDisplay.Play("close");
+                        GlobalEvents.FireBeginDoorEnter(this, EventArgs.Empty);
+                    }
                     break;
 
                 case ShipState.Closing:
                     if (_frontDisplay.CurrentAnimation?.FinishedPlaying == true)
                     {
+                        _state = ShipState.TakingOff;
+                        _player.IsInvisibleAndCantMove = true;
+                    }
+                    break;
+
+                case ShipState.TakingOff:
+                    Velocity += TakeOffDirection * 1000f * elapsed;
+
+                    _rocketTimer += elapsed;
+                    if (_rocketTimer >= RocketTimerGoal)
+                    {
+                        _rocketTimer -= RocketTimerGoal;
+                        // Exhaust trails from the bottom-left of the ship (opposite the 45 degree direction).
+                        EffectsManager.AddExplosion(new Vector2(this.CollisionRectangle.Left, this.CollisionRectangle.Center.Y));
+                    }
+
+                    bool offScreen = worldLocation.Y < Game1.Camera.ViewPort.Top || worldLocation.X > Game1.Camera.ViewPort.Right;
+                    if (offScreen)
+                    {
+                        GlobalEvents.FireDoorEntered(this, GoToMap, "", Name, Game1.TransitionType.SlowFade);
                         _state = ShipState.Idle;
-                        _frontDisplay.Play("idle");
                     }
                     break;
             }

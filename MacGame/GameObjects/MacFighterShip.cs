@@ -130,32 +130,31 @@ namespace MacGame
             _backDisplay.DrawDepth = playerDepth + Game1.MIN_DRAW_INCREMENT;
         }
 
-        private void UpdateDrawDepths()
+        public bool IsMacInShip()
         {
-            switch (_state)
-            {
-                case ShipState.Idle:
-                    MacInFrontOfShip();
-                    break;
+            if (_state == ShipState.Idle) return false;
 
-                case ShipState.Opening:
-                case ShipState.Open:
-                case ShipState.Closing:
-                    if (inShipRectangle.Contains(this._player.WorldLocation + new Vector2(0, -2)))
-                    {
-                        MacInShip();
-                    }
-                    else
-                    {
-                        MacInFrontOfShip();
-                    }
-                    break;
-            }
+            var isInShipRectangle = inShipRectangle.Contains(this._player.WorldLocation + new Vector2(0, -2));
+
+            // Make sure Mac is also to the right of the collision wall or weird visual things will happen.
+            var isToRightOfCollisionWall = this.shipPlatform.Enabled = _player.CollisionRectangle.Left >= _leftWall.CollisionRectangle.Right;
+
+            return isInShipRectangle && isToRightOfCollisionWall;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            UpdateDrawDepths();
+
+            shipPlatform.Enabled = _state != ShipState.Idle;
+
+            if (IsMacInShip())
+            {
+                MacInShip();
+            }
+            else
+            {
+                MacInFrontOfShip();
+            } 
 
             // Wall is only active while Mac is grounded on the ship platform.
             _leftWall.Enabled = _player.PlatformThatThisIsOn == shipPlatform;

@@ -469,6 +469,11 @@ namespace MacGame.Enemies
 
             base.TakeHit(attacker, damage);
 
+            foreach (var tailPiece in _tailPieces)
+            {
+                tailPiece.TriggerHitFlash();
+            }
+
             if (Health <= 0)
             {
                 _state = OurTypeOfBossState.DyingTailBlowingUp;

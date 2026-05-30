@@ -85,6 +85,11 @@ namespace MacGame.Enemies
         private float _hitFlashTimer = 0f;
         private const float HitFlashDuration = 0.1f;
 
+        public void TriggerHitFlash()
+        {
+            _hitFlashTimer = HitFlashDuration;
+        }
+
         /// <summary>
         /// The default is to flash invisible for a moment when hit. Some enemies might want to
         /// override this. If enemies don't have a period of invincibility after being hit they
@@ -196,7 +201,7 @@ namespace MacGame.Enemies
             {
                 PlayTakeHitSound();
                 InvincibleTimer += InvincibleTimeAfterBeingHit;
-                _hitFlashTimer = HitFlashDuration;
+                TriggerHitFlash();
                 _invincibleFlashTimer = 0.1f;
             }
         }

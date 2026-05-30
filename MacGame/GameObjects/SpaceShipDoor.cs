@@ -14,16 +14,16 @@ namespace MacGame
     /// <summary>
     /// The door of the space ship that closes behind mac
     /// </summary>
-    public class SpaceShipDoor : Door
+    public class SpaceshipDoor : Door
     {
 
         private Player _player;
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
-        private SpaceShip _spaceShip;
+        private Spaceship _spaceship;
 
-        public SpaceShipDoor(ContentManager content, Vector2 spaceShipLocation, Player player, SpaceShip spaceShip) : base(content, 0, 0, player)
+        public SpaceshipDoor(ContentManager content, Vector2 spaceshipLocation, Player player, Spaceship spaceship) : base(content, 0, 0, player)
         {
-            _spaceShip = spaceShip;
+            _spaceship = spaceship;
 
             this.CollisionRectangle = new Rectangle(-16, -Game1.TileSize, Game1.TileSize, Game1.TileSize);
 
@@ -88,13 +88,13 @@ namespace MacGame
 
         public override void PlayerTriedToOpen(Player player)
         {
-            _spaceShip.StartTakeOff();
+            _spaceship.StartTakeOff();
         }
 
         public override void ComeOutOfThisDoor(Player player, bool isYeet = false)
         {
             base.ComeOutOfThisDoor(player, isYeet);
-            _spaceShip.OpenDoor();
+            _spaceship.OpenDoor();
         }
 
         public override void PlayerSlidingOut()

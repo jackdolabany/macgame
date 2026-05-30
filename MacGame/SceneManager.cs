@@ -700,18 +700,18 @@ namespace MacGame
                                 level.GameObjects.Add(controller);
                                 layerDepthObjects[z].Add(controller);
                             }
-                            else if (loadClass == "SpaceShip")
+                            else if (loadClass == "Spaceship")
                             {
-                                var spaceShip = new SpaceShip(contentManager, x, y, player);
-                                HandleObjectModifiers(x, y, spaceShip, map, (props) => {
-                                    spaceShip.GoToMap = props["GoToMap"];
-                                    spaceShip.GoToDoor = props["GoToDoor"];
+                                var spaceship = new Spaceship(contentManager, x, y, player);
+                                HandleObjectModifiers(x, y, spaceship, map, (props) => {
+                                    spaceship.GoToMap = props["GoToMap"];
+                                    spaceship.GoToDoor = props["GoToDoor"];
                                 });
 
-                                spaceShip.AddStuffToLevel(level, contentManager);
+                                spaceship.AddStuffToLevel(level, contentManager);
 
-                                level.GameObjects.Add(spaceShip);
-                                layerDepthObjects[z].Add(spaceShip);
+                                level.GameObjects.Add(spaceship);
+                                layerDepthObjects[z].Add(spaceship);
                             }
                             else if (loadClass == "MacFighterShip")
                             {
@@ -826,7 +826,7 @@ namespace MacGame
                     if (o is Door) return 1;
                     if (o is BlockingPiston) return 1;
                     if (o is WaterBomb) return 1;
-                    if (o is SpaceShip) return 1;
+                    if (o is Spaceship) return 1;
                     if (o is CrystalSwitch) return 1;
                     if (o is CrystalBlock) return 1;
                     if (o is Npc) return 2;

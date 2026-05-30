@@ -86,7 +86,7 @@
     <property name="GoToMap" value="TestFinalBoss"/>
    </properties>
   </object>
-  <object id="29" name="Spaceship1" x="336.636" y="81.7727" width="20.6136" height="17.3864">
+  <object id="29" name="Spaceship1" x="336.272" y="83.4091" width="20.6136" height="17.3864">
    <properties>
     <property name="GoToDoor" value="Spaceship1"/>
     <property name="GoToMap" value="World4"/>

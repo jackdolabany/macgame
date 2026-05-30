@@ -16,7 +16,7 @@ namespace MacGame
     /// <summary>
     /// Stairs that go up when you enter the space ship.
     /// </summary>
-    public class SpaceShipStairs : GameObject
+    public class SpaceshipStairs : GameObject
     {
 
         private Player _player;
@@ -26,7 +26,7 @@ namespace MacGame
 
         //LadderPlatform ladderPlatform;
 
-        public SpaceShipStairs(ContentManager content, Vector2 spaceShipLocation, Player player)
+        public SpaceshipStairs(ContentManager content, Vector2 spaceshipLocation, Player player)
         {
             this.CollisionRectangle = new Rectangle(-1, -65, 34, 66);
 

@@ -13,7 +13,7 @@
  </tile>
  <tile id="6">
   <properties>
-   <property name="LoadClass" value="SpaceShip"/>
+   <property name="LoadClass" value="Spaceship"/>
   </properties>
  </tile>
  <tile id="18">

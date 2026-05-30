@@ -40,7 +40,7 @@ namespace MacGame
         /// <summary>
         /// Mac is a space ship in shooting levels.
         /// </summary>
-        SpaceShip,
+        Spaceship,
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ namespace MacGame
         private bool IsClimbingLadder => _state == MacState.ClimbingLadder;
         private bool IsClimbingVine => _state == MacState.ClimbingVine;
         private bool IsDisablingWaterBomb => _state == MacState.DisablingWaterBomb;
-        private bool IsInSpaceShip => _state == MacState.SpaceShip;
+        private bool IsInSpaceship => _state == MacState.Spaceship;
 
         private bool _shipFlipped = false;
         public bool IsShipFlipped => _shipFlipped;
@@ -492,16 +492,16 @@ namespace MacGame
             disableWaterBomb.FrameLength = 0.25f;
             animations.Add(disableWaterBomb);
 
-            var spaceShip = new AnimationStrip(spaceTextures, Helpers.GetTileRect(5, 2), 1, "spaceShip");
-            spaceShip.LoopAnimation = false;
-            spaceShip.FrameLength = 1f;
-            animations.Add(spaceShip);
+            var spaceship = new AnimationStrip(spaceTextures, Helpers.GetTileRect(5, 2), 1, "spaceship");
+            spaceship.LoopAnimation = false;
+            spaceship.FrameLength = 1f;
+            animations.Add(spaceship);
 
             // Ship will flash white when the shot is fully charged.
-            var spaceShipWhite = new AnimationStrip(spaceTextures, Helpers.GetTileRect(5, 0), 1, "spaceShipWhite");
-            spaceShipWhite.LoopAnimation = false;
-            spaceShipWhite.FrameLength = 1f;
-            animations.Add(spaceShipWhite);
+            var spaceshipWhite = new AnimationStrip(spaceTextures, Helpers.GetTileRect(5, 0), 1, "spaceshipWhite");
+            spaceshipWhite.LoopAnimation = false;
+            spaceshipWhite.FrameLength = 1f;
+            animations.Add(spaceshipWhite);
 
             Enabled = true;
 
@@ -762,7 +762,7 @@ namespace MacGame
                         _moveToLocation.Update(this, gameTime, elapsed);
                     }
                 }
-                else if (IsInSpaceShip)
+                else if (IsInSpaceship)
                 {
                     HandleSpaceshipInputs(elapsed);
                 }
@@ -772,7 +772,7 @@ namespace MacGame
                 }
             }
 
-            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom && !IsInSpaceShip)
+            if (this.Enabled && CollisionRectangle.Top > Game1.CurrentMap.GetWorldRectangle().Bottom && !IsInSpaceship)
             {
                 // player fell down a bottomless pit
                 Kill();
@@ -884,7 +884,7 @@ namespace MacGame
                 }
             }
 
-            if (IsInSpaceShip)
+            if (IsInSpaceship)
             {
                 foreach (var shot in Shots.RawList)
                 {
@@ -966,11 +966,11 @@ namespace MacGame
 
             if (isShipWhite)
             {
-                animations.PlayIfNotAlreadyPlaying("spaceShipWhite");
+                animations.PlayIfNotAlreadyPlaying("spaceshipWhite");
             }
             else
             {
-                animations.PlayIfNotAlreadyPlaying("spaceShip");
+                animations.PlayIfNotAlreadyPlaying("spaceship");
             }
             this.IsAbleToMoveOutsideOfWorld = false;
             this.IsAbleToSurviveOutsideOfWorld = true;
@@ -1277,7 +1277,7 @@ namespace MacGame
 
         public bool JumpedOnEnemyRectangle(Rectangle rectangle)
         {
-            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart || IsInSub || IsInSpaceShip)
+            if (IsClimbingLadder || IsClimbingVine || IsInWater || IsInMineCart || IsInSub || IsInSpaceship)
             {
                 return false;
             }
@@ -1364,7 +1364,7 @@ namespace MacGame
                         }
                     }
                 }
-                if (IsInSpaceShip)
+                if (IsInSpaceship)
                 {
                     foreach (var shot in Shots.RawList)
                     {
@@ -1439,7 +1439,7 @@ namespace MacGame
                     CurrentItem = null;
                 }
 
-                if (IsInSpaceShip)
+                if (IsInSpaceship)
                 {
                     if (ShotPower == ShotPower.Charge)
                     {
@@ -2443,10 +2443,10 @@ namespace MacGame
 
         public void EnterSpaceship()
         {
-            _state = MacState.SpaceShip;
+            _state = MacState.Spaceship;
             ResetAllMovementState();
             this.IsAffectedByGravity = false;
-            animations.Play("spaceShip");
+            animations.Play("spaceship");
             SetCenteredCollisionRectangle(8, 8, 5, 5);
         }
 
@@ -2687,7 +2687,7 @@ namespace MacGame
         public void Kill()
         {
 
-            if (IsInSub || IsInSpaceShip)
+            if (IsInSub || IsInSpaceship)
             {
                 EffectsManager.AddExplosion(this.WorldCenter, true);
             }
@@ -2782,7 +2782,7 @@ namespace MacGame
                 spriteBatch.Draw(textures, position, Helpers.GetTileRect(1, 0), Color.White, 0f, Vector2.Zero, 1f, effect, depth);
             }
 
-            if (IsInSpaceShip)
+            if (IsInSpaceship)
             {
                 foreach (var shot in Shots.RawList)
                 {
@@ -2878,7 +2878,7 @@ namespace MacGame
                 spriteBatch.Draw(textures2, markerPosition, Helpers.GetTileRect(10, 6), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
             }
 
-            if (CurrentHat != null && !IsInCannon && !IsInSpaceShip)
+            if (CurrentHat != null && !IsInCannon && !IsInSpaceship)
             {
                 // Draw in front of the player
                 CurrentHat.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
@@ -2986,7 +2986,7 @@ namespace MacGame
                 targetPosition = this.WorldLocation + new Vector2(80, 0);
             }
 
-            if (!IsInSpaceShip)
+            if (!IsInSpaceship)
             {
                 // Track just above the player so we see more up than down.
                 targetPosition.Y -= Game1.TileSize * 1.5f;

@@ -14,26 +14,26 @@ namespace MacGame
     /// A giant space ship that you can walk into and fly off to another world. Not the small one you control,
     /// that's a different player sprite.
     /// </summary>
-    public class SpaceShip : GameObject
+    public class Spaceship : GameObject
     {
 
         private Player _player;
-        private SpaceShipStairs _stairs;
-        private SpaceShipDoor _door;
+        private SpaceshipStairs _stairs;
+        private SpaceshipDoor _door;
 
         private bool _isInitialized = false;
 
         public string GoToDoor { get; set; }
         public string GoToMap { get; set; }
 
-        private SpaceShipState _state;
+        private SpaceshipState _state;
 
         float rocketTimer = 0;
         const float rocketTimerGoal = 0.1f;
 
         float originalPlayerDrawDepth;
 
-        public enum SpaceShipState
+        public enum SpaceshipState
         {
             Idle,
             DoorClosing,
@@ -41,7 +41,7 @@ namespace MacGame
             DoorOpening
         }
 
-        public SpaceShip(ContentManager content, int x, int y, Player player) : base ()
+        public Spaceship(ContentManager content, int x, int y, Player player) : base ()
         {
             _player = player;
             Enabled = true;
@@ -56,10 +56,10 @@ namespace MacGame
 
             this.WorldLocation = new Vector2((x * TileMap.TileSize) + (TileMap.TileSize / 2) + 4, (y + 1) * TileMap.TileSize);
 
-            _stairs = new SpaceShipStairs(content, this.WorldLocation, player);
-            _door = new SpaceShipDoor(content, this.WorldLocation, player, this);
+            _stairs = new SpaceshipStairs(content, this.WorldLocation, player);
+            _door = new SpaceshipDoor(content, this.WorldLocation, player, this);
 
-            _state = SpaceShipState.Idle;
+            _state = SpaceshipState.Idle;
 
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = true;
@@ -86,7 +86,7 @@ namespace MacGame
 
         public void StartTakeOff()
         {
-            _state = SpaceShipState.DoorClosing;
+            _state = SpaceshipState.DoorClosing;
             _stairs.RaiseStairs();
             _door.CloseDoor();
 
@@ -99,7 +99,7 @@ namespace MacGame
 
         public void OpenDoor()
         {   
-            _state = SpaceShipState.DoorOpening;
+            _state = SpaceshipState.DoorOpening;
             _stairs.LowerStairs();
             _door.OpenDoor();
 
@@ -142,18 +142,18 @@ namespace MacGame
 
             switch (_state)
             {
-                case SpaceShipState.Idle:
+                case SpaceshipState.Idle:
                     break;
-                case SpaceShipState.DoorClosing:
+                case SpaceshipState.DoorClosing:
                     if (_door.IsClosed() && _stairs.AreStairsRaised())
                     {
-                        _state = SpaceShipState.TakingOff;
+                        _state = SpaceshipState.TakingOff;
 
                         // Pretend Mac is inside the ship.
                         _player.IsInvisibleAndCantMove = true;
                     }
                     break;
-                case SpaceShipState.TakingOff:
+                case SpaceshipState.TakingOff:
                     // Start flying up
                     this.Velocity += new Vector2(0, -1000) * elapsed;
 
@@ -168,15 +168,15 @@ namespace MacGame
                     if (worldLocation.Y < Game1.Camera.ViewPort.Top)
                     {
                         GlobalEvents.FireDoorEntered(this, GoToMap, GoToDoor, Name);
-                        _state = SpaceShipState.Idle;
+                        _state = SpaceshipState.Idle;
                     }
 
                     break;
-                case SpaceShipState.DoorOpening:
+                case SpaceshipState.DoorOpening:
 
                     if (_door.IsOpen() && !_stairs.AreStairsLowered())
                     {
-                        _state = SpaceShipState.Idle;
+                        _state = SpaceshipState.Idle;
 
                         // Let Mac out of the ship.
                         _player.IsInvisibleAndCantMove = false;

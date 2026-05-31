@@ -41,6 +41,10 @@ namespace MacGame
             DoorOpening
         }
 
+        // We want to draw parts of the ship behind or in front of Mac.
+        // Add some extra padding for his little hat or whatever he might be holding.
+        const float PaddingAroundPlayer = 5f * Game1.MIN_DRAW_INCREMENT;
+
         public Spaceship(ContentManager content, int x, int y, Player player) : base ()
         {
             _player = player;
@@ -94,7 +98,7 @@ namespace MacGame
 
             // Put the player inside the ship
             originalPlayerDrawDepth = _player.DrawDepth;
-            _player.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            _player.SetDrawDepth(this.DrawDepth +  PaddingAroundPlayer);
         }
 
         public void OpenDoor()
@@ -105,7 +109,7 @@ namespace MacGame
 
             // Put the player inside the ship
             originalPlayerDrawDepth = _player.DrawDepth;
-            _player.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            _player.SetDrawDepth(this.DrawDepth +  PaddingAroundPlayer);
         }
 
         private void PositionChildren()
@@ -119,11 +123,11 @@ namespace MacGame
 
             if (!_isInitialized)
             {
-                _door.SetDrawDepth(_player.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                _door.SetDrawDepth(_player.DrawDepth - PaddingAroundPlayer);
 
                 //Game1.CurrentLevel.Doors.Add()
 
-                _stairs.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                _stairs.SetDrawDepth(this.DrawDepth - PaddingAroundPlayer);
                 _isInitialized = true;
 
                 _door.Name = this.Name;

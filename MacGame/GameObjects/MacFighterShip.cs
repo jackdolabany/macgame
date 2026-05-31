@@ -126,9 +126,10 @@ namespace MacGame
         /// </summary>
         private void MacInFrontOfShip()
         {
+            // Add some padding for Mac's little hat or whatever he might be holding
             float playerDepth = _player.DrawDepth;
-            _frontDisplay.DrawDepth = playerDepth + Game1.MIN_DRAW_INCREMENT;
-            _backDisplay.DrawDepth = playerDepth + 2f * Game1.MIN_DRAW_INCREMENT;
+            _frontDisplay.DrawDepth = playerDepth + 5f * Game1.MIN_DRAW_INCREMENT;
+            _backDisplay.DrawDepth = playerDepth + 6f * Game1.MIN_DRAW_INCREMENT;
         }
 
         /// <summary>
@@ -137,9 +138,10 @@ namespace MacGame
         /// </summary>
         private void MacInShip()
         {
+            // Add some padding for Mac's little hat or whatever he might be holding
             float playerDepth = _player.DrawDepth;
-            _frontDisplay.DrawDepth = playerDepth - Game1.MIN_DRAW_INCREMENT;
-            _backDisplay.DrawDepth = playerDepth + Game1.MIN_DRAW_INCREMENT;
+            _frontDisplay.DrawDepth = playerDepth - 5f * Game1.MIN_DRAW_INCREMENT;
+            _backDisplay.DrawDepth = playerDepth + 5f * Game1.MIN_DRAW_INCREMENT;
         }
 
         public bool IsMacInShip()

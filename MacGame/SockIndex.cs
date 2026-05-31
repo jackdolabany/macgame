@@ -83,6 +83,9 @@ namespace MacGame
                 {
                     new SockInfo { Name = "GrokSock", Hint = "Grok steal sock." },
                     new SockInfo { Name = "AlienMomSock", Hint = "Alien moms always have socks for their Alien babies." },
+                    new SockInfo { Name = "CrabzillaSock", Hint = "Crabzilla, find him!" },
+                    new SockInfo { Name = "AlienStealthBomberSock", Hint = "Alien stealth bomber yo" },
+                    new SockInfo { Name = "GalaxyTwinsSock", Hint = "Galaxy Twinz fo realz" },
                 }
             },
         };

@@ -17,12 +17,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Effects/WhiteFlash.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Effects/WhiteFlash.fx
-
 #begin Effects/CRT.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -58,6 +52,12 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Effects/VignetteOnly.fx
+
+#begin Effects/WhiteFlash.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/WhiteFlash.fx
 
 #begin Fonts/emulogic.spritefont
 /importer:FontDescriptionImporter
@@ -105,6 +105,11 @@
 /processorParam:TextureFormat=Color
 /build:Fonts/NesFontCaps.png
 
+#begin Maps/AlienStealthBomberTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/AlienStealthBomberTest.tmx
+
 #begin Maps/BigShipBossTest.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -125,6 +130,11 @@
 /processor:PassThroughProcessor
 /build:Maps/CollisionWorld.tmx
 
+#begin Maps/CrabzillaTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/CrabzillaTest.tmx
+
 #begin Maps/Dracula.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -134,6 +144,11 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/FortressTest.tmx
+
+#begin Maps/GalaxyTwinsTest.tmx
+/importer:TMXMapImporter
+/processor:PassThroughProcessor
+/build:Maps/GalaxyTwinsTest.tmx
 
 #begin Maps/GrokTest.tmx
 /importer:TMXMapImporter
@@ -984,6 +999,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Controller.png
+
+#begin Textures/Crabzilla.png
+/importer:TextureImporter
+/processor:ScaleImageProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Crabzilla.png
 
 #begin Textures/Hats.png
 /importer:TextureImporter

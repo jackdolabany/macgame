@@ -268,7 +268,7 @@
  </tile>
  <tile id="139">
   <properties>
-   <property name="LoadClass" value="GalaxyTwinsBoss"/>
+   <property name="LoadClass" value="Enemy.GalaxyTwinsBoss"/>
   </properties>
  </tile>
  <tile id="140">
@@ -278,7 +278,7 @@
  </tile>
  <tile id="141">
   <properties>
-   <property name="LoadClass" value="AlienStealthBomber"/>
+   <property name="LoadClass" value="Enemy.AlienStealthBomber"/>
   </properties>
  </tile>
  <tile id="142">

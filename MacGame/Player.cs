@@ -571,6 +571,7 @@ namespace MacGame
             _hats.Add(new BaseballHat(this, content));
             _hats.Add(new YellowHat(this, content));
             _hats.Add(new RussianHat(this, content));
+            _hats.Add(new LadysHat(this, content));
 
             _moveToLocation = new MoveToLocation(this, 250, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");

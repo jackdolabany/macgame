@@ -355,6 +355,11 @@
    <property name="LoadClass" value="Item.RussianHatItem"/>
   </properties>
  </tile>
+ <tile id="473">
+  <properties>
+   <property name="LoadClass" value="Item.LadysHatItem"/>
+  </properties>
+ </tile>
  <tile id="500">
   <properties>
    <property name="LoadClass" value="Npc.Bully1"/>

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MacGame.Enemies
 {
@@ -39,6 +40,28 @@ namespace MacGame.Enemies
 
         private bool _isInitialized = false;
         private Sock _sock;
+
+        // Sweep gun: single bullet fired along an angle that pivots up and down.
+        private float _sweepTimer = 0f;
+        private float _sweepFireTimer = 0f;
+        private const float SweepFireInterval = 0.1f;
+        private const float SweepOscillateSpeed = 1.5f;
+        private const float SweepAmplitude = (float)(Math.PI / 3.0); // ±60° from left
+
+        // Circle gun: ring of bullets that slowly rotates.
+        private float _circleAngle = 0f;
+        private float _circleFireTimer = 0f;
+        private const float CircleFireInterval = 0.6f;
+        private const int CircleBulletCount = 8;
+        private const float CircleRotateSpeed = 0.5f; // radians per second
+
+        private const float BulletSpeed = 160f;
+
+        // AlienShip spawning
+        private const int MaxAliveShips = 3;
+        private const float ShipSpawnInterval = 5f;
+        private readonly List<AlienShip> _ships = new List<AlienShip>();
+        private float _shipSpawnTimer = ShipSpawnInterval;
 
         int width = 222 / 3 * Game1.TileScale;
         int height = 128 * Game1.TileScale;
@@ -138,6 +161,14 @@ namespace MacGame.Enemies
                 // bottom arm
                 _getRelativeCrabRectangle(-40, -190, 40, 30),
             };
+
+            for (int i = 0; i < MaxAliveShips; i++)
+            {
+                var ship = new AlienShip(content, cellX, cellY, player, camera);
+                ship.Enabled = false;
+                _ships.Add(ship);
+                AddEnemyInConstructor(ship);
+            }
         }
 
         private void Initialize()
@@ -183,12 +214,22 @@ namespace MacGame.Enemies
                 }
             }
 
-            if (_state != CrabzillaState.Dead)
+            var isActiveAndAttacking = Alive && _state != CrabzillaState.Unseen && _state != CrabzillaState.Dying && _state != CrabzillaState.Dead;
+            if (isActiveAndAttacking)
             {
                 Game1.DrawBossHealth = true;
                 Game1.MaxBossHealth = MaxHealth;
                 Game1.BossHealth = Health;
                 Game1.BossName = "Crabzilla";
+                UpdateSweepGun(elapsed);
+                UpdateCircleGun(elapsed);
+
+                _shipSpawnTimer -= elapsed;
+                if (_shipSpawnTimer <= 0f)
+                {
+                    _shipSpawnTimer = ShipSpawnInterval;
+                    TrySpawnShip();
+                }
             }
 
             if (_state == CrabzillaState.Idle)
@@ -270,6 +311,53 @@ namespace MacGame.Enemies
             {
                 var deadPercentage = _dyingTimer / DyingDuration;
                 DisplayComponent.TintColor = Color.Lerp(Color.White, Color.Transparent, deadPercentage);
+            }
+        }
+
+        private void TrySpawnShip()
+        {
+            if (_ships.Count(s => !s.Dead) >= MaxAliveShips) return;
+
+            var ship = _ships.FirstOrDefault(s => s.Dead);
+            if (ship == null) return;
+
+            var viewport = Game1.Camera.ViewPort;
+            var minY = viewport.Top + (3 * Game1.TileSize);
+            var maxY = viewport.Bottom - (3 * Game1.TileSize);
+            if (maxY <= minY) return;
+
+            ship.Revive(new Vector2(viewport.Right + 50, minY + Game1.Randy.Next(maxY - minY)));
+        }
+
+        private void UpdateSweepGun(float elapsed)
+        {
+            _sweepTimer += elapsed;
+            _sweepFireTimer += elapsed;
+
+            if (_sweepFireTimer >= SweepFireInterval)
+            {
+                _sweepFireTimer = 0f;
+                // Pivot from upper-left to lower-left: Math.PI = left, ±SweepAmplitude sweeps up/down.
+                var angle = Math.PI + Math.Sin(_sweepTimer * SweepOscillateSpeed) * SweepAmplitude;
+                var dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                ShotManager.FireSmallShot(CollisionCenter, dir * BulletSpeed);
+            }
+        }
+
+        private void UpdateCircleGun(float elapsed)
+        {
+            _circleAngle += CircleRotateSpeed * elapsed;
+            _circleFireTimer += elapsed;
+
+            if (_circleFireTimer >= CircleFireInterval)
+            {
+                _circleFireTimer = 0f;
+                for (int i = 0; i < CircleBulletCount; i++)
+                {
+                    var angle = _circleAngle + i * (MathHelper.TwoPi / CircleBulletCount);
+                    var dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                    ShotManager.FireSmallShot(CollisionCenter, dir * BulletSpeed);
+                }
             }
         }
 

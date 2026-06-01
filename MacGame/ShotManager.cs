@@ -8,7 +8,7 @@ namespace MacGame
 {
     public static class ShotManager
     {
-        public const int MAX_SHOTS = 50;
+        public const int MAX_SHOTS = 150;
 
         private static GameObjectCircularBuffer SmallShots;
         private static GameObjectCircularBuffer MediumShots;

@@ -851,6 +851,7 @@ namespace MacGame
                 }
                 else
                 {
+                    DrawBossHealth = false;
                     CurrentLevel.Update(gameTime, elapsed);
                     EffectsManager.Update(gameTime, elapsed);
                     ShotManager.Update(gameTime, elapsed);

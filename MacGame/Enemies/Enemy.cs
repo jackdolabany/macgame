@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TileEngine;
+using System;
 using System.Collections.Generic;
+using TileEngine;
 
 namespace MacGame.Enemies
 {
@@ -109,7 +109,7 @@ namespace MacGame.Enemies
             return vect;
         }
 
-        public Player Player;
+        protected Player Player;
 
         protected Camera camera;
 
@@ -324,6 +324,66 @@ namespace MacGame.Enemies
         public virtual void SetProps(Dictionary<string, string> props)
         {
             // Do nothing by default.
+        }
+
+        /// <summary>
+        /// Checks a collection of collision rectangles that will damage the player or destroy his shots.
+        /// </summary>
+        protected void CheckExtraCollisionRectangles(IEnumerable<Rectangle> collisionRectangles)
+        {
+            foreach (var rect in collisionRectangles)
+            {
+                CheckExtraCollisionRectangle(rect);
+            }
+        }
+
+        protected void CheckExtraCollisionRectangle(Rectangle rect)
+        {
+            if (rect.Intersects(Player.CollisionRectangle))
+            {
+                Player.TakeHit(this);
+            }
+
+            foreach (var shot in Player.Shots.RawList)
+            {
+                if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
+                {
+                    shot.Break();
+                }
+            }
+
+            foreach (var bomb in Player.Bombs.RawList)
+            {
+                if (bomb.Enabled && bomb.CollisionRectangle.Intersects(rect))
+                {
+                    bomb.Break();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Use this to Draw an extra rectangles for debugging.
+        /// </summary>
+        protected void DrawExtraDebugRectangles(SpriteBatch spriteBatch, IEnumerable<Rectangle> rectangles, Color color)
+        {
+            if (Game1.DrawAllCollisionRects)
+            { 
+                foreach (var rect in rectangles)
+                {
+                    DrawExtraDebugRectangle(spriteBatch, rect, color);
+                }
+             }
+        }
+
+        /// <summary>
+        /// Use this to Draw an extra collision rectangle or something for debugging.
+        /// </summary>
+        protected void DrawExtraDebugRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color)
+        {
+            if (Game1.DrawAllCollisionRects)
+            {
+                spriteBatch.Draw(Game1.TileTextures, rectangle, Game1.WhiteSourceRect, color);
+            }
         }
     }
 }

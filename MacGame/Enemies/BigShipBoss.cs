@@ -343,26 +343,7 @@ namespace MacGame.Enemies
                 foreach (var rawRect in collisionRectangles)
                 {
                     var rect = GetShipAdjustedRectangle(rawRect);
-                    if (rect.Intersects(_player.CollisionRectangle))
-                    {
-                        _player.TakeHit(this);
-                    }
-
-                    foreach (var shot in _player.Shots.RawList)
-                    {
-                        if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
-                        {
-                            shot.Break();
-                        }
-                    }
-
-                    foreach (var bomb in _player.Bombs.RawList)
-                    {
-                        if (bomb.Enabled && bomb.CollisionRectangle.Intersects(rect))
-                        {
-                            bomb.Break();
-                        }
-                    }
+                    CheckExtraCollisionRectangle(rect);
                 }
             }
 
@@ -473,7 +454,7 @@ namespace MacGame.Enemies
                 foreach (var rawRect in collisionRectangles)
                 {
                     var rect = GetShipAdjustedRectangle(rawRect);
-                    spriteBatch.Draw(Game1.TileTextures, rect, Game1.WhiteSourceRect, color);
+                    DrawExtraDebugRectangle(spriteBatch, rect, color);
                 }
 
             }

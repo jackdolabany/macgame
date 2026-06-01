@@ -1,9 +1,10 @@
-using System;
 using MacGame.DisplayComponents;
 using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace MacGame.Enemies
 {
@@ -24,7 +25,7 @@ namespace MacGame.Enemies
 
         CrabzillaState _state = CrabzillaState.Unseen;
 
-        private const int MaxHealth = 20;
+        private const int MaxHealth = 100;
 
         private float _idleTimer = 0f;
         private const float IdleDuration = 4f;
@@ -39,8 +40,20 @@ namespace MacGame.Enemies
         private bool _isInitialized = false;
         private Sock _sock;
 
-        int width = 216 / 3 * Game1.TileScale;
-        int height = 120 * Game1.TileScale;
+        int width = 222 / 3 * Game1.TileScale;
+        int height = 128 * Game1.TileScale;
+
+        /// <summary>
+        ///  To know when the thing is on screen. This will be much larger than the hit box regular collision rectangle.
+        /// </summary>
+        Rectangle isSeenRectangle;
+
+        public List<Rectangle> frame1CollisionRectangles;
+        public List<Rectangle> frame2CollisionRectangles;
+        public List<Rectangle> frame3CollisionRectangles;
+        public List<Rectangle> extraCollisionRectangles;
+
+        AnimationDisplay animationDisplay => (AnimationDisplay)DisplayComponent;
 
         public Crabzilla(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -67,6 +80,7 @@ namespace MacGame.Enemies
             var closeArms = new AnimationStrip(textures, firstFrameRect, 3, "closeArms");
             closeArms.LoopAnimation = false;
             closeArms.FrameLength = 0.15f;
+            
             animations.Add(closeArms);
 
             var openArms = (AnimationStrip)closeArms.Clone();
@@ -80,8 +94,50 @@ namespace MacGame.Enemies
             Health = MaxHealth;
             InvincibleTimeAfterBeingHit = 0f;
 
-            CollisionRectangle = new Rectangle(-width / 2, -height, width, height);
-            this.WorldLocation += new Vector2(0, height / 2);
+
+            this.WorldLocation += new Vector2(0, (height / 2) - Game1.TileSize);
+
+            // Just around the crab body
+            CollisionRectangle = new Rectangle(8, -80 * Game1.TileScale, 27 * Game1.TileScale, 33 * Game1.TileScale);
+
+            isSeenRectangle = new Rectangle(WorldLocation.X.ToInt() - (width / 2), WorldLocation.Y.ToInt() - height, width, height);
+
+            // Figure out different collision rectangles for each frame.
+            frame1CollisionRectangles = new List<Rectangle>
+            {
+                // Top claw
+                _getRelativeCrabRectangle(-20, -500, 100, 100),
+                // Top arm
+                _getRelativeCrabRectangle(30, -400, 30, 76),
+                // bottom claw
+                _getRelativeCrabRectangle(-20, -110, 100, 100),
+                // bottom arm
+                _getRelativeCrabRectangle(30, -180, 30, 76),
+            };
+
+            frame2CollisionRectangles = new List<Rectangle>
+            {
+                // Top claw.
+                _getRelativeCrabRectangle(-100, -430, 100, 100),
+                // Top arm.
+                _getRelativeCrabRectangle(10, -400, 30, 76),
+                // bottom claw
+                _getRelativeCrabRectangle(-100, -180, 100, 100),
+                // bottom arm
+                _getRelativeCrabRectangle(10, -180, 30, 76),
+            };
+
+            frame3CollisionRectangles = new List<Rectangle>
+            {
+                 // Top claw.
+                _getRelativeCrabRectangle(-140, -368, 100, 100),
+                // Top arm.
+                _getRelativeCrabRectangle(-40, -350, 40, 30),
+                // bottom claw
+                _getRelativeCrabRectangle(-140, -240, 100, 100),
+                // bottom arm
+                _getRelativeCrabRectangle(-40, -190, 40, 30),
+            };
         }
 
         private void Initialize()
@@ -117,7 +173,7 @@ namespace MacGame.Enemies
 
             if (_state == CrabzillaState.Unseen)
             {
-                if (Game1.Camera.IsPointVisible(CollisionCenter))
+                if (Game1.Camera.IsObjectVisible(isSeenRectangle))
                 {
                     _state = CrabzillaState.Idle;
                 }
@@ -191,11 +247,38 @@ namespace MacGame.Enemies
 
             base.Update(gameTime, elapsed);
 
+            // Set a different set of extra collision rectangles for each frame.
+            if (animationDisplay.CurrentAnimationName == "idle"
+                || animationDisplay.CurrentAnimationName == "openArms" && animationDisplay.CurrentAnimation.currentFrameIndex == 2
+                || animationDisplay.CurrentAnimationName == "closeArms" && animationDisplay.CurrentAnimation.currentFrameIndex == 0)
+            {
+                extraCollisionRectangles = frame1CollisionRectangles;
+            }
+            else if (animationDisplay.CurrentAnimation.currentFrameIndex == 1)
+            {
+                extraCollisionRectangles = frame2CollisionRectangles;
+            }
+            else if (animationDisplay.CurrentAnimationName == "openArms" && animationDisplay.CurrentAnimation.currentFrameIndex == 0
+                || animationDisplay.CurrentAnimationName == "closeArms" && animationDisplay.CurrentAnimation.currentFrameIndex == 2)
+            {
+                extraCollisionRectangles = frame3CollisionRectangles;
+            }
+
+            CheckExtraCollisionRectangles(extraCollisionRectangles);
+
             if (_state == CrabzillaState.Dying)
             {
                 var deadPercentage = _dyingTimer / DyingDuration;
                 DisplayComponent.TintColor = Color.Lerp(Color.White, Color.Transparent, deadPercentage);
             }
+        }
+
+        private Rectangle _getRelativeCrabRectangle(int x, int y, int width, int height)
+        {
+            return new Rectangle(this.WorldLocation.X.ToInt() + x,
+                this.WorldLocation.Y.ToInt() + y,
+                width,
+                height);
         }
 
         public override void PlayTakeHitSound()
@@ -220,6 +303,14 @@ namespace MacGame.Enemies
         public override void PlayDeathSound()
         {
             // Explosions during the dying sequence provide sound.
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            DrawExtraDebugRectangle(spriteBatch, isSeenRectangle, Color.Orange * 0.15f);
+            DrawExtraDebugRectangles(spriteBatch, extraCollisionRectangles, Color.Green * 0.5f);
+
+            base.Draw(spriteBatch);
         }
     }
 }

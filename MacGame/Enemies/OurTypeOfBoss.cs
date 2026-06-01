@@ -308,29 +308,7 @@ namespace MacGame.Enemies
                 }
 
                 // The extra collision rectangles will break shots and bombs, but the enemy won't take damange.
-                foreach (var rect in collisionRectangles)
-                {
-                    if (rect.Intersects(_player.CollisionRectangle))
-                    {
-                        _player.TakeHit(this);
-                    }
-
-                    foreach (var shot in _player.Shots.RawList)
-                    {
-                        if (shot.Enabled && shot.CollisionRectangle.Intersects(rect))
-                        {
-                            shot.Break();
-                        }
-                    }
-
-                    foreach (var bomb in _player.Bombs.RawList)
-                    {
-                        if (bomb.Enabled && bomb.CollisionRectangle.Intersects(rect))
-                        {
-                            bomb.Break();
-                        }
-                    }
-                }
+                CheckExtraCollisionRectangles(collisionRectangles);
 
                 // Update head and tail
                 _head.Update(gameTime, elapsed);

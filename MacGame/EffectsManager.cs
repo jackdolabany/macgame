@@ -159,38 +159,6 @@ namespace MacGame
             particle.RotationAndDrawOrigin = gameObject.RotationAndDrawOrigin;
         }
 
-        public static void AddSparksEffect(Vector2 location, Vector2 impactVelocity, Color? color = null, float scale = 1f)
-        {
-
-            if (!color.HasValue)
-            {
-                color = Pallette.Yellow;
-            }
-
-            int particleCount = Game1.Randy.Next(10, 20);
-            for (int x = 0; x < particleCount; x++)
-            {
-                var spark = (Particle)Particles.GetNextObject();
-
-                // Add some whiteness to some particles
-                var sparkColor = Color.Lerp(color.Value, Pallette.White, Game1.Randy.NextFloat() / 2);
-
-                spark.Initialize(
-                    location - (impactVelocity / 100),
-                    RandomDirection((float)Game1.Randy.Next(10, 10 + (10 * scale).ToInt())),
-                    Vector2.Zero,
-                    100f,
-                    70,
-                    sparkColor,
-                    Color.Transparent);
-
-                spark.SetStaticImage(SparkTexture, WhiteSquareSourceRectangle);
-                spark.Scale = scale;
-                spark.Rotation = Game1.Randy.NextFloat() * MathHelper.TwoPi;
-                spark.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
-            }
-        }
-
         /// <summary>
         /// Adds small dust particles when running on the ground.
         /// </summary>

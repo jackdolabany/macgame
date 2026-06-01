@@ -425,8 +425,13 @@ namespace MacGame.Enemies
             Attack = 0;
             foreach (var ship in _ships)
             {
-                if (ship.Enabled) { ship.Kill(); }
+                if (ship.Enabled) 
+                { 
+                    ship.Kill(); 
+                }
             }
+
+            ShotManager.ClearShotsCinematic();
         }
 
         public override void PlayDeathSound()

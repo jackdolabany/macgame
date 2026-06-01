@@ -33,7 +33,12 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.AddSparksEffect(WorldCenter, velocity, Pallette.Orange, 0.5f);
+            for (int i = 0; i < 8; i++)
+            {
+                // Make particles randomly between blue and white.
+                var color = Color.Lerp(Pallette.White, Pallette.LightBlue, Game1.Randy.NextFloat());
+                EffectsManager.EnemyPop(WorldCenter, 1, color, 80);
+            }
             Enabled = false;
             base.Kill();
         }

@@ -45,11 +45,38 @@ namespace MacGame
             }
         }
 
-        public static void ClearShots()
+        public static void ClearShotsInstant()
         {
             SmallShots.Disable();
             MediumShots.Disable();
             LargeShots.Disable();
+        }
+
+        public static void ClearShotsCinematic()
+        {
+            ScheduleCinematicClear(SmallShots);
+            ScheduleCinematicClear(MediumShots);
+            ScheduleCinematicClear(LargeShots);
+        }
+
+        private static void ScheduleCinematicClear(GameObjectCircularBuffer shots)
+        {
+            foreach (EnemyShot shot in shots)
+            {
+                if (shot.Enabled && shot.Alive)
+                {
+                    var s = shot;
+                    s.IsAbleToSurviveOutsideOfWorld = true;
+                    TimerManager.AddNewTimer((float)Game1.Randy.NextDouble() * 0.7f, () =>
+                    {
+                        s.IsAbleToSurviveOutsideOfWorld = false;
+                        if (s.Enabled) 
+                        { 
+                            s.Kill(); 
+                        }
+                    });
+                }
+            }
         }
 
         public static void Update(GameTime gameTime, float elapsed)
@@ -101,6 +128,7 @@ namespace MacGame
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
+            shot.IsAbleToSurviveOutsideOfWorld = false;
             shot.Enabled = true;
             shot.Alive = true;
         }
@@ -111,6 +139,7 @@ namespace MacGame
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
+            shot.IsAbleToSurviveOutsideOfWorld = false;
             shot.Enabled = true;
             shot.Alive = true;
         }
@@ -121,6 +150,7 @@ namespace MacGame
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
+            shot.IsAbleToSurviveOutsideOfWorld = false;
             shot.Enabled = true;
             shot.Alive = true;
         }

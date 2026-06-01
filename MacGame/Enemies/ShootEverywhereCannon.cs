@@ -44,17 +44,17 @@ namespace MacGame.Enemies
         private void FireCardinal()
         {
             float ySign = UpsideDown ? 1f : -1f;
-            ShotManager.FireSmallShot(CollisionCenter, new Vector2(-1f, 0f) * ShootSpeed);
-            ShotManager.FireSmallShot(CollisionCenter, new Vector2(0f, ySign) * ShootSpeed);
-            ShotManager.FireSmallShot(CollisionCenter, new Vector2(1f, 0f) * ShootSpeed);
+            ShotManager.FireSmallShot(CollisionCenter, new Vector2(-1f, 0f) * ShootSpeed, this);
+            ShotManager.FireSmallShot(CollisionCenter, new Vector2(0f, ySign) * ShootSpeed, this);
+            ShotManager.FireSmallShot(CollisionCenter, new Vector2(1f, 0f) * ShootSpeed, this);
             PlaySoundIfOnScreen("Fire", 0.5f);
         }
 
         private void FireDiagonal()
         {
             float ySign = UpsideDown ? 0.707f : -0.707f;
-            ShotManager.FireSmallShot(CollisionCenter, new Vector2(-0.707f, ySign) * ShootSpeed);
-            ShotManager.FireSmallShot(CollisionCenter, new Vector2(0.707f, ySign) * ShootSpeed);
+            ShotManager.FireSmallShot(CollisionCenter, new Vector2(-0.707f, ySign) * ShootSpeed, this);
+            ShotManager.FireSmallShot(CollisionCenter, new Vector2(0.707f, ySign) * ShootSpeed, this);
             PlaySoundIfOnScreen("Fire", 0.5f);
         }
 

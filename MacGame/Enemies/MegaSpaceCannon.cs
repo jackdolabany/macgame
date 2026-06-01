@@ -122,7 +122,7 @@ namespace MacGame.Enemies
         {
             var direction = GetShootDirection();
             var shotLocation = GetShotLocation(_currentDirection);
-            ShotManager.FireLargeShot(shotLocation, direction * 150f);
+            ShotManager.FireLargeShot(shotLocation, direction * 150f, this);
             PlaySoundIfOnScreen("Fire", 0.5f);
             ResetShootTimer();
         }

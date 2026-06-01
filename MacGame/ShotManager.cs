@@ -8,7 +8,7 @@ namespace MacGame
 {
     public static class ShotManager
     {
-        public const int MAX_SHOTS = 150;
+        public const int MAX_SHOTS = 120;
 
         private static GameObjectCircularBuffer SmallShots;
         private static GameObjectCircularBuffer MediumShots;
@@ -95,29 +95,32 @@ namespace MacGame
             LargeShots.Draw(spriteBatch);
         }
 
-        public static void FireSmallShot(Vector2 position, Vector2 velocity)
+        public static void FireSmallShot(Vector2 position, Vector2 velocity, GameObject shooter, float? drawDepth = null)
         {
             var shot = (EnemyShot)SmallShots.GetNextObject();
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
+            shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
             shot.Enabled = true;
             shot.Alive = true;
         }
 
-        public static void FireMediumShot(Vector2 position, Vector2 velocity)
+        public static void FireMediumShot(Vector2 position, Vector2 velocity, GameObject shooter, float? drawDepth = null)
         {
             var shot = (EnemyShot)MediumShots.GetNextObject();
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
+            shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
             shot.Enabled = true;
             shot.Alive = true;
         }
 
-        public static void FireLargeShot(Vector2 position, Vector2 velocity)
+        public static void FireLargeShot(Vector2 position, Vector2 velocity, GameObject shooter, float? drawDepth = null)
         {
             var shot = (EnemyShot)LargeShots.GetNextObject();
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
+            shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
             shot.Enabled = true;
             shot.Alive = true;
         }

@@ -158,7 +158,7 @@ namespace MacGame.Enemies
 
             var shotLocation = GetShotLocation();
 
-            ShotManager.FireMediumShot(shotLocation, velocity);
+            ShotManager.FireMediumShot(shotLocation, velocity, this);
 
             PlaySoundIfOnScreen("Fire", 0.5f);
 

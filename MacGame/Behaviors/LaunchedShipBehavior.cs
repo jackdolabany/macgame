@@ -48,7 +48,7 @@ namespace MacGame.Behaviors
                     {
                         direction.Normalize();
                     }
-                    ShotManager.FireSmallShot(gameObject.CollisionCenter, direction * ShotSpeed);
+                    ShotManager.FireSmallShot(gameObject.CollisionCenter, direction * ShotSpeed, gameObject);
 
                     _phase = Phase.Attack;
                 }

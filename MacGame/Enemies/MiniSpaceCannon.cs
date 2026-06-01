@@ -144,7 +144,7 @@ namespace MacGame.Enemies
 
         private void Shoot()
         {
-            ShotManager.FireSmallShot(CollisionCenter, GetShootDirection() * ShootSpeed);
+            ShotManager.FireSmallShot(CollisionCenter, GetShootDirection() * ShootSpeed, this);
             PlaySoundIfOnScreen("Fire", 0.5f);
             ResetShootTimer();
         }

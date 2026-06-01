@@ -106,7 +106,7 @@ namespace MacGame.Enemies
             var shootSpeed = 150f;
             var velocity = directionToPlayer * shootSpeed;
 
-            ShotManager.FireSmallShot(CollisionCenter, velocity);
+            ShotManager.FireSmallShot(CollisionCenter, velocity, this);
 
             PlaySoundIfOnScreen("Fire", 0.5f);
 

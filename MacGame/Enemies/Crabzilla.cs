@@ -57,9 +57,16 @@ namespace MacGame.Enemies
 
         private const float BulletSpeed = 160f;
 
+        // Wall gun: dense horizontal line of large shots fired from the front of the body.
+        private float _wallShotTimer = 5f;
+        private const float WallShotInterval = 5f;
+        private const float WallBulletSpacing = 12f; // matches large shot collision size — no gap
+        private const float WallBulletSpeed = 100f;
+        private const float WallSpreadRate = 0.16f; // shots drift outward slowly as they travel
+
         // AlienShip spawning
         private const int MaxAliveShips = 3;
-        private const float ShipSpawnInterval = 5f;
+        private const float ShipSpawnInterval = 3f;
         private readonly List<AlienShip> _ships = new List<AlienShip>();
         private float _shipSpawnTimer = ShipSpawnInterval;
 
@@ -166,6 +173,8 @@ namespace MacGame.Enemies
             {
                 var ship = new AlienShip(content, cellX, cellY, player, camera);
                 ship.Enabled = false;
+                ship.IsAbleToMoveOutsideOfWorld = true;
+                ship.IsAbleToSurviveOutsideOfWorld = true;
                 _ships.Add(ship);
                 AddEnemyInConstructor(ship);
             }
@@ -223,6 +232,7 @@ namespace MacGame.Enemies
                 Game1.BossName = "Crabzilla";
                 UpdateSweepGun(elapsed);
                 UpdateCircleGun(elapsed);
+                UpdateWallGun(elapsed);
 
                 _shipSpawnTimer -= elapsed;
                 if (_shipSpawnTimer <= 0f)
@@ -272,7 +282,7 @@ namespace MacGame.Enemies
                 if (_explosionTimer >= 0.13f)
                 {
                     _explosionTimer = 0f;
-                    EffectsManager.AddExplosion(CollisionRectangle.GetRandomLocation(), true);
+                    EffectsManager.AddExplosion(isSeenRectangle.GetRandomLocation(), true);
                 }
 
                 _dyingTimer += elapsed;
@@ -314,11 +324,38 @@ namespace MacGame.Enemies
             }
         }
 
+        /// <summary>
+        /// The wall gun periodically shoots a whole wall of shots from the collision rectangle. This is so 
+        /// the player can't just camp in front.
+        /// </summary>
+        private void UpdateWallGun(float elapsed)
+        {
+            _wallShotTimer -= elapsed;
+            if (_wallShotTimer <= 0f)
+            {
+                _wallShotTimer = WallShotInterval;
+                float spawnX = CollisionRectangle.Left;
+                float centerY = CollisionRectangle.Center.Y;
+                float topY = CollisionRectangle.Top + 22;
+                float bottomY = CollisionRectangle.Bottom - 22;
+
+                int shotCount = 1;
+
+                for (float y = topY; y <= bottomY; y += WallBulletSpacing)
+                {
+                    shotCount++;
+                    var drawDepth = this.DrawDepth + Game1.MIN_DRAW_INCREMENT * shotCount;
+                    float vy = (y - centerY) * WallSpreadRate;
+                    ShotManager.FireLargeShot(new Vector2(spawnX, y), new Vector2(-WallBulletSpeed, vy), this, drawDepth);
+                }
+            }
+        }
+
         private void TrySpawnShip()
         {
-            if (_ships.Count(s => !s.Dead) >= MaxAliveShips) return;
+            if (_ships.Count(s => s.Enabled) >= MaxAliveShips) return;
 
-            var ship = _ships.FirstOrDefault(s => s.Dead);
+            var ship = _ships.FirstOrDefault(s => !s.Enabled);
             if (ship == null) return;
 
             var viewport = Game1.Camera.ViewPort;
@@ -340,7 +377,7 @@ namespace MacGame.Enemies
                 // Pivot from upper-left to lower-left: Math.PI = left, ±SweepAmplitude sweeps up/down.
                 var angle = Math.PI + Math.Sin(_sweepTimer * SweepOscillateSpeed) * SweepAmplitude;
                 var dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                ShotManager.FireSmallShot(CollisionCenter, dir * BulletSpeed);
+                ShotManager.FireMediumShot(CollisionCenter, dir * BulletSpeed, this);
             }
         }
 
@@ -356,7 +393,7 @@ namespace MacGame.Enemies
                 {
                     var angle = _circleAngle + i * (MathHelper.TwoPi / CircleBulletCount);
                     var dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                    ShotManager.FireSmallShot(CollisionCenter, dir * BulletSpeed);
+                    ShotManager.FireMediumShot(CollisionCenter, dir * BulletSpeed, this);
                 }
             }
         }
@@ -386,6 +423,10 @@ namespace MacGame.Enemies
         {
             _state = CrabzillaState.Dying;
             Attack = 0;
+            foreach (var ship in _ships)
+            {
+                if (ship.Enabled) { ship.Kill(); }
+            }
         }
 
         public override void PlayDeathSound()

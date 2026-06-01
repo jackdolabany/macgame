@@ -17,6 +17,7 @@ namespace MacGame
         public System.Action OnTimer;
         private float TimeRemaining { get; set; }
         public bool Enabled { get; set; }
+        public bool IsDisposed { get; private set; }
         private int Cycles { get; set; }
         private List<Timer> EnableAfter = new List<Timer>();
 
@@ -67,6 +68,7 @@ namespace MacGame
                 else
                 {
                     this.Enabled = false;
+                    this.IsDisposed = true;
                     foreach (var timer in EnableAfter)
                     {
                         timer.Enabled = true;

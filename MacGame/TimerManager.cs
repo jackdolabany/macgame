@@ -12,6 +12,7 @@ namespace MacGame
     {
         private static List<Timer> timers = new List<Timer>(20);
         private static Queue<Timer> timersToAdd = new Queue<Timer>(10);
+        private static readonly Predicate<Timer> _isDisposed = t => t.IsDisposed;
 
         public static void Clear()
         {
@@ -24,7 +25,8 @@ namespace MacGame
             {
                 timer.Update(elapsed);
             }
-            // Add the timers to add after the colleciton is enumerated. This way timers can be added by timer methods.
+            timers.RemoveAll(_isDisposed);
+            // Add the timers to add after the collection is enumerated. This way timers can be added by timer methods.
             while (timersToAdd.Count > 0)
             {
                 var timer = timersToAdd.Dequeue();

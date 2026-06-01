@@ -610,6 +610,18 @@
 /processorParam:Quality=Best
 /build:SoundEffects/ConversationStart.wav
 
+#begin SoundEffects/CrabDeathCry.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CrabDeathCry.wav
+
+#begin SoundEffects/CrabWallShot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CrabWallShot.wav
+
 #begin SoundEffects/Crackle.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

@@ -64,6 +64,11 @@ namespace MacGame.Enemies
             }
         }
 
+        public override void PlayDeathSound() 
+        {
+            // Do nothing.
+        }
+
         public override void AfterHittingPlayer()
         {
             Kill();

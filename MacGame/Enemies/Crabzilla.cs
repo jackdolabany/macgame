@@ -26,7 +26,7 @@ namespace MacGame.Enemies
 
         CrabzillaState _state = CrabzillaState.Unseen;
 
-        private const int MaxHealth = 100;
+        private const int MaxHealth = 10;
 
         private float _idleTimer = 0f;
         private const float IdleDuration = 4f;
@@ -348,6 +348,7 @@ namespace MacGame.Enemies
                     float vy = (y - centerY) * WallSpreadRate;
                     ShotManager.FireLargeShot(new Vector2(spawnX, y), new Vector2(-WallBulletSpeed, vy), this, drawDepth);
                 }
+                SoundManager.PlaySound("CrabWallShot");
             }
         }
 
@@ -432,6 +433,15 @@ namespace MacGame.Enemies
             }
 
             ShotManager.ClearShotsCinematic();
+
+            // Death cries
+            for (int i = 0; i < 10; i++)
+            {
+                var volume = 1f - (i * 0.1f);
+                var pitch = 0f - (i * 0.1f);
+                TimerManager.AddNewTimer(i * 0.4f, () => SoundManager.PlaySound("CrabDeathCry", volume, pitch));
+            }
+
         }
 
         public override void PlayDeathSound()

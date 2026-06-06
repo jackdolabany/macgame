@@ -23,7 +23,7 @@ namespace MacGame.Enemies
     {
         private AlienStealthBomberState _state = AlienStealthBomberState.Unseen;
 
-        private const int MaxHealth = 40;
+        private const int MaxHealth = 200;
 
         private float _dyingTimer = 0f;
         private const float DyingDuration = 4f;
@@ -65,6 +65,25 @@ namespace MacGame.Enemies
         private const float HatchLeadTime = 0.75f;
         private const float HatchFrameLength = 0.1f;
 
+        // Damage sprites
+        private StaticImageDisplay _shipDisplay;
+        private static readonly Rectangle NormalSpriteRect = Helpers.GetMegaTileRect(4, 5);
+        private static readonly Rectangle LightDamageSpriteRect = Helpers.GetMegaTileRect(5, 5);
+        private static readonly Rectangle MediumDamageSpriteRect = Helpers.GetMegaTileRect(6, 5);
+        private static readonly Rectangle FullDamageSpriteRect = Helpers.GetMegaTileRect(7, 5);
+
+        // Damage smokes
+        private BaseSmoke[] _smokes = new BaseSmoke[6];
+        private static readonly Vector2[] SmokeOffsets = new Vector2[]
+        {
+            new Vector2(100, 10),
+            new Vector2(50, -18),
+            new Vector2(20, 10),
+            new Vector2(-20, -10),
+            new Vector2(-50, -30),
+            new Vector2(-100, 44)
+        };
+
         // Falling while dying
         private float _fallSpeedY = 0f;
         private const float FallAcceleration = 120f;
@@ -83,7 +102,7 @@ namespace MacGame.Enemies
             CanBeJumpedOn = true;
 
             var megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
-            var shipDisplay = new StaticImageDisplay(megaTextures, Helpers.GetMegaTileRect(4, 5));
+            _shipDisplay = new StaticImageDisplay(megaTextures, NormalSpriteRect);
 
             var spaceTextures = content.Load<Texture2D>(@"Textures\SpaceTextures");
             _hatchDisplay = new AnimationDisplay();
@@ -100,7 +119,7 @@ namespace MacGame.Enemies
             var tileHeight = Helpers.GetTileRect(14, 9).Height;
             _hatchDisplay.Offset = new Vector2(8, -(megaHeight / 2f - tileHeight / 2f));
 
-            DisplayComponent = new AggregateDisplay(new DisplayComponent[] { shipDisplay, _hatchDisplay });
+            DisplayComponent = new AggregateDisplay(new DisplayComponent[] { _shipDisplay, _hatchDisplay });
 
             Attack = 1;
             Health = MaxHealth;
@@ -115,6 +134,12 @@ namespace MacGame.Enemies
                 _grenades[i] = new ShotGrenade(content, 0, 0, player, camera);
                 _grenades[i].Enabled = false;
                 Level.AddEnemy(_grenades[i]);
+            }
+
+            for (int i = 0; i < _smokes.Length; i++)
+            {
+                _smokes[i] = i % 2 == 0 ? (BaseSmoke)new GraySmoke1(content) : new GraySmoke2(content);
+                _smokes[i].Enabled = false;
             }
         }
 
@@ -176,6 +201,23 @@ namespace MacGame.Enemies
                 Game1.MaxBossHealth = MaxHealth;
                 Game1.BossHealth = Health;
                 Game1.BossName = "Alien Ship";
+
+                if (Health <= (int)(MaxHealth * 0.2f))
+                {
+                    _shipDisplay.Source = FullDamageSpriteRect;
+                }
+                else if (Health <= (int)(MaxHealth * 0.4f))
+                {
+                    _shipDisplay.Source = MediumDamageSpriteRect;
+                }
+                else if (Health <= (int)(MaxHealth * 0.6f))
+                {
+                    _shipDisplay.Source = LightDamageSpriteRect;
+                }
+                else
+                {
+                    _shipDisplay.Source = NormalSpriteRect;
+                }
             }
 
             if (_state == AlienStealthBomberState.MovingToPosition)
@@ -259,13 +301,38 @@ namespace MacGame.Enemies
                 }
             }
 
+            if (_state == AlienStealthBomberState.Attack || _state == AlienStealthBomberState.Dying)
+            {
+                for (int i = 0; i < _smokes.Length; i++)
+                {
+                    if (!_smokes[i].Enabled && Health <= (int)(MaxHealth * (0.5f - i * (0.4f / 5f))))
+                    {
+                        _smokes[i].Enabled = true;
+                    }
+                    if (_smokes[i].Enabled)
+                    {
+                        _smokes[i].WorldLocation = WorldCenter + SmokeOffsets[i];
+                        _smokes[i].Update(gameTime, elapsed);
+                    }
+                }
+            }
+
             base.Update(gameTime, elapsed);
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             _hatchDisplay.DrawDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
             base.Draw(spriteBatch);
+            foreach (var smoke in _smokes)
+            {
+                if (smoke.Enabled)
+                {
+                    smoke.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                    smoke.Draw(spriteBatch);
+                }
+            }
         }
 
         public override void PlayTakeHitSound()

@@ -58,7 +58,13 @@ namespace MacGame.Enemies
         // Ring shot
         private float _ringShotTimer = 0f;
         private const float RingShotInterval = 5f;
-        private const float RingShotSpeed = 150f;
+        private const float RingShotSpeed = 300;
+
+        // Homing missiles
+        private Missile[] _missiles = new Missile[2];
+        private float _missileLaunchTimer = 0f;
+        private const float MissileLaunchInterval = 3.3f;
+        private const float MissileHomingDelay = 1.5f;
 
         // Hatch overlay animation
         private AnimationDisplay _hatchDisplay;
@@ -140,6 +146,13 @@ namespace MacGame.Enemies
             {
                 _smokes[i] = i % 2 == 0 ? (BaseSmoke)new GraySmoke1(content) : new GraySmoke2(content);
                 _smokes[i].Enabled = false;
+            }
+
+            for (int i = 0; i < _missiles.Length; i++)
+            {
+                _missiles[i] = new Missile(content, 0, 0, player, camera);
+                _missiles[i].Enabled = false;
+                Level.AddEnemy(_missiles[i]);
             }
         }
 
@@ -261,6 +274,17 @@ namespace MacGame.Enemies
                 {
                     _ringShotTimer = 0f;
                     ShotManager.FireMediumRing(WorldCenter + new Vector2(-96, 16), new Vector2(-RingShotSpeed, 0), this);
+                }
+
+                if (!_missiles[0].Enabled && !_missiles[1].Enabled)
+                {
+                    _missileLaunchTimer += elapsed;
+                    if (_missileLaunchTimer >= MissileLaunchInterval)
+                    {
+                        _missileLaunchTimer = 0f;
+                        _missiles[0].Launch(WorldCenter, new Vector2(0, -1), MissileHomingDelay);
+                        _missiles[1].Launch(WorldCenter, new Vector2(0, 1), MissileHomingDelay);
+                    }
                 }
 
                 if (!_firstGrenadeFired && _fireTimer >= FirstGrenadeDelay)

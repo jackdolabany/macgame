@@ -3,7 +3,7 @@
 pdn_watch.py — Watches multiple .pdn files and exports named layers as PNG on every save.
 
 Usage:
-    python pdn_watch.py <file.pdn> [\"Layer Name\"] <file2.pdn> [\"Layer Name\"] ...
+    python pdn_watch.py <file.pdn> ["Layer Name"] <file2.pdn> ["Layer Name"] ...
 
 If no layer name follows a .pdn, it exports the flattened image for that file.
 
@@ -27,7 +27,7 @@ from watchdog.events import FileSystemEventHandler
 def export_layer(pdn_path: Path, layer_name: str | None):
     try:
         img = pypdn.read(str(pdn_path))
-        out_path = pdn_path.with_suffix(".png")
+        out_path = Path(__file__).resolve().parent.parent / (pdn_path.stem + ".png")
 
         if layer_name is None:
             flat = img.flatten(asByte=True)

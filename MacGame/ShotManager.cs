@@ -1,3 +1,4 @@
+using System;
 using MacGame.Enemies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -5,6 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame
 {
+    public enum ShotSize { Small, Medium, Large }
+
     public static class ShotManager
     {
         public const int MAX_SHOTS = 120;
@@ -121,6 +124,7 @@ namespace MacGame
             var shot = (EnemyShot)SmallShots.GetNextObject();
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
+            shot.RotateCenter = null;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
             shot.Enabled = true;
             shot.Alive = true;
@@ -131,6 +135,7 @@ namespace MacGame
             var shot = (EnemyShot)MediumShots.GetNextObject();
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
+            shot.RotateCenter = null;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
             shot.Enabled = true;
             shot.Alive = true;
@@ -141,9 +146,41 @@ namespace MacGame
             var shot = (EnemyShot)LargeShots.GetNextObject();
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
+            shot.RotateCenter = null;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
             shot.Enabled = true;
             shot.Alive = true;
+        }
+
+        private static void CreateRing(Vector2 center, Vector2 centerVelocity, int count, float radius, float rotationSpeed, ShotSize size, GameObject shooter)
+        {
+            var pool = size == ShotSize.Large ? LargeShots : size == ShotSize.Medium ? MediumShots : SmallShots;
+            float drawDepth = shooter.DisplayComponent.DrawDepth - Game1.MIN_DRAW_INCREMENT;
+            for (int i = 0; i < count; i++)
+            {
+                var shot = (EnemyShot)pool.GetNextObject();
+                float angle = i * MathHelper.TwoPi / count;
+                shot.RotateCenter = center;
+                shot.RotateCenterVelocity = centerVelocity;
+                shot.RotateRadius = radius;
+                shot.RotateAngle = angle;
+                shot.RotateSpeed = rotationSpeed;
+                shot.Velocity = Vector2.Zero;
+                shot.WorldLocation = center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * radius;
+                shot.DisplayComponent.DrawDepth = drawDepth;
+                shot.Enabled = true;
+                shot.Alive = true;
+            }
+        }
+
+        public static void FireSmallRing(Vector2 position, Vector2 velocity, GameObject shooter)
+        {
+            CreateRing(position, velocity, 6, 24f, 3f, ShotSize.Small, shooter);
+        }
+
+        public static void FireMediumRing(Vector2 position, Vector2 velocity, GameObject shooter)
+        {
+            CreateRing(position, velocity, 6, 32f, 3f, ShotSize.Medium, shooter);
         }
     }
 }

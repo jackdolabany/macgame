@@ -50,10 +50,15 @@ namespace MacGame.Enemies
         private ShotGrenade[] _grenades = new ShotGrenade[2];
         private float _fireTimer = 0f;
         private bool _firstGrenadeFired = false;
-        private const float FirstGrenadeDelay = 4f;
-        private const float SecondGrenadeDelay = 1.5f;
+        private const float FirstGrenadeDelay = 2f;
+        private const float SecondGrenadeDelay = 1f;
         private const float GrenadeUpwardSpeed = -60f;
         private const float GrenadeMaxXSpeed = 80f;
+
+        // Ring shot
+        private float _ringShotTimer = 0f;
+        private const float RingShotInterval = 5f;
+        private const float RingShotSpeed = 150f;
 
         // Hatch overlay animation
         private AnimationDisplay _hatchDisplay;
@@ -184,6 +189,8 @@ namespace MacGame.Enemies
                     WorldLocation = _targetPosition;
                     _baseY = _targetPosition.Y;
                     _state = AlienStealthBomberState.Attack;
+                    _fireTimer = 2f;
+                    _ringShotTimer = 3f;
                 }
                 else
                 {
@@ -205,6 +212,13 @@ namespace MacGame.Enemies
                 if (_hatchDisplay.CurrentAnimationName == "close" && (_hatchDisplay.CurrentAnimation?.FinishedPlaying ?? false))
                 {
                     _hatchDisplay.StopPlaying();
+                }
+
+                _ringShotTimer += elapsed;
+                if (_ringShotTimer >= RingShotInterval)
+                {
+                    _ringShotTimer = 0f;
+                    ShotManager.FireMediumRing(WorldCenter + new Vector2(-96, 16), new Vector2(-RingShotSpeed, 0), this);
                 }
 
                 if (!_firstGrenadeFired && _fireTimer >= FirstGrenadeDelay)

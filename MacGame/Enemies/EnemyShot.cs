@@ -1,3 +1,4 @@
+using System;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -43,8 +44,26 @@ namespace MacGame.Enemies
             base.Kill();
         }
 
+        // When set, this shot orbits around the center point instead of flying freely.
+        public Vector2? RotateCenter;
+        public Vector2 RotateCenterVelocity;
+        public float RotateRadius;
+        public float RotateAngle;
+        public float RotateSpeed;
+
         public override void Update(GameTime gameTime, float elapsed)
         {
+            if (RotateCenter.HasValue)
+            {
+                RotateCenter = RotateCenter.Value + RotateCenterVelocity * elapsed;
+                RotateAngle += RotateSpeed * elapsed;
+                WorldLocation = RotateCenter.Value + new Vector2((float)Math.Cos(RotateAngle), (float)Math.Sin(RotateAngle)) * RotateRadius;
+                if (Game1.Camera.IsWayOffscreen(new Rectangle((int)RotateCenter.Value.X - 50, (int)RotateCenter.Value.Y - 50, 100, 100)))
+                {
+                    Enabled = false;
+                    return;
+                }
+            }
             base.Update(gameTime, elapsed);
         }
 
@@ -71,7 +90,6 @@ namespace MacGame.Enemies
 
         public override void AfterHittingPlayer()
         {
-            Kill();
         }
     }
 }

@@ -10,6 +10,8 @@ Please use the most common C# conventions.
 
 Always use `{ }` braces around if/else bodies. The only exception is a single-line early-return guard written on one line, e.g. `if (!x) return;`
 
+Always use Windows line endings (CRLF) in all files.
+
 ## Common Tasks
 
 ## Important Notes

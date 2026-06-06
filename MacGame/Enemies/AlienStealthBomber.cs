@@ -10,7 +10,8 @@ namespace MacGame.Enemies
     public enum AlienStealthBomberState
     {
         Unseen,
-        Alive,
+        MovingToPosition,
+        Attack,
         Dying,
         Dead
     }
@@ -33,11 +34,31 @@ namespace MacGame.Enemies
 
         private const int SpriteSize = 64;
 
-        // Bobbing while alive
+        // Moving to position on first appearance
+        private Vector2 _targetPosition;
+        private const float MoveToCenterSpeed = 50f;
+        private const float BelowCenterOffset = 150f;
+        private const float RightOfCenterOffset = 60f;
+
+        // Bobbing while attacking
         private float _bobTimer = 0f;
         private float _baseY;
         private const float BobAmplitude = 12f;
         private const float BobSpeed = 1.5f;
+
+        // Grenade firing
+        private ShotGrenade[] _grenades = new ShotGrenade[2];
+        private float _fireTimer = 0f;
+        private bool _firstGrenadeFired = false;
+        private const float FirstGrenadeDelay = 4f;
+        private const float SecondGrenadeDelay = 1.5f;
+        private const float GrenadeUpwardSpeed = -60f;
+        private const float GrenadeMaxXSpeed = 80f;
+
+        // Hatch overlay animation
+        private AnimationDisplay _hatchDisplay;
+        private const float HatchLeadTime = 0.75f;
+        private const float HatchFrameLength = 0.1f;
 
         // Falling while dying
         private float _fallSpeedY = 0f;
@@ -57,7 +78,24 @@ namespace MacGame.Enemies
             CanBeJumpedOn = true;
 
             var megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
-            DisplayComponent = new StaticImageDisplay(megaTextures, Helpers.GetMegaTileRect(4, 5));
+            var shipDisplay = new StaticImageDisplay(megaTextures, Helpers.GetMegaTileRect(4, 5));
+
+            var spaceTextures = content.Load<Texture2D>(@"Textures\SpaceTextures");
+            _hatchDisplay = new AnimationDisplay();
+            var hatchOpen = new AnimationStrip(spaceTextures, Helpers.GetTileRect(14, 9), 2, "open");
+            hatchOpen.LoopAnimation = false;
+            hatchOpen.FrameLength = HatchFrameLength;
+            _hatchDisplay.Add(hatchOpen);
+            var hatchClose = (AnimationStrip)hatchOpen.Clone();
+            hatchClose.Reverse = true;
+            hatchClose.Name = "close";
+            _hatchDisplay.Add(hatchClose);
+            _hatchDisplay.StopPlaying();
+            var megaHeight = Helpers.GetMegaTileRect(4, 5).Height;
+            var tileHeight = Helpers.GetTileRect(14, 9).Height;
+            _hatchDisplay.Offset = new Vector2(8, -(megaHeight / 2f - tileHeight / 2f));
+
+            DisplayComponent = new AggregateDisplay(new DisplayComponent[] { shipDisplay, _hatchDisplay });
 
             Attack = 1;
             Health = MaxHealth;
@@ -65,8 +103,14 @@ namespace MacGame.Enemies
 
             this.WorldLocation += new Vector2(0, SpriteSize / 2);
 
-            // Collision starts at vertical center of sprite, full width, 1/3 height.
-            SetCenteredCollisionRectangle(SpriteSize, SpriteSize, SpriteSize, SpriteSize / 3);
+            SetCenteredCollisionRectangle(SpriteSize, SpriteSize, (SpriteSize * 0.8f).ToInt(), (SpriteSize * 0.25f).ToInt());
+
+            for (int i = 0; i < _grenades.Length; i++)
+            {
+                _grenades[i] = new ShotGrenade(content, 0, 0, player, camera);
+                _grenades[i].Enabled = false;
+                Level.AddEnemy(_grenades[i]);
+            }
         }
 
         private void Initialize()
@@ -93,6 +137,13 @@ namespace MacGame.Enemies
             _isInitialized = true;
         }
 
+        private void LaunchGrenade(ShotGrenade grenade)
+        {
+            if (grenade.Enabled) return;
+            float xVel = (float)(Game1.Randy.NextDouble() * GrenadeMaxXSpeed * 2 - GrenadeMaxXSpeed);
+            grenade.Launch(WorldCenter + new Vector2(8, 0), new Vector2(xVel, GrenadeUpwardSpeed));
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             if (!_isInitialized)
@@ -104,8 +155,9 @@ namespace MacGame.Enemies
             {
                 if (Game1.Camera.IsObjectVisible(CollisionRectangle))
                 {
-                    _state = AlienStealthBomberState.Alive;
-                    _baseY = WorldLocation.Y;
+                    var viewport = Game1.Camera.ViewPort;
+                    _targetPosition = new Vector2(viewport.Center.X + RightOfCenterOffset, viewport.Center.Y + BelowCenterOffset);
+                    _state = AlienStealthBomberState.MovingToPosition;
                 }
                 else
                 {
@@ -121,10 +173,52 @@ namespace MacGame.Enemies
                 Game1.BossName = "Alien Ship";
             }
 
-            if (_state == AlienStealthBomberState.Alive)
+            if (_state == AlienStealthBomberState.MovingToPosition)
+            {
+                _targetPosition.X = Game1.Camera.ViewPort.Center.X + RightOfCenterOffset;
+                var toTarget = _targetPosition - WorldLocation;
+                float dist = toTarget.Length();
+                float step = MoveToCenterSpeed * elapsed;
+                if (dist <= step)
+                {
+                    WorldLocation = _targetPosition;
+                    _baseY = _targetPosition.Y;
+                    _state = AlienStealthBomberState.Attack;
+                }
+                else
+                {
+                    WorldLocation += Vector2.Normalize(toTarget) * step;
+                }
+            }
+            else if (_state == AlienStealthBomberState.Attack)
             {
                 _bobTimer += elapsed;
-                WorldLocation = new Vector2(WorldLocation.X, _baseY + (float)Math.Sin(_bobTimer * BobSpeed) * BobAmplitude);
+                WorldLocation = new Vector2(Game1.Camera.ViewPort.Center.X + RightOfCenterOffset, _baseY + (float)Math.Sin(_bobTimer * BobSpeed) * BobAmplitude);
+
+                _fireTimer += elapsed;
+
+                if (_hatchDisplay.CurrentAnimationName == "" && _fireTimer >= FirstGrenadeDelay - HatchLeadTime)
+                {
+                    _hatchDisplay.Play("open");
+                }
+
+                if (_hatchDisplay.CurrentAnimationName == "close" && (_hatchDisplay.CurrentAnimation?.FinishedPlaying ?? false))
+                {
+                    _hatchDisplay.StopPlaying();
+                }
+
+                if (!_firstGrenadeFired && _fireTimer >= FirstGrenadeDelay)
+                {
+                    LaunchGrenade(_grenades[0]);
+                    _firstGrenadeFired = true;
+                }
+                else if (_firstGrenadeFired && _fireTimer >= FirstGrenadeDelay + SecondGrenadeDelay)
+                {
+                    LaunchGrenade(_grenades[1]);
+                    _fireTimer = 0f;
+                    _firstGrenadeFired = false;
+                    _hatchDisplay.Play("close");
+                }
             }
             else if (_state == AlienStealthBomberState.Dying)
             {
@@ -152,6 +246,12 @@ namespace MacGame.Enemies
             }
 
             base.Update(gameTime, elapsed);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            _hatchDisplay.DrawDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
+            base.Draw(spriteBatch);
         }
 
         public override void PlayTakeHitSound()

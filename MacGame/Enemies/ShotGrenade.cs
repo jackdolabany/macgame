@@ -10,7 +10,7 @@ namespace MacGame.Enemies
     {
         public float Fuse = 2f;
         private float _fuseTimer;
-        private const float ShotSpeed = 120f;
+        private const float ShotSpeed = 160f;
         private const int SpriteSize = 32;
 
         public ShotGrenade(ContentManager content, int cellX, int cellY, Player player, Camera camera)
@@ -62,7 +62,7 @@ namespace MacGame.Enemies
             {
                 var angle = i * MathHelper.TwoPi / 12f;
                 var dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                ShotManager.FireSmallShot(WorldCenter, dir * ShotSpeed, this);
+                ShotManager.FireMediumShot(WorldCenter, dir * ShotSpeed, this);
             }
             Enabled = false;
         }

@@ -376,6 +376,24 @@ namespace MacGame.Enemies
         {
             _state = AlienStealthBomberState.Dying;
             Attack = 0;
+
+            ShotManager.ClearShotsCinematic();
+
+            foreach (var missile in _missiles)
+            {
+                if (missile.Enabled)
+                {
+                    missile.Kill();
+                }
+            }
+
+            foreach (var grenade in _grenades)
+            {
+                if (grenade.Enabled)
+                {
+                    grenade.Enabled = false;
+                }
+            }
         }
 
         public override void PlayDeathSound()

@@ -26,7 +26,7 @@ namespace MacGame.Enemies
     {
         private GalaxyTwinState _state = GalaxyTwinState.Unseen;
 
-        public const int MaxHealth = 50;
+        public const int MaxHealth = 100;
         private const float MoveSpeed = 180f;
         private const float AtTargetDistance = 6f;
 
@@ -49,6 +49,8 @@ namespace MacGame.Enemies
         private float IdleDuration;
         private const float IdleDurationMin = 2f;
         private const float IdleDurationMax = 3f;
+        private const float FirstTimeIdleDurationMax = 6f;
+        private bool _isFirstTimeIdle = true;
 
         // Shared attack timer
         private float _attackTimer = 0f;
@@ -127,7 +129,7 @@ namespace MacGame.Enemies
             Health = MaxHealth;
             InvincibleTimeAfterBeingHit = 0f;
 
-            SetCenteredCollisionRectangle(24, 24, 24, 24);
+            SetCenteredCollisionRectangle(24, 24, 24, 12);
 
             for (int i = 0; i < _missiles.Length; i++)
             {
@@ -173,7 +175,17 @@ namespace MacGame.Enemies
                 case GalaxyTwinState.Idle:
                     _idleTimer = 0f;
                     animations.Play("idle");
-                    IdleDuration = (float)(Game1.Randy.NextDouble() * (IdleDurationMax - IdleDurationMin) + IdleDurationMin);
+                    if (_isFirstTimeIdle)
+                    {
+                        // First time stay idle for longer to give the player a sense of unexpected dread about what's to come.
+                        IdleDuration = FirstTimeIdleDurationMax;
+                        _isFirstTimeIdle = false;
+                    }
+                    else
+                    {
+                        // Every other time vary your idle time a bit.
+                        IdleDuration = (float)(Game1.Randy.NextDouble() * (IdleDurationMax - IdleDurationMin) + IdleDurationMin);
+                    }
                     break;
                 case GalaxyTwinState.HomingMissileAttack:
                     _missilesLaunched = 0;

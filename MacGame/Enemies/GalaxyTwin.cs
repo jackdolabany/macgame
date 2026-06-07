@@ -1,3 +1,4 @@
+using System;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -5,7 +6,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MacGame.Enemies
 {
-    public enum GalaxyTwinState { Alive, Dying, Dead }
+    public enum GalaxyTwinState
+    {
+        Unseen,
+        Idle,
+        HomingMissileAttack,
+        MachineGunAttack,
+        RingShotAttack,
+        Dying,
+        Dead
+    }
 
     /// <summary>
     /// A ship that is part of the GalaxyTwinsBoss. The boss controls two of these bad boys
@@ -13,13 +23,13 @@ namespace MacGame.Enemies
     /// </summary>
     public class GalaxyTwin : Enemy
     {
-        private GalaxyTwinState _state = GalaxyTwinState.Alive;
+        private GalaxyTwinState _state = GalaxyTwinState.Unseen;
 
-        public const int MaxHealth = 20;
+        public const int MaxHealth = 50;
         private const float MoveSpeed = 180f;
         private const float AtTargetDistance = 6f;
 
-        // This controls how the ship falls when it dies.
+        // Dying fall
         public float FallDriftX = -80f;
         private float _fallSpeedY = 0f;
         private const float FallAcceleration = 120f;
@@ -30,9 +40,46 @@ namespace MacGame.Enemies
         private Vector2 _targetLocation;
         private bool _hasTarget = false;
 
+        // Attack cycling
+        private GalaxyTwinState _lastAttack = GalaxyTwinState.Idle;
+
+        // Idle
+        private float _idleTimer = 0f;
+        private float IdleDuration;
+        private const float IdleDurationMin = 2f;
+        private const float IdleDurationMax = 3f;
+
+        // Shared attack timer
+        private float _attackTimer = 0f;
+
+        // Homing missiles
+        private Missile[] _missiles = new Missile[3];
+        private int _missilesLaunched = 0;
+        private bool _hatchClosing = false;
+        private const float MissileHatchOpenDuration = 0.35f;
+        private const float MissileLaunchInterval = 0.6f;
+        private const float MissileHomingDelay = 1.0f;
+        private const float MissileHatchCloseDuration = 0.35f;
+        private static readonly float MissileSequenceEndTime = MissileHatchOpenDuration + 2 * MissileLaunchInterval + 0.2f;
+        private static readonly float HomingAttackDuration = MissileSequenceEndTime + MissileHatchCloseDuration;
+
+        // Machine gun
+        private float _machineGunFireTimer = 0f;
+        private const float MachineGunDuration = 4f;
+        private const float MachineGunInterval = 0.2f;
+        private const float MachineGunBulletSpeed = 300f;
+
+        // Ring shot
+        private const int RingShotCount = 5;
+        private const float RingShotSpeed = 120f;
+        private const float RingShotWobble = 0.5f;
+        private const float RingShotExitDuration = 1.5f;
+
         public int CurrentHealth => Health;
-        public bool IsAlive => _state == GalaxyTwinState.Alive;
+        public bool IsAlive => _state != GalaxyTwinState.Dying && _state != GalaxyTwinState.Dead && _state != GalaxyTwinState.Unseen;
         public bool IsAtTarget => !_hasTarget || Vector2.Distance(WorldLocation, _targetLocation) < AtTargetDistance;
+
+        AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         public GalaxyTwin(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -46,13 +93,38 @@ namespace MacGame.Enemies
             CanBeHitWithWeapons = true;
             CanBeJumpedOn = true;
 
-            DisplayComponent = new StaticImageDisplay(Game1.ReallyBigTileTextures, Helpers.GetReallyBigTileRect(3, 7));
+            var ad = new AnimationDisplay();
+
+            var idle = new AnimationStrip(Game1.ReallyBigTileTextures, Helpers.GetReallyBigTileRect(3, 7), 1, "idle");
+            idle.LoopAnimation = true;
+            idle.FrameLength = 0.1f;
+            ad.Add(idle);
+
+            var openHatch = new AnimationStrip(Game1.ReallyBigTileTextures, Helpers.GetReallyBigTileRect(3, 7), 3, "openHatch");
+            openHatch.LoopAnimation = false;
+            openHatch.FrameLength = 0.1f;
+            ad.Add(openHatch);
+
+            var closeHatch = (AnimationStrip)openHatch.Clone();
+            closeHatch.Name = "closeHatch";
+            closeHatch.Reverse = true;
+            ad.Add(closeHatch);
+
+            ad.Play("idle");
+            DisplayComponent = ad;
 
             Attack = 1;
             Health = MaxHealth;
             InvincibleTimeAfterBeingHit = 0f;
 
             SetCenteredCollisionRectangle(24, 24, 24, 24);
+
+            for (int i = 0; i < _missiles.Length; i++)
+            {
+                _missiles[i] = new Missile(content, 0, 0, player, camera);
+                _missiles[i].Enabled = false;
+                Level.AddEnemy(_missiles[i]);
+            }
         }
 
         public void SetTargetLocation(Vector2 worldLocation)
@@ -61,9 +133,90 @@ namespace MacGame.Enemies
             _hasTarget = true;
         }
 
+        private static readonly GalaxyTwinState[] AttackStates = new[]
+        {
+            GalaxyTwinState.HomingMissileAttack,
+            GalaxyTwinState.MachineGunAttack,
+            GalaxyTwinState.RingShotAttack,
+        };
+
+        private GalaxyTwinState GetNextAttack()
+        {
+            GalaxyTwinState attack;
+            do
+            {
+                attack = AttackStates[Game1.Randy.Next(AttackStates.Length)];
+            }
+            while (attack == _lastAttack);
+            _lastAttack = attack;
+            return attack;
+        }
+
+        private void TransitionToState(GalaxyTwinState newState)
+        {
+            _state = newState;
+            _attackTimer = 0f;
+
+            switch (newState)
+            {
+                case GalaxyTwinState.Idle:
+                    _idleTimer = 0f;
+                    animations.Play("idle");
+                    IdleDuration = (float)(Game1.Randy.NextDouble() * (IdleDurationMax - IdleDurationMin) + IdleDurationMin);
+                    break;
+                case GalaxyTwinState.HomingMissileAttack:
+                    _missilesLaunched = 0;
+                    _hatchClosing = false;
+                    foreach (var missile in _missiles)
+                    {
+                        if (missile.Enabled)
+                        {
+                            missile.Kill();
+                        }
+                    }
+                    animations.Play("openHatch");
+                    SoundManager.PlaySound("OpenHatch");
+                    break;
+                case GalaxyTwinState.MachineGunAttack:
+                    _machineGunFireTimer = 0f;
+                    break;
+                case GalaxyTwinState.RingShotAttack:
+                    FireRingShots();
+                    break;
+            }
+        }
+
+        private void FireRingShots()
+        {
+            var baseDir = Vector2.Normalize(Player.CollisionCenter - WorldCenter);
+            float baseAngle = (float)Math.Atan2(baseDir.Y, baseDir.X);
+            for (int i = 0; i < RingShotCount; i++)
+            {
+                float wobble = (float)(Game1.Randy.NextDouble() * RingShotWobble * 2 - RingShotWobble);
+                var dir = new Vector2(
+                    (float)Math.Cos(baseAngle + wobble),
+                    (float)Math.Sin(baseAngle + wobble));
+                ShotManager.FireMediumRing(WorldCenter, dir * RingShotSpeed, this);
+            }
+            SoundManager.PlaySound("ShootRing");
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (_state == GalaxyTwinState.Alive)
+            if (_state == GalaxyTwinState.Unseen)
+            {
+                if (Game1.Camera.IsObjectVisible(CollisionRectangle))
+                {
+                    TransitionToState(GalaxyTwinState.Idle);
+                }
+                else
+                {
+                    base.Update(gameTime, elapsed);
+                    return;
+                }
+            }
+
+            if (_state != GalaxyTwinState.Dying && _state != GalaxyTwinState.Dead)
             {
                 if (_hasTarget)
                 {
@@ -78,6 +231,77 @@ namespace MacGame.Enemies
                         Velocity = Vector2.Zero;
                         WorldLocation = _targetLocation;
                     }
+                }
+
+                switch (_state)
+                {
+                    case GalaxyTwinState.Idle:
+                        _idleTimer += elapsed;
+                        if (_idleTimer >= IdleDuration)
+                        {
+                            TransitionToState(GetNextAttack());
+                        }
+                        break;
+
+                    case GalaxyTwinState.HomingMissileAttack:
+                        _attackTimer += elapsed;
+
+                        if (_missilesLaunched < 3)
+                        {
+                            float timeSinceOpen = _attackTimer - MissileHatchOpenDuration;
+                            if (timeSinceOpen >= 0f)
+                            {
+                                int shouldHaveLaunched = Math.Min((int)(timeSinceOpen / MissileLaunchInterval) + 1, 3);
+                                while (_missilesLaunched < shouldHaveLaunched)
+                                {
+                                    float baseAngle = (float)Math.Atan2(
+                                        Player.CollisionCenter.Y - WorldCenter.Y,
+                                        Player.CollisionCenter.X - WorldCenter.X);
+                                    float spread = (_missilesLaunched - 1) * (MathHelper.Pi / 12f);
+                                    var dir = new Vector2((float)Math.Cos(baseAngle + spread), (float)Math.Sin(baseAngle + spread));
+                                    _missiles[_missilesLaunched].Launch(WorldCenter, dir, MissileHomingDelay);
+                                    SoundManager.PlaySound("ShootMissile");
+                                    _missilesLaunched++;
+                                }
+                            }
+                        }
+
+                        if (!_hatchClosing && _attackTimer >= MissileSequenceEndTime)
+                        {
+                            animations.Play("closeHatch");
+                            SoundManager.PlaySound("OpenHatch");
+                            _hatchClosing = true;
+                        }
+
+                        if (_attackTimer >= HomingAttackDuration)
+                        {
+                            TransitionToState(GalaxyTwinState.Idle);
+                        }
+                        break;
+
+                    case GalaxyTwinState.MachineGunAttack:
+                        _attackTimer += elapsed;
+                        _machineGunFireTimer += elapsed;
+                        if (_machineGunFireTimer >= MachineGunInterval)
+                        {
+                            _machineGunFireTimer = 0f;
+                            var dir = Vector2.Normalize(Player.CollisionCenter - WorldCenter);
+                            ShotManager.FireMediumShot(WorldCenter + new Vector2(12, 26), dir * MachineGunBulletSpeed, this, this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                            SoundManager.PlaySound("Shoot");
+                        }
+                        if (_attackTimer >= MachineGunDuration)
+                        {
+                            TransitionToState(GalaxyTwinState.Idle);
+                        }
+                        break;
+
+                    case GalaxyTwinState.RingShotAttack:
+                        _attackTimer += elapsed;
+                        if (_attackTimer >= RingShotExitDuration)
+                        {
+                            TransitionToState(GalaxyTwinState.Idle);
+                        }
+                        break;
                 }
             }
             else if (_state == GalaxyTwinState.Dying)
@@ -114,7 +338,7 @@ namespace MacGame.Enemies
 
         public override void TakeHit(GameObject attacker, int damage)
         {
-            if (_state != GalaxyTwinState.Alive) return;
+            if (_state == GalaxyTwinState.Unseen || _state == GalaxyTwinState.Dying || _state == GalaxyTwinState.Dead) return;
             base.TakeHit(attacker, damage);
         }
 
@@ -123,6 +347,14 @@ namespace MacGame.Enemies
             _state = GalaxyTwinState.Dying;
             Attack = 0;
             Velocity = Vector2.Zero;
+            animations.Play("idle");
+            foreach (var missile in _missiles)
+            {
+                if (missile.Enabled)
+                {
+                    missile.Kill();
+                }
+            }
         }
 
         public override void PlayDeathSound()

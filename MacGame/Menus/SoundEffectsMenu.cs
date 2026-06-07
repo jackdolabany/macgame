@@ -179,8 +179,8 @@ namespace MacGame
         private void UpdateScrollOffset()
         {
             // Calculate the offset needed to center the selected item
-            // Each menu item has a height + spacing
-            var itemHeight = Game1.FontSmall.MeasureString("A").Y * Scale + 8;
+            // Must match the spacing used by base.SetMenuPositions: GetHeight() + 2
+            var itemHeight = menuOptions.Count > 0 ? menuOptions[0].GetHeight() + 2 : 0;
 
             // Calculate offset to center selected item
             // We want the selected item at screen center (Game1.GAME_Y_RESOLUTION / 2)

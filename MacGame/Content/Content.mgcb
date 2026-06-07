@@ -838,6 +838,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/MurdererDeath.wav
 
+#begin SoundEffects/OpenHatch.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/OpenHatch.wav
+
 #begin SoundEffects/OpenLockedDoor.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -891,6 +897,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/ShootFromCannon.wav
+
+#begin SoundEffects/ShootMissile.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ShootMissile.wav
+
+#begin SoundEffects/ShootRing.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/ShootRing.wav
 
 #begin SoundEffects/Shrink.wav
 /importer:WavImporter

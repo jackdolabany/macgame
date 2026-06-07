@@ -36,6 +36,7 @@
     "GooseHonk": 20,
     "GooseHit": 30,
     "GooseBallBounce": 35,
-    "Grow": 40
+    "Grow": 40,
+    "OpenHatch": 25
   }
 }

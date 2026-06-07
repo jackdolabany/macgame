@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "AlienStealthBomberTest";
+        public const string StartingWorld = "GalaxyTwinsTest";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 

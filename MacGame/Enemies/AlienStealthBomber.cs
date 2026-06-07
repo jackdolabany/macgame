@@ -262,6 +262,7 @@ namespace MacGame.Enemies
                 if (_hatchDisplay.CurrentAnimationName == "" && _fireTimer >= FirstGrenadeDelay - HatchLeadTime)
                 {
                     _hatchDisplay.Play("open");
+                    SoundManager.PlaySound("OpenHatch");
                 }
 
                 if (_hatchDisplay.CurrentAnimationName == "close" && (_hatchDisplay.CurrentAnimation?.FinishedPlaying ?? false))

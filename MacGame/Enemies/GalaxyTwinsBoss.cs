@@ -130,6 +130,7 @@ namespace MacGame.Enemies
                 Game1.BossHealth = _twin1.CurrentHealth + _twin2.CurrentHealth;
                 Game1.BossName = "Galaxy Twins";
 
+                // Check for death
                 if (!_twin1.IsAlive && !_twin2.IsAlive && !_sockRevealed)
                 {
                     _sockRevealed = true;
@@ -139,6 +140,7 @@ namespace MacGame.Enemies
                     TimerManager.AddNewTimer(1f, () => { _sock.FadeIn(); });
                     Dead = true;
                     Enabled = false;
+                    ShotManager.ClearShotsCinematic();
                 }
 
                 if (_isHolding)

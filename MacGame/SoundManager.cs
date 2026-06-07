@@ -270,6 +270,9 @@ namespace MacGame
             LoadSound("ShipTurn");
             LoadSound("CrabWallShot");
             LoadSound("CrabDeathCry");
+            LoadSound("OpenHatch");
+            LoadSound("ShootRing");
+            LoadSound("ShootMissile");
 
 
             // Charging the ship's mega laser.

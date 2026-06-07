@@ -185,6 +185,7 @@ namespace MacGame.Enemies
             if (grenade.Enabled) return;
             float xVel = (float)(Game1.Randy.NextDouble() * GrenadeMaxXSpeed * 2 - GrenadeMaxXSpeed);
             grenade.Launch(WorldCenter + new Vector2(8, 0), new Vector2(xVel, GrenadeUpwardSpeed));
+            SoundManager.PlaySound("Shoot2");
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -275,6 +276,7 @@ namespace MacGame.Enemies
                 {
                     _ringShotTimer = 0f;
                     ShotManager.FireMediumRing(WorldCenter + new Vector2(-96, 16), new Vector2(-RingShotSpeed, 0), this);
+                    SoundManager.PlaySound("ShootRing");
                 }
 
                 if (!_missiles[0].Enabled && !_missiles[1].Enabled)
@@ -283,8 +285,9 @@ namespace MacGame.Enemies
                     if (_missileLaunchTimer >= MissileLaunchInterval)
                     {
                         _missileLaunchTimer = 0f;
-                        _missiles[0].Launch(WorldCenter, new Vector2(0, -1), MissileHomingDelay);
-                        _missiles[1].Launch(WorldCenter, new Vector2(0, 1), MissileHomingDelay);
+                        _missiles[0].Launch(WorldCenter + new Vector2(0, -30), new Vector2(0, -1), MissileHomingDelay);
+                        _missiles[1].Launch(WorldCenter + new Vector2(0, 40), new Vector2(0, 1), MissileHomingDelay);
+                        SoundManager.PlaySound("ShootMissile");
                     }
                 }
 
@@ -299,6 +302,7 @@ namespace MacGame.Enemies
                     _fireTimer = 0f;
                     _firstGrenadeFired = false;
                     _hatchDisplay.Play("close");
+                    SoundManager.PlaySound("OpenHatch");
                 }
             }
             else if (_state == AlienStealthBomberState.Dying)

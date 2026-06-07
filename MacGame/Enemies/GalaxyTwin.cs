@@ -12,6 +12,7 @@ namespace MacGame.Enemies
         Idle,
         HomingMissileAttack,
         MachineGunAttack,
+        SpinningMachineGunAttack,
         RingShotAttack,
         Dying,
         Dead
@@ -68,6 +69,13 @@ namespace MacGame.Enemies
         private const float MachineGunDuration = 4f;
         private const float MachineGunInterval = 0.2f;
         private const float MachineGunBulletSpeed = 300f;
+
+        // Spinning machine gun
+        private float _spinAngle = 0f;
+        private float _spinFireTimer = 0f;
+        private const float SpinMachineGunDuration = 4f;
+        private const float SpinMachineGunInterval = 0.1f;
+        private const float SpinRotationSpeed = MathHelper.TwoPi * 1.2f;
 
         // Ring shot
         private const int RingShotCount = 5;
@@ -137,6 +145,7 @@ namespace MacGame.Enemies
         {
             GalaxyTwinState.HomingMissileAttack,
             GalaxyTwinState.MachineGunAttack,
+            GalaxyTwinState.SpinningMachineGunAttack,
             GalaxyTwinState.RingShotAttack,
         };
 
@@ -179,6 +188,10 @@ namespace MacGame.Enemies
                     break;
                 case GalaxyTwinState.MachineGunAttack:
                     _machineGunFireTimer = 0f;
+                    break;
+                case GalaxyTwinState.SpinningMachineGunAttack:
+                    _spinAngle = (float)(Game1.Randy.NextDouble() * MathHelper.TwoPi);
+                    _spinFireTimer = 0f;
                     break;
                 case GalaxyTwinState.RingShotAttack:
                     FireRingShots();
@@ -294,6 +307,23 @@ namespace MacGame.Enemies
                             TransitionToState(GalaxyTwinState.Idle);
                         }
                         break;
+
+                    case GalaxyTwinState.SpinningMachineGunAttack:
+                        _attackTimer += elapsed;
+                        _spinAngle += SpinRotationSpeed * elapsed;
+                        _spinFireTimer += elapsed;
+                        if (_spinFireTimer >= SpinMachineGunInterval)
+                        {
+                            _spinFireTimer = 0f;
+                            var dir = new Vector2((float)Math.Cos(_spinAngle), (float)Math.Sin(_spinAngle));
+                            ShotManager.FireMediumShot(WorldCenter, dir * MachineGunBulletSpeed, this, DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                        }
+                        if (_attackTimer >= SpinMachineGunDuration)
+                        {
+                            TransitionToState(GalaxyTwinState.Idle);
+                        }
+                        break;
+
 
                     case GalaxyTwinState.RingShotAttack:
                         _attackTimer += elapsed;

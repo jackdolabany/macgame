@@ -10,7 +10,7 @@ namespace MacGame.Enemies
     {
         public float Fuse = 2f;
         private float _fuseTimer;
-        private const float ShotSpeed = 160f;
+        private const float ShotSpeed = 220f;
         private const int SpriteSize = 32;
 
         public ShotGrenade(ContentManager content, int cellX, int cellY, Player player, Camera camera)

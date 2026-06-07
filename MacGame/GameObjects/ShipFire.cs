@@ -7,8 +7,6 @@ using System.Reflection.Metadata;
 
 namespace MacGame
 {
-
-    
     /// <summary>
     /// The fire from the rocket in the back of your spaceship.
     /// </summary>
@@ -19,7 +17,6 @@ namespace MacGame
 
         public ShipFire(Texture2D textures)
         {
-            // We'll draw the wings all custom like.
             var ad = new AnimationDisplay();
             var fire = new AnimationStrip(textures, Helpers.GetTileRect(5, 1), 3, "fire");
             fire.LoopAnimation = false;

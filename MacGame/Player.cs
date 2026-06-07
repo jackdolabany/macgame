@@ -285,8 +285,7 @@ namespace MacGame
         }
 
         Vector2 gunOffset = new Vector2(0, 8);
-        public CircularBuffer<ShipFire> ShipFires;
-        float shipFireTimer = 0f;
+        public ShipExhaust ShipExhaust;
 
         // Hats!
         private List<PlayerHat> _hats = new List<PlayerHat>();
@@ -554,11 +553,7 @@ namespace MacGame
             {
                 Bombs.AddObject(new SpaceshipBomb(content, 0, 0, this, Game1.Camera));
             }
-            ShipFires = new CircularBuffer<ShipFire>(10);
-            for (int i = 0; i < 10; i++)
-            {
-                ShipFires.SetItem(i, new ShipFire(spaceTextures));
-            }
+            ShipExhaust = new ShipExhaust(spaceTextures);
 
             _shovel = new MacShovel(this, textures);
 
@@ -596,11 +591,7 @@ namespace MacGame
             {
                 Bubbles.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             }
-
-            for (int i = 0; i < ShipFires.Length; i++)
-            {
-                ShipFires.GetItem(i).SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-            }
+            ShipExhaust.DrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
         }
 
         public void BecomeNpc()
@@ -765,7 +756,7 @@ namespace MacGame
                 }
                 else if (IsInSpaceship)
                 {
-                    HandleSpaceshipInputs(elapsed);
+                    HandleSpaceshipInputs(gameTime, elapsed);
                 }
                 else
                 {
@@ -905,14 +896,6 @@ namespace MacGame
                     }
                 }
 
-                for (int i = 0; i < ShipFires.Length; i++)
-                {
-                    var fire = ShipFires.GetItem(i);
-                    if (fire.Enabled)
-                    {
-                        fire.Update(gameTime, elapsed);
-                    }
-                }
             }
 
             // When climbing a vine, to make it look more natural, offset the sprite from the CollisionRectangle a bit.
@@ -960,7 +943,7 @@ namespace MacGame
             }
         }
 
-        private void HandleSpaceshipInputs(float elapsed)
+        private void HandleSpaceshipInputs(GameTime gameTime, float elapsed)
         {
 
             if (Health <= 0) return;
@@ -1151,22 +1134,9 @@ namespace MacGame
                 isShipWhite = false;
             }
 
-            float fireTimerGoal = 0.1f;
-
-            // Make a rocket flame every so often.
-            if (shipFireTimer < fireTimerGoal)
-            {
-                shipFireTimer += elapsed;
-            }
-            else
-            {
-                shipFireTimer = 0f;
-                var fire = ShipFires.GetNextObject();
-                fire.Reset();
-                fire.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
-                fire.WorldLocation = this.WorldLocation + new Vector2(_shipFlipped ? 12 : -12, 0);
-                fire.Velocity = initialSpeed + new Vector2(_shipFlipped ? 120 : -120, 0);
-            }
+            ShipExhaust.WorldLocation = this.WorldLocation + new Vector2(_shipFlipped ? 12 : -12, 0);
+            ShipExhaust.Velocity = initialSpeed + new Vector2(_shipFlipped ? 120 : -120, 0);
+            ShipExhaust.Update(gameTime, elapsed);
 
             // When you're the ship you can fly through solid objects but
             // the corners of your collision rectangle will cause you to take a hit.
@@ -2800,13 +2770,7 @@ namespace MacGame
                         bomb.Draw(spriteBatch);
                     }
                 }
-                for (int i = 0; i < ShipFires.Length; i++)
-                {
-                    if (ShipFires.GetItem(i).Enabled)
-                    {
-                        ShipFires.GetItem(i).Draw(spriteBatch);
-                    }
-                }
+                ShipExhaust.Draw(spriteBatch);
             }
 
             // Draw the rotating Dracula parts behind the player

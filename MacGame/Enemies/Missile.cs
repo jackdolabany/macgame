@@ -13,9 +13,7 @@ namespace MacGame.Enemies
 
         private float turnTimer = 0f;
 
-        private CircularBuffer<ShipFire> _fires;
-        private float _fireTimer = 0f;
-        private const float FireInterval = 0.1f;
+        private ShipExhaust _exhaust;
 
         private readonly Rectangle rightRect;
         private readonly Rectangle upRightRect;
@@ -35,11 +33,7 @@ namespace MacGame.Enemies
         {
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
 
-            _fires = new CircularBuffer<ShipFire>(10);
-            for (int i = 0; i < 10; i++)
-            {
-                _fires.SetItem(i, new ShipFire(textures));
-            }
+            _exhaust = new ShipExhaust(textures);
 
             rightRect = Helpers.GetTileRect(3, 5);
             upRightRect = Helpers.GetTileRect(4, 5);
@@ -113,11 +107,8 @@ namespace MacGame.Enemies
             Alive = true;
             InvincibleTimer = 0;
             turnTimer = 0f;
-            _fireTimer = 0f;
-            for (int i = 0; i < _fires.Length; i++)
-            {
-                _fires.GetItem(i).Enabled = false;
-            }
+            _exhaust.DrawDepth = DrawDepth + Game1.MIN_DRAW_INCREMENT;
+            _exhaust.Enabled = true;
         }
 
         public void LaunchHoming(Vector2 position)
@@ -150,14 +141,17 @@ namespace MacGame.Enemies
             Kill();
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            _exhaust.DrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
+        }
+
         public override void Kill()
         {
             EffectsManager.AddExplosion(WorldCenter);
             Enabled = false;
-            for (int i = 0; i < _fires.Length; i++)
-            {
-                _fires.GetItem(i).Enabled = false;
-            }
+            _exhaust.Enabled = false;
             base.Kill();
         }
 
@@ -190,26 +184,9 @@ namespace MacGame.Enemies
                     }
                 }
 
-                _fireTimer += elapsed;
-                if (_fireTimer >= FireInterval)
-                {
-                    _fireTimer = 0f;
-                    var fire = _fires.GetNextObject();
-                    fire.Reset();
-                    fire.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-                    var behind = -RotationDirection.Vector2 * 12f;
-                    fire.WorldLocation = WorldLocation + behind;
-                    fire.Velocity = -RotationDirection.Vector2 * 30f;
-                }
-
-                for (int i = 0; i < _fires.Length; i++)
-                {
-                    var fire = _fires.GetItem(i);
-                    if (fire.Enabled)
-                    {
-                        fire.Update(gameTime, elapsed);
-                    }
-                }
+                _exhaust.WorldLocation = WorldLocation + (-RotationDirection.Vector2 * 12f);
+                _exhaust.Velocity = -RotationDirection.Vector2 * 30f;
+                _exhaust.Update(gameTime, elapsed);
             }
 
             base.Update(gameTime, elapsed);
@@ -217,15 +194,7 @@ namespace MacGame.Enemies
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < _fires.Length; i++)
-            {
-                var fire = _fires.GetItem(i);
-                if (fire.Enabled)
-                {
-                    fire.Draw(spriteBatch);
-                }
-            }
-
+            _exhaust.Draw(spriteBatch);
             base.Draw(spriteBatch);
         }
     }

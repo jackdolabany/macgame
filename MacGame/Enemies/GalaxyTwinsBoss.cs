@@ -29,8 +29,8 @@ namespace MacGame.Enemies
 
         private GalaxyTwin _twin1;
         private GalaxyTwin _twin2;
-        private BossPosition _twin1Position = BossPosition.TopLeft;
-        private BossPosition _twin2Position = BossPosition.TopRight;
+        private BossPosition _twin1Position;
+        private BossPosition _twin2Position;
 
         private bool _isHolding = false;
         private float _holdTimer = 0f;
@@ -74,6 +74,8 @@ namespace MacGame.Enemies
 
             ExtraEnemiesToAddAfterConstructor.Add(_twin1);
             ExtraEnemiesToAddAfterConstructor.Add(_twin2);
+
+            SetCenteredCollisionRectangle(48, 48, 48, 48);
         }
 
         private void Initialize()
@@ -131,7 +133,7 @@ namespace MacGame.Enemies
                 Game1.BossName = "Galaxy Twins";
 
                 // Check for death
-                if (!_twin1.IsAlive && !_twin2.IsAlive && !_sockRevealed)
+                if (_twin1.Dead && _twin2.Dead && !_sockRevealed)
                 {
                     _sockRevealed = true;
                     _state = GalaxyTwinsBossState.Done;
@@ -154,8 +156,8 @@ namespace MacGame.Enemies
                 }
                 else
                 {
-                    var t1Ready = !_twin1.IsAlive || _twin1.IsAtTarget;
-                    var t2Ready = !_twin2.IsAlive || _twin2.IsAtTarget;
+                    var t1Ready = !_twin1.IsAliveAndAttacking || _twin1.IsAtTarget;
+                    var t2Ready = !_twin2.IsAliveAndAttacking || _twin2.IsAtTarget;
                     if (t1Ready && t2Ready)
                     {
                         _isHolding = true;
@@ -169,7 +171,7 @@ namespace MacGame.Enemies
 
         private void AssignInitialPositions()
         {
-            _twin1Position = BossPosition.TopLeft;
+            _twin1Position = BossPosition.BottomRight;
             _twin2Position = BossPosition.TopRight;
             _twin1.SetTargetLocation(GetWorldPosition(_twin1Position));
             _twin2.SetTargetLocation(GetWorldPosition(_twin2Position));
@@ -193,8 +195,14 @@ namespace MacGame.Enemies
             while (newT2 == _twin2Position || newT2 == _twin1Position);
             _twin2Position = newT2;
 
-            if (_twin1.IsAlive) { _twin1.SetTargetLocation(GetWorldPosition(_twin1Position)); }
-            if (_twin2.IsAlive) { _twin2.SetTargetLocation(GetWorldPosition(_twin2Position)); }
+            if (_twin1.IsAliveAndAttacking) 
+            { 
+                _twin1.SetTargetLocation(GetWorldPosition(_twin1Position)); 
+            }
+            if (_twin2.IsAliveAndAttacking) 
+            { 
+                _twin2.SetTargetLocation(GetWorldPosition(_twin2Position)); 
+            }
         }
 
         private Vector2 GetWorldPosition(BossPosition pos)

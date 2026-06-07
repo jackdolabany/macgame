@@ -26,7 +26,7 @@ namespace MacGame.Enemies
     {
         private GalaxyTwinState _state = GalaxyTwinState.Unseen;
 
-        public const int MaxHealth = 100;
+        public const int MaxHealth = 80;
         private const float MoveSpeed = 180f;
         private const float AtTargetDistance = 6f;
 
@@ -37,6 +37,8 @@ namespace MacGame.Enemies
         private float _dyingTimer = 0f;
         private const float DyingDuration = 3f;
         private float _explosionTimer = 0f;
+
+        private ShipExhaust _exhaust;
 
         private Vector2 _targetLocation;
         private bool _hasTarget = false;
@@ -88,7 +90,7 @@ namespace MacGame.Enemies
         private const float RingShotExitDuration = 1.5f;
 
         public int CurrentHealth => Health;
-        public bool IsAlive => _state != GalaxyTwinState.Dying && _state != GalaxyTwinState.Dead && _state != GalaxyTwinState.Unseen;
+        public bool IsAliveAndAttacking => Alive && _state != GalaxyTwinState.Dying && _state != GalaxyTwinState.Dead && _state != GalaxyTwinState.Unseen;
         public bool IsAtTarget => !_hasTarget || Vector2.Distance(WorldLocation, _targetLocation) < AtTargetDistance;
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
@@ -137,6 +139,10 @@ namespace MacGame.Enemies
                 _missiles[i].Enabled = false;
                 Level.AddEnemy(_missiles[i]);
             }
+
+            var spaceTextures = content.Load<Texture2D>(@"Textures\SpaceTextures");
+            _exhaust = new ShipExhaust(spaceTextures);
+            _exhaust.Enabled = false;
         }
 
         public void SetTargetLocation(Vector2 worldLocation)
@@ -235,6 +241,7 @@ namespace MacGame.Enemies
                 if (Game1.Camera.IsObjectVisible(CollisionRectangle))
                 {
                     TransitionToState(GalaxyTwinState.Idle);
+                    _exhaust.Enabled = true;
                 }
                 else
                 {
@@ -331,6 +338,7 @@ namespace MacGame.Enemies
                             _spinFireTimer = 0f;
                             var dir = new Vector2((float)Math.Cos(_spinAngle), (float)Math.Sin(_spinAngle));
                             ShotManager.FireMediumShot(WorldCenter + _gunOffset, dir * MachineGunBulletSpeed, this, DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                            SoundManager.PlaySound("Shoot");
                         }
                         if (_attackTimer >= SpinMachineGunDuration)
                         {
@@ -347,6 +355,10 @@ namespace MacGame.Enemies
                         }
                         break;
                 }
+
+                _exhaust.WorldLocation = WorldCenter + new Vector2(-48, 12);
+                _exhaust.Velocity = new Vector2(-120, 0);
+                _exhaust.Update(gameTime, elapsed);
             }
             else if (_state == GalaxyTwinState.Dying)
             {
@@ -375,6 +387,12 @@ namespace MacGame.Enemies
             base.Update(gameTime, elapsed);
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            _exhaust.DrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
+        }
+
         public override void PlayTakeHitSound()
         {
             SoundManager.PlaySound("HitEnemy2");
@@ -392,6 +410,7 @@ namespace MacGame.Enemies
             Attack = 0;
             Velocity = Vector2.Zero;
             animations.Play("idle");
+            _exhaust.Enabled = false;
             foreach (var missile in _missiles)
             {
                 if (missile.Enabled)
@@ -399,6 +418,12 @@ namespace MacGame.Enemies
                     missile.Kill();
                 }
             }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            _exhaust.Draw(spriteBatch);
+            base.Draw(spriteBatch);
         }
 
         public override void PlayDeathSound()

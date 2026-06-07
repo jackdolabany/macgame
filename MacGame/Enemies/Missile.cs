@@ -108,7 +108,7 @@ namespace MacGame.Enemies
             InvincibleTimer = 0;
             turnTimer = 0f;
             _exhaust.DrawDepth = DrawDepth + Game1.MIN_DRAW_INCREMENT;
-            _exhaust.Enabled = true;
+            _exhaust.Enable();
         }
 
         public void LaunchHoming(Vector2 position)
@@ -151,7 +151,7 @@ namespace MacGame.Enemies
         {
             EffectsManager.AddExplosion(WorldCenter);
             Enabled = false;
-            _exhaust.Enabled = false;
+            _exhaust.Disable();
             base.Kill();
         }
 

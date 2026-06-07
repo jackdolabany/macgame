@@ -113,10 +113,10 @@ namespace MacGame.Enemies
             {
                 if (Game1.Camera.IsObjectVisible(CollisionRectangle))
                 {
-                    _twin1.WorldLocation = WorldLocation;
-                    _twin2.WorldLocation = WorldLocation;
-                    _twin1.Enabled = true;
-                    _twin2.Enabled = true;
+                    _twin1.WorldLocation = WorldLocation + new Vector2(0, 200); ;
+                    _twin2.WorldLocation = WorldLocation + new Vector2(0, -200);
+                    _twin1.Engage();
+                    _twin2.Engage();
                     AssignInitialPositions();
                     _state = GalaxyTwinsBossState.Active;
                     Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;

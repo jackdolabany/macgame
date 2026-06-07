@@ -105,7 +105,7 @@ namespace MacGame.Enemies
             IsAffectedByGravity = false;
             IsAffectedByPlatforms = false;
             CanBeHitWithWeapons = true;
-            CanBeJumpedOn = true;
+            CanBeJumpedOn = false;
 
             var ad = new AnimationDisplay();
 
@@ -142,7 +142,7 @@ namespace MacGame.Enemies
 
             var spaceTextures = content.Load<Texture2D>(@"Textures\SpaceTextures");
             _exhaust = new ShipExhaust(spaceTextures);
-            _exhaust.Enabled = false;
+            _exhaust.Disable();
         }
 
         public void SetTargetLocation(Vector2 worldLocation)
@@ -234,20 +234,20 @@ namespace MacGame.Enemies
             SoundManager.PlaySound("ShootRing");
         }
 
+        public void Engage()
+        {
+            TransitionToState(GalaxyTwinState.Idle);
+            _exhaust.Enable();
+            Enabled = true;
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
             if (_state == GalaxyTwinState.Unseen)
             {
-                if (Game1.Camera.IsObjectVisible(CollisionRectangle))
-                {
-                    TransitionToState(GalaxyTwinState.Idle);
-                    _exhaust.Enabled = true;
-                }
-                else
-                {
-                    base.Update(gameTime, elapsed);
-                    return;
-                }
+                // Do nothing, wait for GalaxyTwinBoss to call Engage().
+                base.Update(gameTime, elapsed);
+                return;
             }
 
             if (_state != GalaxyTwinState.Dying && _state != GalaxyTwinState.Dead)
@@ -410,7 +410,7 @@ namespace MacGame.Enemies
             Attack = 0;
             Velocity = Vector2.Zero;
             animations.Play("idle");
-            _exhaust.Enabled = false;
+            _exhaust.Disable();
             foreach (var missile in _missiles)
             {
                 if (missile.Enabled)

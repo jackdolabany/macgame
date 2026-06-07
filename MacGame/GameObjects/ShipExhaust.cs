@@ -10,7 +10,7 @@ namespace MacGame
     {
         private readonly CircularBuffer<ShipFire> _fires;
         private float _timer;
-        public bool Enabled { get; set; }
+        private bool _enabled { get; set; }
 
         public float FireInterval = 0.1f;
         public Vector2 WorldLocation;
@@ -24,12 +24,26 @@ namespace MacGame
             {
                 _fires.SetItem(i, new ShipFire(textures));
             }
-            Enabled = true;
+            _enabled = true;
+        }
+
+        public void Enable()
+        {
+            _enabled = true;
+        }
+
+        public void Disable()
+        {
+            _enabled = false;
+            foreach (ShipFire fire in _fires)
+            {
+                fire.Enabled = false;
+            }
         }
 
         public void Update(GameTime gameTime, float elapsed)
         {
-            if (!Enabled) return;
+            if (!_enabled) return;
 
             _timer += elapsed;
             if (_timer >= FireInterval)
@@ -54,7 +68,7 @@ namespace MacGame
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (!Enabled) return;
+            if (!_enabled) return;
 
             for (int i = 0; i < _fires.Length; i++)
             {

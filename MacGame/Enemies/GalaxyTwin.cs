@@ -64,6 +64,8 @@ namespace MacGame.Enemies
         private static readonly float MissileSequenceEndTime = MissileHatchOpenDuration + 2 * MissileLaunchInterval + 0.2f;
         private static readonly float HomingAttackDuration = MissileSequenceEndTime + MissileHatchCloseDuration;
 
+        private Vector2 _gunOffset = new Vector2(12, 26);
+
         // Machine gun
         private float _machineGunFireTimer = 0f;
         private const float MachineGunDuration = 4f;
@@ -299,7 +301,7 @@ namespace MacGame.Enemies
                         {
                             _machineGunFireTimer = 0f;
                             var dir = Vector2.Normalize(Player.CollisionCenter - WorldCenter);
-                            ShotManager.FireMediumShot(WorldCenter + new Vector2(12, 26), dir * MachineGunBulletSpeed, this, this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                            ShotManager.FireMediumShot(WorldCenter + _gunOffset, dir * MachineGunBulletSpeed, this, this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
                             SoundManager.PlaySound("Shoot");
                         }
                         if (_attackTimer >= MachineGunDuration)
@@ -316,7 +318,7 @@ namespace MacGame.Enemies
                         {
                             _spinFireTimer = 0f;
                             var dir = new Vector2((float)Math.Cos(_spinAngle), (float)Math.Sin(_spinAngle));
-                            ShotManager.FireMediumShot(WorldCenter, dir * MachineGunBulletSpeed, this, DrawDepth - Game1.MIN_DRAW_INCREMENT);
+                            ShotManager.FireMediumShot(WorldCenter + _gunOffset, dir * MachineGunBulletSpeed, this, DrawDepth - Game1.MIN_DRAW_INCREMENT);
                         }
                         if (_attackTimer >= SpinMachineGunDuration)
                         {

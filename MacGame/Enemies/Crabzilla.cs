@@ -26,7 +26,7 @@ namespace MacGame.Enemies
 
         CrabzillaState _state = CrabzillaState.Unseen;
 
-        private const int MaxHealth = 10;
+        private const int MaxHealth = 250;
 
         private float _idleTimer = 0f;
         private const float IdleDuration = 4f;

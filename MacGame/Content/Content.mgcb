@@ -10,10 +10,10 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\CustomContentProcessorLibrary.dll
-/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TileEngine.dll
-/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net6.0\TmxMapLibrary.dll
-/reference:..\..\..\..\.nuget\packages\system.drawing.common\8.0.10\lib\net6.0\System.Drawing.Common.dll
+/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net8.0\CustomContentProcessorLibrary.dll
+/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net8.0\TileEngine.dll
+/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net8.0\TmxMapLibrary.dll
+/reference:..\..\CustomContentProcessorLibrary\bin\Debug\net8.0\System.Drawing.Common.dll
 
 #---------------------------------- Content ---------------------------------#
 

@@ -31,6 +31,16 @@ namespace MacGame
         private static readonly Vector2 TakeOffDirection = Vector2.Normalize(new Vector2(1f, -1f));
 
         /// <summary>
+        /// Track whether or not Mac was in the ship on the last frame. We use this to mess with his draw depth temporarily.
+        /// </summary>
+        bool _wasMacInShip = false;
+
+        /// <summary>
+        /// Cache the player's normal draw depth before we mess with it. This way we can put it back when needed.
+        /// </summary>
+        float _playerDrawDepth = 0f;
+
+        /// <summary>
         /// The map to transition to when the ship blasts off. Set a GoToMap property from the
         /// map editor.
         /// </summary>
@@ -117,31 +127,25 @@ namespace MacGame
         public override void SetDrawDepth(float depth)
         {
             base.SetDrawDepth(depth);
-            _backDisplay.DrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
+            // Draw the back in the back, with some padding to stuff Mac in there.
+            _backDisplay.DrawDepth = depth + (10 * Game1.MIN_DRAW_INCREMENT);
         }
 
-        /// <summary>
-        /// Mac renders in front of (on top of) the ship. Both ship layers are drawn behind Mac.
-        /// Used when the ship is closed or when Mac is standing inside the open cockpit.
-        /// </summary>
-        private void MacInFrontOfShip()
+        private void MacExitedTheShip()
         {
-            // Add some padding for Mac's little hat or whatever he might be holding
-            float playerDepth = _player.DrawDepth;
-            _frontDisplay.DrawDepth = playerDepth + 5f * Game1.MIN_DRAW_INCREMENT;
-            _backDisplay.DrawDepth = playerDepth + 6f * Game1.MIN_DRAW_INCREMENT;
+            _player.SetDrawDepth(_playerDrawDepth);
         }
 
         /// <summary>
         /// The ship's front cockpit panel renders in front of Mac; the back is behind Mac.
         /// Used when Mac is outside the cockpit rect while the ship is open.
         /// </summary>
-        private void MacInShip()
+        private void MacEnteredTheShip()
         {
-            // Add some padding for Mac's little hat or whatever he might be holding
-            float playerDepth = _player.DrawDepth;
-            _frontDisplay.DrawDepth = playerDepth - 5f * Game1.MIN_DRAW_INCREMENT;
-            _backDisplay.DrawDepth = playerDepth + 5f * Game1.MIN_DRAW_INCREMENT;
+            _playerDrawDepth = _player.DrawDepth;
+
+            // Some padding for Mac's little hat or whatever.
+            _player.SetDrawDepth(this.DrawDepth + (5 * Game1.MIN_DRAW_INCREMENT));
         }
 
         public bool IsMacInShip()
@@ -162,14 +166,15 @@ namespace MacGame
         {
 
             shipPlatform.Enabled = _state != ShipState.Idle;
+            var macIsInTheShip = IsMacInShip();
 
-            if (IsMacInShip())
+            if (!_wasMacInShip && macIsInTheShip)
             {
-                MacInShip();
+                MacEnteredTheShip();
             }
-            else
+            else if (_wasMacInShip && !macIsInTheShip)
             {
-                MacInFrontOfShip();
+                MacExitedTheShip();
             } 
 
             // Wall is only active while Mac is grounded on the ship platform.
@@ -239,6 +244,8 @@ namespace MacGame
             }
 
             base.Update(gameTime, elapsed);
+
+            _wasMacInShip = macIsInTheShip;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

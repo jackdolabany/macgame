@@ -824,6 +824,7 @@ namespace MacGame
                 // Highest number things end up in the front.
                 var gameObjects = layerDepthObjects[layer].OrderBy(o => {
                     if (o is Door) return 1;
+                    if (o is MacFighterShip) return 1;
                     if (o is BlockingPiston) return 1;
                     if (o is WaterBomb) return 1;
                     if (o is Spaceship) return 1;

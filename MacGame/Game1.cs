@@ -16,7 +16,7 @@ namespace MacGame
     public class Game1 : Game
     {
 
-        public const string StartingWorld = "GalaxyTwinsTest";
+        public const string StartingWorld = "World4";
         private const bool startAtTitleScreen = false;
         public const bool IS_DEBUG = true;
 
@@ -199,6 +199,16 @@ namespace MacGame
         /// You'd return here if you quit or die.
         /// </summary>
         public static string HubDoorNameYouCameFrom = "";
+
+        /// <summary>
+        /// The name of the map the player was on before entering the current level.
+        /// </summary>
+        public static string PreviousMapName = "";
+
+        /// <summary>
+        /// The name of the door in the previous map the player came through.
+        /// </summary>
+        public static string PreviousMapDoorName = "";
 
         private static bool drawHappened = true;
 
@@ -416,6 +426,9 @@ namespace MacGame
             // that game state will actually load the level.
             _goToMap = args.TransitionToMap;
             _putPlayerAtDoor = args.PutPlayerAtDoor;
+
+            PreviousMapName = CurrentLevel.Name;
+            PreviousMapDoorName = args.DoorNameEntered;
 
             if (Game1.CurrentLevel.IsHubWorld && !string.IsNullOrEmpty(args.DoorNameEntered))
             {

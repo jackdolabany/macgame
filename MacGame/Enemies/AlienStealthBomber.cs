@@ -177,6 +177,8 @@ namespace MacGame.Enemies
                 _sock.Enabled = false;
             }
 
+            SetSockReturnAction(_sock);
+
             _isInitialized = true;
         }
 

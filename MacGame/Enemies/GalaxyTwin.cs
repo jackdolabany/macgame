@@ -26,7 +26,7 @@ namespace MacGame.Enemies
     {
         private GalaxyTwinState _state = GalaxyTwinState.Unseen;
 
-        public const int MaxHealth = 80;
+        public const int MaxHealth = 5;
         private const float MoveSpeed = 180f;
         private const float AtTargetDistance = 6f;
 
@@ -407,6 +407,7 @@ namespace MacGame.Enemies
         public override void Kill()
         {
             _state = GalaxyTwinState.Dying;
+            CanBeHitWithWeapons = false;
             Attack = 0;
             Velocity = Vector2.Zero;
             animations.Play("idle");

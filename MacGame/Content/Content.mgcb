@@ -445,6 +445,36 @@
 /processor:PassThroughProcessor
 /build:Maps/World4.tmx
 
+#begin Maps/World4AlienStealthBomberLevel.tmx
+/importer:
+/processor:
+/build:Maps/World4AlienStealthBomberLevel.tmx
+
+#begin Maps/World4BigShipLevel.tmx
+/importer:
+/processor:
+/build:Maps/World4BigShipLevel.tmx
+
+#begin Maps/World4CrabzillaLevel.tmx
+/importer:
+/processor:
+/build:Maps/World4CrabzillaLevel.tmx
+
+#begin Maps/World4FortressLevel.tmx
+/importer:
+/processor:
+/build:Maps/World4FortressLevel.tmx
+
+#begin Maps/World4GalaxyTwinsLevel.tmx
+/importer:
+/processor:
+/build:Maps/World4GalaxyTwinsLevel.tmx
+
+#begin Maps/World4GrokLevel.tmx
+/importer:
+/processor:
+/build:Maps/World4GrokLevel.tmx
+
 #begin Maps/World4House1.tmx
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
@@ -484,11 +514,6 @@
 /importer:TMXMapImporter
 /processor:PassThroughProcessor
 /build:Maps/World4House8.tmx
-
-#begin Maps/World4SpaceShip1.tmx
-/importer:TMXMapImporter
-/processor:PassThroughProcessor
-/build:Maps/World4SpaceShip1.tmx
 
 #begin Music/BossFight.mp3
 /importer:Mp3Importer

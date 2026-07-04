@@ -72,8 +72,7 @@ namespace MacGame
             star.Transparency = Game1.Randy.Next(1, 9) / 10.0f;
 
             // Give it a random velocity but moving to the left
-            
-            star.Velocity = new Vector2(-Game1.Randy.Next(5, 11) * 1 , 0);
+            star.Velocity = new Vector2(-Game1.Randy.Next(20, 70) * 1, 0);
 
         }
 

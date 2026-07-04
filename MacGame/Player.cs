@@ -713,7 +713,7 @@ namespace MacGame
                 SoundManager.StopMinecart();
             }
 
-            if (!ConsoleManager.ShowConsole)
+            if (!ConsoleManager.ShowConsole && !IsInvisibleAndCantMove)
             {
                 if (IsInMineCart)
                 {

@@ -94,10 +94,7 @@ namespace MacGame.Enemies
                 throw new Exception("You need a sock named GalaxyTwinsSock in the level!");
             }
 
-            if (!_sock.IsCollected)
-            {
-                _sock.Enabled = false;
-            }
+            _sock.Enabled = false;
 
             SetSockReturnAction(_sock);
 

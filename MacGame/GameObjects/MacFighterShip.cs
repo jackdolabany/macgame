@@ -19,7 +19,7 @@ namespace MacGame
 
         private Player _player;
 
-        private enum ShipState { Idle, Opening, Open, Closing, TakingOff }
+        private enum ShipState { Idle, Opening, Open, Closing, TakingOff, ReturningFromMission }
         private ShipState _state = ShipState.Idle;
 
         private float _onScreenTimer;
@@ -39,6 +39,12 @@ namespace MacGame
         /// Cache the player's normal draw depth before we mess with it. This way we can put it back when needed.
         /// </summary>
         float _playerDrawDepth = 0f;
+
+        /// <summary>
+        /// True after returning from a mission. Prevents Mac from immediately taking off again
+        /// before he's exited the ship at least once.
+        /// </summary>
+        bool _justReturnedFromMission = false;
 
         /// <summary>
         /// The map to transition to when the ship blasts off. Set a GoToMap property from the
@@ -134,6 +140,7 @@ namespace MacGame
         private void MacExitedTheShip()
         {
             _player.SetDrawDepth(_playerDrawDepth);
+            _justReturnedFromMission = false;
         }
 
         /// <summary>
@@ -154,12 +161,39 @@ namespace MacGame
 
             if (_state == ShipState.TakingOff) return true;
 
+            if (_state == ShipState.ReturningFromMission) return true;
+
             var isInShipRectangle = inShipRectangle.Contains(this._player.WorldLocation + new Vector2(0, -2));
 
             // Make sure Mac is also to the right of the collision wall or weird visual things will happen.
             var isToRightOfCollisionWall = this.shipPlatform.Enabled = _player.CollisionRectangle.Left >= _leftWall.CollisionRectangle.Right;
 
             return isInShipRectangle && isToRightOfCollisionWall;
+        }
+
+        /// <summary>
+        /// Called when the player returns from a shooter level. Places Mac inside the cockpit,
+        /// fixes his draw depth, disables his controls, and opens the door.
+        /// </summary>
+        public void ReturnMacToShip(Player player)
+        {
+            // Place Mac's feet at the platform surface inside the cockpit.
+            player.WorldLocation = WorldLocation + new Vector2(12, -28);
+            player.Velocity = Vector2.Zero;
+            player.IsInvisibleAndCantMove = true;
+
+            // Apply in-ship draw depth immediately so the first render is correct.
+            MacEnteredTheShip();
+            _wasMacInShip = true;
+            _justReturnedFromMission = true;
+
+            _state = ShipState.ReturningFromMission;
+            TimerManager.AddNewTimer(1f, () => 
+            { 
+                _frontDisplay.Play("open");
+                _state = ShipState.Open;
+                _player.IsInvisibleAndCantMove = false;
+            });
         }
 
         public override void Update(GameTime gameTime, float elapsed)
@@ -203,9 +237,11 @@ namespace MacGame
                     }
                     break;
 
+
                 case ShipState.Open:
                     // Blast off if the Player presses up.
-                    if (_player.PlatformThatThisIsOn == shipPlatform
+                    if (!_justReturnedFromMission
+                        && _player.PlatformThatThisIsOn == shipPlatform
                         && _player.InputManager.CurrentAction.up
                         && !_player.InputManager.PreviousAction.up)
                     {

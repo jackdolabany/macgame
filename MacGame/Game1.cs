@@ -927,14 +927,29 @@ namespace MacGame
                 // Player just went through a door, put him where he's supposed to be.
                 if (!string.IsNullOrEmpty(_putPlayerAtDoor))
                 {
+                    bool placed = false;
                     foreach (var door in CurrentLevel.Doors)
                     {
                         if (door.Name == _putPlayerAtDoor)
                         {
                             door.ComeOutOfThisDoor(Player);
+                            placed = true;
                             break;
                         }
                     }
+
+                    if (!placed)
+                    {
+                        foreach (var obj in CurrentLevel.GameObjects)
+                        {
+                            if (obj is MacFighterShip ship && ship.Name == _putPlayerAtDoor)
+                            {
+                                ship.ReturnMacToShip(Player);
+                                break;
+                            }
+                        }
+                    }
+
                     _putPlayerAtDoor = "";
                 }
 

@@ -286,6 +286,16 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="168">
+  <properties>
+   <property name="LoadClass" value="Enemy.BigShooterShip"/>
+  </properties>
+ </tile>
+ <tile id="169">
+  <properties>
+   <property name="LoadClass" value="Enemy.FishShip"/>
+  </properties>
+ </tile>
  <tile id="240">
   <properties>
    <property name="BlockPlayer" value="SlopeUp"/>

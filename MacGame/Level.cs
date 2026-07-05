@@ -186,7 +186,7 @@ namespace MacGame
                 sb.Update(gameTime, elapsed);
             }
 
-            if (AutoScrollSpeed != Vector2.Zero)
+            if (AutoScrollSpeed != Vector2.Zero && !IsSpaceScrollLocked)
             {
                 Camera.Position += AutoScrollSpeed * elapsed;
 
@@ -208,10 +208,11 @@ namespace MacGame
                 }
 
             }
-            else
+            else if (AutoScrollSpeed == Vector2.Zero)
             {
                 Player.SetCameraTarget(Camera, elapsed);
             }
+            // else: shooter level with locked scroll — camera stays where it is
 
             foreach (var enemy in Enemies)
             {

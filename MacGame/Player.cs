@@ -2681,6 +2681,8 @@ namespace MacGame
             SoundManager.StopMinecart();
             SoundManager.StopCharging();
             SoundManager.StopFullyCharged();
+
+            Game1.CurrentLevel.StopSpaceAutoScrolling();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

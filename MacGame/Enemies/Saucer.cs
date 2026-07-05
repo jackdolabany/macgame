@@ -12,11 +12,16 @@ namespace MacGame.Enemies
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
+        private readonly Player _player;
         private float speed = 30;
+
+        private float _fireTimer;
+        private const float ShotSpeed = 100f;
 
         public Saucer(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
+            _player = player;
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
@@ -36,6 +41,8 @@ namespace MacGame.Enemies
             Flipped = true;
 
             InvincibleTimeAfterBeingHit = 0.1f;
+
+            _fireTimer = (float)Game1.Randy.NextDouble() * 8f;
         }
 
         public override void Kill()
@@ -49,9 +56,18 @@ namespace MacGame.Enemies
         public override void Update(GameTime gameTime, float elapsed)
         {
 
-            if (!camera.IsWayOffscreen(this.CollisionRectangle))
+            if (!camera.IsWayOffscreen(this.CollisionRectangle) && Alive)
             {
                 velocity.X = -speed;
+
+                _fireTimer -= elapsed;
+                if (_fireTimer <= 0f)
+                {
+                    _fireTimer = 8f;
+                    var direction = Vector2.Normalize(_player.WorldCenter - WorldCenter);
+                    ShotManager.FireSmallShot(WorldCenter, direction * ShotSpeed, this);
+                    SoundManager.PlaySound("Shoot");
+                }
             }
             else
             {

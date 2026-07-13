@@ -26,7 +26,7 @@ namespace MacGame.Enemies
     {
         private GalaxyTwinState _state = GalaxyTwinState.Unseen;
 
-        public const int MaxHealth = 5;
+        public const int MaxHealth = 80;
         private const float MoveSpeed = 180f;
         private const float AtTargetDistance = 6f;
 

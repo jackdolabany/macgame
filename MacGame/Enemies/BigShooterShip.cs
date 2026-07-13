@@ -20,16 +20,17 @@ namespace MacGame.Enemies
         private const float PauseDuration = 2f;
 
         private float _shootTimer;
+        // Total time the ship shoots for before stopping.
         private const float ShootDuration = 2f;
 
         private float _fireTimer;
-        private const float FireInterval = 0.15f;
+        private const float FireInterval = 0.25f;
         private bool _fireFromTop = true;
 
         private int _shotCycles;
         private const int ShotCyclesBeforeFlyOff = 4;
 
-        private const float ShotSpeed = 180f;
+        private const float ShotSpeed = 220f;
 
 
         public BigShooterShip(ContentManager content, int cellX, int cellY, Player player, Camera camera)
@@ -43,18 +44,18 @@ namespace MacGame.Enemies
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
 
             var idle = new AnimationStrip(textures, Helpers.GetBigTileRect(12, 1), 1, "idle");
-            idle.LoopAnimation = true;
-            idle.FrameLength = 0.2f;
+            idle.LoopAnimation = false;
+            idle.FrameLength = 0.5f;
             _animations.Add(idle);
 
             var shoot = new AnimationStrip(textures, Helpers.GetBigTileRect(13, 1), 2, "shoot");
             shoot.LoopAnimation = true;
-            shoot.FrameLength = 0.1f;
+            shoot.FrameLength = FireInterval;
             _animations.Add(shoot);
 
             _animations.Play("idle");
 
-            SetInitialHealth(6);
+            SetInitialHealth(10);
             Attack = 1;
 
             SetCenteredCollisionRectangle(16, 16, 12, 12);

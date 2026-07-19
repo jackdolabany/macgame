@@ -121,29 +121,36 @@ namespace MacGame
 
         public static void FireSmallShot(Vector2 position, Vector2 velocity, GameObject shooter, float? drawDepth = null)
         {
-            var shot = (EnemyShot)SmallShots.GetNextObject();
-            shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
-            shot.Velocity = velocity;
-            shot.RotateCenter = null;
-            shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
-            shot.Enabled = true;
-            shot.Alive = true;
+          _fireShot(position, velocity, ShotSize.Small, shooter, drawDepth);
         }
 
         public static void FireMediumShot(Vector2 position, Vector2 velocity, GameObject shooter, float? drawDepth = null)
         {
-            var shot = (EnemyShot)MediumShots.GetNextObject();
-            shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
-            shot.Velocity = velocity;
-            shot.RotateCenter = null;
-            shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
-            shot.Enabled = true;
-            shot.Alive = true;
+            _fireShot(position, velocity, ShotSize.Medium, shooter, drawDepth);
         }
 
         public static void FireLargeShot(Vector2 position, Vector2 velocity, GameObject shooter, float? drawDepth = null)
         {
-            var shot = (EnemyShot)LargeShots.GetNextObject();
+            _fireShot(position, velocity, ShotSize.Large, shooter, drawDepth);
+        }
+
+        private static void _fireShot(Vector2 position, Vector2 velocity, ShotSize size, GameObject shooter, float? drawDepth = null)
+        {
+            EnemyShot shot;
+            switch (size)
+            {
+                case ShotSize.Small:
+                    shot = (EnemyShot)SmallShots.GetNextObject();
+                    break;
+                case ShotSize.Medium:
+                    shot = (EnemyShot)MediumShots.GetNextObject();
+                    break;
+                case ShotSize.Large:
+                    shot = (EnemyShot)LargeShots.GetNextObject();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(size), size, null);
+            }
             shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
             shot.Velocity = velocity;
             shot.RotateCenter = null;

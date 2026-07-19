@@ -113,6 +113,11 @@ namespace MacGame.Enemies
 
         protected Camera camera;
 
+        /// <summary>
+        /// The current level's auto scroll speed.
+        /// </summary>
+        public Vector2 AutoScrollSpeed => Game1.CurrentLevel.AutoScrollSpeed;
+
         public Enemy(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base()
         {

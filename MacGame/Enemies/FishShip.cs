@@ -1,3 +1,4 @@
+using MacGame.Behaviors;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -29,30 +30,9 @@ namespace MacGame.Enemies
 
             SetCenteredCollisionRectangle(16, 16, 12, 12);
 
-            Velocity = new Vector2(-30f, 0f);
-
-        }
-
-        public override void Update(GameTime gameTime, float elapsed)
-        {
-            Velocity = Vector2.Zero;
-
-            if (!Alive || !Game1.Camera.IsObjectVisible(CollisionRectangle) || !Enabled)
-            {
-                base.Update(gameTime, elapsed);
-                return;
-            }
-
-            _fireTimer += elapsed;
-            if (_fireTimer >= FireInterval)
-            {
-                _fireTimer = 0f;
-                var direction = Vector2.Normalize(_player.WorldCenter - WorldCenter);
-                ShotManager.FireMediumShot(WorldCenter, direction * ShotSpeed, this);
-                SoundManager.PlaySound("Shoot");
-            }
-
-            base.Update(gameTime, elapsed);
+            var enemyShipBehavior = new EnemyShipBehavior(40, camera, player);
+            enemyShipBehavior.SetupShootAtPlayer(FireInterval, ShotSpeed, ShotSize.Medium);
+            Behavior = enemyShipBehavior;
         }
     }
 }

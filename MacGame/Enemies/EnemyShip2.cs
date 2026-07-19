@@ -33,7 +33,7 @@ namespace MacGame.Enemies
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            Behavior = new EnemyShipBehavior(40, camera);
+            Behavior = new EnemyShipBehavior(40, camera, player);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

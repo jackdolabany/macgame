@@ -102,7 +102,7 @@ namespace MacGame
                 var isSpace = map.Properties["IsSpace"].ToBoolean();
                 if (isSpace)
                 {
-                    float scrollSpeed = 50f;
+                    float scrollSpeed = 80f;
                     if (map.Properties.ContainsKey("HorizontalScrollSpeed") &&
                         float.TryParse(map.Properties["HorizontalScrollSpeed"], out float overrideSpeed))
                     {

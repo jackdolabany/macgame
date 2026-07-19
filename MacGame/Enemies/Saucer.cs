@@ -13,7 +13,7 @@ namespace MacGame.Enemies
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         private readonly Player _player;
-        private float speed = 30;
+        private float speed = 40;
 
         private float _fireTimer;
         private const float ShotSpeed = 100f;

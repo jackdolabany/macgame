@@ -211,6 +211,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="105">
+  <properties>
+   <property name="LoadClass" value="Enemy.SpaceTrash"/>
+  </properties>
+ </tile>
  <tile id="107">
   <properties>
    <property name="Hidden" value="1"/>

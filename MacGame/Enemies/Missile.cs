@@ -101,7 +101,7 @@ namespace MacGame.Enemies
 
         private void ResetCommon(Vector2 position)
         {
-            WorldLocation = position;
+            WorldLocation = position + new Vector2(0, 16);
             Health = 1;
             Enabled = true;
             Alive = true;
@@ -182,6 +182,13 @@ namespace MacGame.Enemies
                         velocity = RotationDirection.Vector2 * Speed;
                         turnTimer = TurnInterval;
                     }
+                }
+                
+                // Just fly if the player died.
+                if (_isHoming && !Player.Enabled)
+                {
+                    _isHoming = false;
+                    velocity = RotationDirection.Vector2 * Speed;
                 }
 
                 _exhaust.WorldLocation = WorldLocation + (-RotationDirection.Vector2 * 12f);

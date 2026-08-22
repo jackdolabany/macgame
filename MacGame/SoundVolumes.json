@@ -37,6 +37,7 @@
     "GooseHit": 30,
     "GooseBallBounce": 35,
     "Grow": 40,
-    "OpenHatch": 25
+    "OpenHatch": 25,
+    "ShootMissile": 15
   }
 }

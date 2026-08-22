@@ -17,6 +17,14 @@ namespace MacGame.Behaviors
         private ShotSize _shotSize;
         private Player _player;
 
+        private static readonly Random _random = new Random();
+
+        private float _missileTimer;
+        private float _missileInterval;
+        private float _missileArmDelay;
+        private float _missileOnScreenTimer;
+        private bool _missileArmed;
+
         public EnemyShipBehavior(int speed, Camera camera, Player player)
         {
             _speed = speed;
@@ -58,6 +66,31 @@ namespace MacGame.Behaviors
                         SoundManager.PlaySound("Shoot");
                     }
                 }
+
+                // Launch a homing missile if it's been set up, but only once the ship has
+                // been on screen for a bit so it doesn't fire the instant it appears.
+                if (_missileInterval > 0)
+                {
+                    if (!_missileArmed)
+                    {
+                        _missileOnScreenTimer += elapsed;
+                        if (_missileOnScreenTimer >= _missileArmDelay)
+                        {
+                            _missileArmed = true;
+                            _missileTimer = _missileInterval;
+                        }
+                    }
+                    else
+                    {
+                        _missileTimer -= elapsed;
+                        if (_missileTimer <= 0f)
+                        {
+                            _missileTimer = _missileInterval;
+                            MissileManager.LaunchHomingMissile(enemy.CollisionCenter);
+                            SoundManager.PlaySound("ShootMissile");
+                        }
+                    }
+                }
             }
             else
             {
@@ -70,6 +103,14 @@ namespace MacGame.Behaviors
             _fireInterval = fireInterval;
             _shotSpeed = shotSpeed;
             _shotSize = shotSize;
+        }
+
+        internal void SetupLaunchHomingMissile(float missileInterval)
+        {
+            _missileInterval = missileInterval;
+            _missileArmDelay = 2f + (float)_random.NextDouble() * 2.5f;
+            _missileOnScreenTimer = 0f;
+            _missileArmed = false;
         }
     }
 }

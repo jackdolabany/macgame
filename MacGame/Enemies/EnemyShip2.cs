@@ -11,8 +11,6 @@ namespace MacGame.Enemies
     {
         private const float MissileInterval = 2f;
 
-        private float missileTimer = MissileInterval;
-
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
         public EnemyShip2(ContentManager content, int cellX, int cellY, Player player, Camera camera)
@@ -33,22 +31,9 @@ namespace MacGame.Enemies
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            Behavior = new EnemyShipBehavior(40, camera, player);
-        }
-
-        public override void Update(GameTime gameTime, float elapsed)
-        {
-            if (Alive && IsOnScreen())
-            {
-                missileTimer -= elapsed;
-                if (missileTimer <= 0f)
-                {
-                    MissileManager.LaunchHomingMissile(CollisionCenter);
-                    missileTimer = MissileInterval;
-                }
-            }
-
-            base.Update(gameTime, elapsed);
+            var shipBehavior = new EnemyShipBehavior(40, camera, player);
+            shipBehavior.SetupLaunchHomingMissile(MissileInterval);
+            Behavior = shipBehavior;
         }
     }
 }

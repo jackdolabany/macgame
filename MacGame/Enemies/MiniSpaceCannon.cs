@@ -133,18 +133,31 @@ namespace MacGame.Enemies
 
             switch (_currentDirection)
             {
-                case FacingDirection.Left:    return new Vector2(-1f, 0f);
-                case FacingDirection.UpLeft:  return new Vector2(-0.707f, ySign * 0.707f);
-                case FacingDirection.Up:      return new Vector2(0f, ySign);
-                case FacingDirection.UpRight: return new Vector2(0.707f, ySign * 0.707f);
-                case FacingDirection.Right:   return new Vector2(1f, 0f);
-                default:                      return new Vector2(1f, 0f);
+                case FacingDirection.Left:    
+                    return new Vector2(-1f, 0f);
+                case FacingDirection.UpLeft:  
+                    return new Vector2(-0.707f, ySign * 0.707f);
+                case FacingDirection.Up:      
+                    return new Vector2(0f, ySign);
+                case FacingDirection.UpRight: 
+                    return new Vector2(0.707f, ySign * 0.707f);
+                case FacingDirection.Right:   
+                    return new Vector2(1f, 0f);
+                default:                      
+                    return new Vector2(1f, 0f);
             }
         }
 
         private void Shoot()
         {
-            ShotManager.FireSmallShot(CollisionCenter, GetShootDirection() * ShootSpeed, this);
+
+            var shotOffset = new Vector2(0, 4);
+            if (UpsideDown)
+            {
+                shotOffset *= -1;
+            }
+
+            ShotManager.FireSmallShot(CollisionCenter + shotOffset, GetShootDirection() * ShootSpeed, this);
             PlaySoundIfOnScreen("Fire", 0.5f);
             ResetShootTimer();
         }

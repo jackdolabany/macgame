@@ -9,15 +9,6 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public enum SpaceTrashMovement
-    {
-        StraightLeft = 1,
-        DiagonalDownLeft45 = 2,
-        DiagonalDownLeftShallow = 3,
-        DiagonalUpLeft45 = 4,
-        DiagonalUpLeftShallow = 5,
-    }
-
     public enum SpaceTrashState
     {
         NotAppearedYet,
@@ -26,7 +17,7 @@ namespace MacGame.Enemies
     }
 
     /// <summary>
-    /// Just some trash floating in space. 
+    /// Just some trash floating in space.
     /// </summary>
     public class SpaceTrash : Enemy
     {
@@ -40,10 +31,16 @@ namespace MacGame.Enemies
 
         private int _imageIndex;
         private int _rotationDegrees;
-        private SpaceTrashMovement _movement;
+
+        // Angle of travel, in degrees, measured from horizontal. 0 is straight left, positive is
+        // down-left, negative is up-left. Always moves right to left.
+        private float _angleDegrees;
 
         private Vector2 _spawnLocation;
+
+        // The trash's own travel speed, in pixels/sec, independent of the level's auto scroll.
         private Vector2 _direction;
+
         private SpaceTrashState _state = SpaceTrashState.NotAppearedYet;
         private bool _hasBeenOnScreen;
 
@@ -57,7 +54,7 @@ namespace MacGame.Enemies
 
             _imageIndex = _random.Next(0, 3);
             _rotationDegrees = _random.Next(0, 4) * 90;
-            _movement = (SpaceTrashMovement)_random.Next(1, 6);
+            _angleDegrees = (float)(_random.NextDouble() * 180.0 - 90.0);
 
             ApplyImage();
             ApplyRotation();
@@ -99,35 +96,32 @@ namespace MacGame.Enemies
                 }
             }
 
-            if (props.ContainsKey("Movement") && int.TryParse(props["Movement"], out int movement))
+            if (props.ContainsKey("Angle") && float.TryParse(props["Angle"], out float angle))
             {
-                if (movement >= 1 && movement <= 5)
-                {
-                    _movement = (SpaceTrashMovement)movement;
-                    ApplyMovement();
-                }
+                _angleDegrees = MathHelper.Clamp(angle, -90f, 90f);
+                ApplyMovement();
             }
         }
 
         public override void TakeHit(GameObject attacker, int damage)
         {
             // Mostly invincible: weapons still collide with (and are destroyed by) the trash,
-            // but only a charged shot is strong enough to actually blow it up.e
+            // but only a charged shot is strong enough to actually blow it up.
             if (attacker is ChargedSpaceshipShot)
             {
                 base.TakeHit(attacker, damage);
             }
         }
 
-        public override void PlayDeathSound()
-        {
-            // No sound when the trash is blown up.
-        }
-
         public override void Kill()
         {
             EffectsManager.AddExplosion(WorldCenter);
             base.Kill();
+        }
+
+        public override void PlayDeathSound()
+        {
+            // No sound when the trash is blown up.
         }
 
         private void BlowUpCollidingMissiles()
@@ -164,37 +158,8 @@ namespace MacGame.Enemies
 
         private void ApplyMovement()
         {
-            float thetaDegrees;
-            float verticalSign;
-
-            switch (_movement)
-            {
-                case SpaceTrashMovement.StraightLeft:
-                    thetaDegrees = 0f;
-                    verticalSign = 0f;
-                    break;
-                case SpaceTrashMovement.DiagonalDownLeft45:
-                    thetaDegrees = 45f;
-                    verticalSign = 1f;
-                    break;
-                case SpaceTrashMovement.DiagonalDownLeftShallow:
-                    thetaDegrees = (float)(_random.NextDouble() * 45.0);
-                    verticalSign = 1f;
-                    break;
-                case SpaceTrashMovement.DiagonalUpLeft45:
-                    thetaDegrees = 45f;
-                    verticalSign = -1f;
-                    break;
-                case SpaceTrashMovement.DiagonalUpLeftShallow:
-                    thetaDegrees = (float)(_random.NextDouble() * 45.0);
-                    verticalSign = -1f;
-                    break;
-                default:
-                    throw new Exception("Unexpected SpaceTrashMovement value: " + _movement);
-            }
-
-            var thetaRadians = MathHelper.ToRadians(thetaDegrees);
-            _direction = new Vector2(-(float)Math.Cos(thetaRadians), verticalSign * (float)Math.Sin(thetaRadians));
+            var thetaRadians = MathHelper.ToRadians(_angleDegrees);
+            _direction = new Vector2(-(float)Math.Cos(thetaRadians), (float)Math.Sin(thetaRadians)) * Speed;
         }
 
         private void StartJourney()
@@ -203,7 +168,10 @@ namespace MacGame.Enemies
             Enabled = true;
 
             WorldLocation = _spawnLocation - _direction * GetOffscreenDistance();
-            Velocity = _direction * Speed;
+
+            // Subtract the level's current auto scroll speed so the trash's on-screen speed
+            // matches _direction exactly, regardless of how fast the level is scrolling.
+            Velocity = _direction - AutoScrollSpeed;
         }
 
         // Distance backward along _direction needed to just clear the viewport, so the trash
@@ -266,13 +234,10 @@ namespace MacGame.Enemies
                     break;
 
                 case SpaceTrashState.MovedOffScreen:
-                    break;
+                    return;
             }
 
-            if (_state != SpaceTrashState.MovedOffScreen)
-            {
-                base.Update(gameTime, elapsed);
-            }
+            base.Update(gameTime, elapsed);
         }
     }
 }

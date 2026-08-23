@@ -35,6 +35,8 @@ namespace MacGame.Behaviors
 
         public override void Update(GameObject gameObject, GameTime gameTime, float elapsed)
         {
+            if (!gameObject.Enabled) return;
+
             if (_phase == Phase.Launch)
             {
                 gameObject.Velocity = new Vector2(LaunchVelocityX, LaunchVelocityY);

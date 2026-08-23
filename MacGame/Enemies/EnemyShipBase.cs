@@ -29,10 +29,10 @@ namespace MacGame.Enemies
             InvincibleTimeAfterBeingHit = 0.1f;
         }
 
-        public void Revive(Vector2 worldLocation)
+        public void Revive(Vector2 worldLocation, float speed)
         {
             WorldLocation = worldLocation;
-            Velocity = Vector2.Zero;
+            Velocity = new Vector2(-speed, 0);
             Enabled = true;
             Alive = true;
             Health = _initialHealth;

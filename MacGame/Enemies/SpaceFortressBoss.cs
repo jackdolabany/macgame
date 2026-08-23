@@ -135,7 +135,9 @@ namespace MacGame.Enemies
             var maxY = viewport.Bottom - (3 * Game1.TileSize);
             if (maxY <= minY) return;
 
-            ship.Revive(new Vector2(viewport.Right + 50, minY + Game1.Randy.Next(maxY - minY)));
+            var shipLocation = new Vector2(viewport.Right + 50, minY + Game1.Randy.Next(maxY - minY));
+
+            ship.Revive(shipLocation, 100);
         }
 
         public override void Kill()

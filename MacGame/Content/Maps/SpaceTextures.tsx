@@ -241,6 +241,11 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="117">
+  <properties>
+   <property name="LoadClass" value="Enemy.MiniSpaceCannon"/>
+  </properties>
+ </tile>
  <tile id="120">
   <properties>
    <property name="LoadClass" value="Enemy.BigShipHomingLauncher"/>

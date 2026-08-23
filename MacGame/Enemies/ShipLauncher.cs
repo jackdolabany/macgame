@@ -99,7 +99,7 @@ namespace MacGame.Enemies
                     case State.Opening:
                         if (animations.CurrentAnimation!.FinishedPlaying)
                         {
-                            _ship.Revive(WorldLocation);
+                            _ship.Revive(WorldLocation, 0);
                             currentState = State.Closing;
                             animations.Play("close");
                         }

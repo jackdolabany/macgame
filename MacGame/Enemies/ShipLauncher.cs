@@ -79,7 +79,8 @@ namespace MacGame.Enemies
 
         public override void Update(GameTime gameTime, float elapsed)
         {
-            if (Alive)
+            var isVisible = camera.IsObjectVisible(this.CollisionRectangle);
+            if (Alive && isVisible)
             {
                 switch (currentState)
                 {

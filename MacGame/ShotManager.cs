@@ -151,7 +151,11 @@ namespace MacGame
                 default:
                     throw new ArgumentOutOfRangeException(nameof(size), size, null);
             }
-            shot.WorldLocation = position + new Vector2(0, shot.CollisionRectangle.Height / 2);
+
+            // So they're centered on the point.
+            var yOffset = Game1.TileSize / 2;
+
+            shot.WorldLocation = position + new Vector2(0, yOffset);
             shot.Velocity = velocity;
             shot.RotateCenter = null;
             shot.DisplayComponent.DrawDepth = drawDepth ?? shooter.DisplayComponent.DrawDepth + Game1.MIN_DRAW_INCREMENT;
@@ -163,17 +167,20 @@ namespace MacGame
         {
             var pool = size == ShotSize.Large ? LargeShots : size == ShotSize.Medium ? MediumShots : SmallShots;
             float drawDepth = shooter.DisplayComponent.DrawDepth - Game1.MIN_DRAW_INCREMENT;
+
+            // So they're centered on the point.
+            var yOffset = Game1.TileSize / 2;
+
             for (int i = 0; i < count; i++)
             {
                 var shot = (EnemyShot)pool.GetNextObject();
                 float angle = i * MathHelper.TwoPi / count;
-                shot.RotateCenter = center;
+                shot.RotateCenter = center + new Vector2(0, yOffset);
                 shot.RotateCenterVelocity = centerVelocity;
                 shot.RotateRadius = radius;
                 shot.RotateAngle = angle;
                 shot.RotateSpeed = rotationSpeed;
                 shot.Velocity = Vector2.Zero;
-                shot.WorldLocation = center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * radius;
                 shot.DisplayComponent.DrawDepth = drawDepth;
                 shot.Enabled = true;
                 shot.Alive = true;

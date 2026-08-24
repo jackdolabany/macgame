@@ -7,19 +7,28 @@ using TileEngine;
 
 namespace MacGame.Enemies
 {
-    public class FishShip : EnemyShipBase
+    public class BigRedShip : EnemyShipBase
     {
         private const float FireInterval = 2f;
         private const float ShotSpeed = 150f;
 
-        public FishShip(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public BigRedShip(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             IsAbleToMoveOutsideOfWorld = true;
             IsAbleToSurviveOutsideOfWorld = true;
 
             var textures = content.Load<Texture2D>(@"Textures\BigTextures");
-            DisplayComponent = new StaticImageDisplay(textures, Helpers.GetBigTileRect(14, 2));
+
+            var animations = new AnimationDisplay();
+            DisplayComponent = animations;
+
+            var idle = new AnimationStrip(textures, Helpers.GetBigTileRect(12, 9), 4, "idle");
+            idle.LoopAnimation = true;
+            idle.FrameLength = 0.3f;
+            animations.Add(idle);
+
+            animations.Play("idle");
 
             SetInitialHealth(6);
             Attack = 1;

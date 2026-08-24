@@ -451,7 +451,11 @@ namespace MacGame.Enemies
         public override void Draw(SpriteBatch spriteBatch)
         {
             DrawExtraDebugRectangle(spriteBatch, isSeenRectangle, Color.Orange * 0.15f);
-            DrawExtraDebugRectangles(spriteBatch, extraCollisionRectangles, Color.Green * 0.5f);
+
+            if (extraCollisionRectangles != null)
+            {
+                DrawExtraDebugRectangles(spriteBatch, extraCollisionRectangles, Color.Green * 0.5f);
+            }
 
             base.Draw(spriteBatch);
         }

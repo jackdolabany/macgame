@@ -49,8 +49,36 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
-            EffectsManager.AddExplosion(WorldCenter);
+            PlayDeathEffects();
             base.Kill();
+        }
+
+        /// <summary>
+        /// Override to customize the visual/audio effects played when the ship dies. Defaults to
+        /// a single explosion at its center.
+        /// </summary>
+        protected virtual void PlayDeathEffects()
+        {
+            EffectsManager.AddExplosion(WorldCenter);
+        }
+
+        /// <summary>
+        /// Fires off several explosions, staggered so they don't all go off at the same instant,
+        /// each placed randomly within the ship's collision rectangle, with screen shake. Meant
+        /// for bigger ships whose death should feel like more of an event.
+        /// </summary>
+        protected void PlayMultiExplosionDeathEffect(int count = 5)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var offset = new Vector2(
+                    Game1.Randy.Next(-CollisionRectangle.Width / 2, CollisionRectangle.Width / 2 + 1),
+                    Game1.Randy.Next(-CollisionRectangle.Height / 2, CollisionRectangle.Height / 2 + 1));
+                var explosionLocation = CollisionCenter + offset;
+
+                var delay = i * 0.1f + (float)Game1.Randy.NextDouble() * 0.15f;
+                TimerManager.AddNewTimer(delay, () => EffectsManager.AddExplosion(explosionLocation, withShake: true));
+            }
         }
 
         public override void Update(GameTime gameTime, float elapsed)

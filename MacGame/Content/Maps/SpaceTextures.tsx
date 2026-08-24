@@ -276,6 +276,26 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="135">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="136">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="137">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="138">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
  <tile id="139">
   <properties>
    <property name="LoadClass" value="Enemy.GalaxyTwinsBoss"/>
@@ -292,6 +312,26 @@
   </properties>
  </tile>
  <tile id="142">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="151">
+  <properties>
+   <property name="LoadClass" value="Enemy.BigAlienShip"/>
+  </properties>
+ </tile>
+ <tile id="152">
+  <properties>
+   <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="153">
+  <properties>
+   <property name="LoadClass" value="Enemy.BigRedShip"/>
+  </properties>
+ </tile>
+ <tile id="154">
   <properties>
    <property name="Hidden" value="1"/>
   </properties>

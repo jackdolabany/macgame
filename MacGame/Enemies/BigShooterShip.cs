@@ -144,5 +144,10 @@ namespace MacGame.Enemies
 
             base.Update(gameTime, elapsed);
         }
+
+        protected override void PlayDeathEffects()
+        {
+            PlayMultiExplosionDeathEffect();
+        }
     }
 }

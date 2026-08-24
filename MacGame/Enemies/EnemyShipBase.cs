@@ -18,6 +18,10 @@ namespace MacGame.Enemies
         private int _initialHealth;
         private bool _hasBeenOnScreen = false;
 
+        // When set by PlayMultiExplosionDeathEffect, the ship stays visible/enabled until this
+        // much time has passed, instead of disappearing the instant Kill() is called.
+        private float _disableAfterDeathDelay = 0f;
+
         public EnemyShipBase(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
@@ -38,6 +42,7 @@ namespace MacGame.Enemies
             Health = _initialHealth;
             InvincibleTimer = 0;
             _hasBeenOnScreen = false;
+            _disableAfterDeathDelay = 0f;
             Behavior?.Reset();
         }
 
@@ -49,8 +54,25 @@ namespace MacGame.Enemies
 
         public override void Kill()
         {
+            _disableAfterDeathDelay = 0f;
             PlayDeathEffects();
             base.Kill();
+        }
+
+        /// <summary>
+        /// Some ships might explode for a bit as they die. Use this to delay them being disabled so they 
+        /// don't disappear right away.
+        /// </summary>
+        protected override void DisableAfterDeath()
+        {
+            if (_disableAfterDeathDelay > 0f)
+            {
+                TimerManager.AddNewTimer(_disableAfterDeathDelay, () => Enabled = false);
+            }
+            else
+            {
+                Enabled = false;
+            }
         }
 
         /// <summary>
@@ -63,12 +85,13 @@ namespace MacGame.Enemies
         }
 
         /// <summary>
-        /// Fires off several explosions, staggered so they don't all go off at the same instant,
-        /// each placed randomly within the ship's collision rectangle, with screen shake. Meant
-        /// for bigger ships whose death should feel like more of an event.
+        /// Fire off several explosions. 
         /// </summary>
-        protected void PlayMultiExplosionDeathEffect(int count = 5)
+        protected void PlayMultiExplosionDeathEffect(int count = 4)
         {
+            // So the ship doesn't disappear right away.
+            _disableAfterDeathDelay = 0.4f;
+
             for (int i = 0; i < count; i++)
             {
                 var offset = new Vector2(
@@ -76,7 +99,7 @@ namespace MacGame.Enemies
                     Game1.Randy.Next(-CollisionRectangle.Height / 2, CollisionRectangle.Height / 2 + 1));
                 var explosionLocation = CollisionCenter + offset;
 
-                var delay = i * 0.1f + (float)Game1.Randy.NextDouble() * 0.15f;
+                var delay = i * 0.18f;
                 TimerManager.AddNewTimer(delay, () => EffectsManager.AddExplosion(explosionLocation, withShake: true));
             }
         }

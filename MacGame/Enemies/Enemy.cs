@@ -240,9 +240,18 @@ namespace MacGame.Enemies
         {
             Dead = true;
             PlayDeathSound();
-            Enabled = false;
+            DisableAfterDeath();
 
             DropItem();
+        }
+
+        /// <summary>
+        /// Called from Kill() to actually disable the enemy (stops it drawing/updating). Override
+        /// to delay this - e.g. to keep the sprite visible a bit longer for a death effect.
+        /// </summary>
+        protected virtual void DisableAfterDeath()
+        {
+            Enabled = false;
         }
 
         private void InitializeItemDrop()

@@ -186,9 +186,12 @@ namespace MacGame
                 sb.Update(gameTime, elapsed);
             }
 
-            if (AutoScrollSpeed != Vector2.Zero && !IsSpaceScrollLocked)
+            if (AutoScrollSpeed != Vector2.Zero)
             {
-                Camera.Position += AutoScrollSpeed * elapsed;
+                if (!IsSpaceScrollLocked)
+                {
+                    Camera.Position += AutoScrollSpeed * elapsed;
+                }
 
                 // Just scrolling left or right
                 if (AutoScrollSpeed.Y == 0)
@@ -198,12 +201,14 @@ namespace MacGame
                     // When the ship is coasting at scroll speed (not pressing a direction), snap
                     // the camera's fractional X to match the player's so their integer truncations
                     // always agree — eliminating 1-pixel sub-pixel jitter.
-                    if (Player.Velocity.X == AutoScrollSpeed.X)
+                    if (!IsSpaceScrollLocked && Player.Velocity.X == AutoScrollSpeed.X)
                     {
                         float playerFracX = Player.WorldLocation.X - MathF.Floor(Player.WorldLocation.X);
                         camX = MathF.Floor(Camera.Position.X) + playerFracX;
                     }
 
+                    // Keep tracking the player's Y even while scroll is locked (e.g. a boss fight),
+                    // so there's no sudden jump when scrolling resumes. Only X is actually paused.
                     Camera.Position = new Vector2(camX, Player.WorldCenter.Y);
                 }
 
@@ -212,7 +217,6 @@ namespace MacGame
             {
                 Player.SetCameraTarget(Camera, elapsed);
             }
-            // else: shooter level with locked scroll — camera stays where it is
 
             foreach (var enemy in Enemies)
             {

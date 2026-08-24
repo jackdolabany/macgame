@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MacGame.Items;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TileEngine;
 
 namespace MacGame.Enemies
@@ -112,6 +114,11 @@ namespace MacGame.Enemies
         protected Player Player;
 
         protected Camera camera;
+
+        // An item placed directly above the enemy on the map (same convention as Chest) is
+        // hidden until the enemy dies, at which point it pops out and behaves like a normal item.
+        private Item _itemToDrop;
+        private bool _itemDropInitialized;
 
         /// <summary>
         /// The current level's auto scroll speed.
@@ -234,10 +241,43 @@ namespace MacGame.Enemies
             Dead = true;
             PlayDeathSound();
             Enabled = false;
+
+            DropItem();
+        }
+
+        private void InitializeItemDrop()
+        {
+            var dropArea = this.CollisionRectangle;
+            dropArea.Y -= TileMap.TileSize;
+            dropArea.Height += TileMap.TileSize;
+
+            _itemToDrop = Game1.CurrentLevel.Items.FirstOrDefault(item => item.CollisionRectangle.Intersects(dropArea));
+            if (_itemToDrop != null)
+            {
+                _itemToDrop.Enabled = false;
+            }
+        }
+
+        private void DropItem()
+        {
+            if (_itemToDrop == null)
+            {
+                return;
+            }
+
+            _itemToDrop.WorldLocation = WorldLocation;
+            _itemToDrop.Enabled = true;
+
+            _itemToDrop = null;
         }
 
         public override void Update(GameTime gameTime, float elapsed)
         {
+            if (!_itemDropInitialized)
+            {
+                _itemDropInitialized = true;
+                InitializeItemDrop();
+            }
 
             if (_hitFlashTimer > 0)
             {

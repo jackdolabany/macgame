@@ -86,6 +86,8 @@ namespace MacGame
                     new SockInfo { Name = "CrabzillaSock", Hint = "Crabzilla, find him!" },
                     new SockInfo { Name = "AlienStealthBomberSock", Hint = "Alien stealth bomber yo" },
                     new SockInfo { Name = "GalaxyTwinsSock", Hint = "Galaxy Twinz fo realz" },
+                    new SockInfo { Name = "FortressSock", Hint = "I know a sock location, but there's a bit of a fortress in the way" },
+                    new SockInfo { Name = "TopOfTheMoonSock", Hint = "If you keep climbing up you will reach a sock in the sky." },
                 }
             },
         };

@@ -27,7 +27,7 @@ namespace MacGame.Enemies
             animations.Play("fly");
 
             Attack = 1;
-            SetInitialHealth(2);
+            SetInitialHealth(1);
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 

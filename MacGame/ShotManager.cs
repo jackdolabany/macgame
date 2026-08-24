@@ -180,6 +180,7 @@ namespace MacGame
                 shot.RotateRadius = radius;
                 shot.RotateAngle = angle;
                 shot.RotateSpeed = rotationSpeed;
+                shot.RotateRadiusGrowTimer = 0f;
                 shot.Velocity = Vector2.Zero;
                 shot.DisplayComponent.DrawDepth = drawDepth;
                 shot.Enabled = true;

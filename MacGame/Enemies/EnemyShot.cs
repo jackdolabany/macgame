@@ -8,6 +8,18 @@ namespace MacGame.Enemies
 {
     public class EnemyShot : Enemy
     {
+        // When set, this shot orbits around the center point instead of flying freely.
+        public Vector2? RotateCenter;
+        public Vector2 RotateCenterVelocity;
+        public float RotateRadius;
+        public float RotateAngle;
+        public float RotateSpeed;
+
+        // Ring shots ease out from the center to their full RotateRadius over this many
+        // seconds. Reset RotateRadiusGrowTimer to 0 whenever a ring shot is (re)activated.
+        private const float RadiusGrowDuration = 0.4f;
+        public float RotateRadiusGrowTimer;
+
         public EnemyShot(ContentManager content, Rectangle sourceRect, int collisionWidth, int collisionHeight)
             : base(content, 0, 0, null, null)
         {
@@ -44,20 +56,16 @@ namespace MacGame.Enemies
             base.Kill();
         }
 
-        // When set, this shot orbits around the center point instead of flying freely.
-        public Vector2? RotateCenter;
-        public Vector2 RotateCenterVelocity;
-        public float RotateRadius;
-        public float RotateAngle;
-        public float RotateSpeed;
-
         public override void Update(GameTime gameTime, float elapsed)
         {
             if (RotateCenter.HasValue)
             {
                 RotateCenter = RotateCenter.Value + RotateCenterVelocity * elapsed;
                 RotateAngle += RotateSpeed * elapsed;
-                WorldLocation = RotateCenter.Value + new Vector2((float)Math.Cos(RotateAngle), (float)Math.Sin(RotateAngle)) * RotateRadius;
+                RotateRadiusGrowTimer += elapsed;
+
+                var radius = RotateRadius * MathHelper.Clamp(RotateRadiusGrowTimer / RadiusGrowDuration, 0f, 1f);
+                WorldLocation = RotateCenter.Value + new Vector2((float)Math.Cos(RotateAngle), (float)Math.Sin(RotateAngle)) * radius;
                 if (Game1.Camera.IsWayOffscreen(new Rectangle((int)RotateCenter.Value.X - 50, (int)RotateCenter.Value.Y - 50, 100, 100)))
                 {
                     Enabled = false;

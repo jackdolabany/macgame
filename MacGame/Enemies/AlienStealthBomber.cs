@@ -274,7 +274,7 @@ namespace MacGame.Enemies
                 if (_ringShotTimer >= RingShotInterval)
                 {
                     _ringShotTimer = 0f;
-                    ShotManager.FireMediumRing(WorldCenter + new Vector2(-96, 16), new Vector2(-RingShotSpeed, 0), this);
+                    ShotManager.FireMediumRing(WorldCenter + new Vector2(-96, 0), new Vector2(-RingShotSpeed, 0), this);
                     SoundManager.PlaySound("ShootRing");
                 }
 

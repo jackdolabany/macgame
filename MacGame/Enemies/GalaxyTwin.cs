@@ -68,7 +68,7 @@ namespace MacGame.Enemies
         private static readonly float MissileSequenceEndTime = MissileHatchOpenDuration + 2 * MissileLaunchInterval + 0.2f;
         private static readonly float HomingAttackDuration = MissileSequenceEndTime + MissileHatchCloseDuration;
 
-        private Vector2 _gunOffset = new Vector2(12, 26);
+        private Vector2 _gunOffset = new Vector2(12, 18);
 
         // Machine gun
         private float _machineGunFireTimer = 0f;

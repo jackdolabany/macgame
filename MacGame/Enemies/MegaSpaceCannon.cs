@@ -2,6 +2,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MacGame.Enemies
 {
@@ -15,6 +16,8 @@ namespace MacGame.Enemies
 
         private const float DyingDuration = 3f;
         private const float ExplosionInterval = 0.07f;
+        private const float SinkVelocity = 45f;
+        private const float SinkPixels = 150f;
 
         private float _shootTimer;
 
@@ -46,7 +49,7 @@ namespace MacGame.Enemies
         public MegaSpaceCannon(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
-            WorldLocation = WorldLocation + new Vector2(0, 12);
+            WorldLocation = WorldLocation + new Vector2(16, 12);
 
             _megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
             _reallyBigTextures = content.Load<Texture2D>(@"Textures\ReallyBigTextures");
@@ -64,6 +67,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             Attack = 1;
             Health = 30;
+
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0.1f;
@@ -173,15 +177,6 @@ namespace MacGame.Enemies
 
                     case CannonState.Dying:
                         _stateTimer -= elapsed;
-                        _explosionTimer -= elapsed;
-
-                        if (_explosionTimer <= 0f)
-                        {
-                            _explosionTimer = ExplosionInterval;
-                            var randomX = CollisionRectangle.Left + Game1.Randy.Next(CollisionRectangle.Width);
-                            var randomY = CollisionRectangle.Top + Game1.Randy.Next(CollisionRectangle.Height);
-                            EffectsManager.AddExplosion(new Vector2(randomX, randomY));
-                        }
 
                         if (_stateTimer <= DyingDuration / 2 && !_isDestroyed)
                         {
@@ -197,6 +192,25 @@ namespace MacGame.Enemies
                     case CannonState.Dead:
 
                         break;
+                }
+
+                // Explode while it's falling
+                if (!Alive && _sinkOffset < SinkPixels)
+                {
+                    _explosionTimer -= elapsed;
+                    if (_explosionTimer <= 0f)
+                    {
+                        _explosionTimer = ExplosionInterval;
+                        var randomX = CollisionRectangle.Left + Game1.Randy.Next(CollisionRectangle.Width);
+                        var randomY = CollisionRectangle.Top + Game1.Randy.Next(CollisionRectangle.Height);
+                        EffectsManager.AddExplosion(new Vector2(randomX, randomY), withShake: true);
+                    }
+                }
+
+                // Slowly sink the wreckage once it's been destroyed, then just settle there.
+                if (_isDestroyed && _sinkOffset < SinkPixels)
+                {
+                    _sinkOffset = Math.Min(_sinkOffset + SinkVelocity * elapsed, SinkPixels);
                 }
             }
 

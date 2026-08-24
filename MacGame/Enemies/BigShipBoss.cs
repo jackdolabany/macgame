@@ -129,13 +129,13 @@ namespace MacGame.Enemies
             ExtraEnemiesToAddAfterConstructor.Add(_shotLeft);
             ExtraEnemiesToAddAfterConstructor.Add(_shotRight);
 
-            _shootEverywhereFrontTop    = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
+            _shootEverywhereFrontTop = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
             _shootEverywhereFrontBottom = new ShootEverywhereCannon(content, cellX, cellY, player, camera);
             _shootEverywhereFrontBottom.UpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_shootEverywhereFrontTop);
             ExtraEnemiesToAddAfterConstructor.Add(_shootEverywhereFrontBottom);
 
-            _miniCannonFrontTop    = new MiniSpaceCannon(content, cellX, cellY, player, camera);
+            _miniCannonFrontTop = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniCannonFrontBottom = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniCannonFrontBottom.UpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontTop);
@@ -192,6 +192,15 @@ namespace MacGame.Enemies
             _miniSpaceCannonTopFinTwo.Enabled = false;
             _topBigShipHomingLauncher.Active = false;
 
+
+            // Set the mini space cannons to have 6 health
+            foreach (var enemy in ExtraEnemiesToAddAfterConstructor)
+            {
+                if (enemy is MiniSpaceCannon miniCannon)
+                {
+                    miniCannon.SetHealth(6);
+                }
+            }
         }
 
         /// <summary>

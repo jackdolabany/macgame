@@ -31,7 +31,7 @@ namespace MacGame.Enemies
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            var shipBehavior = new EnemyShipBehavior(170, camera, player);
+            var shipBehavior = new EnemyShipBehavior(150, camera, player);
             shipBehavior.SetupShootAtPlayer(1.5f, 250f, ShotSize.Medium);
             Behavior = shipBehavior;
 

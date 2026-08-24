@@ -2,6 +2,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TileEngine;
 
 namespace MacGame.Enemies
@@ -43,7 +44,7 @@ namespace MacGame.Enemies
             isEnemyTileColliding = false;
             isTileColliding = false;
             Attack = 1;
-            Health = 6;
+            Health = 1;
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0.1f;
@@ -185,6 +186,11 @@ namespace MacGame.Enemies
             }
 
             base.Update(gameTime, elapsed);
+        }
+
+        public void SetHealth(int health)
+        {
+            this.Health = health;
         }
     }
 }

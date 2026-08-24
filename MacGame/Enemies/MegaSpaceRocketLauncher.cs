@@ -2,6 +2,7 @@ using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MacGame.Enemies
 {
@@ -14,8 +15,10 @@ namespace MacGame.Enemies
         private const float UpDuration = 3f;
         private const float FireDelay = 1f;
 
-        private const float DyingDuration = 3f;
+        private const float DyingDuration = 2f;
         private const float ExplosionInterval = 0.07f;
+        private const float SinkVelocity = 60f;
+        private const float SinkPixels = 150f;
 
         private Texture2D _megaTextures;
 
@@ -30,7 +33,7 @@ namespace MacGame.Enemies
 
         private float _stateTimer;
         private float _explosionTimer = 0f;
-        //private float _sinkOffset = 0f;
+        private float _sinkOffset = 0f;
         private bool _hasFired = false;
         private bool _hasLockedCamera = false;
 
@@ -48,7 +51,7 @@ namespace MacGame.Enemies
             : base(content, cellX, cellY, player, camera)
         {
 
-            WorldLocation = WorldLocation + new Vector2(0, 12);
+            WorldLocation = WorldLocation + new Vector2(16, 12);
 
             _megaTextures = content.Load<Texture2D>(@"Textures\MegaTextures");
 
@@ -62,6 +65,7 @@ namespace MacGame.Enemies
             isTileColliding = false;
             Attack = 1;
             Health = 40;
+
             IsAffectedByGravity = false;
             IsAbleToMoveOutsideOfWorld = false;
             InvincibleTimeAfterBeingHit = 0.1f;
@@ -118,6 +122,8 @@ namespace MacGame.Enemies
             this.CanBeHitWithWeapons = false;
             _head.Kill();
 
+            MissileManager.BlowUpAllMissiles();
+
             Game1.Camera.MaxX = null;
             Game1.CurrentLevel.StartSpaceAutoScrolling();
 
@@ -136,40 +142,22 @@ namespace MacGame.Enemies
             const float delay = 2f;
             
             var missile1 = MissileManager.LaunchMissile(topLeftMissileLocation, EightWayRotationDirection.UpLeft, delay);
-            if (missile1 != null)
-            {
-                missile1.SetDrawDepth(missileDrawDepth);
-            }
+            missile1?.SetDrawDepth(missileDrawDepth);
 
             var missile2 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(0, missileVerticalSpacing), EightWayRotationDirection.Left, delay);
-            if (missile2 != null)
-            {
-                missile2.SetDrawDepth(missileDrawDepth - Game1.MIN_DRAW_INCREMENT);
-            }
+            missile2?.SetDrawDepth(missileDrawDepth - Game1.MIN_DRAW_INCREMENT);
 
             var missile3 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(0, 2 * missileVerticalSpacing), EightWayRotationDirection.DownLeft, delay);
-            if (missile3 != null)
-            {
-                missile3.SetDrawDepth(missileDrawDepth - (2f * Game1.MIN_DRAW_INCREMENT));
-            }   
+            missile3?.SetDrawDepth(missileDrawDepth - (2f * Game1.MIN_DRAW_INCREMENT));
 
             var missile4 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, 0), EightWayRotationDirection.UpRight, delay);
-            if (missile4 != null)
-            {
-                missile4.SetDrawDepth(missileDrawDepth - (3f * Game1.MIN_DRAW_INCREMENT));
-            }
+            missile4?.SetDrawDepth(missileDrawDepth - (3f * Game1.MIN_DRAW_INCREMENT));
 
             var missile5 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, missileVerticalSpacing), EightWayRotationDirection.Right, delay);
-            if (missile5 != null)
-            {
-                missile5.SetDrawDepth(missileDrawDepth - (4f * Game1.MIN_DRAW_INCREMENT));
-            }
+            missile5?.SetDrawDepth(missileDrawDepth - (4f * Game1.MIN_DRAW_INCREMENT));
 
             var missile6 = MissileManager.LaunchMissile(topLeftMissileLocation + new Vector2(missileHorizontalSpacing, 2 * missileVerticalSpacing), EightWayRotationDirection.DownRight, delay);
-            if (missile6 != null)
-            {
-                missile6.SetDrawDepth(missileDrawDepth - (5f * Game1.MIN_DRAW_INCREMENT));
-            }
+            missile6?.SetDrawDepth(missileDrawDepth - (5f * Game1.MIN_DRAW_INCREMENT));
 
             PlaySoundIfOnScreen("Fire", 0.5f);
         }
@@ -190,17 +178,23 @@ namespace MacGame.Enemies
                 _isInitialized = true;
             }
 
-            if (Enabled && IsOnScreen())
+            if (Enabled)
             {
-                if (Alive && !_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
-                {
-                    Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
-                    Game1.CurrentLevel.StopSpaceAutoScrolling();
-                    _hasLockedCamera = true;
-                }
+                // The death sequence should keep playing out even if the wreckage scrolls off
+                // screen mid-fall, so only the alive-state gameplay is paused while off screen.
+                bool isDyingOrDead = _launcherState == LauncherState.Dying || _launcherState == LauncherState.Dead;
 
-                switch (_launcherState)
+                if (isDyingOrDead || IsOnScreen())
                 {
+                    if (!isDyingOrDead && Alive && !_hasLockedCamera && Game1.Camera.ViewPort.Contains(CollisionRectangle))
+                    {
+                        Game1.Camera.MaxX = (int)Game1.Camera.Position.X + 32;
+                        Game1.CurrentLevel.StopSpaceAutoScrolling();
+                        _hasLockedCamera = true;
+                    }
+
+                    switch (_launcherState)
+                    {
                     case LauncherState.Down:
                         _stateTimer -= elapsed;
                         if (_stateTimer <= 0f)
@@ -247,8 +241,7 @@ namespace MacGame.Enemies
 
                     case LauncherState.Dying:
                         _stateTimer -= elapsed;
-                        _explosionTimer -= elapsed;
-                        
+
                         // Is the head returning to psoition independent of the body?
                         if (_head.Velocity.Y > 0 && this.Velocity.Y == 0)
                         {
@@ -257,26 +250,7 @@ namespace MacGame.Enemies
                             {
                                 // Start sinking both head and body
                                 _head.WorldLocation = new Vector2(_head.WorldLocation.X, _headDownY);
-                                //this.Velocity = new Vector2(0, 70);
                                 _head.Velocity = this.Velocity;
-                            }
-                        }
-
-                        // Add random explosions.
-                        if (_explosionTimer <= 0f)
-                        {
-                            // Add an offset for the head.
-                            var top = CollisionRectangle.Top + 36;
-                            var rectHeight = _initialWorldLocation.Y.ToInt() - top;
-
-                            // Don't add explosions if it's too tight or negative.
-                            if (rectHeight > 24)
-                            {
-                                var explosionRectangle = new Rectangle(CollisionRectangle.Left, top, CollisionRectangle.Width, rectHeight);
-                                _explosionTimer = ExplosionInterval;
-                                var randomX = explosionRectangle.Left + Game1.Randy.Next(explosionRectangle.Width);
-                                var randomY = explosionRectangle.Top + Game1.Randy.Next(explosionRectangle.Height);
-                                EffectsManager.AddExplosion(new Vector2(randomX, randomY));
                             }
                         }
 
@@ -295,13 +269,38 @@ namespace MacGame.Enemies
                         break;
 
                     case LauncherState.Dead:
-                        //_sinkOffset += SinkVelocity * elapsed;
-                        //_destroyedDisplay.Offset = new Vector2(0, _sinkOffset);
-                        //if (_sinkOffset >= SinkPixels)
-                        //{
-                        //    Enabled = false;
-                        //}
                         break;
+                    }
+                }
+
+                // Keep exploding for as long as the wreckage is still falling, not just while
+                // it's in the Dying state - otherwise the explosions stop well before it lands.
+                if (!Alive && _sinkOffset < SinkPixels)
+                {
+                    _explosionTimer -= elapsed;
+                    if (_explosionTimer <= 0f)
+                    {
+                        // Add an offset for the head.
+                        var top = CollisionRectangle.Top + 36;
+                        var rectHeight = _initialWorldLocation.Y.ToInt() - top;
+
+                        // Don't add explosions if it's too tight or negative.
+                        if (rectHeight > 24)
+                        {
+                            var explosionRectangle = new Rectangle(CollisionRectangle.Left, top, CollisionRectangle.Width, rectHeight);
+                            _explosionTimer = ExplosionInterval;
+                            var randomX = explosionRectangle.Left + Game1.Randy.Next(explosionRectangle.Width);
+                            var randomY = explosionRectangle.Top + Game1.Randy.Next(explosionRectangle.Height);
+                            EffectsManager.AddExplosion(new Vector2(randomX, randomY), withShake: true);
+                        }
+                    }
+                }
+
+                // Slowly sink the wreckage once it's swapped to the destroyed texture, then just settle there.
+                if (DisplayComponent == _destroyedDisplay && _sinkOffset < SinkPixels)
+                {
+                    _sinkOffset = Math.Min(_sinkOffset + SinkVelocity * elapsed, SinkPixels);
+                    _destroyedDisplay.Offset = new Vector2(0, _sinkOffset);
                 }
             }
 
@@ -310,7 +309,16 @@ namespace MacGame.Enemies
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!IsOnScreen()) return;
+            // The collision rect is tiny compared to the sprite, so use the full sprite bounds
+            // (including how far it's sunk) to decide visibility - otherwise it disappears as
+            // soon as its anchor point scrolls off screen, well before the top actually does.
+            var currentDisplay = DisplayComponent == _destroyedDisplay ? _destroyedDisplay : _bodyDisplay;
+            var spriteWidth = currentDisplay.Source.Width;
+            var spriteHeight = currentDisplay.Source.Height;
+            var spriteTop = WorldLocation.Y - spriteHeight + _sinkOffset;
+            var spriteRect = new Rectangle((WorldLocation.X - spriteWidth / 2f).ToInt(), spriteTop.ToInt(), spriteWidth, spriteHeight);
+            if (!Game1.Camera.IsObjectVisible(spriteRect, 1)) return;
+
             base.Draw(spriteBatch);
         }
     }

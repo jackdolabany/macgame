@@ -75,5 +75,27 @@ namespace MacGame
                 missile.Enabled = false;
             }
         }
+
+        /// <summary>
+        /// Blows up every currently active missile, staggered over half a second so they don't
+        /// all explode in the same instant.
+        /// </summary>
+        public static void BlowUpAllMissiles()
+        {
+            foreach (var missile in pool)
+            {
+                if (missile.Enabled && missile.Alive)
+                {
+                    var m = missile;
+                    TimerManager.AddNewTimer((float)Game1.Randy.NextDouble() * 0.5f, () =>
+                    {
+                        if (m.Enabled)
+                        {
+                            m.Kill();
+                        }
+                    });
+                }
+            }
+        }
     }
 }

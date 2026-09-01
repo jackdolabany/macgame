@@ -30,13 +30,13 @@ namespace MacGame.Enemies
 
             animations.Play("idle");
 
-            SetInitialHealth(6);
+            SetInitialHealth(8);
             Attack = 1;
 
             SetCenteredCollisionRectangle(16, 16, 12, 12);
 
             var enemyShipBehavior = new EnemyShipBehavior(40, camera, player);
-            enemyShipBehavior.SetupShootAtPlayer(FireInterval, ShotSpeed, ShotSize.Medium);
+            enemyShipBehavior.SetupShootAtPlayer(FireInterval, ShotSpeed, ShotSize.Medium, 3.5f);
             Behavior = enemyShipBehavior;
         }
 

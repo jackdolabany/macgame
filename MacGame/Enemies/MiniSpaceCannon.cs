@@ -21,7 +21,9 @@ namespace MacGame.Enemies
 
         private StaticImageDisplay display => (StaticImageDisplay)DisplayComponent;
 
-        public bool UpsideDown { get; set; }
+        public bool IsUpsideDown { get; set; }
+
+        private bool _isInitialized = false;
 
         // The 5 canonical directions; when UpsideDown, Up/UpLeft/UpRight become Down/DownLeft/DownRight.
         private enum FacingDirection { Left, UpLeft, Up, UpRight, Right }
@@ -63,7 +65,7 @@ namespace MacGame.Enemies
         {
             var dir = Helpers.GetEightWayDirectionTowardsTarget(CollisionCenter, Player.CollisionCenter);
 
-            if (!UpsideDown)
+            if (!IsUpsideDown)
             {
                 // Mirrors SpaceCannon: avoid downward shots.
                 if (dir.X > 0.5f)
@@ -101,7 +103,7 @@ namespace MacGame.Enemies
 
         private void UpdateDisplay()
         {
-            SpriteEffects baseEffect = UpsideDown ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            SpriteEffects baseEffect = IsUpsideDown ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
             switch (_currentDirection)
             {
@@ -130,7 +132,7 @@ namespace MacGame.Enemies
 
         private Vector2 GetShootDirection()
         {
-            float ySign = UpsideDown ? 1f : -1f;
+            float ySign = IsUpsideDown ? 1f : -1f;
 
             switch (_currentDirection)
             {
@@ -153,7 +155,7 @@ namespace MacGame.Enemies
         {
 
             var shotOffset = new Vector2(0, 4);
-            if (UpsideDown)
+            if (IsUpsideDown)
             {
                 shotOffset *= -1;
             }
@@ -169,8 +171,27 @@ namespace MacGame.Enemies
             base.Kill();
         }
 
+        public void Initialize()
+        {
+            // If the cannon is has solid ground above, but not below, make it upside down.
+            var aboveMapSquare = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldLocation + new Vector2(0, -48));
+            var belowMapSquare = Game1.CurrentMap.GetMapSquareAtPixel(this.WorldLocation + new Vector2(0, 16));   
+
+            if ((aboveMapSquare == null || !aboveMapSquare.Passable) && (belowMapSquare != null && belowMapSquare.Passable))
+            {
+                IsUpsideDown = true;
+            }
+        }
+
         public override void Update(GameTime gameTime, float elapsed)
         {
+
+            if (!_isInitialized)
+            {
+                Initialize();
+                _isInitialized = true;
+            }
+
             if (Alive)
             {
                 UpdateFacingDirection();

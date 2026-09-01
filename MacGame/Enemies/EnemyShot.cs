@@ -49,7 +49,7 @@ namespace MacGame.Enemies
             for (int i = 0; i < 8; i++)
             {
                 // Make particles randomly between blue and white.
-                var color = Color.Lerp(Pallette.White, Pallette.LightBlue, Game1.Randy.NextFloat());
+                var color = Color.Lerp(Pallette.White, Pallette.LightGreen, Game1.Randy.NextFloat());
                 EffectsManager.EnemyPop(WorldCenter, 1, color, 80);
             }
             Enabled = false;

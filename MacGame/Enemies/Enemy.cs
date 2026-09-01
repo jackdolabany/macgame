@@ -158,7 +158,7 @@ namespace MacGame.Enemies
             GoToLocation(speed, wayPoint.CenterLocation);
         }
 
-        public bool IsOnScreen()
+        public virtual bool IsOnScreen()
         {
             var isOnScreen = Game1.Camera.IsObjectVisible(this.CollisionRectangle, 1);
             return isOnScreen;

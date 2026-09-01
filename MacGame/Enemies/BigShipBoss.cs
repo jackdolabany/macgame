@@ -137,7 +137,7 @@ namespace MacGame.Enemies
 
             _miniCannonFrontTop = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniCannonFrontBottom = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniCannonFrontBottom.UpsideDown = true;
+            _miniCannonFrontBottom.IsUpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontTop);
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonFrontBottom);
 
@@ -156,9 +156,9 @@ namespace MacGame.Enemies
             _miniSpaceCannonTopFinTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniSpaceCannonTopFinThree = new MiniSpaceCannon(content, cellX, cellY, player, camera);
             _miniSpaceCannonBottomFinTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniSpaceCannonBottomFinTwo.UpsideDown = true;
+            _miniSpaceCannonBottomFinTwo.IsUpsideDown = true;
             _miniSpaceCannonBottomFinThree = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniSpaceCannonBottomFinThree.UpsideDown = true;
+            _miniSpaceCannonBottomFinThree.IsUpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinOne);
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinTwo);
             ExtraEnemiesToAddAfterConstructor.Add(_miniSpaceCannonTopFinThree);
@@ -176,10 +176,10 @@ namespace MacGame.Enemies
 
 
             _miniCannonUnderCarriageOne = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniCannonUnderCarriageOne.UpsideDown = true;
+            _miniCannonUnderCarriageOne.IsUpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonUnderCarriageOne);
             _miniCannonUnderCarriageTwo = new MiniSpaceCannon(content, cellX, cellY, player, camera);
-            _miniCannonUnderCarriageTwo.UpsideDown = true;
+            _miniCannonUnderCarriageTwo.IsUpsideDown = true;
             ExtraEnemiesToAddAfterConstructor.Add(_miniCannonUnderCarriageTwo);
 
             // Disable these guys, they'll be re-enabled when you destroy the carriage

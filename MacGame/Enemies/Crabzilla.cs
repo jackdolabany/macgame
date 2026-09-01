@@ -323,34 +323,6 @@ namespace MacGame.Enemies
             }
         }
 
-        /// <summary>
-        /// The wall gun periodically shoots a whole wall of shots from the collision rectangle. This is so 
-        /// the player can't just camp in front.
-        /// </summary>
-        private void UpdateWallGun(float elapsed)
-        {
-            _wallShotTimer -= elapsed;
-            if (_wallShotTimer <= 0f)
-            {
-                _wallShotTimer = WallShotInterval;
-                float spawnX = CollisionRectangle.Left;
-                float centerY = CollisionRectangle.Center.Y;
-                float topY = CollisionRectangle.Top + 22;
-                float bottomY = CollisionRectangle.Bottom - 22;
-
-                int shotCount = 1;
-
-                for (float y = topY; y <= bottomY; y += WallBulletSpacing)
-                {
-                    shotCount++;
-                    var drawDepth = this.DrawDepth + Game1.MIN_DRAW_INCREMENT * shotCount;
-                    float vy = (y - centerY) * WallSpreadRate;
-                    ShotManager.FireLargeShot(new Vector2(spawnX, y), new Vector2(-WallBulletSpeed, vy), this, drawDepth);
-                }
-                SoundManager.PlaySound("CrabWallShot");
-            }
-        }
-
         private void TrySpawnShip()
         {
             if (_ships.Count(s => s.Enabled) >= MaxAliveShips) return;
@@ -371,7 +343,15 @@ namespace MacGame.Enemies
             _sweepTimer += elapsed;
             _sweepFireTimer += elapsed;
 
-            if (_sweepFireTimer >= SweepFireInterval)
+            var interval = SweepFireInterval;
+
+            // Slower until you get rid of half health.
+            if (Health >= MaxHealth * 0.5f)
+            {
+                interval *= 2f;
+            }
+
+            if (_sweepFireTimer >= interval)
             {
                 _sweepFireTimer = 0f;
                 // Pivot from upper-left to lower-left: Math.PI = left, ±SweepAmplitude sweeps up/down.
@@ -386,7 +366,15 @@ namespace MacGame.Enemies
             _circleAngle += CircleRotateSpeed * elapsed;
             _circleFireTimer += elapsed;
 
-            if (_circleFireTimer >= CircleFireInterval)
+            var interval = CircleFireInterval;
+
+            // Slower until you get rid of 1/3rd of health.
+            if (Health >= MaxHealth * 0.666f)
+            {
+                interval *= 2f;
+            }
+
+            if (_circleFireTimer >= interval)
             {
                 _circleFireTimer = 0f;
                 for (int i = 0; i < CircleBulletCount; i++)
@@ -395,6 +383,38 @@ namespace MacGame.Enemies
                     var dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
                     ShotManager.FireMediumShot(CollisionCenter, dir * BulletSpeed, this);
                 }
+            }
+        }
+
+        /// <summary>
+        /// The wall gun periodically shoots a whole wall of shots from the collision rectangle. This is so 
+        /// the player can't just camp in front.
+        /// </summary>
+        private void UpdateWallGun(float elapsed)
+        {
+
+            // no wall gun until you are at 50% health remaining
+            if (Health > MaxHealth * 0.5f) return;
+
+            _wallShotTimer -= elapsed;
+            if (_wallShotTimer <= 0f)
+            {
+                _wallShotTimer = WallShotInterval;
+                float spawnX = CollisionRectangle.Left;
+                float centerY = CollisionRectangle.Center.Y;
+                float topY = CollisionRectangle.Top + 22;
+                float bottomY = CollisionRectangle.Bottom - 22;
+
+                int shotCount = 1;
+
+                for (float y = topY; y <= bottomY; y += WallBulletSpacing)
+                {
+                    shotCount++;
+                    var drawDepth = this.DrawDepth + Game1.MIN_DRAW_INCREMENT * shotCount;
+                    float vy = (y - centerY) * WallSpreadRate;
+                    ShotManager.FireLargeShot(new Vector2(spawnX, y), new Vector2(-WallBulletSpeed, vy), this, drawDepth);
+                }
+                SoundManager.PlaySound("CrabWallShot");
             }
         }
 
@@ -458,6 +478,12 @@ namespace MacGame.Enemies
             }
 
             base.Draw(spriteBatch);
+        }
+
+        public override bool IsOnScreen()
+        {
+            var isOnScreen = Game1.Camera.IsObjectVisible(this.isSeenRectangle, 1);
+            return isOnScreen;
         }
     }
 }

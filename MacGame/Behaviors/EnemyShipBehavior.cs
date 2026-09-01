@@ -98,11 +98,12 @@ namespace MacGame.Behaviors
             }
         }
 
-        internal void SetupShootAtPlayer(float fireInterval, float shotSpeed, ShotSize shotSize)
+        internal void SetupShootAtPlayer(float fireInterval, float shotSpeed, ShotSize shotSize, float initialShotDelay = 0f)
         {
             _fireInterval = fireInterval;
             _shotSpeed = shotSpeed;
             _shotSize = shotSize;
+            _fireTimer = -initialShotDelay;
         }
 
         internal void SetupLaunchHomingMissile(float missileInterval)

@@ -15,6 +15,8 @@ namespace MacGame.Behaviors
         private float _fireInterval;
         private float _shotSpeed;
         private ShotSize _shotSize;
+        private int _shotCount = 1;
+        private float _spreadAngle;
         private Player _player;
 
         private static readonly Random _random = new Random();
@@ -49,19 +51,27 @@ namespace MacGame.Behaviors
                     {
                         _fireTimer = 0f;
                         var direction = Vector2.Normalize(_player.WorldCenter - enemy.WorldCenter);
-                        switch (_shotSize)
+
+                        for (int i = 0; i < _shotCount; i++)
                         {
-                            case ShotSize.Small:
-                                ShotManager.FireSmallShot(enemy.WorldCenter, direction * _shotSpeed, enemy);
-                                break;
-                            case ShotSize.Large:
-                                ShotManager.FireLargeShot(enemy.WorldCenter, direction * _shotSpeed, enemy);
-                                break;
-                            case ShotSize.Medium:
-                                ShotManager.FireMediumShot(enemy.WorldCenter, direction * _shotSpeed, enemy);
-                                break;
-                            default:
-                                throw new Exception("Unexpected ShotSize value: " + _shotSize);
+                            // Center shot goes straight at the player, the rest fan out evenly around it.
+                            var angle = _shotCount == 1 ? 0f : _spreadAngle * (i - (_shotCount - 1) / 2f);
+                            var shotDirection = angle == 0f ? direction : Vector2.Transform(direction, Matrix.CreateRotationZ(angle));
+
+                            switch (_shotSize)
+                            {
+                                case ShotSize.Small:
+                                    ShotManager.FireSmallShot(enemy.WorldCenter, shotDirection * _shotSpeed, enemy);
+                                    break;
+                                case ShotSize.Large:
+                                    ShotManager.FireLargeShot(enemy.WorldCenter, shotDirection * _shotSpeed, enemy);
+                                    break;
+                                case ShotSize.Medium:
+                                    ShotManager.FireMediumShot(enemy.WorldCenter, shotDirection * _shotSpeed, enemy);
+                                    break;
+                                default:
+                                    throw new Exception("Unexpected ShotSize value: " + _shotSize);
+                            }
                         }
                         SoundManager.PlaySound("Shoot");
                     }
@@ -98,12 +108,14 @@ namespace MacGame.Behaviors
             }
         }
 
-        internal void SetupShootAtPlayer(float fireInterval, float shotSpeed, ShotSize shotSize, float initialShotDelay = 0f)
+        internal void SetupShootAtPlayer(float fireInterval, float shotSpeed, ShotSize shotSize, float initialShotDelay = 0f, int shotCount = 1, float spreadAngleDegrees = 15f)
         {
             _fireInterval = fireInterval;
             _shotSpeed = shotSpeed;
             _shotSize = shotSize;
             _fireTimer = -initialShotDelay;
+            _shotCount = shotCount;
+            _spreadAngle = MathHelper.ToRadians(spreadAngleDegrees);
         }
 
         internal void SetupLaunchHomingMissile(float missileInterval)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MacGame.Behaviors;
 using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
@@ -9,20 +9,20 @@ using TileEngine;
 namespace MacGame.Enemies
 {
     /// <summary>
-    /// Fast fodder ship.
+    /// Slower and stronger than 6
     /// </summary>
-    public class EnemyShip3 : EnemyShipBase
+    public class EnemyShip7 : EnemyShipBase
     {
 
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
 
-        public EnemyShip3(ContentManager content, int cellX, int cellY, Player player, Camera camera)
+        public EnemyShip7(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
         {
             DisplayComponent = new AnimationDisplay();
 
             var textures = content.Load<Texture2D>(@"Textures\SpaceTextures");
-            var fly = new AnimationStrip(textures, Helpers.GetTileRect(2, 2), 1, "fly");
+            var fly = new AnimationStrip(textures, Helpers.GetTileRect(1, 2), 1, "fly");
             fly.LoopAnimation = true;
             fly.FrameLength = 0.14f;
             animations.Add(fly);
@@ -30,11 +30,13 @@ namespace MacGame.Enemies
             animations.Play("fly");
 
             Attack = 1;
-            SetInitialHealth(1);
+            SetInitialHealth(6);
 
             SetCenteredCollisionRectangle(8, 8, 8, 8);
 
-            Behavior = new EnemyShipBehavior(350, camera, player);
+            var shipBehavior = new EnemyShipBehavior(130, camera, player);
+            shipBehavior.SetupShootAtPlayer(2.2f, 200f, ShotSize.Medium);
+            Behavior = shipBehavior;
 
         }
     }

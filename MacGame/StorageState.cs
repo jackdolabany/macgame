@@ -108,6 +108,14 @@ namespace MacGame
             return this.Levels.Select(l => l.Value.CollectedSocks.Count).Sum();
         }
 
+        /// <summary>
+        /// Checks if the player has collected a sock with this name, regardless of which level it was collected in.
+        /// </summary>
+        public bool HasCollectedSock(string sockName)
+        {
+            return this.Levels.Any(l => l.Value.CollectedSocks.Contains(sockName));
+        }
+
         public int GetPercentComplete()
         {
             var sockCount = this.GetSockCount();

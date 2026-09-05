@@ -255,8 +255,11 @@ namespace MacGame
             }
             if (input.StartsWith("sock"))
             {
+                // "all" isn't a number, so it used to fall through to the default of just giving you 1 sock.
+                bool giveAll = inputArray.Length >= 2 && inputArray[1] == "all";
+
                 int sockCount = 1;
-                if (inputArray.Length >= 2)
+                if (!giveAll && inputArray.Length >= 2)
                 {
                     int.TryParse(inputArray[1], out sockCount);
                 }
@@ -275,14 +278,23 @@ namespace MacGame
                         {
                             levelState.CollectedSocks.Add(sock.Name);
                             player.SockCount++;
-                            sockCount--;
 
-                            if (sockCount <= 0)
+                            if (!giveAll)
                             {
-                                return "Done!";
+                                sockCount--;
+
+                                if (sockCount <= 0)
+                                {
+                                    return "Done!";
+                                }
                             }
                         }
                     }
+                }
+
+                if (giveAll)
+                {
+                    return "Gave you every sock!";
                 }
             }
             if (input.StartsWith("taco ") || input.StartsWith("tacos "))

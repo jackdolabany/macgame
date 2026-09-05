@@ -461,9 +461,10 @@ namespace MacGame
                                 HandleObjectModifiers(x, y, npc, map, (props) =>
                                 {
                                     // NPC modifiers
-                                    if (props.ContainsKey("Convo"))
+                                    // Npcs can have multiple possible conversations: Convo, Convo2, Convo3, etc.
+                                    foreach (var convoKey in props.Keys.Where(k => k.StartsWith("Convo")))
                                     {
-                                        npc.CreateConversationOverride(props["Convo"]);
+                                        npc.AddConversation(props[convoKey]);
                                     }
                                 });
                             }

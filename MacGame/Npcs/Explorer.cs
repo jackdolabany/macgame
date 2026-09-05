@@ -10,6 +10,10 @@ using TileEngine;
 
 namespace MacGame.Npcs
 {
+    /// <summary>
+    /// Special NPC in the ghost house (elsewhere?) who tells you if you found everything in that room
+    /// or not. So you don't go bonkers looking for stuff.
+    /// </summary>
     public class Explorer : Npc
     {
         AnimationDisplay animations => (AnimationDisplay)DisplayComponent;
@@ -45,13 +49,13 @@ namespace MacGame.Npcs
 
         public override void CheckPlayerInteractions(Player player)
         {
-            if (ConversationOverrides.Any())
+            if (Conversations.Any())
             {
-                // This NPC is special. If we found everything in the level, we're going to cancel this 
+                // This NPC is special. If we found everything in the level, we're going to cancel this
                 // convo override and replace it with a default message that's in InitiateConversation().
                 if (HasFoundEverything())
                 {
-                    ConversationOverrides.Clear();
+                    Conversations.Clear();
                 }
             }
 

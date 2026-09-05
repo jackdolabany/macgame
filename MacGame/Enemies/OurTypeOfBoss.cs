@@ -41,8 +41,7 @@ namespace MacGame.Enemies
 
         private Player _player;
 
-        private int MaxHealth = 100;
-        //private int MaxHealth = 3;
+        private int MaxHealth = 70;
 
         private bool isInitialized = false;
 

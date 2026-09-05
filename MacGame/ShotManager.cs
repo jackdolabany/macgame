@@ -38,7 +38,7 @@ namespace MacGame
 
             for (int i = 0; i < MAX_SHOTS; i++)
             {
-                var shot = new EnemyShot(content, Helpers.GetTileRect(7, 6), 6, 6);
+                var shot = new EnemyShot(content, Helpers.GetTileRect(7, 6), 5, 5);
                 shot.Enabled = false;
                 LargeShots.SetItem(i, shot);
             }

@@ -206,7 +206,7 @@ namespace MacGame.Enemies
             }
 
             Sock.Enabled = false;
-            SetSockReturnAction(Sock);
+            SetSockCollectActionToReturn(Sock);
         }
 
         public override void Update(GameTime gameTime, float elapsed)

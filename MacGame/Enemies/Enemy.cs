@@ -444,7 +444,7 @@ namespace MacGame.Enemies
         /// Sets the sock's CollectOrRevealAction to return the player to the map and door they came from.
         /// Call this in Initialize() for shooter level bosses. Or any other boss that takes you back where you came from.
         /// </summary>
-        protected void SetSockReturnAction(MacGame.Items.Sock sock)
+        protected void SetSockCollectActionToReturn(MacGame.Items.Sock sock)
         {
             var mapName = Game1.PreviousMapName;
             var doorName = Game1.PreviousMapDoorName;

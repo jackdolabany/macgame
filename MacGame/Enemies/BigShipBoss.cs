@@ -1,4 +1,5 @@
 using MacGame.DisplayComponents;
+using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -64,6 +65,8 @@ namespace MacGame.Enemies
 
         private float _explosionTimer = 0f;
         private const float ExplosionInterval = 0.1f;
+
+        private Sock _sock;
 
         public BigShipBoss(ContentManager content, int cellX, int cellY, Player player, Camera camera)
             : base(content, cellX, cellY, player, camera)
@@ -233,6 +236,24 @@ namespace MacGame.Enemies
 
         private void Initialize()
         {
+            foreach (var item in Game1.CurrentLevel.Items)
+            {
+                if (item is Sock sock && sock.Name == "BigShipSock")
+                {
+                    _sock = sock;
+                    break;
+                }
+            }
+
+            if (_sock == null)
+            {
+                throw new Exception("You need a sock named BigShipSock in the level!");
+            }
+
+            _sock.Enabled = false;
+
+            SetSockCollectActionToReturn(_sock);
+
             // weak spots in front of the main ship
             float weakSpotDepth = DrawDepth - Game1.MIN_DRAW_INCREMENT;
             _weakSpotFront.SetDrawDepth(weakSpotDepth);
@@ -451,6 +472,19 @@ namespace MacGame.Enemies
                     TimerManager.AddNewTimer(blowUpTimer, () => enemy.Kill());
                 }
             }
+
+            // This level scrolls back and forth as you fly around the ship so there's no spot in the
+            // map where we can count on Mac being able to reach the sock. Stop the scrolling and drop
+            // the sock in the middle of the screen where we know he can get to it.
+            Game1.CurrentLevel.StopSpaceAutoScrolling();
+            ShotManager.ClearShotsCinematic();
+
+            TimerManager.AddNewTimer(2f, () =>
+            {
+                var viewPort = Game1.Camera.ViewPort;
+                _sock.WorldLocation = new Vector2(viewPort.Center.X, viewPort.Center.Y);
+                _sock.FadeIn();
+            });
         }
 
         public override void Draw(SpriteBatch spriteBatch)

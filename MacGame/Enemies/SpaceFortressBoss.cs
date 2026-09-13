@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MacGame.DisplayComponents;
+using MacGame.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,8 @@ namespace MacGame.Enemies
         private MegaSpaceCannon _cannon1;
         private MegaSpaceCannon _cannon2;
         private MegaSpaceRocketLauncher _rocketLauncher;
+
+        private Sock _sock;
 
         private readonly List<AlienShip> _ships = new List<AlienShip>();
         private float _shipSpawnTimer = 0f;
@@ -69,6 +72,24 @@ namespace MacGame.Enemies
             _rocketLauncher = launchers[0];
 
             _maxHealth = _cannon1.CurrentHealth + _cannon2.CurrentHealth + _rocketLauncher.CurrentHealth;
+
+            foreach (var item in Game1.CurrentLevel.Items)
+            {
+                if (item is Sock sock && sock.Name == "FortressSock")
+                {
+                    _sock = sock;
+                    break;
+                }
+            }
+
+            if (_sock == null)
+            {
+                throw new Exception("You need a sock named FortressSock in the level!");
+            }
+
+            // The sock isn't hidden like the other bosses, the screen just keeps scrolling to reveal it
+            // at the end of the level once the fortress is destroyed.
+            SetSockCollectActionToReturn(_sock);
 
             _isInitialized = true;
         }

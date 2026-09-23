@@ -1227,6 +1227,8 @@ namespace MacGame
             SoundManager.StopCharging();
             SoundManager.StopFullyCharged();
 
+            ConversationManager.Clear();
+
             _shipFlipped = false;
         }
 

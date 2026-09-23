@@ -641,6 +641,12 @@
 /processorParam:Quality=Best
 /build:SoundEffects/CrabDeathCry.wav
 
+#begin SoundEffects/CrabRoar.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/CrabRoar.wav
+
 #begin SoundEffects/CrabWallShot.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -874,6 +880,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:SoundEffects/OpenLockedDoor.wav
+
+#begin SoundEffects/OurTypeRoar.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SoundEffects/OurTypeRoar.wav
 
 #begin SoundEffects/Pickup.wav
 /importer:WavImporter

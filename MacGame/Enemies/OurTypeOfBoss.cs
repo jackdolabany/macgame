@@ -37,7 +37,12 @@ namespace MacGame.Enemies
         OurTypeOfBossState _state = OurTypeOfBossState.Unseen;
 
         float openAndCloseMouthTimer = 0;
-        float openAndCloseMouthTimerGoal = 2.5f;
+        float openAndCloseMouthTimerGoal = 4f;
+        
+        /// <summary>
+        /// Whether or not the boss shot the shot this open mouth cycle. Reset when he shuts his mouth.
+        /// </summary>
+        bool hasShotTheShot = false;
 
         private Player _player;
 
@@ -370,18 +375,25 @@ namespace MacGame.Enemies
                     }
                 }
 
-                // Shoot every so often
-                shotTimer += elapsed;
-                if (shotTimer >= shotTimerGoal)
+                if (!hasShotTheShot && animations.CurrentAnimationName == "openMouth" && animations.CurrentAnimation.currentFrameIndex == 1)
                 {
-                    shotTimer = 0;
+
                     // Search for a disabled shot to reuse.
                     _shot.WorldLocation = this.WorldLocation + new Vector2(-78, -158);
                     _shot.Enabled = true;
+
                     // Shoot towards the player
                     var direction = _player.CollisionCenter - _shot.CollisionCenter;
                     direction.Normalize();
                     _shot.Velocity = direction * 300;
+
+                    SoundManager.PlaySound("OurTypeRoar");
+
+                    hasShotTheShot = true;
+                }
+                else if (hasShotTheShot && animations.CurrentAnimationName == "closeMouth")
+                {
+                    hasShotTheShot = false;
                 }
             }
 

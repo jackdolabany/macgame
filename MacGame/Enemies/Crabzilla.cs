@@ -70,6 +70,11 @@ namespace MacGame.Enemies
         private readonly List<AlienShip> _ships = new List<AlienShip>();
         private float _shipSpawnTimer = ShipSpawnInterval;
 
+        // Roar periodically while alive.
+        private float _roarTimer = 0f;
+        private const float MinRoarInterval = 4f;
+        private const float MaxRoarInterval = 6f;
+
         int width = 222 / 3 * Game1.TileScale;
         int height = 128 * Game1.TileScale;
 
@@ -238,6 +243,13 @@ namespace MacGame.Enemies
                 {
                     _shipSpawnTimer = ShipSpawnInterval;
                     TrySpawnShip();
+                }
+
+                _roarTimer -= elapsed;
+                if (_roarTimer <= 0f)
+                {
+                    _roarTimer = MinRoarInterval + Game1.Randy.NextFloat() * (MaxRoarInterval - MinRoarInterval);
+                    SoundManager.PlaySound("CrabRoar");
                 }
             }
 

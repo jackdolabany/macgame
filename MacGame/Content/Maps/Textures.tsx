@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.0" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.2" name="Textures" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -29,6 +29,11 @@
  <tile id="11">
   <properties>
    <property name="LoadClass" value="Item.InfiniteJump"/>
+  </properties>
+ </tile>
+ <tile id="13">
+  <properties>
+   <property name="LoadClass" value="Item.FootballHelmet"/>
   </properties>
  </tile>
  <tile id="14">
@@ -760,11 +765,13 @@
  <tile id="320">
   <properties>
    <property name="BlockPlayer" value="1"/>
+   <property name="Breakable" value="True"/>
   </properties>
  </tile>
  <tile id="321">
   <properties>
    <property name="BlockPlayer" value="1"/>
+   <property name="Breakable" value="True"/>
   </properties>
  </tile>
  <tile id="323">
@@ -811,11 +818,13 @@
  <tile id="336">
   <properties>
    <property name="BlockPlayer" value="1"/>
+   <property name="Breakable" value="True"/>
   </properties>
  </tile>
  <tile id="337">
   <properties>
    <property name="BlockPlayer" value="1"/>
+   <property name="Breakable" value="True"/>
   </properties>
  </tile>
  <tile id="338">

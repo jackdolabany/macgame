@@ -323,6 +323,25 @@ namespace MacGame
         }
         private MacSpear _spear;
 
+        private bool HasFootballHelmet
+        {
+            get
+            {
+                return this.CurrentItem is FootballHelmet;
+            }
+        }
+        private MacFootballHelmet _footballHelmet;
+
+        /// <summary>
+        /// How fast Mac needs to be moving up to smash a Breakable tile with the football helmet.
+        /// </summary>
+        private const float minHelmetSmashVelocity = 200f;
+
+        /// <summary>
+        /// The downward velocity Mac gets after smashing a Breakable tile.
+        /// </summary>
+        private const float helmetSmashBounceVelocity = 100f;
+
         /// <summary>
         /// if Mac is using the wing, it'll render behind him.
         /// </summary>
@@ -576,6 +595,7 @@ namespace MacGame
             _shovel = new MacShovel(this, textures);
             _yoyo = new MacYoyo(this, textures2);
             _spear = new MacSpear(this, content, bigTextures);
+            _footballHelmet = new MacFootballHelmet(textures2);
 
             _hats.Add(new PilgrimHat(this, content));
             _hats.Add(new NinjaHat(this, content));
@@ -884,6 +904,8 @@ namespace MacGame
                 // Don't leave a spear platform behind if Mac loses the spear.
                 _spear.Reset();
             }
+
+            UpdateHelmetCollisions(velocityBeforeUpdate);
 
             foreach (var apple in Apples.RawList)
             {
@@ -2908,87 +2930,217 @@ namespace MacGame
                 spriteBatch.Draw(textures2, markerPosition, Helpers.GetTileRect(10, 6), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
             }
 
-            if (CurrentHat != null && !IsInCannon && !IsInSpaceship)
+            if (!IsInCannon && !IsInSpaceship)
             {
-                // Draw in front of the player
-                CurrentHat.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
-                CurrentHat.WorldLocation = this.WorldLocation + new Vector2(4, -12);
-                CurrentHat.Flipped = this.Flipped;
+                if (HasFootballHelmet)
+                {
+                    // The helmet replaces whatever hat Mac is wearing.
+                    PositionHelmet();
 
-                if (Flipped)
-                {
-                    CurrentHat.WorldLocation += new Vector2(-8, 0);
-                }
-
-                // Offset the hat for certain animations
-                if (animations.CurrentAnimationName == "jump" || animations.CurrentAnimationName == "fall")
-                {
-                    CurrentHat.WorldLocation += new Vector2(0, -4);
-                }
-                else if (animations.CurrentAnimationName == "climbLadder")
-                {
-                    if (Flipped)
+                    if (IsHeadFacingAway())
                     {
-                        CurrentHat.WorldLocation += new Vector2(4, 0);
+                        _footballHelmet.Back();
                     }
                     else
                     {
-                        CurrentHat.WorldLocation -= new Vector2(4, 0);
+                        _footballHelmet.Front();
                     }
+
+                    _footballHelmet.Draw(spriteBatch);
                 }
-                else if (animations.CurrentAnimationName == "knockedDown")
+                else if (CurrentHat != null)
                 {
-                    CurrentHat.WorldLocation += new Vector2(0, 4);
-                }
-                else if (IsInMineCart)
-                {
-                    CurrentHat.WorldLocation += new Vector2(0, -4);
-                }
-                else if (animations.CurrentAnimationName == "disableWaterBomb")
-                {
-                    if (Flipped)
+                    PositionOnHead(CurrentHat);
+
+                    // Front or back
+                    if (IsHeadFacingAway())
                     {
-                        CurrentHat.WorldLocation += new Vector2(4, 0);
+                        CurrentHat.Back();
                     }
                     else
                     {
-                        CurrentHat.WorldLocation += new Vector2(-4, 0);
+                        CurrentHat.Front();
                     }
-                }
-                else if (IsInSub)
-                {
-                    CurrentHat.WorldLocation += new Vector2(0, -8);
 
-                    // Draw behind the player in the sub because the player becomes the sub and a player sprite is drawn behind that.
-                    CurrentHat.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+                    CurrentHat.Draw(spriteBatch);
                 }
-                else if (IsInWater)
-                {
-                    if (Flipped)
-                    {
-                        CurrentHat.WorldLocation += new Vector2(-4, 0);
-                    }
-                    else
-                    {
-                        CurrentHat.WorldLocation += new Vector2(4, 0);
-                    }
-                }
-
-                // Front or back
-                if (animations.CurrentAnimationName == "climbLadder" || animations.CurrentAnimationName == "disableWaterBomb")
-                {
-                    CurrentHat.Back();
-                }
-                else
-                {
-                    CurrentHat.Front();
-                }
-
-                CurrentHat.Draw(spriteBatch);
             }
 
             base.Draw(spriteBatch);
 
+        }
+
+        /// <summary>
+        /// Moves hats or anything else Mac wears on his head to follow his head through his animations.
+        /// </summary>
+        private void PositionOnHead(GameObject headwear)
+        {
+            // Draw in front of the player
+            headwear.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
+            headwear.WorldLocation = this.WorldLocation + new Vector2(4, -12);
+            headwear.Flipped = this.Flipped;
+
+            if (Flipped)
+            {
+                headwear.WorldLocation += new Vector2(-8, 0);
+            }
+
+            // Offset for certain animations
+            if (animations.CurrentAnimationName == "jump" || animations.CurrentAnimationName == "fall")
+            {
+                headwear.WorldLocation += new Vector2(0, -4);
+            }
+            else if (animations.CurrentAnimationName == "climbLadder")
+            {
+                if (Flipped)
+                {
+                    headwear.WorldLocation += new Vector2(4, 0);
+                }
+                else
+                {
+                    headwear.WorldLocation -= new Vector2(4, 0);
+                }
+            }
+            else if (animations.CurrentAnimationName == "knockedDown")
+            {
+                headwear.WorldLocation += new Vector2(0, 4);
+            }
+            else if (IsInMineCart)
+            {
+                headwear.WorldLocation += new Vector2(0, -4);
+            }
+            else if (animations.CurrentAnimationName == "disableWaterBomb")
+            {
+                if (Flipped)
+                {
+                    headwear.WorldLocation += new Vector2(4, 0);
+                }
+                else
+                {
+                    headwear.WorldLocation += new Vector2(-4, 0);
+                }
+            }
+            else if (IsInSub)
+            {
+                headwear.WorldLocation += new Vector2(0, -8);
+
+                // Draw behind the player in the sub because the player becomes the sub and a player sprite is drawn behind that.
+                headwear.SetDrawDepth(this.DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            }
+            else if (IsInWater)
+            {
+                if (Flipped)
+                {
+                    headwear.WorldLocation += new Vector2(-4, 0);
+                }
+                else
+                {
+                    headwear.WorldLocation += new Vector2(4, 0);
+                }
+            }
+        }
+
+        /// <summary>
+        /// True when Mac is facing into the screen so headwear should show its back.
+        /// </summary>
+        private bool IsHeadFacingAway()
+        {
+            return animations.CurrentAnimationName == "climbLadder" || animations.CurrentAnimationName == "disableWaterBomb";
+        }
+
+        /// <summary>
+        /// Moves the helmet onto Mac's head. The helmet art needs a slight nudge back and down from where hats go.
+        /// </summary>
+        private void PositionHelmet()
+        {
+            PositionOnHead(_footballHelmet);
+
+            // Mirror the nudge when he faces left.
+            var nudgeX = Flipped ? 1 : -1;
+            _footballHelmet.WorldLocation += new Vector2(nudgeX, 1) * Game1.TileScale;
+        }
+
+        /// <summary>
+        /// While Mac is jumping up the helmet smashes Breakable tiles and hurts enemies it runs into.
+        /// </summary>
+        private void UpdateHelmetCollisions(Vector2 velocityBeforeUpdate)
+        {
+            if (!HasFootballHelmet || IsInCannon || IsInSpaceship || IsInSub) return;
+
+            PositionHelmet();
+
+            // Only while airborne and moving up. Climbing and swimming up don't count.
+            var isJumpingUp = velocityBeforeUpdate.Y < 0 && !OnGround && !IsClimbingLadder && !IsClimbingVine && !IsInWater;
+            if (!isJumpingUp) return;
+
+            foreach (var enemy in Game1.CurrentLevel.Enemies)
+            {
+                if (enemy.Enabled && enemy.Alive && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(_footballHelmet.CollisionRectangle))
+                {
+                    enemy.TakeHit(_footballHelmet, 1);
+                }
+            }
+
+            if (velocityBeforeUpdate.Y <= -minHelmetSmashVelocity)
+            {
+                TrySmashBreakableTileWithHelmet();
+            }
+        }
+
+        /// <summary>
+        /// Smash a Breakable tile that the helmet ran into. Only one tile breaks at a time, the one closest to the center of the helmet.
+        /// </summary>
+        private void TrySmashBreakableTileWithHelmet()
+        {
+            var helmetRect = _footballHelmet.CollisionRectangle;
+            var leftCell = Game1.CurrentMap.GetCellByPixelX(helmetRect.Left);
+            var rightCell = Game1.CurrentMap.GetCellByPixelX(helmetRect.Right - 1);
+            var topCell = Game1.CurrentMap.GetCellByPixelY(helmetRect.Top);
+            var bottomCell = Game1.CurrentMap.GetCellByPixelY(helmetRect.Bottom - 1);
+
+            MapSquare? squareToBreak = null;
+            var cellToBreak = Point.Zero;
+            var closestDistance = float.MaxValue;
+
+            for (int x = leftCell; x <= rightCell; x++)
+            {
+                for (int y = topCell; y <= bottomCell; y++)
+                {
+                    var mapSquare = Game1.CurrentMap.GetMapSquareAtCell(x, y);
+                    if (mapSquare == null || !mapSquare.CanBreak())
+                    {
+                        continue;
+                    }
+
+                    var distance = Math.Abs(((x + 0.5f) * TileMap.TileSize) - helmetRect.Center.X);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        squareToBreak = mapSquare;
+                        cellToBreak = new Point(x, y);
+                    }
+                }
+            }
+
+            if (squareToBreak == null) return;
+
+            var tileCenter = new Vector2((cellToBreak.X + 0.5f) * TileMap.TileSize, (cellToBreak.Y + 0.5f) * TileMap.TileSize);
+
+            // Break the tile's graphic into 4 pieces.
+            for (int z = 0; z < squareToBreak.LayerTiles.Length; z++)
+            {
+                var tile = squareToBreak.LayerTiles[z];
+                if (tile != null && tile.IsBreakable && tile.Texture != null)
+                {
+                    EffectsManager.AddSmashedTile(tileCenter, tile.Texture, tile.TextureRectangle);
+                }
+            }
+
+            squareToBreak.Break();
+            SoundManager.PlaySound("Break");
+
+            // Knock Mac back down a bit.
+            this.velocity.Y = helmetSmashBounceVelocity;
         }
 
         public void SyncHatWithSaveState()

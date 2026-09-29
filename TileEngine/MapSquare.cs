@@ -67,6 +67,9 @@ namespace TileEngine
         // Keep track of tiles that were water for when we adjust the water level.
         private bool wasWater = false;
 
+        // Keep track of smashed breakable tiles so we can put them back when the map reloads.
+        private bool wasBroken = false;
+
         /// <summary>
         /// Not the best way to identify these. But works for now.
         /// </summary>
@@ -171,6 +174,50 @@ namespace TileEngine
                     {
                         // Only reset the water textures.
                         LayerTiles[i].Color = Color.White;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Blocking squares with a Breakable tile can be smashed by Mac's football helmet.
+        /// </summary>
+        public bool CanBreak()
+        {
+            return !Passable && LayerTiles.Any(t => t != null && t.IsBreakable);
+        }
+
+        /// <summary>
+        /// Smash a breakable tile so it stops blocking and stops drawing.
+        /// </summary>
+        public void Break()
+        {
+            if (!CanBreak()) return;
+
+            Passable = true;
+            wasBroken = true;
+
+            for (int i = 0; i < LayerTiles.Length; i++)
+            {
+                if (LayerTiles[i] != null && LayerTiles[i]!.IsBreakable)
+                {
+                    LayerTiles[i]!.Color = Color.Transparent;
+                }
+            }
+        }
+
+        public void ResetBreakable()
+        {
+            if (wasBroken)
+            {
+                Passable = false;
+                wasBroken = false;
+
+                for (int i = 0; i < LayerTiles.Length; i++)
+                {
+                    if (LayerTiles[i] != null && LayerTiles[i]!.IsBreakable)
+                    {
+                        LayerTiles[i]!.Color = Color.White;
                     }
                 }
             }

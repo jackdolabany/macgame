@@ -160,6 +160,7 @@ namespace MacGame
                     var mapSquare = map.GetMapSquareAtCell(x, y);
 
                     mapSquare.ResetSand();
+                    mapSquare.ResetBreakable();
 
                     if (mapSquare.IsLadder)
                     {

@@ -323,6 +323,35 @@ namespace MacGame
             piece.SetDrawDepth(drawDepth);
         }
 
+        /// <summary>
+        /// Splits a tile into 4 quarters that pop up and fall away.
+        /// </summary>
+        public static void AddSmashedTile(Vector2 tileCenter, Texture2D image, Rectangle tileSourceRect)
+        {
+            const float horizontalSpeed = 120f;
+            const float topPieceUpSpeed = 550f;
+            const float bottomPieceUpSpeed = 350f;
+            var gravity = new Vector2(0, 20);
+            var half = TileMap.TileSize / 2;
+
+            for (int i = 0; i < 4; i++)
+            {
+                var column = i % 2;
+                var row = i / 2;
+
+                var source = new Rectangle(tileSourceRect.X + column * half, tileSourceRect.Y + row * half, half, half);
+                var location = tileCenter + new Vector2((column - 0.5f) * half, (row - 0.5f) * half);
+                var velocity = new Vector2(
+                    column == 0 ? -horizontalSpeed : horizontalSpeed,
+                    row == 0 ? -topPieceUpSpeed : -bottomPieceUpSpeed);
+
+                var piece = (Particle)Particles.GetNextObject();
+                piece.Initialize(location, velocity, gravity, 10000, 120, Color.White, Color.White);
+                piece.SetStaticImage(image, source);
+                piece.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH + (i * Game1.MIN_DRAW_INCREMENT));
+            }
+        }
+
         public static void RisingText(string text, Vector2 location)
         {
             var textParticle = (Particle)TextParticles.GetNextObject();

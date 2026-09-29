@@ -793,6 +793,13 @@ namespace Squared.Tiled
                             }
                         }
                         
+                        if (tileInfo.properties.ContainsKey("Breakable")
+                            && tileInfo.properties["Breakable"].Equals("true", StringComparison.OrdinalIgnoreCase)
+                            && !tileMapLayer.IsParallax)
+                        {
+                            tileMap.MapCells[x][y].LayerTiles[z].IsBreakable = true;
+                        }
+
                         if (tileInfo.properties.ContainsKey("PlayerStart"))
                         {
                             tileMap.PlayerStart = new Vector2(x, y);

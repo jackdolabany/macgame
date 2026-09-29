@@ -27,6 +27,11 @@ namespace TileEngine
 
         public WaterType WaterType { get; set; } = WaterType.NotWater;
 
+        /// <summary>
+        /// Set from the Breakable tile property. This is the tile that disappears when the map square is smashed.
+        /// </summary>
+        public bool IsBreakable { get; set; } = false;
+
         public Rectangle TextureRectangle
         {
             get

@@ -305,6 +305,24 @@ namespace MacGame
         }
         private MacShovel _shovel;
 
+        private bool HasYoyo
+        {
+            get
+            {
+                return this.CurrentItem is Yoyo;
+            }
+        }
+        private MacYoyo _yoyo;
+
+        private bool HasSpear
+        {
+            get
+            {
+                return this.CurrentItem is Spear;
+            }
+        }
+        private MacSpear _spear;
+
         /// <summary>
         /// if Mac is using the wing, it'll render behind him.
         /// </summary>
@@ -556,6 +574,8 @@ namespace MacGame
             ShipExhaust = new ShipExhaust(spaceTextures);
 
             _shovel = new MacShovel(this, textures);
+            _yoyo = new MacYoyo(this, textures2);
+            _spear = new MacSpear(this, content, bigTextures);
 
             _hats.Add(new PilgrimHat(this, content));
             _hats.Add(new NinjaHat(this, content));
@@ -582,6 +602,7 @@ namespace MacGame
         {
             this.DisplayComponent.DrawDepth = depth;
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            this._yoyo.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
@@ -849,6 +870,19 @@ namespace MacGame
             if (HasShovel)
             {
                 _shovel.Update(gameTime, elapsed);
+            }
+            if (HasYoyo)
+            {
+                _yoyo.Update(gameTime, elapsed);
+            }
+            if (HasSpear)
+            {
+                _spear.Update(gameTime, elapsed);
+            }
+            else
+            {
+                // Don't leave a spear platform behind if Mac loses the spear.
+                _spear.Reset();
             }
 
             foreach (var apple in Apples.RawList)
@@ -1221,6 +1255,7 @@ namespace MacGame
             Apples.Reset();
             Harpoons.Reset();
             Bombs.Reset();
+            _spear.Reset();
             chargedShot.Enabled = false;
 
             SoundManager.StopMinecart();
@@ -2190,6 +2225,22 @@ namespace MacGame
                 }
             }
 
+            if (HasYoyo)
+            {
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && !didPickUpObject && !didKickObject)
+                {
+                    _yoyo.TryThrow(Flipped, InputManager.CurrentAction.up);
+                }
+            }
+
+            if (HasSpear)
+            {
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && !didPickUpObject && !didKickObject)
+                {
+                    _spear.Throw(Flipped);
+                }
+            }
+
             string nextAnimation;
             if (IsJumping)
             {
@@ -2721,6 +2772,16 @@ namespace MacGame
             if (HasShovel)
             {
                 _shovel.Draw(spriteBatch);
+            }
+
+            if (HasYoyo)
+            {
+                _yoyo.Draw(spriteBatch);
+            }
+
+            if (HasSpear)
+            {
+                _spear.Draw(spriteBatch);
             }
 
             foreach (var apple in Apples.RawList)

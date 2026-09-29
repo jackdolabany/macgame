@@ -602,7 +602,7 @@ namespace MacGame
         {
             this.DisplayComponent.DrawDepth = depth;
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-            this._yoyo.SetDrawDepth(DrawDepth - Game1.MIN_DRAW_INCREMENT);
+            this._yoyo.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));

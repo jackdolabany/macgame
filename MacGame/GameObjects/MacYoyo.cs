@@ -37,7 +37,9 @@ namespace MacGame
 
         // The chain sprite is a single pixel in its tile.
         private Rectangle chainSource;
-        private const int chainLinkCount = 4;
+        private const int chainLinkCount = 5;
+
+        private float _linkDrawDepth;
 
         public MacYoyo(Player player, Texture2D textures2)
         {
@@ -129,6 +131,12 @@ namespace MacGame
             base.Update(gameTime, elapsed);
         }
 
+        public override void SetDrawDepth(float depth)
+        {
+            base.SetDrawDepth(depth);
+            _linkDrawDepth = depth + Game1.MIN_DRAW_INCREMENT;
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (Enabled)
@@ -140,7 +148,7 @@ namespace MacGame
                 for (int i = 1; i <= chainLinkCount; i++)
                 {
                     var linkLocation = Vector2.Lerp(chainStart, chainEnd, i / (float)(chainLinkCount + 1));
-                    spriteBatch.Draw(_textures2, (linkLocation - linkOrigin).ToIntegerVector(), chainSource, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, DisplayComponent.DrawDepth);
+                    spriteBatch.Draw(_textures2, (linkLocation - linkOrigin).ToIntegerVector(), chainSource, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, _linkDrawDepth);
                 }
 
                 base.Draw(spriteBatch);

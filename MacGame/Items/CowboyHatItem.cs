@@ -6,7 +6,7 @@ namespace MacGame.Items
     public class CowboyHatItem : HatItem
     {
         public override string HatName => "Cowboy Hat";
-        protected override Rectangle SourceRectangle => Helpers.GetTileRect(6, 0);
+        protected override Rectangle SourceRectangle => Helpers.GetBigTileRect(6, 0);
 
         public CowboyHatItem(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player) { }
     }

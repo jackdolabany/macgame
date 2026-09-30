@@ -7,11 +7,11 @@ namespace MacGame
     {
         public override string HatName => "Ninja";
 
-        protected override Rectangle frontSource => Helpers.GetTileRect(2, 0);
-        protected override Rectangle backSource => Helpers.GetTileRect(3, 0);
+        protected override Rectangle frontSource => Helpers.GetBigTileRect(2, 0);
+        protected override Rectangle backSource => Helpers.GetBigTileRect(3, 0);
 
-        public NinjaHat(Player player, ContentManager content)
-            : base(player, content)
+        public NinjaHat(ContentManager content)
+            : base(content)
         {
         }
     }

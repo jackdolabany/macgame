@@ -6,7 +6,7 @@ namespace MacGame.Items
     public class NinjaHatItem : HatItem
     {
         public override string HatName => "Ninja";
-        protected override Rectangle SourceRectangle => Helpers.GetTileRect(2, 0);
+        protected override Rectangle SourceRectangle => Helpers.GetBigTileRect(2, 0);
 
         public NinjaHatItem(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {

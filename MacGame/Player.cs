@@ -595,18 +595,18 @@ namespace MacGame
             _shovel = new MacShovel(this, textures);
             _yoyo = new MacYoyo(this, textures2);
             _spear = new MacSpear(this, content, bigTextures);
-            _footballHelmet = new MacFootballHelmet(textures2);
+            _footballHelmet = new MacFootballHelmet(content);
 
-            _hats.Add(new PilgrimHat(this, content));
-            _hats.Add(new NinjaHat(this, content));
-            _hats.Add(new WinterHat(this, content));
-            _hats.Add(new CowboyHat(this, content));
-            _hats.Add(new HairHat(this, content));
-            _hats.Add(new TopHat(this, content));
-            _hats.Add(new BaseballHat(this, content));
-            _hats.Add(new YellowHat(this, content));
-            _hats.Add(new RussianHat(this, content));
-            _hats.Add(new LadysHat(this, content));
+            _hats.Add(new PilgrimHat(content));
+            _hats.Add(new NinjaHat(content));
+            _hats.Add(new WinterHat(content));
+            _hats.Add(new CowboyHat(content));
+            _hats.Add(new HairHat(content));
+            _hats.Add(new TopHat(content));
+            _hats.Add(new BaseballHat(content));
+            _hats.Add(new YellowHat(content));
+            _hats.Add(new RussianHat(content));
+            _hats.Add(new LadysHat(content));
 
             _moveToLocation = new MoveToLocation(this, 250, "idle", "run", "jump", "climbLadder");
             _justIdle = new JustIdle("idle");
@@ -2930,40 +2930,12 @@ namespace MacGame
                 spriteBatch.Draw(textures2, markerPosition, Helpers.GetTileRect(10, 6), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, TileMap.OVERLAY_DRAW_DEPTH);
             }
 
-            if (!IsInCannon && !IsInSpaceship)
+            // The helmet replaces whatever hat Mac is wearing.
+            Headwear? headwear = HasFootballHelmet ? _footballHelmet : CurrentHat;
+            if (headwear != null && !IsInCannon && !IsInSpaceship)
             {
-                if (HasFootballHelmet)
-                {
-                    // The helmet replaces whatever hat Mac is wearing.
-                    PositionHelmet();
-
-                    if (IsHeadFacingAway())
-                    {
-                        _footballHelmet.Back();
-                    }
-                    else
-                    {
-                        _footballHelmet.Front();
-                    }
-
-                    _footballHelmet.Draw(spriteBatch);
-                }
-                else if (CurrentHat != null)
-                {
-                    PositionOnHead(CurrentHat);
-
-                    // Front or back
-                    if (IsHeadFacingAway())
-                    {
-                        CurrentHat.Back();
-                    }
-                    else
-                    {
-                        CurrentHat.Front();
-                    }
-
-                    CurrentHat.Draw(spriteBatch);
-                }
+                PositionOnHead(headwear);
+                headwear.Draw(spriteBatch);
             }
 
             base.Draw(spriteBatch);
@@ -2973,17 +2945,12 @@ namespace MacGame
         /// <summary>
         /// Moves hats or anything else Mac wears on his head to follow his head through his animations.
         /// </summary>
-        private void PositionOnHead(GameObject headwear)
+        private void PositionOnHead(Headwear headwear)
         {
             // Draw in front of the player
             headwear.SetDrawDepth(this.DrawDepth - Game1.MIN_DRAW_INCREMENT);
-            headwear.WorldLocation = this.WorldLocation + new Vector2(4, -12);
+            headwear.WorldLocation = this.WorldLocation + new Vector2(0, 2 * Game1.TileScale);
             headwear.Flipped = this.Flipped;
-
-            if (Flipped)
-            {
-                headwear.WorldLocation += new Vector2(-8, 0);
-            }
 
             // Offset for certain animations
             if (animations.CurrentAnimationName == "jump" || animations.CurrentAnimationName == "fall")
@@ -3038,26 +3005,16 @@ namespace MacGame
                     headwear.WorldLocation += new Vector2(4, 0);
                 }
             }
-        }
 
-        /// <summary>
-        /// True when Mac is facing into the screen so headwear should show its back.
-        /// </summary>
-        private bool IsHeadFacingAway()
-        {
-            return animations.CurrentAnimationName == "climbLadder" || animations.CurrentAnimationName == "disableWaterBomb";
-        }
-
-        /// <summary>
-        /// Moves the helmet onto Mac's head. The helmet art needs a slight nudge back and down from where hats go.
-        /// </summary>
-        private void PositionHelmet()
-        {
-            PositionOnHead(_footballHelmet);
-
-            // Mirror the nudge when he faces left.
-            var nudgeX = Flipped ? 1 : -1;
-            _footballHelmet.WorldLocation += new Vector2(nudgeX, 1) * Game1.TileScale;
+            // Show the back when Mac is facing into the screen.
+            if (animations.CurrentAnimationName == "climbLadder" || animations.CurrentAnimationName == "disableWaterBomb")
+            {
+                headwear.Back();
+            }
+            else
+            {
+                headwear.Front();
+            }
         }
 
         /// <summary>
@@ -3067,7 +3024,7 @@ namespace MacGame
         {
             if (!HasFootballHelmet || IsInCannon || IsInSpaceship || IsInSub) return;
 
-            PositionHelmet();
+            PositionOnHead(_footballHelmet);
 
             // Only while airborne and moving up. Climbing and swimming up don't count.
             var isJumpingUp = velocityBeforeUpdate.Y < 0 && !OnGround && !IsClimbingLadder && !IsClimbingVine && !IsInWater;

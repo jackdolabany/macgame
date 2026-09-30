@@ -1,41 +1,20 @@
-using MacGame.DisplayComponents;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace MacGame
 {
     /// <summary>
     /// The football helmet drawn on Mac's head. Not the item to get the helmet (FootballHelmet.cs).
     /// </summary>
-    public class MacFootballHelmet : GameObject
+    public class MacFootballHelmet : Headwear
     {
-        private StaticImageDisplay _frontDisplay;
-        private StaticImageDisplay _backDisplay;
+        protected override Rectangle frontSource => Helpers.GetBigTileRect(4, 2);
+        protected override Rectangle backSource => Helpers.GetBigTileRect(5, 2);
 
-        public MacFootballHelmet(Texture2D textures2)
+        public MacFootballHelmet(ContentManager content) : base(content)
         {
-            _frontDisplay = new StaticImageDisplay(textures2, Helpers.GetTileRect(15, 15));
-            _backDisplay = new StaticImageDisplay(textures2, Helpers.GetTileRect(15, 16));
-            DisplayComponent = _frontDisplay;
-            Enabled = true;
-
-            CollisionRectangle = new Rectangle(-3 * Game1.TileScale, -8 * Game1.TileScale, 6 * Game1.TileScale, 6 * Game1.TileScale);
-        }
-
-        public void Front()
-        {
-            DisplayComponent = _frontDisplay;
-        }
-
-        public void Back()
-        {
-            DisplayComponent = _backDisplay;
-        }
-
-        public override void SetDrawDepth(float depth)
-        {
-            _frontDisplay.DrawDepth = depth;
-            _backDisplay.DrawDepth = depth;
+            // Covers the helmet art, which sits in rows 4-9 of the 16x16 hat tile.
+            CollisionRectangle = new Rectangle(-3 * Game1.TileScale, -12 * Game1.TileScale, 6 * Game1.TileScale, 6 * Game1.TileScale);
         }
     }
 }

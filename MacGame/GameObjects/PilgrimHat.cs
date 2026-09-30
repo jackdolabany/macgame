@@ -7,11 +7,11 @@ namespace MacGame
     {
         public override string HatName => "Pilgrim";
 
-        protected override Rectangle frontSource => Helpers.GetTileRect(0, 0);
-        protected override Rectangle backSource => Helpers.GetTileRect(1, 0);
+        protected override Rectangle frontSource => Helpers.GetBigTileRect(0, 0);
+        protected override Rectangle backSource => Helpers.GetBigTileRect(1, 0);
 
-        public PilgrimHat(Player player, ContentManager content)
-            : base(player, content)
+        public PilgrimHat(ContentManager content)
+            : base(content)
         {
         }
     }

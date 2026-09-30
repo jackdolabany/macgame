@@ -6,7 +6,7 @@ namespace MacGame.Items
     public class RussianHatItem : HatItem
     {
         public override string HatName => "Russian Hat";
-        protected override Rectangle SourceRectangle => Helpers.GetTileRect(0, 2);
+        protected override Rectangle SourceRectangle => Helpers.GetBigTileRect(0, 2);
 
         public RussianHatItem(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player) { }
     }

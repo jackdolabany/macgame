@@ -1081,7 +1081,7 @@
 
 #begin Textures/Hats.png
 /importer:TextureImporter
-/processor:SmallTileBorderImageProcessor
+/processor:BigTileBorderImageProcessor
 /processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False

@@ -14,6 +14,9 @@ namespace MacGame.Items
         {
             var hatsTexture = content.Load<Texture2D>(@"Textures\Hats");
             DisplayComponent = new StaticImageDisplay(hatsTexture, SourceRectangle);
+
+            // Hat art sits in the upper middle of the 16x16 tile so it lines up with Mac's head. Pull it down so it rests in the item's cell.
+            DisplayComponent.Offset = new Vector2(0, 5 * Game1.TileScale);
             SetWorldLocationCollisionRectangle(8, 8);
         }
 

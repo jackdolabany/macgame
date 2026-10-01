@@ -314,6 +314,15 @@ namespace MacGame
         }
         private MacDonut _donut;
 
+        private bool HasBoomerang
+        {
+            get
+            {
+                return this.CurrentItem is Boomerang;
+            }
+        }
+        public GameObjectPool<MacBoomerang> Boomerangs;
+
         private bool HasSpear
         {
             get
@@ -594,6 +603,10 @@ namespace MacGame
 
             _shovel = new MacShovel(this, textures);
             _donut = new MacDonut(this, textures2);
+
+            Boomerangs = new GameObjectPool<MacBoomerang>(2);
+            Boomerangs.AddObject(new MacBoomerang(this, textures2));
+            Boomerangs.AddObject(new MacBoomerang(this, textures2));
             _spear = new MacSpear(this, content, bigTextures);
             _footballHelmet = new MacFootballHelmet(content);
 
@@ -625,6 +638,7 @@ namespace MacGame
             this._donut.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
+            this.Boomerangs.RawList.ForEach(b => b.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Shots.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             chargedShot.SetDrawDepth(TileMap.EFFECTS_DRAW_DEPTH);
@@ -912,6 +926,14 @@ namespace MacGame
                 if (apple.Enabled)
                 {
                     apple.Update(gameTime, elapsed);
+                }
+            }
+
+            foreach (var boomerang in Boomerangs.RawList)
+            {
+                if (boomerang.Enabled)
+                {
+                    boomerang.Update(gameTime, elapsed);
                 }
             }
 
@@ -1275,6 +1297,7 @@ namespace MacGame
 
             Shots.Reset();
             Apples.Reset();
+            Boomerangs.Reset();
             Harpoons.Reset();
             Bombs.Reset();
             _spear.Reset();
@@ -2255,6 +2278,14 @@ namespace MacGame
                 }
             }
 
+            if (HasBoomerang)
+            {
+                if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && !didPickUpObject && !didKickObject)
+                {
+                    Boomerangs.TryGetObject()?.Throw(Flipped);
+                }
+            }
+
             if (HasSpear)
             {
                 if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && !didPickUpObject && !didKickObject)
@@ -2811,6 +2842,14 @@ namespace MacGame
                 if (apple.Enabled)
                 {
                     apple.Draw(spriteBatch);
+                }
+            }
+
+            foreach (var boomerang in Boomerangs.RawList)
+            {
+                if (boomerang.Enabled)
+                {
+                    boomerang.Draw(spriteBatch);
                 }
             }
 

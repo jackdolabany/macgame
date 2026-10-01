@@ -310,6 +310,11 @@
    <property name="LoadClass" value="Npc.AlienMom"/>
   </properties>
  </tile>
+ <tile id="234">
+  <properties>
+   <property name="LoadClass" value="Item.Boomerang"/>
+  </properties>
+ </tile>
  <tile id="252">
   <properties>
    <property name="LoadClass" value="Item.Spear"/>

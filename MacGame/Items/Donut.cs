@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MacGame.Items
 {
     /// <summary>
-    /// This item gives Mac a yoyo to swing at enemies. Not the yoyo Mac uses (MacYoyo.cs).
+    /// This item gives Mac a donut to swing at enemies. Not the donut Mac uses (MacDonut.cs).
     /// </summary>
-    public class Yoyo : Item
+    public class Donut : Item
     {
 
-        public Yoyo(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
+        public Donut(ContentManager content, int cellX, int cellY, Player player) : base(content, cellX, cellY, player)
         {
             var textures = content.Load<Texture2D>(@"Textures\Textures2");
             var image = new StaticImageDisplay(textures);

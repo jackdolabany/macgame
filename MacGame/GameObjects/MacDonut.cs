@@ -6,15 +6,15 @@ using TileEngine;
 
 namespace MacGame
 {
-    // This is the yoyo Mac swings. Not the item to get the yoyo (Yoyo.cs).
+    // This is the donut Mac swings. Not the item to get the donut (Donut.cs).
     // It works like the diskarmor in Rygar. A normal throw shoots straight ahead and snaps back.
     // An up throw shoots ahead, swings up over Mac's head to behind him, and then comes back.
-    public class MacYoyo : GameObject
+    public class MacDonut : GameObject
     {
         private Player _player;
 
         /// <summary>
-        /// How far the yoyo reaches from Mac. 2.5 blocks.
+        /// How far the donut reaches from Mac. 2.5 blocks.
         /// </summary>
         private const float reach = TileMap.TileSize * 2.5f;
 
@@ -41,7 +41,7 @@ namespace MacGame
 
         private float _linkDrawDepth;
 
-        public MacYoyo(Player player, Texture2D textures2)
+        public MacDonut(Player player, Texture2D textures2)
         {
             _player = player;
             _textures2 = textures2;

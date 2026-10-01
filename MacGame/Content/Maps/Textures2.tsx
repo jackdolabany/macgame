@@ -317,7 +317,7 @@
  </tile>
  <tile id="253">
   <properties>
-   <property name="LoadClass" value="Item.Yoyo"/>
+   <property name="LoadClass" value="Item.Donut"/>
   </properties>
  </tile>
  <tile id="464">

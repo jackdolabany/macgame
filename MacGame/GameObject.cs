@@ -75,6 +75,31 @@ namespace MacGame
         protected Rectangle collisionRectangle;
 
         /// <summary>
+        /// Set this if the collision rectangle isn't centered and should flip along with the art when the
+        /// object turns around. Define the rectangle as if the object is facing right.
+        ///
+        /// WARNING: Flipping an object with an off-center collision rectangle moves the rectangle sideways instantly.
+        /// If a tile colliding object turns around next to a wall, this can push its collision rectangle into
+        /// blocking tiles and the object may get stuck or be shoved through the wall.
+        /// </summary>
+        protected bool mirrorCollisionRectangleWhenFlipped = false;
+
+        /// <summary>
+        /// Where the collision rectangle starts horizontally, taking flipping into account.
+        /// </summary>
+        private int collisionRectangleOffsetX
+        {
+            get
+            {
+                if (mirrorCollisionRectangleWhenFlipped && Flipped)
+                {
+                    return -collisionRectangle.X - collisionRectangle.Width;
+                }
+                return collisionRectangle.X;
+            }
+        }
+
+        /// <summary>
         /// if true, this enemy will be blocked by enemy blocking tiles. This is a way to restrict enemies to walk back
         /// and forth in a given area. This should be false for any enemy that isn't affected by gravity or that can move in the 
         /// y direction (jump) because they can land on the enemy tiles and it will look weird. 
@@ -249,7 +274,7 @@ namespace MacGame
             if (DisplayComponent == null)
             {
                 return new Rectangle(
-                  position.X.Round() + collisionRectangle.X,
+                  position.X.Round() + collisionRectangleOffsetX,
                   position.Y.Round() + collisionRectangle.Y,
                   collisionRectangle.Width,
                   collisionRectangle.Height);
@@ -257,7 +282,7 @@ namespace MacGame
             else
             {
                 return new Rectangle(
-                  (position.X - DisplayComponent.RotationAndDrawOrigin.X).Round() + collisionRectangle.X,
+                  (position.X - DisplayComponent.RotationAndDrawOrigin.X).Round() + collisionRectangleOffsetX,
                   (position.Y - DisplayComponent.RotationAndDrawOrigin.Y).Round() + collisionRectangle.Y,
                   collisionRectangle.Width,
                   collisionRectangle.Height);
@@ -392,7 +417,7 @@ namespace MacGame
                             if (isMovingRight)
                             {
                                 // Moving right
-                                float rightMostPoint = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
+                                float rightMostPoint = this.WorldLocation.X + collisionRectangleOffsetX + collisionRectangle.Width;
                                 float distanceToTile = (float)(TileMap.TileSize * x) - rightMostPoint;
                                 moveAmount.X = Math.Min(moveAmount.X, distanceToTile);
                                 onRightWall = true;
@@ -400,7 +425,7 @@ namespace MacGame
                             else
                             {
                                 // Moving left
-                                float leftMostPoint = this.WorldLocation.X + collisionRectangle.X;
+                                float leftMostPoint = this.WorldLocation.X + collisionRectangleOffsetX;
                                 float distanceToTile = leftMostPoint - ((x + 1) * TileMap.TileSize);
                                 moveAmount.X = Math.Max(moveAmount.X, -distanceToTile);
                                 onLeftWall = true;
@@ -433,7 +458,7 @@ namespace MacGame
 
                 if (isMovingRight)
                 {
-                    float beforeMoveRight = this.WorldLocation.X + collisionRectangle.X + collisionRectangle.Width;
+                    float beforeMoveRight = this.WorldLocation.X + collisionRectangleOffsetX + collisionRectangle.Width;
                     float afterMoveRight = beforeMoveRight + moveAmount.X;
                     var leftOfObject = collisionObject.CollisionRectangle.Left;
 
@@ -447,7 +472,7 @@ namespace MacGame
                 }
                 else
                 {
-                    float beforeMoveLeft = this.WorldLocation.X + collisionRectangle.X;
+                    float beforeMoveLeft = this.WorldLocation.X + collisionRectangleOffsetX;
                     float afterMoveLeft = beforeMoveLeft + moveAmount.X;
                     var rightOfObject = collisionObject.CollisionRectangle.Right;
                     if (beforeMoveLeft >= rightOfObject && afterMoveLeft < rightOfObject)
@@ -564,11 +589,11 @@ namespace MacGame
                 {
                     // The default favors the left by rounding down. If horizontal detection let them move to the right,
                     // evena  fraction of a pixel, we should consider them there, and so let's favor the right most pixel and use Ceiling.  
-                    leftPixel = newPosition.X.ToCeiling() + collisionRectangle.X;
+                    leftPixel = newPosition.X.ToCeiling() + collisionRectangleOffsetX;
                 }
                 else
                 {
-                    leftPixel = (int)(newPosition.X + collisionRectangle.X);
+                    leftPixel = (int)(newPosition.X + collisionRectangleOffsetX);
                 }
 
                 var rightPixel = leftPixel + collisionRectangle.Width - 1;

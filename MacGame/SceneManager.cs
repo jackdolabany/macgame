@@ -31,6 +31,7 @@ namespace MacGame
             TimerManager.Clear();
             ShotManager.ClearShotsInstant();
             MissileManager.Clear();
+            EffectsManager.ClearEffects();
             Game1.Camera.ClearRestrictions();
             Game1.BackgroundEffectsManager.Reset();
 

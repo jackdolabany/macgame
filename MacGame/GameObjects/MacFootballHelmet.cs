@@ -13,8 +13,8 @@ namespace MacGame
 
         public MacFootballHelmet(ContentManager content) : base(content)
         {
-            // Covers the helmet art, which sits in rows 4-9 of the 16x16 hat tile.
-            CollisionRectangle = new Rectangle(-3 * Game1.TileScale, -12 * Game1.TileScale, 6 * Game1.TileScale, 6 * Game1.TileScale);
+            CollisionRectangle = new Rectangle(-4 * Game1.TileScale, -12 * Game1.TileScale, 6 * Game1.TileScale, 6 * Game1.TileScale);
+            mirrorCollisionRectangleWhenFlipped = true;
         }
     }
 }

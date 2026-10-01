@@ -305,14 +305,14 @@ namespace MacGame
         }
         private MacShovel _shovel;
 
-        private bool HasYoyo
+        private bool HasDonut
         {
             get
             {
-                return this.CurrentItem is Yoyo;
+                return this.CurrentItem is Donut;
             }
         }
-        private MacYoyo _yoyo;
+        private MacDonut _donut;
 
         private bool HasSpear
         {
@@ -338,7 +338,7 @@ namespace MacGame
         private const float minHelmetSmashVelocity = 200f;
 
         /// <summary>
-        /// The downward velocity Mac gets after smashing a Breakable tile.
+        /// The downward velocity Mac gets after smashing a Breakable tile or hitting an enemy with the football helmet.
         /// </summary>
         private const float helmetSmashBounceVelocity = 100f;
 
@@ -593,7 +593,7 @@ namespace MacGame
             ShipExhaust = new ShipExhaust(spaceTextures);
 
             _shovel = new MacShovel(this, textures);
-            _yoyo = new MacYoyo(this, textures2);
+            _donut = new MacDonut(this, textures2);
             _spear = new MacSpear(this, content, bigTextures);
             _footballHelmet = new MacFootballHelmet(content);
 
@@ -622,7 +622,7 @@ namespace MacGame
         {
             this.DisplayComponent.DrawDepth = depth;
             this._shovel.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
-            this._yoyo.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
+            this._donut.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.wings.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT);
             this.Apples.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
             this.Harpoons.RawList.ForEach(a => a.SetDrawDepth(DrawDepth + Game1.MIN_DRAW_INCREMENT));
@@ -891,9 +891,9 @@ namespace MacGame
             {
                 _shovel.Update(gameTime, elapsed);
             }
-            if (HasYoyo)
+            if (HasDonut)
             {
-                _yoyo.Update(gameTime, elapsed);
+                _donut.Update(gameTime, elapsed);
             }
             if (HasSpear)
             {
@@ -2247,11 +2247,11 @@ namespace MacGame
                 }
             }
 
-            if (HasYoyo)
+            if (HasDonut)
             {
                 if (InputManager.CurrentAction.action && !InputManager.PreviousAction.action && !didPickUpObject && !didKickObject)
                 {
-                    _yoyo.TryThrow(Flipped, InputManager.CurrentAction.up);
+                    _donut.TryThrow(Flipped, InputManager.CurrentAction.up);
                 }
             }
 
@@ -2796,9 +2796,9 @@ namespace MacGame
                 _shovel.Draw(spriteBatch);
             }
 
-            if (HasYoyo)
+            if (HasDonut)
             {
-                _yoyo.Draw(spriteBatch);
+                _donut.Draw(spriteBatch);
             }
 
             if (HasSpear)
@@ -3030,12 +3030,20 @@ namespace MacGame
             var isJumpingUp = velocityBeforeUpdate.Y < 0 && !OnGround && !IsClimbingLadder && !IsClimbingVine && !IsInWater;
             if (!isJumpingUp) return;
 
+            var hitEnemy = false;
             foreach (var enemy in Game1.CurrentLevel.Enemies)
             {
                 if (enemy.Enabled && enemy.Alive && enemy.CanBeHitWithWeapons && enemy.CollisionRectangle.Intersects(_footballHelmet.CollisionRectangle))
                 {
                     enemy.TakeHit(_footballHelmet, 1);
+                    hitEnemy = true;
                 }
+            }
+
+            if (hitEnemy)
+            {
+                // Knock Mac back down a bit.
+                this.velocity.Y = helmetSmashBounceVelocity;
             }
 
             if (velocityBeforeUpdate.Y <= -minHelmetSmashVelocity)
@@ -3045,59 +3053,49 @@ namespace MacGame
         }
 
         /// <summary>
-        /// Smash a Breakable tile that the helmet ran into. Only one tile breaks at a time, the one closest to the center of the helmet.
+        /// Smash a Breakable tile that the helmet ran into. Only one tile breaks per hit, the one most directly above Mac's helmet.
         /// </summary>
         private void TrySmashBreakableTileWithHelmet()
         {
             var helmetRect = _footballHelmet.CollisionRectangle;
-            var leftCell = Game1.CurrentMap.GetCellByPixelX(helmetRect.Left);
-            var rightCell = Game1.CurrentMap.GetCellByPixelX(helmetRect.Right - 1);
-            var topCell = Game1.CurrentMap.GetCellByPixelY(helmetRect.Top);
-            var bottomCell = Game1.CurrentMap.GetCellByPixelY(helmetRect.Bottom - 1);
+            var topLeft = new Vector2(helmetRect.Left, helmetRect.Top);
+            var topRight = new Vector2(helmetRect.Right - 1, helmetRect.Top);
+            var topCenter = new Vector2(helmetRect.Center.X, helmetRect.Top);
 
-            MapSquare? squareToBreak = null;
-            var cellToBreak = Point.Zero;
-            var closestDistance = float.MaxValue;
+            var leftIsCloser = Game1.CurrentMap.GetMapSquareAtPixel(topCenter) == Game1.CurrentMap.GetMapSquareAtPixel(topLeft);
+            var closerCorner = leftIsCloser ? topLeft : topRight;
+            var fartherCorner = leftIsCloser ? topRight : topLeft;
 
-            for (int x = leftCell; x <= rightCell; x++)
+            if (TrySmashBreakableTileAtPixel(closerCorner) || TrySmashBreakableTileAtPixel(fartherCorner))
             {
-                for (int y = topCell; y <= bottomCell; y++)
-                {
-                    var mapSquare = Game1.CurrentMap.GetMapSquareAtCell(x, y);
-                    if (mapSquare == null || !mapSquare.CanBreak())
-                    {
-                        continue;
-                    }
+                SoundManager.PlaySound("Break");
 
-                    var distance = Math.Abs(((x + 0.5f) * TileMap.TileSize) - helmetRect.Center.X);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        squareToBreak = mapSquare;
-                        cellToBreak = new Point(x, y);
-                    }
-                }
+                // Knock Mac back down a bit.
+                this.velocity.Y = helmetSmashBounceVelocity;
             }
+        }
 
-            if (squareToBreak == null) return;
-
-            var tileCenter = new Vector2((cellToBreak.X + 0.5f) * TileMap.TileSize, (cellToBreak.Y + 0.5f) * TileMap.TileSize);
+        /// <summary>
+        /// Breaks the tile at the given pixel if it's Breakable.
+        /// </summary>
+        /// <returns>True if a tile was broken.</returns>
+        private bool TrySmashBreakableTileAtPixel(Vector2 pixel)
+        {
+            var mapSquare = Game1.CurrentMap.GetMapSquareAtPixel(pixel);
+            if (mapSquare == null || !mapSquare.CanBreak()) return false;
 
             // Break the tile's graphic into 4 pieces.
-            for (int z = 0; z < squareToBreak.LayerTiles.Length; z++)
+            var tileCenter = Game1.CurrentMap.GetCellCenter(Game1.CurrentMap.GetCellByPixel(pixel));
+            foreach (var tile in mapSquare.LayerTiles)
             {
-                var tile = squareToBreak.LayerTiles[z];
                 if (tile != null && tile.IsBreakable && tile.Texture != null)
                 {
                     EffectsManager.AddSmashedTile(tileCenter, tile.Texture, tile.TextureRectangle);
                 }
             }
 
-            squareToBreak.Break();
-            SoundManager.PlaySound("Break");
-
-            // Knock Mac back down a bit.
-            this.velocity.Y = helmetSmashBounceVelocity;
+            mapSquare.Break();
+            return true;
         }
 
         public void SyncHatWithSaveState()

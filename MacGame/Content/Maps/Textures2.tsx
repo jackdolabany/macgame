@@ -175,6 +175,11 @@
    <property name="LoadClass" value="Enemy.HiddenGhost"/>
   </properties>
  </tile>
+ <tile id="103">
+  <properties>
+   <property name="LoadClass" value="Enemy.RadishMan"/>
+  </properties>
+ </tile>
  <tile id="112">
   <properties>
    <property name="LoadClass" value="Enemy.JimmyCricket"/>

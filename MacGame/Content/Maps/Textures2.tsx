@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.0" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
+<tileset version="1.10" tiledversion="1.11.2" name="Textures2" tilewidth="8" tileheight="8" tilecount="576" columns="16">
  <image source="../Textures/Textures2.png" width="128" height="288"/>
  <tile id="1">
   <properties>
@@ -155,6 +155,51 @@
    <property name="Hidden" value="1"/>
   </properties>
  </tile>
+ <tile id="96">
+  <properties>
+   <property name="LoadClass" value="Enemy.FireBlob"/>
+  </properties>
+ </tile>
+ <tile id="98">
+  <properties>
+   <property name="LoadClass" value="Enemy.LadyBug"/>
+  </properties>
+ </tile>
+ <tile id="100">
+  <properties>
+   <property name="LoadClass" value="Enemy.HiddenGhost"/>
+  </properties>
+ </tile>
+ <tile id="102">
+  <properties>
+   <property name="LoadClass" value="Enemy.HiddenGhost"/>
+  </properties>
+ </tile>
+ <tile id="112">
+  <properties>
+   <property name="LoadClass" value="Enemy.JimmyCricket"/>
+  </properties>
+ </tile>
+ <tile id="114">
+  <properties>
+   <property name="LoadClass" value="Enemy.FlyTrap"/>
+  </properties>
+ </tile>
+ <tile id="116">
+  <properties>
+   <property name="LoadClass" value="Enemy.Snail"/>
+  </properties>
+ </tile>
+ <tile id="118">
+  <properties>
+   <property name="LoadClass" value="Enemy.Slug"/>
+  </properties>
+ </tile>
+ <tile id="120">
+  <properties>
+   <property name="LoadClass" value="Enemy.DungBeetle"/>
+  </properties>
+ </tile>
  <tile id="122">
   <properties>
    <property name="Hidden" value="1"/>
@@ -178,6 +223,11 @@
  <tile id="126">
   <properties>
    <property name="Hidden" value="1"/>
+  </properties>
+ </tile>
+ <tile id="130">
+  <properties>
+   <property name="LoadClass" value="Enemy.FlyTrapJumping"/>
   </properties>
  </tile>
  <tile id="138">
